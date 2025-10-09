@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en" class="noselect">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Account Settings</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+      <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+      <style>
+         :root {
+         /* Colors - Dark Theme */
+         --bg-primary: #121212;
+         --bg-secondary: #1f1f1f;
+         --bg-tertiary: #333333;
+         --bg-gradient-dark: linear-gradient(145deg, #1e1e1e, #333333);
+         --bg-input: #2c2c2c;
+         /* Text Colors - Dark Theme */
+         --text-primary: #fff;
+         --text-secondary: #ddd;
+         --text-tertiary: #b0bec5;
+         --text-muted: rgb(230, 230, 230);
+         /* Accent Colors */
+         --accent-primary: #ffc107;
+         --accent-hover: #e0a800;
+         --accent-focus: #ffd54f;
+         --accent-button-text: black;
+         /* Shadow Colors */
+         --shadow-dark: rgba(0, 0, 0, 0.5);
+         --shadow-medium: rgba(0, 0, 0, 0.6);
+         --shadow-light: rgba(0, 0, 0, 0.4);
+         /* Spacing Values */
+         --spacing-xs: 4px;
+         --spacing-sm: 8px;
+         --spacing-md: 12px;
+         --spacing-lg: 16px;
+         --spacing-xl: 20px;
+         --spacing-xxl: 25px;
+         --spacing-xxxl: 30px;
+         /* Border Radius */
+         --radius-sm: 5px;
+         --radius-md: 8px;
+         --radius-lg: 10px;
+         --radius-xl: 12px;
+         --radius-full: 50%;
+         /* Font Sizes */
+         --font-sm: 0.9rem;
+         --font-base: 1rem;
+         --font-md: 1.1rem;
+         --font-lg: 1.2rem;
+         --font-xl: 1.6rem;
+         --font-xxl: 1.7rem;
+         --font-xxxl: 1.8rem;
+         --font-icon-sm: 1.2rem;
+         /* Transitions */
+         --transition-fast: 0.2s ease;
+         --transition-base: 0.3s ease;
+         --transition-slow: 0.4s all;
+         }
+         /* Light theme overrides */
+         body.light-theme {
+         --bg-primary: #ffffff;
+         --bg-secondary: rgb(253, 253, 253);
+         --bg-tertiary: rgb(240, 240, 240);
+         --bg-gradient-dark: linear-gradient(145deg, #ffffff, #f0f0f0);
+         --bg-input: #ffffff;
+         --text-primary: #333;
+         --text-secondary: rgb(50, 50, 50);
+         --text-tertiary: rgb(80, 80, 80);
+         --text-muted: #333;
+         --accent-button-text: rgb(30, 30, 30);
+         --shadow-dark: rgba(0, 0, 0, 0.1);
+         --shadow-medium: rgba(0, 0, 0, 0.1);
+         --shadow-light: rgba(0, 0, 0, 0.1);
+         }
+         * {
+         box-sizing: border-box;
+         margin: 0;
+         padding: 0;
+         max-height: 9999999px;
+         font-family: 'Roboto', sans-serif;
+         transition: var(--transition-base) all;
+         }
+         .noselect {
+         -webkit-user-select: none;
+         -moz-user-select: none;
+         -ms-user-select: none;
+         user-select: none;
+         -webkit-touch-callout: none;
+         -webkit-user-drag: none;
+         -webkit-tap-highlight-color: transparent;
+         }
+         body {
+         background-color: var(--bg-primary);
+         color: var(--text-primary);
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         min-height: 100vh;
+         padding: var(--spacing-xl);
+         overflow-x: hidden;
+         }
+         .theme-toggle {
+         position: fixed;
+         top: var(--spacing-xl);
+         right: var(--spacing-xl);
+         background-color: var(--bg-secondary);
+         border: none;
+         border-radius: var(--radius-lg);
+         padding: var(--spacing-md);
+         cursor: pointer;
+         color: var(--text-primary);
+         font-size: var(--font-icon-sm);
+         box-shadow: 0 2px 8px var(--shadow-light);
+         transition: var(--transition-base);
+         z-index: 1000;
+         display: none;
+         }
+         .theme-toggle:hover {
+         background-color: var(--bg-tertiary);
+         transform: scale(1.1);
+         }
+         .theme-toggle:active {
+         transform: scale(0.95);
+         }
+         .container {
+         max-width: 900px;
+         width: 100%;
+         background: var(--bg-gradient-dark);
+         border-radius: var(--radius-lg);
+         padding: var(--spacing-xxxl);
+         color: var(--text-primary);
+         box-shadow: 0 8px 30px var(--shadow-medium);
+         }
+         h1 {
+         font-size: var(--font-xl);
+         font-weight: 700;
+         margin-bottom: var(--spacing-xl);
+         color: var(--text-primary);
+         text-align: center;
+         }
+         .profile-header {
+         display: flex;
+         flex-direction: column;
+         align-items: center;
+         margin-bottom: var(--spacing-xxxl);
+         }
+         .avatar-container {
+         position: relative;
+         cursor: pointer;
+         margin-bottom: var(--spacing-lg);
+         }
+         #avatar-preview {
+         width: 150px;
+         height: 150px;
+         border-radius: var(--radius-full);
+         border: 4px solid var(--accent-primary);
+         box-shadow: 0 4px 12px var(--shadow-light);
+         transition: var(--transition-base);
+         }
+         .avatar-container:hover #avatar-preview {
+         transform: scale(1.05);
+         box-shadow: 0 8px 20px var(--shadow-medium);
+         }
+         .avatar-edit-icon {
+         position: absolute;
+         bottom: 5px;
+         right: 5px;
+         background-color: var(--accent-primary);
+         color: var(--accent-button-text);
+         width: 35px;
+         height: 35px;
+         border-radius: var(--radius-full);
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         font-size: var(--font-base);
+         box-shadow: 0 2px 8px var(--shadow-light);
+         }
+         .student-name {
+         font-size: var(--font-lg);
+         font-weight: 700;
+         margin-bottom: var(--spacing-xs);
+         }
+         .student-grade {
+         font-size: var(--font-md);
+         color: var(--text-tertiary);
+         }
+         .logout-button {
+         margin-top: var(--spacing-lg);
+         padding: var(--spacing-md) var(--spacing-xl);
+         font-size: var(--font-sm);
+         width: auto;
+         min-width: 120px;
+         background: var(--bg-secondary);
+         color: var(--text-primary);
+         border: 2px solid var(--accent-primary);
+         display: inline-flex;
+         align-items: center;
+         justify-content: center;
+         gap: var(--spacing-sm);
+         }
+         .logout-button:hover {
+         background: var(--accent-primary);
+         color: var(--accent-button-text);
+         border-color: var(--accent-primary);
+         transform: translateY(-2px);
+         box-shadow: 0 4px 15px var(--shadow-medium);
+         }
+         .logout-button:active {
+         transform: translateY(0);
+         box-shadow: 0 2px 8px var(--shadow-light);
+         }
+         .logout-button i {
+         font-size: var(--font-base);
+         }
+         .section {
+         background-color: var(--bg-secondary);
+         border-radius: var(--radius-lg);
+         padding: var(--spacing-xl);
+         margin-bottom: var(--spacing-xl);
+         box-shadow: 0 2px 8px var(--shadow-light);
+         }
+         .section-title {
+         font-size: var(--font-lg);
+         font-weight: 700;
+         margin-bottom: var(--spacing-lg);
+         color: var(--text-primary);
+         display: flex;
+         align-items: center;
+         gap: var(--spacing-sm);
+         }
+         .section-title i {
+         color: var(--accent-primary);
+         }
+         .info-grid {
+         display: grid;
+         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+         gap: var(--spacing-lg);
+         }
+         .info-item {
+         display: flex;
+         flex-direction: column;
+         gap: var(--spacing-xs);
+         }
+         .info-label {
+         font-size: var(--font-sm);
+         color: var(--text-tertiary);
+         font-weight: 500;
+         }
+         .info-value {
+         font-size: var(--font-base);
+         color: var(--text-primary);
+         padding: var(--spacing-md);
+         background-color: var(--bg-tertiary);
+         border-radius: var(--radius-md);
+         min-height: 42px;
+         display: flex;
+         align-items: center;
+         }
+         .info-value.empty {
+         color: var(--text-tertiary);
+         font-style: italic;
+         }
+         input[type="text"],
+         input[type="date"],
+         textarea {
+         width: 100%;
+         padding: var(--spacing-md);
+         border: none;
+         border-radius: var(--radius-md);
+         font-size: var(--font-base);
+         background-color: var(--bg-input);
+         color: var(--text-primary);
+         box-shadow: 0 2px 8px var(--shadow-light);
+         transition: var(--transition-base);
+         font-family: 'Roboto', sans-serif;
+         }
+         input[type="text"]:focus,
+         input[type="date"]:focus,
+         textarea:focus {
+         outline: none;
+         box-shadow: 0 0 0 3px var(--accent-focus);
+         }
+         textarea {
+         resize: vertical;
+         min-height: 80px;
+         }
+         .theme-switch-container {
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         }
+         .theme-switch {
+         position: relative;
+         display: inline-block;
+         width: 60px;
+         height: 30px;
+         }
+         .theme-switch input {
+         opacity: 0;
+         width: 0;
+         height: 0;
+         }
+         .slider {
+         position: absolute;
+         cursor: pointer;
+         top: 0;
+         left: 0;
+         right: 0;
+         bottom: 0;
+         background-color: var(--bg-tertiary);
+         transition: var(--transition-base);
+         border-radius: 30px;
+         }
+         .slider:before {
+         position: absolute;
+         content: "";
+         height: 22px;
+         width: 22px;
+         left: 4px;
+         bottom: 4px;
+         background-color: var(--text-primary);
+         transition: var(--transition-base);
+         border-radius: 50%;
+         }
+         input:checked + .slider {
+         background-color: var(--accent-primary);
+         }
+         input:checked + .slider:before {
+         transform: translateX(30px);
+         background-color: var(--accent-button-text);
+         }
+         .theme-label {
+         font-size: var(--font-base);
+         color: var(--text-primary);
+         }
+         .subscription-card {
+         background-color: var(--bg-tertiary);
+         border-radius: var(--radius-md);
+         padding: var(--spacing-lg);
+         margin-bottom: var(--spacing-md);
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         box-shadow: 0 2px 8px var(--shadow-light);
+         }
+         .subscription-info {
+         flex: 1;
+         }
+         .subscription-subject {
+         font-size: var(--font-md);
+         font-weight: 700;
+         color: var(--text-primary);
+         margin-bottom: var(--spacing-xs);
+         }
+         .subscription-plan {
+         font-size: var(--font-sm);
+         color: var(--text-secondary);
+         font-weight: 600;
+         margin-top: var(--spacing-md);
+         }
+         .subscription-expiry {
+         font-size: var(--font-sm);
+         color: var(--text-tertiary);
+         margin-top: var(--spacing-xs);
+         }
+         .subscription-icon {
+         font-size: var(--font-xxl);
+         color: var(--accent-primary);
+         }
+         button {
+         display: inline-block;
+         padding: var(--spacing-lg) var(--spacing-xxl);
+         font-size: var(--font-base);
+         color: var(--accent-button-text);
+         background: var(--accent-primary);
+         border: none;
+         border-radius: var(--radius-lg);
+         text-decoration: none;
+         transition: var(--transition-base);
+         cursor: pointer;
+         font-weight: bold;
+         width: 100%;
+         }
+         button:hover {
+         background: var(--accent-hover);
+         transform: translateY(-2px);
+         box-shadow: 0 4px 15px var(--shadow-medium);
+         }
+         button:active {
+         transform: translateY(0);
+         box-shadow: 0 2px 8px var(--shadow-light);
+         }
+         .button-group {
+         display: grid;
+         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+         gap: var(--spacing-lg);
+         margin-top: var(--spacing-xl);
+         }
+         @media (max-width: 768px) {
+         body {
+         padding: var(--spacing-md);
+         }
+         .theme-toggle {
+         top: var(--spacing-md);
+         right: var(--spacing-md);
+         display: none;
+         }
+         .container {
+         padding: var(--spacing-xl);
+         }
+         h1 {
+         font-size: var(--font-lg);
+         }
+         #avatar-preview {
+         width: 120px;
+         height: 120px;
+         }
+         .info-grid {
+         grid-template-columns: 1fr;
+         }
+         .button-group {
+         grid-template-columns: 1fr;
+         }
+         .subscription-card {
+         flex-direction: column;
+         text-align: center;
+         gap: var(--spacing-md);
+         }
+         }
+      </style>
+   </head>
+   <body>
+      <button style="display: none" class="theme-toggle noselect">
+      <i class="fas fa-moon"></i>
+      </button>
+      <div class="container">
+         <h1 style="display: none">My Account</h1>
+         <div class="profile-header">
+            <div class="avatar-container" onclick="navigateToAvatarGenerator()">
+               <img id="avatar-preview" src="" alt="Student Avatar">
+               <div class="avatar-edit-icon">
+                  <i class="fas fa-camera"></i>
+               </div>
+            </div>
+            <div class="student-name" id="student-name"></div>
+            <div class="student-grade" id="student-grade"></div>
+            <button class="logout-button" onclick="window.parent.logOut()">
+            <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+         </div>
+         <div class="section">
+            <div class="section-title">
+               <i class="fas fa-user"></i>
+               Basic Information
+            </div>
+            <div class="info-grid">
+               <div class="info-item">
+                  <div class="info-label">School</div>
+                  <div class="info-value" id="school"></div>
+               </div>
+               <div class="info-item">
+                  <div class="info-label">House</div>
+                  <div class="info-value" id="house"></div>
+               </div>
+               <div class="info-item">
+                  <div class="info-label">Gender</div>
+                  <div class="info-value" id="gender"></div>
+               </div>
+               <div class="info-item">
+                  <div class="info-label">Section</div>
+                  <div class="info-value" id="section"></div>
+               </div>
+            </div>
+         </div>
+         <div class="section">
+            <div class="section-title">
+               <i class="fas fa-edit"></i>
+               Editable Information
+            </div>
+            <div class="info-grid">
+               <div class="info-item">
+                  <div class="info-label">Date of Birth</div>
+                  <input type="date" id="dob" />
+               </div>
+               <div class="info-item">
+                  <div class="info-label">Father's Name</div>
+                  <input type="text" id="father-name" placeholder="Enter father's name" />
+               </div>
+               <div class="info-item">
+                  <div class="info-label">Phone</div>
+                  <input type="text" id="phone" placeholder="Enter phone number" />
+               </div>
+            </div>
+            <div class="info-grid" style="margin-top: var(--spacing-lg);">
+               <div class="info-item">
+                  <div class="info-label">Address</div>
+                  <textarea id="address" placeholder="Enter your address"></textarea>
+               </div>
+            </div>
+         </div>
+         <div class="section">
+            <div class="section-title">
+               <i class="fas fa-palette"></i>
+               App Settings
+            </div>
+            <div class="theme-switch-container">
+               <span class="theme-label">App Theme</span>
+               <label class="theme-switch">
+               <input type="checkbox" id="theme-checkbox" onchange="handleThemeToggle()">
+               <span class="slider"></span>
+               </label>
+               <span class="theme-label" id="theme-text">Dark</span>
+            </div>
+         </div>
+         <div class="section">
+            <div class="section-title">
+               <i class="fas fa-star"></i>
+               Active Subscriptions
+            </div>
+            <div id="subscriptions-container"></div>
+         </div>
+         <div class="button-group">
+            <button onclick="saveChanges()">
+            <i class="fas fa-save"></i> Save Changes
+            </button>
+            <button style="display: none" onclick="manageSubscriptions()">
+            <i class="fas fa-cog"></i> Manage Subscriptions
+            </button>
+         </div>
+      </div>
+      <script>
+         function initializePage(student) {
+             const baseAvatarUrl = "https://avataaars.io/";
+             document.getElementById('avatar-preview').src = `${baseAvatarUrl}?${student.avatar}`;
+             document.getElementById('student-name').textContent = student.name;
+             document.getElementById('student-grade').textContent = `Class: ${student.grade}-${student.section}`;
+             
+             document.getElementById('school').textContent = student.school || 'Not provided';
+             document.getElementById('house').textContent = student.house || 'Not provided';
+             document.getElementById('gender').textContent = student.gender === 'M' ? 'Male' : student.gender === 'F' ? 'Female' : 'Not provided';
+             document.getElementById('section').textContent = student.section || 'Not provided';
+             
+             document.getElementById('dob').value = student.dob || '';
+             document.getElementById('father-name').value = student.father_name || '';
+             document.getElementById('phone').value = student.phone || '';
+             document.getElementById('address').value = student.address || '';
+         
+             if (!student.school) document.getElementById('school').classList.add('empty');
+             if (!student.house) document.getElementById('house').classList.add('empty');
+             if (!student.gender) document.getElementById('gender').classList.add('empty');
+             if (!student.section) document.getElementById('section').classList.add('empty');
+         
+             const themeCheckbox = document.getElementById('theme-checkbox');
+             const isLightTheme = document.body.classList.contains('light-theme');
+             themeCheckbox.checked = isLightTheme;
+             document.getElementById('theme-text').textContent = isLightTheme ? 'Light' : 'Dark';
+         
+             renderSubscriptions(student['subscriptions']);
+         }
+         
+         function renderSubscriptions(subscriptions) {
+             const container = document.getElementById('subscriptions-container');
+             container.innerHTML = '';
+         
+             subscriptions.forEach(sub => {
+                 const card = document.createElement('div');
+                 card.className = 'subscription-card';
+                 
+                 const expiryDate = new Date(sub.subscription_ends_at);
+                 const formattedDate = expiryDate.toLocaleDateString('en-US', { 
+                     year: 'numeric', 
+                     month: 'short', 
+                     day: 'numeric' 
+                 });
+         
+                 card.innerHTML = `
+                     <div class="subscription-info">
+                         <div class="subscription-subject">${sub.subject}</div>
+                         <div class="subscription-plan">${sub.subscription_plan}</div>
+                         <div class="subscription-expiry">Valid until ${formattedDate}</div>
+                     </div>
+                     <div class="subscription-icon">
+                         <i class="fas fa-check-circle"></i>
+                     </div>
+                 `;
+                 
+                 container.appendChild(card);
+             });
+         }
+         
+         function toggleIframeTheme() {
+             const icon = document.querySelector('.theme-toggle i');
+             const isLight = document.body.classList.contains('light-theme');
+             icon.className = isLight ? 'fas fa-sun' : 'fas fa-moon';
+             
+             const themeCheckbox = document.getElementById('theme-checkbox');
+             themeCheckbox.checked = isLight;
+             document.getElementById('theme-text').textContent = isLight ? 'Light' : 'Dark';
+         }
+         
+         function handleThemeToggle() {
+             const checkbox = document.getElementById('theme-checkbox');
+             const isLight = checkbox.checked;
+             
+             if (isLight) {
+                 document.body.classList.add('light-theme');
+             } else {
+                 document.body.classList.remove('light-theme');
+             }
+         
+             // propagate this change live to the parent app page as well
+             window.parent.toggleTheme();
+             
+             document.getElementById('theme-text').textContent = isLight ? 'Light' : 'Dark';
+             
+             const icon = document.querySelector('.theme-toggle i');
+             icon.className = isLight ? 'fas fa-sun' : 'fas fa-moon';
+         }
+         
+         async function saveChanges() {
+         
+             const dob = document.getElementById('dob').value || null;
+             const father_name = document.getElementById('father-name').value.trim() || null;
+             const phone = document.getElementById('phone').value.trim() || null;
+             const address = document.getElementById('address').value.trim() || null;
+         
+              // Update student details on server
+               window.parent.showProcessingDialog();
+               const updated = await window.parent.updateRow('students', ['id'], [window.parent.userId], ['dob', 'father_name', 'phone', 'address'], [dob, father_name, phone, address]);
+                if(updated) {
+                    await window.parent.showDialog({
+                    title: 'Success',
+                    message: 'Details updated!',
+                    type: 'alert'
+                    });
+                } else {
+                    await window.parent.showDialog({
+                    title: 'Error',
+                    message: 'Error updating details!',
+                    type: 'alert'
+                    });
+                }
+                window.parent.hideProcessingDialog();
+         
+         }
+         
+         function navigateToAvatarGenerator() {
+             window.parent.loadManualPage({link: './pages/avatar-generator/index.html', title: 'My Avatar', page_key: 'avatar-generator'});
+         }
+         
+         function manageSubscriptions() {
+             window.parent.loadManualPage({link: './pages/coming-soon/index.html', title: 'Subscriptions', page_key: 'subscriptions'});
+         }
+         
+      </script>
+   </body>
+</html>
