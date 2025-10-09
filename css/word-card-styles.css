@@ -1,0 +1,179 @@
+/* Word card styling */
+.word-card {
+	display: none;
+	position: fixed;
+	width: 90%;
+	max-width: 450px;
+	max-height: 90vh;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	padding: var(--spacing-xxxl);
+	border-radius: var(--radius-xl);
+	box-shadow: 0 15px 35px var(--shadow-medium);
+	background: var(--bg-secondary);
+	z-index: var(--z-signin);
+	color: var(--text-primary);
+	text-align: left;
+	animation: fadeIn var(--transition-slower) ease;
+	border: 1px solid var(--bg-tertiary);
+	overflow-y: auto;
+}
+
+/* Landscape mode adjustments for small screens */
+@media (max-height: 600px) and (orientation: landscape) {
+	.word-card {
+		max-height: 95vh;
+		top: 2.5vh;
+		transform: translate(-50%, 0);
+		padding: var(--spacing-lg);
+	}
+
+	#word-text {
+		font-size: var(--font-xl);
+		margin-bottom: var(--spacing-md);
+	}
+
+	#pronunciation-text {
+		font-size: var(--font-base);
+		margin-bottom: var(--spacing-lg);
+	}
+
+	#meaning-text,
+	#synonym-text,
+	#antonym-text,
+	#sentence-text {
+		font-size: var(--font-base);
+		margin-bottom: var(--spacing-sm);
+	}
+
+	#sentence-text {
+		margin-top: var(--spacing-lg);
+		padding: var(--spacing-md);
+	}
+
+	.word-card button {
+		margin: var(--spacing-md) var(--spacing-xs) 0;
+		padding: var(--spacing-sm) var(--spacing-lg);
+	}
+}
+
+.word-card p {
+	margin: var(--spacing-md) 0;
+	line-height: 1.6;
+}
+
+/* Style for the word itself */
+#word-text {
+	font-weight: 800;
+	font-size: var(--font-xxxl);
+	color: var(--accent-primary);
+	text-align: center;
+	margin-bottom: var(--spacing-lg);
+}
+
+/* Pronunciation styling */
+#pronunciation-text {
+	font-style: italic;
+	color: var(--text-tertiary);
+	font-size: var(--font-lg);
+	text-align: center;
+	margin-bottom: var(--spacing-xxl);
+}
+
+/* Meaning, synonym, antonym, and sentence styling */
+#meaning-text,
+#synonym-text,
+#antonym-text,
+#sentence-text {
+	font-size: var(--font-md);
+	padding-left: var(--spacing-lg);
+	position: relative;
+	margin-bottom: var(--spacing-md);
+	color: var(--text-secondary);
+}
+
+#meaning-text:before,
+#synonym-text:before,
+#antonym-text:before,
+#sentence-text:before {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 10px;
+	width: var(--spacing-sm);
+	height: var(--spacing-sm);
+	border-radius: var(--radius-full);
+	background: var(--accent-primary);
+	box-shadow: 0 2px 4px var(--shadow-light);
+}
+
+/* Bold labels for better clarity */
+#meaning-text span,
+#synonym-text span,
+#antonym-text span,
+#sentence-text span {
+	font-weight: 600;
+	color: var(--text-primary);
+	margin-right: var(--spacing-xs);
+}
+
+/* Sentence styling */
+#sentence-text {
+	font-style: italic;
+	color: var(--text-tertiary);
+	border-left: 3px solid var(--accent-primary);
+	padding-left: var(--spacing-lg);
+	margin-top: var(--spacing-xxl);
+	background: var(--bg-tertiary);
+	padding: var(--spacing-lg);
+	border-radius: var(--radius-md);
+	box-shadow: inset 0 1px 3px var(--shadow-light);
+}
+
+/* Buttons styling */
+.word-card button {
+	display: inline-block;
+	width: 45%;
+	margin: var(--spacing-xl) var(--spacing-xs) 0;
+	padding: var(--spacing-md) var(--spacing-xl);
+	border: none;
+	border-radius: var(--radius-xl);
+	background: var(--accent-primary);
+	color: var(--accent-button-text);
+	font-size: var(--font-base);
+	cursor: pointer;
+	text-align: center;
+	transition: var(--transition-base);
+	font-weight: 500;
+	box-shadow: 0 4px 12px var(--shadow-light);
+}
+
+.word-card button:hover {
+	transform: translateY(-2px);
+	background: var(--accent-hover);
+	box-shadow: 0 6px 20px var(--shadow-medium);
+}
+
+.word-card button:active {
+	transform: translateY(0);
+	box-shadow: 0 2px 8px var(--shadow-light);
+}
+
+.word-card button:focus {
+	outline: 2px solid var(--accent-focus);
+	outline-offset: 2px;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translate(-50%, -60%);
+	}
+
+	to {
+		opacity: 1;
+		transform: translate(-50%, -50%);
+	}
+}

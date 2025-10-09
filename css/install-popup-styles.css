@@ -1,0 +1,180 @@
+         .install-popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            z-index: 9999999;
+            animation: fadeIn 0.3s ease-out;
+            box-sizing: border-box;
+         }
+
+         .install-popup {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            color: #333;
+            border-radius: 20px;
+            padding: 40px 30px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: popupSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-sizing: border-box;
+         }
+
+         .install-popup-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: #007bff;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            animation: pulse 2s infinite;
+         }
+
+         .install-popup h2 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 15px;
+            color: #333;
+         }
+
+         .install-popup p {
+            font-size: 16px;
+            margin: 0 0 30px;
+            line-height: 1.5;
+            color: #666;
+         }
+
+         .install-popup-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+         }
+
+         .install-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+         }
+
+         .install-btn:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 123, 255, 0.4);
+         }
+
+         .install-btn.secondary {
+            background: transparent;
+            color: #666;
+            border: 2px solid #ddd;
+            box-shadow: none;
+         }
+
+         .install-btn.secondary:hover {
+            background: #f8f9fa;
+            border-color: #bbb;
+            color: #333;
+         }
+
+         @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+         }
+
+         @keyframes popupSlideIn {
+            from {
+               opacity: 0;
+               transform: translate(-50%, -60%) scale(0.8);
+            }
+            to {
+               opacity: 1;
+               transform: translate(-50%, -50%) scale(1);
+            }
+         }
+
+         @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+         }
+
+         /* Dark theme support */
+         body:not(.light-theme) .install-popup-overlay {
+            background: rgba(0, 0, 0, 0.8);
+         }
+
+         body:not(.light-theme) .install-popup {
+            background: #2d3748;
+            color: #e2e8f0;
+         }
+
+         body:not(.light-theme) .install-popup-icon {
+            background: #4299e1;
+         }
+
+         body:not(.light-theme) .install-popup h2 {
+            color: #e2e8f0;
+         }
+
+         body:not(.light-theme) .install-popup p {
+            color: #a0aec0;
+         }
+
+         body:not(.light-theme) .install-btn {
+            background: #4299e1;
+            box-shadow: 0 4px 15px rgba(66, 153, 225, 0.3);
+         }
+
+         body:not(.light-theme) .install-btn:hover {
+            background: #3182ce;
+            box-shadow: 0 8px 25px rgba(66, 153, 225, 0.4);
+         }
+
+         body:not(.light-theme) .install-btn.secondary {
+            color: #a0aec0;
+            border-color: #4a5568;
+         }
+
+         body:not(.light-theme) .install-btn.secondary:hover {
+            background: #4a5568;
+            border-color: #718096;
+            color: #e2e8f0;
+         }
+
+         /* Responsive Design */
+         @media (max-width: 480px) {
+            .install-popup {
+               padding: 30px 20px;
+               width: calc(100% - 40px);
+            }
+            
+            .install-popup h2 {
+               font-size: 24px;
+            }
+            
+            .install-popup-buttons {
+               flex-direction: column;
+            }
+            
+            .install-btn {
+               width: 100%;
+            }
+         }
