@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en" class="noselect">
+   <head>
+      <meta charset="UTF-8">
+      <title>Color meaning game</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+      <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <style>
+         :root {
+         /* Colors - Dark Theme */
+         --bg-primary: #121212;
+         --bg-secondary: #1f1f1f;
+         --bg-tertiary: #333333;
+         --bg-gradient-dark: linear-gradient(145deg, #1e1e1e, #333333);
+         --bg-input: #2c2c2c;
+         /* Text Colors - Dark Theme */
+         --text-primary: #fff;
+         --text-secondary: #ddd;
+         --text-tertiary: #b0bec5;
+         --text-muted: rgb(230, 230, 230);
+         /* Accent Colors */
+         --accent-primary: #ffc107;
+         --accent-hover: #e0a800;
+         --accent-focus: #ffd54f;
+         --accent-button-text: black;
+         /* Shadow Colors */
+         --shadow-dark: rgba(0, 0, 0, 0.5);
+         --shadow-medium: rgba(0, 0, 0, 0.6);
+         --shadow-light: rgba(0, 0, 0, 0.4);
+         /* Spacing Values */
+         --spacing-xs: 4px;
+         --spacing-sm: 8px;
+         --spacing-md: 12px;
+         --spacing-lg: 16px;
+         --spacing-xl: 20px;
+         --spacing-xxl: 25px;
+         --spacing-xxxl: 30px;
+         /* Border Radius */
+         --radius-sm: 5px;
+         --radius-md: 8px;
+         --radius-lg: 10px;
+         --radius-xl: 12px;
+         --radius-full: 50%;
+         /* Font Sizes */
+         --font-sm: 0.9rem;
+         --font-base: 1rem;
+         --font-md: 1.1rem;
+         --font-lg: 1.2rem;
+         --font-xl: 1.6rem;
+         --font-xxl: 1.7rem;
+         --font-xxxl: 1.8rem;
+         --font-icon-sm: 1.2rem;
+         /* Transitions */
+         --transition-fast: 0.2s ease;
+         --transition-base: 0.3s ease;
+         --transition-slow: 0.4s all;
+         }
+         /* Light theme overrides */
+         body.light-theme {
+         --bg-primary: #ffffff;
+         --bg-secondary: rgb(253, 253, 253);
+         --bg-tertiary: rgb(240, 240, 240);
+         --bg-gradient-dark: linear-gradient(145deg, #ffffff, #f0f0f0);
+         --bg-input: #ffffff;
+         --text-primary: #333;
+         --text-secondary: rgb(50, 50, 50);
+         --text-tertiary: rgb(80, 80, 80);
+         --text-muted: #333;
+         --accent-button-text: rgb(30, 30, 30);
+         --shadow-dark: rgba(0, 0, 0, 0.1);
+         --shadow-medium: rgba(0, 0, 0, 0.1);
+         --shadow-light: rgba(0, 0, 0, 0.1);
+         }
+         * {
+         box-sizing: border-box;
+         margin: 0;
+         padding: 0;
+         max-height: 9999999px;
+         font-family: 'Roboto', sans-serif;
+         transition: var(--transition-base) all;
+         }
+         .noselect {
+         -webkit-user-select: none;
+         -moz-user-select: none;
+         -ms-user-select: none;
+         user-select: none;
+         -webkit-touch-callout: none;
+         -webkit-user-drag: none;
+         -webkit-tap-highlight-color: transparent;
+         }
+         html,
+         body {
+         height: 100%;
+         }
+         body {
+         font-family: 'Roboto', sans-serif;
+         font-weight: 400;
+         color: var(--text-primary);
+         background-color: var(--bg-primary);
+         }
+         p {
+         margin: 0;
+         }
+         .attract,
+         .finished {
+         width: 80%;
+         position: absolute;
+         top: 50%;
+         left: 50%;
+         transform: translate(-50%, -50%);
+         text-align: center;
+         background: var(--bg-gradient-dark);
+         border-radius: var(--radius-lg);
+         padding: var(--spacing-xxxl);
+         box-shadow: 0 8px 30px var(--shadow-medium);
+         }
+         @media only screen and (min-width: 560px) {
+         .attract,
+         .finished {
+         max-width: 500px;
+         }
+         }
+         .finished {
+         display: none;
+         }
+         .playing {
+         display: none;
+         flex-direction: column;
+         height: 100%;
+         min-height: 300px;
+         }
+         .attract__rules {
+         font-size: var(--font-xl);
+         margin-bottom: var(--spacing-xxxl);
+         color: var(--text-primary);
+         font-weight: 400;
+         }
+         @media only screen and (max-width: 560px), only screen and (max-height: 560px) {
+         .attract__rules {
+         font-size: var(--font-lg);
+         }
+         }
+         .count {
+         flex-basis: 60px;
+         flex-shrink: 0;
+         padding-left: var(--spacing-xl);
+         padding-right: var(--spacing-xl);
+         background-color: var(--bg-secondary);
+         color: var(--text-primary);
+         font-size: var(--font-lg);
+         box-shadow: 0 2px 8px var(--shadow-light);
+         }
+         @media only screen and (max-width: 560px), only screen and (max-height: 560px) {
+         .count {
+         flex-basis: 40px;
+         font-size: var(--font-base);
+         }
+         }
+         .count__inner {
+         height: 100%;
+         display: flex;
+         justify-content: flex-end;
+         align-items: center;
+         }
+         .count__timer {
+         margin-right: var(--spacing-xl);
+         color: var(--text-secondary);
+         }
+         .count__score {
+         color: var(--text-secondary);
+         }
+         .question {
+         flex-basis: 70%;
+         background: var(--bg-gradient-dark);
+         position: relative;
+         box-shadow: 0 4px 12px var(--shadow-light);
+         }
+         .question__block {
+         width: 100%;
+         height: 50%;
+         position: relative;
+         padding-top: var(--spacing-lg);
+         }
+         @media only screen and (max-height: 460px) {
+         .question__block {
+         padding-top: var(--spacing-sm);
+         }
+         }
+         .question__block:first-child {
+         border-bottom: 1px solid var(--bg-tertiary);
+         }
+         .question__block:nth-child(2) {
+         border-top: 1px solid var(--bg-tertiary);
+         }
+         .question__main {
+         position: absolute;
+         top: 50%;
+         left: 50%;
+         transform: translate(-50%, -50%);
+         font-size: 110px;
+         font-weight: 900;
+         text-transform: uppercase;
+         letter-spacing: 0.05em;
+         }
+         @media only screen and (max-width: 560px), only screen and (max-height: 560px) {
+         .question__main {
+         font-size: 70px;
+         }
+         }
+         @media only screen and (max-width: 360px), only screen and (max-height: 360px) {
+         .question__main {
+         font-size: 50px;
+         }
+         }
+         .question__desc {
+         font-size: var(--font-lg);
+         text-align: center;
+         color: var(--text-tertiary);
+         }
+         @media only screen and (max-width: 560px), only screen and (max-height: 560px) {
+         .question__desc {
+         font-size: var(--font-base);
+         }
+         }
+         @media only screen and (max-width: 360px), only screen and (max-height: 360px) {
+         .question__desc {
+         font-size: var(--font-sm);
+         }
+         }
+         .question__feedback {
+         position: absolute;
+         top: 0;
+         left: 0;
+         width: 100%;
+         height: 100%;
+         }
+         .question__feedback-text {
+         position: absolute;
+         top: 50%;
+         left: 50%;
+         transform: translate(-50%, -50%);
+         background-color: rgba(255, 255, 255, 0.1);
+         width: 100%;
+         height: 100%;
+         visibility: hidden;
+         font-size: var(--font-lg);
+         }
+         .question__feedback-text > p {
+         position: absolute;
+         top: 50%;
+         left: 50%;
+         transform: translate(-50%, -50%);
+         text-transform: uppercase;
+         font-weight: 700;
+         }
+         .question__feedback-text--correct {
+         color: #27AE60;
+         }
+         .question__feedback-text--wrong {
+         color: #EB5757;
+         }
+         .question__feedback-text.is-active {
+         visibility: visible;
+         animation: showFeedback 0.3s ease-out forwards;
+         }
+         @keyframes showFeedback {
+         0% {
+         font-size: var(--font-lg);
+         background-color: rgba(255, 255, 255, 0.1);
+         }
+         100% {
+         font-size: 100px;
+         background-color: var(--bg-primary);
+         }
+         }
+         @media only screen and (max-width: 560px), only screen and (max-height: 560px) {
+         @keyframes showFeedback {
+         0% {
+         font-size: var(--font-lg);
+         background-color: rgba(255, 255, 255, 0.1);
+         }
+         100% {
+         font-size: 40px;
+         background-color: var(--bg-primary);
+         }
+         }
+         }
+         .answer {
+         flex-basis: 25%;
+         background-color: var(--bg-secondary);
+         box-shadow: 0 -2px 8px var(--shadow-light);
+         }
+         .answer__inner {
+         height: 100%;
+         display: flex;
+         flex-direction: column;
+         align-content: center;
+         }
+         .answer__desc {
+         flex-basis: 60px;
+         flex-shrink: 0;
+         text-align: center;
+         position: relative;
+         }
+         @media only screen and (max-height: 560px) {
+         .answer__desc {
+         flex-basis: 40px;
+         }
+         }
+         .answer__desc > p {
+         width: 100%;
+         padding: 0 var(--spacing-xl);
+         position: absolute;
+         top: 50%;
+         left: 50%;
+         transform: translate(-50%, -50%);
+         color: var(--text-tertiary);
+         font-size: var(--font-lg);
+         }
+         @media only screen and (max-width: 560px), only screen and (max-height: 560px) {
+         .answer__desc > p {
+         font-size: var(--font-base);
+         }
+         }
+         @media only screen and (max-width: 360px), only screen and (max-height: 360px) {
+         .answer__desc > p {
+         font-size: var(--font-sm);
+         }
+         }
+         .answer__buttons {
+         flex-basis: 100%;
+         padding: 0 var(--spacing-xl) var(--spacing-xl);
+         display: flex;
+         justify-content: center;
+         }
+         @media only screen and (max-width: 560px), only screen and (max-height: 560px) {
+         .answer__buttons {
+         padding: 0 var(--spacing-md) var(--spacing-xl);
+         }
+         }
+         @media only screen and (max-height: 360px), only screen and (max-height: 360px) {
+         .answer__buttons {
+         padding: 0 var(--spacing-md) var(--spacing-md);
+         }
+         }
+         .answer__btn-wrap {
+         width: 50%;
+         float: left;
+         height: 100%;
+         padding: 0 var(--spacing-xl);
+         max-width: 400px;
+         }
+         @media only screen and (max-height: 560px) {
+         .answer__btn-wrap {
+         max-width: 200px;
+         }
+         }
+         @media only screen and (max-width: 560px), only screen and (max-height: 560px) {
+         .answer__btn-wrap {
+         padding: 0 var(--spacing-md);
+         }
+         }
+         .answer__btn {
+         width: 100%;
+         height: 100%;
+         border: none;
+         padding: 0;
+         background: var(--accent-primary);
+         font-size: 50px;
+         text-transform: uppercase;
+         cursor: pointer;
+         border-radius: var(--radius-lg);
+         transition: var(--transition-base);
+         letter-spacing: 0.05em;
+         color: var(--accent-button-text);
+         font-family: 'Roboto', sans-serif;
+         font-weight: 700;
+         box-shadow: 0 2px 8px var(--shadow-light);
+         }
+         @media only screen and (max-width: 560px), only screen and (max-height: 560px) {
+         .answer__btn {
+         font-size: 30px;
+         }
+         }
+         @media only screen and (max-height: 360px) {
+         .answer__btn {
+         font-size: 20px;
+         }
+         }
+         .answer__btn:hover {
+         background: var(--accent-hover);
+         transform: translateY(-2px);
+         box-shadow: 0 4px 15px var(--shadow-medium);
+         }
+         .answer__btn:active {
+         transform: translateY(0);
+         box-shadow: 0 2px 8px var(--shadow-light);
+         }
+         .answer__btn:focus {
+         outline: none;
+         box-shadow: 0 0 0 3px var(--accent-focus);
+         }
+         .finished__wrap {
+         width: 100%;
+         text-align: center;
+         }
+         .finished__score {
+         font-size: var(--font-xl);
+         margin-bottom: var(--spacing-xxxl);
+         color: var(--text-primary);
+         }
+         @media only screen and (max-width: 560px), only screen and (max-height: 560px) {
+         .finished__score {
+         font-size: var(--font-lg);
+         margin-bottom: var(--spacing-xl);
+         }
+         }
+         .finished__score-nr {
+         display: inline-block;
+         width: 100%;
+         text-align: center;
+         font-size: 100px;
+         font-weight: 900;
+         color: var(--accent-primary);
+         margin-top: var(--spacing-lg);
+         }
+         @media only screen and (max-width: 560px), only screen and (max-height: 560px) {
+         .finished__score-nr {
+         font-size: 70px;
+         }
+         }
+         .button {
+         display: inline-block;
+         padding: var(--spacing-xl) var(--spacing-xxl);
+         font-size: var(--font-xl);
+         color: var(--accent-button-text);
+         background: var(--accent-primary);
+         border: none;
+         border-radius: var(--radius-lg);
+         cursor: pointer;
+         font-weight: 700;
+         text-transform: uppercase;
+         letter-spacing: 0.05em;
+         font-family: 'Roboto', sans-serif;
+         transition: var(--transition-base);
+         box-shadow: 0 4px 12px var(--shadow-light);
+         }
+         @media only screen and (max-width: 560px), only screen and (max-height: 560px) {
+         .button {
+         font-size: var(--font-lg);
+         padding: var(--spacing-md) var(--spacing-xl);
+         }
+         }
+         .button:hover {
+         background: var(--accent-hover);
+         transform: translateY(-2px);
+         box-shadow: 0 4px 15px var(--shadow-medium);
+         }
+         .button:active {
+         transform: translateY(0);
+         box-shadow: 0 2px 8px var(--shadow-light);
+         }
+         .button:focus {
+         outline: none;
+         box-shadow: 0 0 0 3px var(--accent-focus);
+         }
+      </style>
+   </head>
+   <body>
+      <div id="js-attract" class="attract">
+         <div class="attract__rules">
+            <p>Does the meaning of the word match the colour of the text?</p>
+         </div>
+         <button id="js-start-btn" class="button" type="button" name="button">Start</button>
+      </div>
+      <div id="js-playing" class="playing">
+         <div class="count">
+            <div class="count__inner">
+               <div class="count__timer">
+                  <span id="js-timer"></span>
+               </div>
+               <div class="count__score">
+                  <span>Score: </span><span id="js-score-count"></span>
+               </div>
+            </div>
+         </div>
+         <div class="question">
+            <div class="question__block">
+               <div class="question__desc">
+                  <p>Meaning</p>
+               </div>
+               <div id="js-colour-meaning" class="question__main"></div>
+            </div>
+            <div class="question__block">
+               <div class="question__desc">
+                  <p>Colour of the text</p>
+               </div>
+               <div id="js-colour-text" class="question__main"></div>
+            </div>
+            <div class="question__feedback">
+               <div id="js-feedback-correct" class="question__feedback-text question__feedback-text--correct">
+                  <p>Correct!</p>
+               </div>
+               <div id="js-feedback-wrong" class="question__feedback-text question__feedback-text--wrong">
+                  <p>Wrong!</p>
+               </div>
+            </div>
+         </div>
+         <div class="answer">
+            <div class="answer__inner">
+               <div class="answer__desc">
+                  <p>Does the meaning of the word match the colour of the text?</p>
+               </div>
+               <div class="answer__buttons">
+                  <div class="answer__btn-wrap">
+                     <button id="js-btn-yes" class="answer__btn" type="button" name="button" value="Yes">Yes</button>
+                  </div>
+                  <div class="answer__btn-wrap">
+                     <button id="js-btn-no" class="answer__btn" type="button" name="button" value="No">No</button>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div id="js-finished" class="finished">
+         <div class="finished__wrap">
+            <div class="finished__score">Your score: <span id="js-finished-score" class="finished__score-nr"></span></div>
+            <button id="js-play-again" class="button" type="button" name="button">Play again</button>
+         </div>
+      </div>
+      <script>
+         const btnStart = document.getElementById('js-start-btn');
+         const btnPlayAgain = document.getElementById('js-play-again');
+         const pnlAttract = document.getElementById('js-attract');
+         const pnlPlaying = document.getElementById('js-playing');
+         const pnlFinished = document.getElementById('js-finished');
+         const displayMeaning = document.getElementById('js-colour-meaning');
+         const displayColourText = document.getElementById('js-colour-text');
+         const btnYes = document.getElementById('js-btn-yes');
+         const btnNo = document.getElementById('js-btn-no');
+         const displayTimer = document.getElementById('js-timer');
+         const displayScoreCount = document.getElementById('js-score-count');
+         const feedbackCorrect = document.getElementById('js-feedback-correct');
+         const feedbackWrong = document.getElementById('js-feedback-wrong');
+         const scoreOnFinished = document.getElementById('js-finished-score');
+         let colourMatchesMeaning = false;
+         let score = 0;
+         let feedbackDisplayed = false;
+         let startTime = null;
+         let intervalId = null;
+         
+         const meaning = ['red', 'green', 'blue', 'yellow', 'black'];
+         const text = ['red', 'green', 'blue', 'yellow', 'black'];
+         const textColours = [
+               {name : 'red', hexCode: '#EB5757'},
+               {name : 'green', hexCode: '#27AE60'},
+               {name : 'blue', hexCode: '#2D9CDB'},
+               {name : 'yellow', hexCode: '#F2C94C'},
+               {name : 'black', hexCode: '#000000'}
+         ]
+         
+         let currentMeaning = '';
+         let currentText = '';
+         let currentTextColour = '';
+         
+         btnStart.addEventListener('click', OnStart);
+         btnPlayAgain.addEventListener('click', OnStart);
+         
+         function getRandom() {
+               let randomNumber = Math.floor(Math.random() * 5);
+               return randomNumber;
+         }
+         
+         function OnStart() {
+               pnlAttract.style.display = 'none';
+               pnlPlaying.style.display = 'flex';
+               pnlFinished.style.display = 'none';
+         
+               score = 0;
+               displayScoreCount.textContent = 0;
+         
+               newQuestion();
+         
+               startTime = new Date().getTime();
+               intervalId = setInterval(onTimerTick, 100);
+         }
+         
+         var maxTime = 40;
+         
+         function onTimerTick() {
+           var currentTime = new Date().getTime();
+           var elapsedTime = currentTime - startTime;
+           var totalSeconds = parseInt(elapsedTime / 1000);
+           var remainingTime = maxTime - totalSeconds;
+           var minutes = parseInt(remainingTime / 60);
+           var seconds = remainingTime % 60;
+           var secondsZeroPadded = `0${seconds}`.slice(-2);
+         
+           if (remainingTime <= 0) {
+             clearInterval(intervalId);
+         
+             pnlPlaying.style.display = 'none';
+             pnlFinished.style.display = 'flex';
+             scoreOnFinished.textContent = score;
+           }
+         
+           displayTimer.textContent = `${minutes}:${secondsZeroPadded}`;
+         }
+         
+         function onAnswerSubmitted(answer) {
+               if (feedbackDisplayed === false) { // do something only if feedback is not shown
+                 
+                     if (answer === 'yes') {
+                           if (colourMatchesMeaning) {
+                                 score += 1;
+                                 feedbackCorrect.classList.add('is-active');
+                           } else {
+                                 score -= 2;
+                                 feedbackWrong.classList.add('is-active');
+                           }
+                     } else {
+                           if (colourMatchesMeaning) {
+                                 score -= 2;
+                                 feedbackWrong.classList.add('is-active');
+                           } else {
+                                 score += 1;
+                                 feedbackCorrect.classList.add('is-active');
+                           }
+                     }
+         
+                     displayScoreCount.textContent = score;
+               }
+         
+               feedbackDisplayed = true;
+               setTimeout(newQuestion, 500);
+         }
+         
+         function newQuestion() {
+         
+               // remove feedback of previous answer
+               feedbackCorrect.classList.remove('is-active');
+               feedbackWrong.classList.remove('is-active');
+               feedbackDisplayed = false;
+         
+               currentMeaning = meaning[getRandom()];
+               displayMeaning.textContent = currentMeaning;
+               currentText = text[getRandom()];
+               displayColourText.textContent = currentText;
+               currentTextColour = textColours[getRandom()];
+               displayColourText.style.color = currentTextColour.hexCode;
+         
+               if (currentMeaning === currentTextColour.name) {
+                     colourMatchesMeaning = true;
+               } else {
+                     colourMatchesMeaning = false;
+               }
+         
+               console.log('colour matches meaning: ' + colourMatchesMeaning);
+         
+         }
+         
+               btnYes.addEventListener('click', function() {
+                     onAnswerSubmitted('yes');
+               });
+         
+               btnNo.addEventListener('click', function() {
+                     onAnswerSubmitted('no');
+               });        
+      </script>
+   </body>
+</html>
