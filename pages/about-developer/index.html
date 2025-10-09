@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en" class="noselect">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>About Developer</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+      <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+      <style>
+         :root {
+         /* Colors - Dark Theme */
+         --bg-primary: #121212;
+         --bg-secondary: #1f1f1f;
+         --bg-tertiary: #333333;
+         --bg-gradient-dark: linear-gradient(145deg, #1e1e1e, #333333);
+         --bg-input: #2c2c2c;
+         /* Text Colors - Dark Theme */
+         --text-primary: #fff;
+         --text-secondary: #ddd;
+         --text-tertiary: #b0bec5;
+         --text-muted: rgb(230, 230, 230);
+         /* Accent Colors */
+         --accent-primary: #ffc107;
+         --accent-hover: #e0a800;
+         --accent-focus: #ffd54f;
+         --accent-button-text: black;
+         /* Shadow Colors */
+         --shadow-dark: rgba(0, 0, 0, 0.5);
+         --shadow-medium: rgba(0, 0, 0, 0.6);
+         --shadow-light: rgba(0, 0, 0, 0.4);
+         /* Spacing Values */
+         --spacing-xs: 4px;
+         --spacing-sm: 8px;
+         --spacing-md: 12px;
+         --spacing-lg: 16px;
+         --spacing-xl: 20px;
+         --spacing-xxl: 25px;
+         --spacing-xxxl: 30px;
+         /* Border Radius */
+         --radius-sm: 5px;
+         --radius-md: 8px;
+         --radius-lg: 10px;
+         --radius-xl: 12px;
+         --radius-full: 50%;
+         /* Font Sizes */
+         --font-sm: 0.9rem;
+         --font-base: 1rem;
+         --font-md: 1.1rem;
+         --font-lg: 1.2rem;
+         --font-xl: 1.6rem;
+         --font-xxl: 1.7rem;
+         --font-xxxl: 1.8rem;
+         --font-icon-sm: 1.2rem;
+         /* Transitions */
+         --transition-fast: 0.2s ease;
+         --transition-base: 0.3s ease;
+         --transition-slow: 0.4s all;
+         }
+         /* Light theme overrides */
+         body.light-theme {
+         --bg-primary: #ffffff;
+         --bg-secondary: rgb(253, 253, 253);
+         --bg-tertiary: rgb(240, 240, 240);
+         --bg-gradient-dark: linear-gradient(145deg, #ffffff, #f0f0f0);
+         --bg-input: #ffffff;
+         --text-primary: #333;
+         --text-secondary: rgb(50, 50, 50);
+         --text-tertiary: rgb(80, 80, 80);
+         --text-muted: #333;
+         --accent-button-text: rgb(30, 30, 30);
+         --shadow-dark: rgba(0, 0, 0, 0.1);
+         --shadow-medium: rgba(0, 0, 0, 0.1);
+         --shadow-light: rgba(0, 0, 0, 0.1);
+         }
+         * {
+         box-sizing: border-box;
+         margin: 0;
+         padding: 0;
+         max-height: 9999999px;
+         font-family: 'Roboto', sans-serif;
+         transition: var(--transition-base) all;
+         }
+         .noselect {
+         -webkit-user-select: none;
+         -moz-user-select: none;
+         -ms-user-select: none;
+         user-select: none;
+         -webkit-touch-callout: none;
+         -webkit-user-drag: none;
+         -webkit-tap-highlight-color: transparent;
+         }
+         body {
+         background-color: var(--bg-primary);
+         color: var(--text-primary);
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         min-height: 100vh;
+         padding: var(--spacing-xl);
+         overflow-x: hidden;
+         }
+         .theme-toggle {
+         position: fixed;
+         top: var(--spacing-xl);
+         right: var(--spacing-xl);
+         background-color: var(--bg-secondary);
+         border: none;
+         border-radius: var(--radius-lg);
+         padding: var(--spacing-md);
+         cursor: pointer;
+         color: var(--text-primary);
+         font-size: var(--font-icon-sm);
+         box-shadow: 0 2px 8px var(--shadow-light);
+         transition: var(--transition-base);
+         z-index: 1000;
+         }
+         .theme-toggle:hover {
+         background-color: var(--bg-tertiary);
+         transform: scale(1.1);
+         }
+         .theme-toggle:active {
+         transform: scale(0.95);
+         }
+         .container {
+         max-width: 900px;
+         width: 100%;
+         background: var(--bg-gradient-dark);
+         border-radius: var(--radius-lg);
+         padding: var(--spacing-xxxl);
+         color: var(--text-primary);
+         box-shadow: 0 8px 30px var(--shadow-medium);
+         }
+         h1 {
+         font-size: var(--font-xl);
+         font-weight: 700;
+         margin-bottom: var(--spacing-xl);
+         color: var(--text-primary);
+         text-align: center;
+         }
+         .hero-section {
+         text-align: center;
+         margin-bottom: var(--spacing-xxxl);
+         padding: var(--spacing-xl) 0;
+         }
+         .developer-avatar {
+         width: 180px;
+         height: 180px;
+         border-radius: var(--radius-full);
+         border: 5px solid var(--accent-primary);
+         box-shadow: 0 8px 25px var(--shadow-medium);
+         margin: 0 auto var(--spacing-xl);
+         background: var(--bg-tertiary);
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         font-size: 4rem;
+         color: var(--accent-primary);
+         animation: float 3s ease-in-out infinite;
+         }
+         @keyframes float {
+         0%, 100% { transform: translateY(0px); }
+         50% { transform: translateY(-10px); }
+         }
+         .developer-name {
+         font-size: var(--font-xxl);
+         font-weight: 700;
+         margin-bottom: var(--spacing-sm);
+         color: var(--text-primary);
+         }
+         .developer-title {
+         font-size: var(--font-md);
+         color: var(--text-secondary);
+         font-weight: 600;
+         margin-bottom: var(--spacing-xs);
+         }
+         .developer-location {
+         font-size: var(--font-base);
+         color: var(--text-tertiary);
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         gap: var(--spacing-xs);
+         }
+         .section {
+         background-color: var(--bg-secondary);
+         border-radius: var(--radius-lg);
+         padding: var(--spacing-xl);
+         margin-bottom: var(--spacing-xl);
+         box-shadow: 0 2px 8px var(--shadow-light);
+         }
+         .section-title {
+         font-size: var(--font-lg);
+         font-weight: 700;
+         margin-bottom: var(--spacing-lg);
+         color: var(--text-primary);
+         display: flex;
+         align-items: center;
+         gap: var(--spacing-sm);
+         }
+         .section-title i {
+         color: var(--accent-primary);
+         font-size: var(--font-xl);
+         margin-right: var(--spacing-sm);
+         }
+         .story-text {
+         font-size: var(--font-base);
+         color: var(--text-secondary);
+         line-height: 1.8;
+         margin-bottom: var(--spacing-lg);
+         }
+         .story-text:last-child {
+         margin-bottom: 0;
+         }
+         .highlight {
+         font-weight: 600;
+         }
+         .vision-grid {
+         display: grid;
+         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+         gap: var(--spacing-lg);
+         margin-top: var(--spacing-lg);
+         }
+         .vision-card {
+         background-color: var(--bg-tertiary);
+         border-radius: var(--radius-md);
+         padding: var(--spacing-lg);
+         text-align: center;
+         box-shadow: 0 2px 8px var(--shadow-light);
+         transition: var(--transition-base);
+         }
+         .vision-card:hover {
+         transform: translateY(-5px);
+         box-shadow: 0 6px 20px var(--shadow-medium);
+         }
+         .vision-icon {
+         font-size: 2.5rem;
+         color: var(--accent-primary);
+         margin-bottom: var(--spacing-md);
+         }
+         .vision-title {
+         font-size: var(--font-md);
+         font-weight: 700;
+         color: var(--text-primary);
+         margin-bottom: var(--spacing-sm);
+         }
+         .vision-description {
+         font-size: var(--font-sm);
+         color: var(--text-tertiary);
+         line-height: 1.6;
+         }
+         .stats-container {
+         display: grid;
+         grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+         gap: var(--spacing-lg);
+         margin-top: var(--spacing-lg);
+         }
+         .stat-box {
+         background-color: var(--bg-tertiary);
+         border-radius: var(--radius-md);
+         padding: var(--spacing-lg);
+         text-align: center;
+         box-shadow: 0 2px 8px var(--shadow-light);
+         }
+         .stat-icon {
+         font-size: 2rem;
+         color: var(--accent-primary);
+         margin-bottom: var(--spacing-sm);
+         }
+         .stat-label {
+         font-size: var(--font-sm);
+         color: var(--text-tertiary);
+         margin-top: var(--spacing-sm);
+         }
+         .quote-box {
+         background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-secondary));
+         border-left: 4px solid var(--accent-primary);
+         border-radius: var(--radius-md);
+         padding: var(--spacing-xl);
+         margin: var(--spacing-xl) 0;
+         font-style: italic;
+         color: var(--text-secondary);
+         font-size: var(--font-md);
+         line-height: 1.8;
+         box-shadow: 0 4px 15px var(--shadow-light);
+         }
+         .quote-icon {
+         color: var(--accent-primary);
+         font-size: var(--font-xl);
+         margin-right: var(--spacing-sm);
+         }
+         button {
+         display: inline-block;
+         padding: var(--spacing-lg) var(--spacing-xxl);
+         font-size: var(--font-base);
+         color: var(--accent-button-text);
+         background: var(--accent-primary);
+         border: none;
+         border-radius: var(--radius-lg);
+         text-decoration: none;
+         transition: var(--transition-base);
+         cursor: pointer;
+         font-weight: bold;
+         width: 100%;
+         }
+         button:hover {
+         background: var(--accent-hover);
+         transform: translateY(-2px);
+         box-shadow: 0 4px 15px var(--shadow-medium);
+         }
+         button:active {
+         transform: translateY(0);
+         box-shadow: 0 2px 8px var(--shadow-light);
+         }
+         .feedback-section {
+         text-align: center;
+         margin-top: var(--spacing-xxxl);
+         }
+         .feedback-button {
+         display: inline-flex;
+         align-items: center;
+         justify-content: center;
+         gap: var(--spacing-sm);
+         padding: var(--spacing-lg) var(--spacing-xxxl);
+         width: auto;
+         min-width: 250px;
+         }
+         .feedback-button i {
+         font-size: var(--font-lg);
+         }
+         @media (max-width: 768px) {
+         body {
+         padding: var(--spacing-md);
+         }
+         .theme-toggle {
+         top: var(--spacing-md);
+         right: var(--spacing-md);
+         }
+         .container {
+         padding: var(--spacing-xl);
+         }
+         h1 {
+         font-size: var(--font-lg);
+         }
+         .developer-avatar {
+         width: 140px;
+         height: 140px;
+         font-size: 3rem;
+         }
+         .developer-name {
+         font-size: var(--font-xl);
+         }
+         .vision-grid {
+         grid-template-columns: 1fr;
+         }
+         .stats-container {
+         grid-template-columns: repeat(2, 1fr);
+         }
+         .quote-box {
+         font-size: var(--font-base);
+         padding: var(--spacing-lg);
+         }
+         .feedback-button {
+         width: 100%;
+         }
+         }
+      </style>
+   </head>
+   <body>
+      <button style="display: none" class="theme-toggle noselect" onclick="toggleTheme()">
+         <i class="fas fa-moon"></i>
+      </button>
+      
+      <div class="container">
+         <h1>About the Developer</h1>
+         
+         <div class="hero-section">
+            <img src="../../images/sourabh_suneja.jpg" alt="Sourabh Sir" class="developer-avatar" style="object-fit: cover;">
+            <div class="developer-name">Sourabh Sir</div>
+            <div class="developer-title">Computer Teacher & Education Innovator</div>
+            <div class="developer-location">
+               <i class="fas fa-map-marker-alt"></i>
+               <span>Jaipur, Rajasthan</span>
+            </div>
+         </div>
+
+         <div class="section">
+            <div class="section-title">
+               <i class="fas fa-lightbulb"></i>
+               The Story
+            </div>
+            <div class="story-text">
+               JVP Spark is more than just an educational app—it's the manifestation of a teacher's dream to transform how students learn. Born from personal experience and fueled by passion, this app represents years of dedication to making education <span class="highlight">joyful, engaging, and effective</span>.
+            </div>
+            <div class="story-text">
+               As a student, Sourabh Sir experienced firsthand the frustration of monotonous teaching methods that stifled imagination and creativity. Traditional classroom approaches often reduced learning to rote memorization, leaving little room for curiosity, exploration, or genuine understanding. This experience left a lasting impact and planted the seed for what would eventually become JVP Spark.
+            </div>
+            <div class="story-text">
+               Today, as a <span class="highlight">brilliant and passionate computer teacher</span> in Jaipur, Sourabh Sir has channeled his frustrations into innovation. He recognized that modern students deserve better—they deserve learning experiences that ignite curiosity, reward progress, and make education feel less like a chore and more like an adventure.
+            </div>
+         </div>
+
+         <div class="quote-box">
+            <i class="fas fa-quote-left quote-icon"></i>
+            Education should spark joy, not just fill notebooks. Every child has the potential to be brilliant—they just need the right environment to shine.
+         </div>
+
+         <div class="section">
+            <div class="section-title">
+               <i class="fas fa-rocket"></i>
+               The Vision
+            </div>
+            <div class="story-text">
+               JVP Spark was created with a clear mission: to <span class="highlight">gamify the learning experience</span> for school students. By blending education with game mechanics, the app transforms studying from a tedious obligation into an exciting journey of discovery.
+            </div>
+            
+            <div class="vision-grid">
+               <div class="vision-card">
+                  <div class="vision-icon">
+                     <i class="fas fa-trophy"></i>
+                  </div>
+                  <div class="vision-title">Amazing Quizzes</div>
+                  <div class="vision-description">
+                     Interactive quiz applications that challenge students while making learning competitive and fun
+                  </div>
+               </div>
+               
+               <div class="vision-card">
+                  <div class="vision-icon">
+                     <i class="fas fa-gamepad"></i>
+                  </div>
+                  <div class="vision-title">Memory Games</div>
+                  <div class="vision-description">
+                     Engaging games designed to improve memory, concentration, and cognitive skills through play
+                  </div>
+               </div>
+               
+               <div class="vision-card">
+                  <div class="vision-icon">
+                     <i class="fas fa-puzzle-piece"></i>
+                  </div>
+                  <div class="vision-title">Creative Tools</div>
+                  <div class="vision-description">
+                     Innovative learning tools that encourage creativity and hands-on problem-solving
+                  </div>
+               </div>
+               
+               <div class="vision-card">
+                  <div class="vision-icon">
+                     <i class="fas fa-star"></i>
+                  </div>
+                  <div class="vision-title">Joyful Learning</div>
+                  <div class="vision-description">
+                     Every feature designed to make the learning journey enjoyable and rewarding
+                  </div>
+               </div>
+            </div>
+         </div>
+
+         <div class="section">
+            <div class="section-title">
+               <i class="fas fa-heart"></i>
+               Built with Passion
+            </div>
+            <div class="story-text">
+               JVP Spark is not just another educational app developed for commercial purposes. It is the <span class="highlight">result of genuine passion</span> and a deep commitment to improving education. Every feature, every quiz, every game has been carefully crafted with students' needs in mind.
+            </div>
+            <div class="story-text">
+               Sourabh Sir personally oversees the development process, ensuring that each tool not only educates but also inspires. His experience as a teacher gives him unique insights into what students need, what keeps them engaged, and what helps them truly understand concepts rather than just memorize them.
+            </div>
+            <div class="story-text">
+               The app continues to evolve based on feedback from real students and educators, constantly adding new features and refining existing ones to create the best possible learning experience.
+            </div>
+            
+            <div class="stats-container">
+               <div class="stat-box">
+                  <div class="stat-icon">
+                     <i class="fas fa-users"></i>
+                  </div>
+                  <div class="stat-label">Created for Students</div>
+               </div>
+               
+               <div class="stat-box">
+                  <div class="stat-icon">
+                     <i class="fas fa-code"></i>
+                  </div>
+                  <div class="stat-label">Crafted with Care</div>
+               </div>
+               
+               <div class="stat-box">
+                  <div class="stat-icon">
+                     <i class="fas fa-graduation-cap"></i>
+                  </div>
+                  <div class="stat-label">Teacher-Designed</div>
+               </div>
+               
+               <div class="stat-box">
+                  <div class="stat-icon">
+                     <i class="fas fa-sync-alt"></i>
+                  </div>
+                  <div class="stat-label">Constantly Evolving</div>
+               </div>
+            </div>
+         </div>
+
+         <div class="section">
+            <div class="section-title">
+               <i class="fas fa-bullseye"></i>
+               The Mission
+            </div>
+            <div class="story-text">
+               The ultimate goal of JVP Spark is to create a generation of students who <span class="highlight">love learning</span>. By making education engaging, accessible, and enjoyable, the app aims to help students develop a lifelong curiosity and passion for knowledge.
+            </div>
+            <div class="story-text">
+               Sourabh Sir believes that when students enjoy what they're learning, they naturally perform better, retain more information, and develop critical thinking skills that will serve them throughout their lives. JVP Spark is his contribution to making this vision a reality for students everywhere.
+            </div>
+         </div>
+
+         <div class="feedback-section">
+            <button class="feedback-button" onclick="showFeedbackForm()">
+               Share Your Feedback
+            </button>
+         </div>
+      </div>
+
+      <script>
+         function toggleTheme() {
+            const body = document.body;
+            const themeToggle = document.querySelector('.theme-toggle i');
+            
+            body.classList.toggle('light-theme');
+            
+            if (body.classList.contains('light-theme')) {
+               themeToggle.classList.remove('fa-moon');
+               themeToggle.classList.add('fa-sun');
+            } else {
+               themeToggle.classList.remove('fa-sun');
+               themeToggle.classList.add('fa-moon');
+            }
+         }
+
+         function showFeedbackForm() {
+            alert('Feedback form will be opened here.\n\nThank you for your interest in sharing your thoughts about JVP Spark!');
+            // In the actual PWA, this would navigate to a feedback form or open a modal
+         }
+
+         // Check for saved theme preference
+         const savedTheme = localStorage.getItem('theme');
+         if (savedTheme === 'light') {
+            document.body.classList.add('light-theme');
+            document.querySelector('.theme-toggle i').classList.remove('fa-moon');
+            document.querySelector('.theme-toggle i').classList.add('fa-sun');
+         }
+      </script>
+   </body>
+</html>
