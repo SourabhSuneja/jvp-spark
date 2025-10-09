@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" class="custom-scroll noselect">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="theme-color" content="#000">
+      <!-- PWA Meta Tags -->
+      <meta name="application-name" content="JVP Spark">
+      <meta name="apple-mobile-web-app-capable" content="yes">
+      <meta name="apple-mobile-web-app-status-bar-style" content="default">
+      <meta name="apple-mobile-web-app-title" content="JVP Spark">
+      <meta name="format-detection" content="telephone=no">
+      <meta name="mobile-web-app-capable" content="yes">
+      <meta name="msapplication-config" content="browserconfig.xml">
+      <meta name="msapplication-TileColor" content="#000000">
+      <meta name="msapplication-tap-highlight" content="no">
+      <!-- PWA Manifest -->
+      <link rel="manifest" href="manifest.json">
+      <!-- Favicons and Icons -->
+      <link rel="icon" type="image/x-icon" href="favicon.ico">
+      <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+      <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+      <link rel="apple-touch-icon" href="apple-touch-icon.png">
+      <link rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png">
+      <link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png">
+      <title>JVP Spark | Spark Your Learning</title>
+      <meta name="description" content="Discover the ultimate student learning app crafted by Sourabh sir! Engage with interactive quizzes, fun games, insightful notes, and hands-on projects designed to make learning exciting and effective.">
+      <!-- font awesome icons link -->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+      <!-- ion icons link -->
+      <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+      <link rel="stylesheet" href="./css/style.css">
+      <link rel="stylesheet" href="./css/qr-scan.css">
+      <link rel="stylesheet" href="./css/dialog.css">
+      <link rel="stylesheet" href="./css/word-card-styles.css">
+      <link rel="stylesheet" href="./css/install-popup-styles.css">
+      <link rel="stylesheet" href="./css/offline-overlay.css">
+   </head>
+   <body class="custom-scroll">
+      <!-- App Install Popup -->
+      <div id="install-popup-overlay" class="install-popup-overlay">
+         <div class="install-popup">
+            <div class="install-popup-icon">
+               <ion-icon name="flash"></ion-icon>
+            </div>
+            <h2>Install JVP Spark</h2>
+            <p>Get the full app experience! Install our app for faster access, offline features, and a native app feel.</p>
+            <div class="install-popup-buttons">
+               <button id="install-app-btn" class="install-btn">
+               <i class="fas fa-download"></i> Install Now
+               </button>
+               <button id="install-later-btn" class="install-btn secondary">Maybe Later</button>
+            </div>
+         </div>
+      </div>
+      <!-- Overlays -->
+      <div id="overlay" onclick="toggleMenu()"></div>
+      <div id="loading-overlay">
+         <ion-icon class="fading-element" name="flash"></ion-icon>
+         <div class="credits">Crafted by Sourabh Sir</div>
+      </div>
+      <!-- Sidebar Menu -->
+      <div id="sidebar">
+         <!-- Menu items will be added here dynamically-->
+      </div>
+      <!-- Main Container -->
+      <div id="main-container">
+         <!-- Header -->
+         <div id="header">
+            <div class="left-section">
+               <ion-icon id="menu-btn" name="menu-outline" onclick="toggleMenu()"></ion-icon>
+               <ion-icon id="back-btn" name="arrow-back"></ion-icon>
+               <div class="app-name">
+                  <span id="screen-name">JVP Spark </span>
+                  <ion-icon name="flash"></ion-icon>
+               </div>
+            </div>
+            <div class="right-section avatar">
+               <ion-icon id="theme-toggle-btn" class="theme-toggle header-btn" name="sunny-outline" onclick="toggleTheme()"></ion-icon>
+               <ion-icon class="notification-btn header-btn" name="notifications"></ion-icon>
+               <img id="header-avatar" alt="Avatar" onclick="PageManager.loadManualPage({link: './pages/account/index.html', title: 'Settings', page_key: 'settings'})">
+               <div id="name-in-header" class="name" onclick="PageManager.loadManualPage({link: './pages/account/index.html', title: 'Settings', page_key: 'settings'})"></div>
+            </div>
+         </div>
+         <!-- Student Profile -->
+         <div id="student-profile" onclick="PageManager.loadManualPage({link: './pages/account/index.html', title: 'Settings', page_key: 'settings'})">
+            <!-- Student profile will be added here dynamically-->
+         </div>
+         <!-- Subject switcher starts -->
+         <div id="subject-switcher">
+         </div>
+         <!-- Subject switcher ends -->
+         <!-- Content Area -->
+         <div id="content" class="custom-scroll">
+            <!-- Cards will be added here dynamically-->
+         </div>
+      </div>
+      <!-- Dialog Overlay -->
+      <div id="dialog-overlay" class="dialog-overlay">
+         <div class="dialog-box" id="dialog-box">
+            <div class="dialog-header" id="dialog-header">Title</div>
+            <div class="dialog-message" id="dialog-message">Message goes here</div>
+            <div class="dialog-buttons" id="dialog-buttons">
+               <!-- Buttons will be added dynamically -->
+            </div>
+         </div>
+      </div>
+      <!-- Dialog Overlay Ends -->
+      <!-- Sign in Screen Starts -->
+      <div id="sign-in-screen" class="custom-scroll">
+         <div class="sign-in-container">
+            <h1>
+               <ion-icon name="flash"></ion-icon>
+               <br>JVP Spark
+            </h1>
+            <div class="sign-in-text">Sign in to continue</div>
+            <form id="signInForm">
+               <div class="form-group">
+                  <input type="text" id="username" placeholder="Enter your username" autocomplete="off">
+                  <ion-icon name="person-outline"></ion-icon>
+               </div>
+               <div class="form-group">
+                  <input type="password" id="password" placeholder="Enter your password" >
+                  <ion-icon name="lock-closed"></ion-icon>
+               </div>
+               <button id="sign-in-btn" type="submit">Sign In</button>
+               <div id="error-message" class="error-message"></div>
+            </form>
+            <!-- Login Divider -->
+            <div class="login-divider">
+               <span>OR</span>
+            </div>
+            <!-- QR Code Login Section -->
+            <div class="qr-login-section">
+               <!-- QR Scanner Container (Initially Hidden) -->
+               <div class="qr-scanner-container" id="qr-scanner-container">
+                  <div id="qr-reader"></div>
+                  <button class="qr-close-btn" id="qr-close-btn" onclick="closeQRScanner()">
+                  <i class="fas fa-times"></i> Close Scanner
+                  </button>
+               </div>
+               <!-- QR Scanner Action Buttons -->
+               <div class="qr-scanner-actions" id="qr-scanner-actions">
+                  <button class="qr-action-btn" id="qr-camera-btn" onclick="startQRScanner()">
+                  <i class="fas fa-camera"></i> Scan QR Code with Camera
+                  </button>
+                  <label for="qr-file-input" class="qr-action-btn">
+                  <i class="fas fa-image"></i> Upload QR Code Image
+                  <input type="file" id="qr-file-input" accept="image/*" onchange="handleQRFileSelect(event)">
+                  </label>
+               </div>
+            </div>
+            <div class="credit-text-in-form">Crafted by Sourabh Sir</div>
+         </div>
+      </div>
+      <!-- Sign in Screen Ends -->
+      <!-- Word of the Day Card Starts -->
+      <div class="word-card" id="word-card">
+         <p id="word-text"></p>
+         <p id="pronunciation-text"></p>
+         <p id="meaning-text"><span>Meaning:</span> </p>
+         <p id="synonym-text"><span>Synonym:</span> </p>
+         <p id="antonym-text"><span>Antonym:</span> </p>
+         <p id="sentence-text"><span>Sentence:</span> </p>
+         <button id="new-word">More</button>
+         <button id="close-word-card">Close</button>
+      </div>
+      <!-- Word of the Day Card Ends -->
+      <!-- Offline Dialog Overlay Starts -->
+      <div class="offline-overlay" id="offlineOverlay">
+         <div class="offline-content">
+            <div class="offline-icon-container">
+               <div class="wifi-signal">
+                  <div class="wifi-bar"></div>
+                  <div class="wifi-bar"></div>
+                  <div class="wifi-bar"></div>
+                  <div class="wifi-bar"></div>
+               </div>
+               <i class="fas fa-wifi-slash offline-icon"></i>
+            </div>
+            <h2 class="offline-title">You're Offline</h2>
+            <p class="offline-message">
+               It looks like you've lost your internet connection. Don't worry, we'll get you back online!
+            </p>
+            <div class="offline-details">
+               <i class="fas fa-info-circle"></i>
+               Please check your internet connection and try again.
+            </div>
+            <button class="retry-button" onclick="offlineManager.retryConnection()">
+            <i class="fas fa-sync-alt"></i>
+            Check Again
+            </button>
+         </div>
+      </div>
+      <!-- Offline Dialog Overlay Ends -->
+      <!-- Scripts Start -->
+      <!-- PWA Script -->     
+      <script src="./js/pwa-utils.js"></script>
+      <!-- HTML5 QR Scan -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+      <script src="./js/qr-scan.js"></script>
+      <!-- Supabase CRUD -->
+      <script type="module" src="./js/supabase-crud.js"></script>
+      <!-- Dialog box script -->
+      <script src="./js/dialog.js"></script>
+      <!-- Offline dialog script -->
+      <script src="./js/offline-manager.js"></script>
+      <!-- Main JS script -->
+      <script src="./js/script.js"></script>
+      <!-- Push Notification script -->
+      <script src="./js/push-notifications.js"></script>
+      <!-- Ion Icons -->
+      <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+      <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+      <!-- Word of the Day -->
+      <script type="module" src="./js/word-card.js"></script>
+      <!-- Scripts End -->
+   </body>
+</html>
