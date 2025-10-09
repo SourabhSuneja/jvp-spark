@@ -1,5 +1,5 @@
 // Bump the version number when you deploy a new service worker
-const CACHE_NAME = 'jvp-spark-v1.0.0.dev.90';
+const CACHE_NAME = 'jvp-spark-v1.0.0.dev.91';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -186,7 +186,7 @@ self.addEventListener('notificationclick', event => {
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
       for (const client of clientList) {
-        if ('focus' in client) {
+        if (client.url.includes('/index.html') && 'focus' in client) {
           client.focus();
           if (notificationID) {
             client.postMessage({ type: 'NOTIFICATION_CLICK', id: notificationID });
@@ -196,8 +196,8 @@ self.addEventListener('notificationclick', event => {
       }
       if (clients.openWindow) {
         const urlToOpen = notificationID ?
-          `/?notification_id=${notificationID}` :
-          '/';
+          `/index.html?notification_id=${notificationID}` :
+          '/index.html';
         return clients.openWindow(urlToOpen);
       }
     })
