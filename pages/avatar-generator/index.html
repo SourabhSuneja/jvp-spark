@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en" class="noselect">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="description" content="Create your personalized avatar and express yourself in fun and unique ways. Join us for an exciting avatar-making experience tailored just for you!" />
+      <title>Avatar Generator</title>
+      <!-- Font Awesome -->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+      <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+      <style>
+         :root {
+         /* Colors - Dark Theme */
+         --bg-primary: #121212;
+         --bg-secondary: #1f1f1f;
+         --bg-tertiary: #333333;
+         --bg-gradient-dark: linear-gradient(145deg, #1e1e1e, #333333);
+         --bg-input: #2c2c2c;
+         /* Text Colors - Dark Theme */
+         --text-primary: #fff;
+         --text-secondary: #ddd;
+         --text-tertiary: #b0bec5;
+         --text-muted: rgb(230, 230, 230);
+         /* Accent Colors */
+         --accent-primary: #ffc107;
+         --accent-hover: #e0a800;
+         --accent-focus: #ffd54f;
+         --accent-button-text: black;
+         /* Shadow Colors */
+         --shadow-dark: rgba(0, 0, 0, 0.5);
+         --shadow-medium: rgba(0, 0, 0, 0.6);
+         --shadow-light: rgba(0, 0, 0, 0.4);
+         /* Spacing Values */
+         --spacing-xs: 4px;
+         --spacing-sm: 8px;
+         --spacing-md: 12px;
+         --spacing-lg: 16px;
+         --spacing-xl: 20px;
+         --spacing-xxl: 25px;
+         --spacing-xxxl: 30px;
+         /* Border Radius */
+         --radius-sm: 5px;
+         --radius-md: 8px;
+         --radius-lg: 10px;
+         --radius-xl: 12px;
+         --radius-full: 50%;
+         /* Font Sizes */
+         --font-sm: 0.9rem;
+         --font-base: 1rem;
+         --font-md: 1.1rem;
+         --font-lg: 1.2rem;
+         --font-xl: 1.6rem;
+         --font-xxl: 1.7rem;
+         --font-xxxl: 1.8rem;
+         --font-icon-sm: 1.2rem;
+         /* Transitions */
+         --transition-fast: 0.2s ease;
+         --transition-base: 0.3s ease;
+         --transition-slow: 0.4s all;
+         }
+         /* Light theme overrides */
+         body.light-theme {
+         --bg-primary: #ffffff;
+         --bg-secondary: rgb(253, 253, 253);
+         --bg-tertiary: rgb(240, 240, 240);
+         --bg-gradient-dark: linear-gradient(145deg, #ffffff, #f0f0f0);
+         --bg-input: #ffffff;
+         --text-primary: #333;
+         --text-secondary: rgb(50, 50, 50);
+         --text-tertiary: rgb(80, 80, 80);
+         --text-muted: #333;
+         --accent-button-text: rgb(30, 30, 30);
+         --shadow-dark: rgba(0, 0, 0, 0.1);
+         --shadow-medium: rgba(0, 0, 0, 0.1);
+         --shadow-light: rgba(0, 0, 0, 0.1);
+         }
+         * {
+         box-sizing: border-box;
+         margin: 0;
+         padding: 0;
+         max-height: 9999999px;
+         font-family: 'Roboto', sans-serif;
+         transition: var(--transition-base) all;
+         }
+         .noselect {
+         -webkit-user-select: none;
+         -moz-user-select: none;
+         -ms-user-select: none;
+         user-select: none;
+         -webkit-touch-callout: none;
+         -webkit-user-drag: none;
+         -webkit-tap-highlight-color: transparent;
+         }
+         body {
+         background-color: var(--bg-primary);
+         color: var(--text-primary);
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         min-height: 100vh;
+         padding: var(--spacing-xl);
+         overflow-x: hidden;
+         }
+         .theme-toggle {
+         position: fixed;
+         top: var(--spacing-xl);
+         right: var(--spacing-xl);
+         background-color: var(--bg-secondary);
+         border: none;
+         border-radius: var(--radius-lg);
+         padding: var(--spacing-md);
+         cursor: pointer;
+         color: var(--text-primary);
+         font-size: var(--font-icon-sm);
+         box-shadow: 0 2px 8px var(--shadow-light);
+         transition: var(--transition-base);
+         z-index: 1000;
+         display: none;
+         }
+         .theme-toggle:hover {
+         background-color: var(--bg-tertiary);
+         transform: scale(1.1);
+         }
+         .theme-toggle:active {
+         transform: scale(0.95);
+         }
+         .container {
+         max-width: 900px;
+         width: 100%;
+         background: var(--bg-gradient-dark);
+         border-radius: var(--radius-lg);
+         padding: var(--spacing-xxxl);
+         color: var(--text-primary);
+         box-shadow: 0 8px 30px var(--shadow-medium);
+         text-align: center;
+         display: none;
+         }
+         h1 {
+         font-size: var(--font-xl);
+         font-weight: 700;
+         margin-bottom: var(--spacing-xl);
+         color: var(--text-primary);
+         }
+         #avatar-preview {
+         width: 250px;
+         height: 250px;
+         margin: var(--spacing-xl) auto;
+         border-radius: var(--radius-full);
+         border: 5px solid var(--accent-primary);
+         box-shadow: 0 4px 12px var(--shadow-light);
+         transition: var(--transition-base);
+         }
+         #avatar-preview:hover {
+         transform: scale(1.05);
+         box-shadow: 0 8px 20px var(--shadow-medium);
+         }
+         .customize-container {
+         display: grid;
+         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+         gap: var(--spacing-lg);
+         margin: var(--spacing-xxxl) 0;
+         }
+         .input-group {
+         display: flex;
+         flex-direction: column;
+         gap: var(--spacing-sm);
+         text-align: left;
+         }
+         label {
+         font-size: var(--font-base);
+         color: var(--text-secondary);
+         font-weight: 500;
+         }
+         select {
+         padding: var(--spacing-md);
+         border: none;
+         border-radius: var(--radius-md);
+         font-size: var(--font-base);
+         cursor: pointer;
+         background-color: var(--bg-input);
+         color: var(--text-primary);
+         width: 100%;
+         box-shadow: 0 2px 8px var(--shadow-light);
+         transition: var(--transition-base);
+         }
+         select:hover {
+         background-color: var(--bg-secondary);
+         }
+         select:focus {
+         outline: none;
+         box-shadow: 0 0 0 3px var(--accent-focus);
+         }
+         .button-container {
+         display: flex;
+         flex-direction: column;
+         align-items: center;
+         gap: var(--spacing-md);
+         margin-top: var(--spacing-xxxl);
+         }
+         button {
+         display: inline-block;
+         margin-top: var(--spacing-xl);
+         padding: var(--spacing-xl) var(--spacing-xxl);
+         font-size: var(--font-lg);
+         color: var(--accent-button-text);
+         background: var(--accent-primary);
+         border: none;
+         border-radius: var(--radius-lg);
+         text-decoration: none;
+         transition: var(--transition-base);
+         cursor: pointer;
+         font-weight: bold;
+         }
+         button:hover {
+         background: var(--accent-hover);
+         transform: translateY(-2px);
+         box-shadow: 0 4px 15px var(--shadow-medium);
+         }
+         button:active {
+         transform: translateY(0);
+         box-shadow: 0 2px 8px var(--shadow-light);
+         }
+         @media (max-width: 768px) {
+         body {
+         padding: var(--spacing-md);
+         }
+         .theme-toggle {
+         top: var(--spacing-md);
+         right: var(--spacing-md);
+         }
+         h1 {
+         font-size: var(--font-lg);
+         }
+         .container {
+         padding: var(--spacing-xl);
+         }
+         #avatar-preview {
+         width: 200px;
+         height: 200px;
+         }
+         .customize-container {
+         grid-template-columns: 1fr;
+         }
+         button {
+         font-size: var(--font-base);
+         padding: var(--spacing-md) var(--spacing-xl);
+         width: 100%;
+         min-width: unset;
+         }
+         }
+         @media (max-width: 480px) {
+         #avatar-preview {
+         width: 180px;
+         height: 180px;
+         }
+         }
+      </style>
+   </head>
+   <body>
+      <div id="container" class="container">
+         <h1 class="noselect">Create Your Avatar</h1>
+         <div id="avatar-preview">
+            <img id="avatar" src="https://avataaars.io/?avatarStyle=Circle&topType=ShortHairShortCurly&accessoriesType=Blank&hairColor=BrownDark&facialHairType=Blank&clotheType=BlazerSweater&eyeType=Happy&eyebrowType=Default&mouthType=Smile&skinColor=Light" alt="Avatar" width="100%" height="100%">
+         </div>
+         <div class="customize-container">
+            <div class="input-group">
+               <label for="topType">Hair Style:</label>
+               <select id="topType">
+                  <option value="ShortHairShortCurly">Short Curly</option>
+                  <option value="ShortHairDreads01">Dreads</option>
+                  <option value="LongHairCurly">Long Curly</option>
+                  <option value="Hijab">Hijab</option>
+                  <option value="Hat">Hat</option>
+                  <option value="LongHairStraight">Long Straight</option>
+                  <option value="LongHairStraight2">Long Straight 2</option>
+                  <option value="ShortHairTheCaesar">Caesar Cut</option>
+                  <option value="ShortHairFrizzle">Frizzy Short</option>
+               </select>
+            </div>
+            <div class="input-group">
+               <label for="hairColor">Hair Color:</label>
+               <select id="hairColor">
+                  <option value="BrownDark">Dark Brown</option>
+                  <option value="Blonde">Blonde</option>
+                  <option value="Black">Black</option>
+                  <option value="Red">Red</option>
+                  <option value="SilverGray">Silver Gray</option>
+               </select>
+            </div>
+            <div class="input-group">
+               <label for="clotheType">Clothing:</label>
+               <select id="clotheType">
+                  <option value="BlazerSweater">Blazer & Sweater</option>
+                  <option value="ShirtCrewNeck">Crew Neck Shirt</option>
+                  <option value="Hoodie">Hoodie</option>
+                  <option value="ShirtScoopNeck">Scoop Neck Shirt</option>
+               </select>
+            </div>
+            <div class="input-group">
+               <label for="eyeType">Eye Type:</label>
+               <select id="eyeType">
+                  <option value="Happy">Happy</option>
+                  <option value="Surprised">Surprised</option>
+                  <option value="Squint">Squint</option>
+                  <option value="Wink">Wink</option>
+               </select>
+            </div>
+            <div class="input-group">
+               <label for="mouthType">Mouth Type:</label>
+               <select id="mouthType">
+                  <option value="Smile">Smile</option>
+                  <option value="Grimace">Grimace</option>
+                  <option value="Serious">Serious</option>
+                  <option value="ScreamOpen">Scream Open</option>
+               </select>
+            </div>
+            <div class="input-group">
+               <label for="skinColor">Skin Color:</label>
+               <select id="skinColor">
+                  <option value="Light">Light</option>
+                  <option value="Tanned">Tanned</option>
+                  <option value="Pale">Pale</option>
+                  <option value="Brown">Brown</option>
+                  <option value="DarkBrown">Dark Brown</option>
+               </select>
+            </div>
+            <div class="input-group">
+               <label for="facialHairType">Facial Hair:</label>
+               <select id="facialHairType">
+                  <option value="Blank">None</option>
+                  <option value="BeardLight">Light Beard</option>
+                  <option value="MoustacheFancy">Fancy Moustache</option>
+                  <option value="BeardMajestic">Majestic Beard</option>
+               </select>
+            </div>
+            <div class="input-group">
+               <label for="accessoriesType">Accessories:</label>
+               <select id="accessoriesType">
+                  <option value="Blank">None</option>
+                  <option value="Kurt">Glasses</option>
+                  <option value="Round">Round Glasses</option>
+                  <option value="Sunglasses">Sunglasses</option>
+               </select>
+            </div>
+         </div>
+         <div class="button-container">
+            <button id="generate-avatar">Save My Avatar</button>
+         </div>
+      </div>
+
+      <script>
+         // Get URL parameters
+         function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+         }
+
+         const baseUrl = "https://avataaars.io/";
+         
+         // Avatar generation functionality
+         const avatar = document.getElementById('avatar');
+         const generateBtn = document.getElementById('generate-avatar');
+         
+         const selects = {
+         topType: document.getElementById('topType'),
+         hairColor: document.getElementById('hairColor'),
+         clotheType: document.getElementById('clotheType'),
+         eyeType: document.getElementById('eyeType'),
+         mouthType: document.getElementById('mouthType'),
+         skinColor: document.getElementById('skinColor'),
+         facialHairType: document.getElementById('facialHairType'),
+         accessoriesType: document.getElementById('accessoriesType')
+         };
+         
+         async function updateAvatar(sync=null) {
+         const queryString = `avatarStyle=Circle&topType=${selects.topType.value}&accessoriesType=${selects.accessoriesType.value}&hairColor=${selects.hairColor.value}&facialHairType=${selects.facialHairType.value}&clotheType=${selects.clotheType.value}&eyeType=${selects.eyeType.value}&eyebrowType=Default&mouthType=${selects.mouthType.value}&skinColor=${selects.skinColor.value}`;
+         
+         const url = `${baseUrl}?${queryString}`;
+         avatar.src = url;
+         // Scroll to top after generating avatar
+         window.scrollTo({ top: 0, behavior: 'smooth' });
+         // sync new avatar to user settings on Supabase
+         if(sync === true) {
+              window.parent.showProcessingDialog();
+              const updated = await window.parent.updateRow('settings', ['student_id'], [window.parent.userId], ['avatar'], [queryString]);
+               if(updated) {
+                   await window.parent.showDialog({
+                   title: 'Success',
+                   message: 'Avatar updated!',
+                   type: 'alert'
+                   });
+                   // Load home screen
+                   window.parent.init();
+               } else {
+                   await window.parent.showDialog({
+                   title: 'Error',
+                   message: 'Error updating avatar!',
+                   type: 'alert'
+                   });
+               }
+         }
+         }
+         
+         generateBtn.addEventListener('click', function() {
+         updateAvatar(true);
+         });
+         
+         // Update avatar on any select change
+         Object.values(selects).forEach(select => {
+         select.addEventListener('change', updateAvatar);
+         });
+
+async function initializePage(userData) {
+    // Show loading
+    window.parent.showProcessingDialog();
+    // Fetch the avatar string from the user data
+    const currentAvatarString = userData['avatar'] || '';
+
+    if (currentAvatarString) {
+        // Build full URL and set avatar image preview
+
+        const currentAvatarSrc = `${baseUrl}?${currentAvatarString}`;
+        avatar.src = currentAvatarSrc;
+
+        // Parse query string into key-value pairs
+        const params = new URLSearchParams(currentAvatarString);
+
+        // Loop through each select and set its value
+        Object.entries(selects).forEach(([key, select]) => {
+            const value = params.get(key);
+            if (value) {
+                select.value = value;
+            }
+        });
+    }
+
+    // Finally, reveal the container after avatar + selects are ready
+    document.getElementById('container').style.display = 'block';
+    updateAvatar();
+    // Hide loading
+    window.parent.hideProcessingDialog();
+}
+      </script>
+   </body>
+</html>
+
