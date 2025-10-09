@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en" class="noselect">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Notification</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+      <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+      <style>
+         :root {
+         /* Colors - Dark Theme */
+         --bg-primary: #121212;
+         --bg-secondary: #1f1f1f;
+         --bg-tertiary: #333333;
+         --bg-gradient-dark: linear-gradient(145deg, #1e1e1e, #333333);
+         --bg-input: #2c2c2c;
+         /* Text Colors - Dark Theme */
+         --text-primary: #fff;
+         --text-secondary: #ddd;
+         --text-tertiary: #b0bec5;
+         --text-muted: rgb(230, 230, 230);
+         /* Accent Colors */
+         --accent-primary: #ffc107;
+         --accent-hover: #e0a800;
+         --accent-focus: #ffd54f;
+         --accent-button-text: black;
+         /* Shadow Colors */
+         --shadow-dark: rgba(0, 0, 0, 0.5);
+         --shadow-medium: rgba(0, 0, 0, 0.6);
+         --shadow-light: rgba(0, 0, 0, 0.4);
+         /* Spacing Values */
+         --spacing-xs: 4px;
+         --spacing-sm: 8px;
+         --spacing-md: 12px;
+         --spacing-lg: 16px;
+         --spacing-xl: 20px;
+         --spacing-xxl: 25px;
+         --spacing-xxxl: 30px;
+         /* Border Radius */
+         --radius-sm: 5px;
+         --radius-md: 8px;
+         --radius-lg: 10px;
+         --radius-xl: 12px;
+         --radius-full: 50%;
+         /* Font Sizes */
+         --font-sm: 0.9rem;
+         --font-base: 1rem;
+         --font-md: 1.1rem;
+         --font-lg: 1.2rem;
+         --font-xl: 1.6rem;
+         --font-xxl: 1.7rem;
+         --font-xxxl: 1.8rem;
+         --font-icon-sm: 1.2rem;
+         /* Transitions */
+         --transition-fast: 0.2s ease;
+         --transition-base: 0.3s ease;
+         --transition-slow: 0.4s all;
+         }
+         /* Light theme overrides */
+         body.light-theme {
+         --bg-primary: #ffffff;
+         --bg-secondary: rgb(253, 253, 253);
+         --bg-tertiary: rgb(240, 240, 240);
+         --bg-gradient-dark: linear-gradient(145deg, #ffffff, #f0f0f0);
+         --bg-input: #ffffff;
+         --text-primary: #333;
+         --text-secondary: rgb(50, 50, 50);
+         --text-tertiary: rgb(80, 80, 80);
+         --text-muted: #333;
+         --accent-button-text: rgb(30, 30, 30);
+         --shadow-dark: rgba(0, 0, 0, 0.1);
+         --shadow-medium: rgba(0, 0, 0, 0.1);
+         --shadow-light: rgba(0, 0, 0, 0.1);
+         }
+         * {
+         box-sizing: border-box;
+         margin: 0;
+         padding: 0;
+         max-height: 9999999px;
+         font-family: 'Roboto', sans-serif;
+         transition: var(--transition-base) all;
+         }
+         .noselect {
+         -webkit-user-select: none;
+         -moz-user-select: none;
+         -ms-user-select: none;
+         user-select: none;
+         -webkit-touch-callout: none;
+         -webkit-user-drag: none;
+         -webkit-tap-highlight-color: transparent;
+         }
+         body {
+         background-color: var(--bg-primary);
+         color: var(--text-primary);
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         min-height: 100vh;
+         padding: var(--spacing-xl);
+         overflow-x: hidden;
+         }
+         .container {
+         max-width: 900px;
+         width: 100%;
+         background: var(--bg-gradient-dark);
+         border-radius: var(--radius-lg);
+         padding: var(--spacing-xxxl);
+         color: var(--text-primary);
+         box-shadow: 0 8px 30px var(--shadow-medium);
+         }
+         .header {
+         display: flex;
+         align-items: center;
+         gap: var(--spacing-lg);
+         margin-bottom: var(--spacing-xxxl);
+         }
+         .back-button {
+         background-color: var(--bg-secondary);
+         border: none;
+         border-radius: var(--radius-lg);
+         padding: var(--spacing-md);
+         cursor: pointer;
+         color: var(--text-primary);
+         font-size: var(--font-icon-sm);
+         box-shadow: 0 2px 8px var(--shadow-light);
+         transition: var(--transition-base);
+         width: 45px;
+         height: 45px;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         }
+         .back-button:hover {
+         background-color: var(--accent-primary);
+         color: var(--accent-button-text);
+         transform: translateY(-2px);
+         box-shadow: 0 4px 15px var(--shadow-medium);
+         }
+         .back-button:active {
+         transform: translateY(0);
+         box-shadow: 0 2px 8px var(--shadow-light);
+         }
+         h1 {
+         font-size: var(--font-xl);
+         font-weight: 700;
+         color: var(--text-primary);
+         flex: 1;
+         }
+         .notification-card {
+         background-color: var(--bg-secondary);
+         border-radius: var(--radius-lg);
+         padding: var(--spacing-xxxl);
+         box-shadow: 0 2px 8px var(--shadow-light);
+         }
+         .notification-header {
+         display: flex;
+         align-items: flex-start;
+         gap: var(--spacing-lg);
+         margin-bottom: var(--spacing-xl);
+         padding-bottom: var(--spacing-xl);
+         border-bottom: 2px solid var(--bg-tertiary);
+         }
+         .notification-icon {
+         background-color: var(--accent-primary);
+         color: var(--accent-button-text);
+         width: 55px;
+         height: 55px;
+         border-radius: var(--radius-lg);
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         font-size: var(--font-xl);
+         box-shadow: 0 2px 8px var(--shadow-light);
+         flex-shrink: 0;
+         }
+         .notification-title-section {
+         flex: 1;
+         }
+         .notification-title {
+         font-size: var(--font-lg);
+         font-weight: 700;
+         color: var(--text-primary);
+         margin-bottom: var(--spacing-sm);
+         line-height: 1.4;
+         }
+         .notification-timestamp {
+         font-size: var(--font-sm);
+         color: var(--text-tertiary);
+         display: flex;
+         align-items: center;
+         gap: var(--spacing-xs);
+         }
+         .notification-body {
+         font-size: var(--font-base);
+         color: var(--text-secondary);
+         line-height: 1.7;
+         white-space: pre-wrap;
+         word-wrap: break-word;
+         }
+         .empty-state {
+         text-align: center;
+         padding: var(--spacing-xxxl);
+         }
+         .empty-icon {
+         font-size: 80px;
+         color: var(--text-tertiary);
+         margin-bottom: var(--spacing-xl);
+         opacity: 0.5;
+         }
+         .empty-text {
+         font-size: var(--font-lg);
+         color: var(--text-tertiary);
+         font-weight: 500;
+         }
+         button.action-button {
+         display: inline-block;
+         padding: var(--spacing-lg) var(--spacing-xxl);
+         font-size: var(--font-base);
+         color: var(--accent-button-text);
+         background: var(--accent-primary);
+         border: none;
+         border-radius: var(--radius-lg);
+         text-decoration: none;
+         transition: var(--transition-base);
+         cursor: pointer;
+         font-weight: bold;
+         width: 100%;
+         margin-top: var(--spacing-xxxl);
+         }
+         button.action-button:hover {
+         background: var(--accent-hover);
+         transform: translateY(-2px);
+         box-shadow: 0 4px 15px var(--shadow-medium);
+         }
+         button.action-button:active {
+         transform: translateY(0);
+         box-shadow: 0 2px 8px var(--shadow-light);
+         }
+         @media (max-width: 768px) {
+         body {
+         padding: var(--spacing-md);
+         }
+         .container {
+         padding: var(--spacing-xl);
+         }
+         h1 {
+         font-size: var(--font-lg);
+         }
+         .notification-card {
+         padding: var(--spacing-xl);
+         }
+         .notification-header {
+         flex-direction: column;
+         align-items: center;
+         text-align: center;
+         }
+         .notification-icon {
+         width: 50px;
+         height: 50px;
+         font-size: var(--font-lg);
+         }
+         .notification-title {
+         font-size: var(--font-md);
+         }
+         .empty-icon {
+         font-size: 60px;
+         }
+         }
+      </style>
+   </head>
+   <body>
+      <div class="container">
+         <div style="display: none" class="header">
+            <button class="back-button noselect" onclick="navigateBack()">
+               <i class="fas fa-arrow-left"></i>
+            </button>
+            <h1>Notification</h1>
+         </div>
+         
+         <div id="notification-content"></div>
+      </div>
+
+      <script>
+
+         function formatText(text) {
+            if (!text) return '';
+            
+            // Replace *text* with <strong>text</strong>
+            text = text.replace(/\*([^*]+)\*/g, '<strong>$1</strong>');
+            
+            // Replace _text_ with <em>text</em>
+            text = text.replace(/_([^_]+)_/g, '<em>$1</em>');
+            
+            return text;
+         }
+
+         function formatTimestamp(timestamp) {
+            if (!timestamp) return '';
+            
+            const date = new Date(timestamp.replace(' ', 'T'));
+            const now = new Date();
+            const diffInSeconds = Math.floor((now - date) / 1000);
+            
+            if (diffInSeconds < 60) {
+               return 'Just now';
+            } else if (diffInSeconds < 3600) {
+               const minutes = Math.floor(diffInSeconds / 60);
+               return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+            } else if (diffInSeconds < 86400) {
+               const hours = Math.floor(diffInSeconds / 3600);
+               return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+            } else if (diffInSeconds < 604800) {
+               const days = Math.floor(diffInSeconds / 86400);
+               return `${days} day${days > 1 ? 's' : ''} ago`;
+            } else {
+               return date.toLocaleDateString('en-US', { 
+                  year: 'numeric', 
+                  month: 'short', 
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+               });
+            }
+         }
+
+         function renderNotification(notification) {
+            const contentDiv = document.getElementById('notification-content');
+            
+            if (!notification || !notification.message_title) {
+               contentDiv.innerHTML = `
+                  <div class="notification-card">
+                     <div class="empty-state">
+                        <div class="empty-icon">
+                           <i class="fas fa-bell-slash"></i>
+                        </div>
+                        <div class="empty-text">Nothing to show</div>
+                     </div>
+                  </div>
+                  <button class="action-button" onclick="navigateBack()">
+                     <i class="fas fa-arrow-left"></i> Back to Notifications
+                  </button>
+               `;
+               return;
+            }
+
+            const messageContent = notification.detailed_message || notification.message_body || '';
+            const formattedMessage = formatText(messageContent);
+            const formattedTime = formatTimestamp(notification.created_at);
+
+            contentDiv.innerHTML = `
+               <div class="notification-card">
+                  <div class="notification-header">
+                     <div class="notification-icon">
+                        <i class="fas fa-bell"></i>
+                     </div>
+                     <div class="notification-title-section">
+                        <div class="notification-title">${notification.message_title}</div>
+                        <div class="notification-timestamp">
+                           <i class="far fa-clock"></i>
+                           ${formattedTime}
+                        </div>
+                     </div>
+                  </div>
+                  <div class="notification-body">${formattedMessage}</div>
+               </div>
+               <button style="display: none" class="action-button" onclick="navigateBack()">
+                  <i class="fas fa-arrow-left"></i> Back to Notifications
+               </button>
+            `;
+         }
+
+         function navigateBack() {
+            // Replace with your actual navigation logic
+            if (window.parent && window.parent.navigateToNotifications) {
+               window.parent.navigateToNotifications();
+            } else {
+               window.history.back();
+            }
+         }
+
+         // Initialize the page
+         async function initializePage(userData) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const notificationId = urlParams.get('notification_id');
+
+            const notification = await window.parent.invokeFunction('get_specific_notification', {
+         'p_notification_id': notificationId
+      }, true); 
+            renderNotification(notification);
+         }
+      </script>
+   </body>
+</html>
