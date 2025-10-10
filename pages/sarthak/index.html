@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="description" content="Meet Sarthak, your AI study companion! Get instant answers, study help, and guidance to ace your academics. Transform your learning experience with Sarthak today!">
+      <title>Sarthak | Your AI Study Buddy</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+      <!-- Google Fonts -->
+      <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+      <link rel="stylesheet" href="style.css">
+   </head>
+   <body>
+      <div class="content">
+         <h2>Your AI Study Buddy</h2>
+         <p>Sarthak is a helpful and child-friendly AI chatbot created by Sourabh sir to answer your school questions. Sarthak can make learning easier for you and can talk to you in both English and Hindi. Here are some example questions you can ask from Sarthak to get started:</p>
+         <ul>
+            <li>What is Microsoft Excel?</li>
+            <li>Any easy way to remember the order of planets?</li>
+            <li>Some tips to improve Maths?</li>
+         </ul>
+         <h2>Terms and Conditions</h2>
+         <p>When you use Sarthak, you agree to these rules:</p>
+         <ul>
+            <li>You will use Sarthak for school work and learning only.</li>
+            <li>Do not use mean or violent words.</li>
+            <li>The answers from Sarthak might be sometimes wrong or irrelevant. Always check with your books or teachers to make sure you get the right information.</li>
+            <li>Do not share any personal details about yourself.</li>
+            <li>Your conversations might be saved to help keep things safe and improve Sarthak.</li>
+         </ul>
+         <div style="text-align: center;">
+            <!-- Centering the button -->
+            <a onclick="toggleChat()" class="get-started-btn">Get Started</a>
+         </div>
+      </div>
+      <!-- Floating Chat Button -->
+      <div id="chatButton" onclick="toggleChat()">
+         <i class="far fa-comment"></i>
+      </div>
+      <!-- Chatbot Container -->
+      <div id="chatContainer" class="fade-in">
+         <!-- Chat Header -->
+         <div id="chatHeader">
+            <i class="fas fa-robot chat-icon"></i>
+            <span class="chat-name">Sarthak AI Assistant</span>
+            <button id="closeChat" onclick="toggleChat()">&times;</button>
+         </div>
+         <!-- Chat Messages -->
+         <div id="chatMessages">
+            <!-- Sample Messages -->
+            <div class="chat-msg bot-msg">Hello! How can I assist you today?</div>
+            <div id="firstQ" class="chat-msg user-msg">What is the Internet?</div>
+            <div id="firstA" class="chat-msg bot-msg">The Internet is the global network of billions of computers and other devices connected together.</div>
+         </div>
+         <!-- Typing Animation -->
+         <div id="typingIndicator" class="typing hidden">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+         </div>
+         <!-- Message Input -->
+         <div id="chatInputArea">
+            <input type="text" id="userInput" placeholder="Type your message here..." onkeypress="sendMessage(event)">
+            <button onclick="sendMessage(event)"><i class="fas fa-paper-plane"></i></button>
+         </div>
+      </div>
+      <script src="script.js"></script>
+      <script src="ai-fetch.js"></script>
+   </body>
+</html>
+
