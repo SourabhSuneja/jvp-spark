@@ -3,6 +3,6 @@
   "target": {
     "namespace": "android_app",
     "package_name": "io.github.sourabhsuneja.twa",
-    "sha256_cert_fingerprints": ["BD:B0:26:7C:3E:08:1F:7F:F8:D6:13:D7:4B:A8:6F:CC:7C:8D:2B:5C:BE:94:DF:4C:14:86:EF:BE:D3:A6:67:97"]
+    "sha256_cert_fingerprints": ["74:BE:E8:90:EC:21:D7:F1:01:8E:2C:F0:10:A8:B1:D1:CE:38:E6:42:9A:A1:5C:54:18:D7:B7:0D:F3:0A:56:1E"]
   }
 }]
