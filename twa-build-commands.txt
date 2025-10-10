@@ -1,0 +1,8 @@
+#1
+bubblewrap init --manifest=https://jvp-spark.netlify.app/manifest.json
+
+#2
+bubblewrap build
+
+#3
+keytool -list -v -keystore android.keystore -alias android
