@@ -79,7 +79,9 @@
             </div>
             <div class="right-section avatar">
                <ion-icon id="theme-toggle-btn" class="theme-toggle header-btn" name="sunny-outline" onclick="toggleTheme()"></ion-icon>
-               <ion-icon class="notification-btn header-btn" name="notifications"></ion-icon>
+               <div class="notification-btn header-btn">
+                 <ion-icon name="notifications"></ion-icon>
+               </div>
                <img id="header-avatar" alt="Avatar" onclick="PageManager.loadManualPage({link: './pages/account/index.html', title: 'Settings', page_key: 'settings'})">
                <div id="name-in-header" class="name" onclick="PageManager.loadManualPage({link: './pages/account/index.html', title: 'Settings', page_key: 'settings'})"></div>
             </div>
