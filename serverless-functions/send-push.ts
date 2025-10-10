@@ -4,7 +4,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 // Define CORS headers to be used in all responses
 const corsHeaders = {
-  'Access-Control-Allow-Origin': 'https://jvp-spark.netlify.app',
+  'Access-Control-Allow-Origin': 'https://sourabhsuneja.github.io',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type'
 };
 serve(async (req)=>{
