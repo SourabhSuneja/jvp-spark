@@ -1,0 +1,270 @@
+/* Notification Permission Overlay Styles */
+.notification-overlay {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background: var(--bg-primary);
+   z-index: var(--z-loading);
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   opacity: 0;
+   visibility: hidden;
+   transition: opacity var(--transition-slower) ease, visibility var(--transition-slower) ease;
+}
+
+.notification-overlay.show {
+   opacity: 1;
+   visibility: visible;
+}
+
+.notification-content {
+   text-align: center;
+   max-width: 500px;
+   padding: var(--spacing-xxxl);
+   background: var(--bg-gradient-dark);
+   border-radius: var(--radius-xl);
+   box-shadow: 0 20px 60px var(--shadow-dark);
+   transform: translateY(30px) scale(0.9);
+   transition: transform var(--transition-slower) cubic-bezier(0.34, 1.56, 0.64, 1);
+   position: relative;
+   overflow: hidden;
+}
+
+.notification-overlay.show .notification-content {
+   transform: translateY(0) scale(1);
+}
+
+/* Animated background pattern */
+.notification-content::before {
+   content: '';
+   position: absolute;
+   top: -50%;
+   left: -50%;
+   width: 200%;
+   height: 200%;
+   background: linear-gradient(45deg,
+      transparent 30%,
+      rgba(255, 193, 7, 0.05) 50%,
+      transparent 70%);
+   animation: shimmer 3s ease-in-out infinite;
+   pointer-events: none;
+}
+
+/* Icon container */
+.notification-icon-container {
+   position: relative;
+   margin-bottom: var(--spacing-xxl);
+}
+
+.notification-icon {
+   font-size: var(--font-icon-xl);
+   color: var(--accent-primary);
+   margin-bottom: var(--spacing-lg);
+   display: inline-block;
+   position: relative;
+   z-index: 2;
+   animation: bellShake 2s ease-in-out infinite;
+}
+
+@keyframes bellShake {
+   0%, 50%, 100% {
+      transform: rotate(0deg);
+   }
+   5%, 15% {
+      transform: rotate(15deg);
+   }
+   10%, 20% {
+      transform: rotate(-15deg);
+   }
+   25% {
+      transform: rotate(0deg);
+   }
+}
+
+/* Pulse rings animation */
+.pulse-rings {
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   width: 100px;
+   height: 100px;
+}
+
+.pulse-ring {
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   width: 60px;
+   height: 60px;
+   border: 3px solid var(--accent-primary);
+   border-radius: var(--radius-full);
+   opacity: 0;
+   animation: pulsate 2s ease-out infinite;
+}
+
+.pulse-ring:nth-child(2) {
+   animation-delay: 0.5s;
+}
+
+.pulse-ring:nth-child(3) {
+   animation-delay: 1s;
+}
+
+@keyframes pulsate {
+   0% {
+      transform: translate(-50%, -50%) scale(0.8);
+      opacity: 1;
+   }
+   100% {
+      transform: translate(-50%, -50%) scale(1.8);
+      opacity: 0;
+   }
+}
+
+/* Typography */
+.notification-title {
+   font-size: var(--font-xxl);
+   font-weight: 700;
+   color: var(--text-primary);
+   margin-bottom: var(--spacing-md);
+   position: relative;
+   z-index: 1;
+}
+
+.notification-message {
+   font-size: var(--font-md);
+   color: var(--text-secondary);
+   line-height: 1.6;
+   margin-bottom: var(--spacing-xl);
+   position: relative;
+   z-index: 1;
+}
+
+.notification-warning {
+   font-size: var(--font-sm);
+   color: var(--text-tertiary);
+   margin-bottom: var(--spacing-lg);
+   padding: var(--spacing-lg);
+   background: var(--bg-tertiary);
+   border-radius: var(--radius-md);
+   border-left: 4px solid var(--error-color);
+   position: relative;
+   z-index: 1;
+   display: flex;
+   align-items: center;
+   gap: var(--spacing-md);
+   text-align: left;
+}
+
+.notification-warning i {
+   color: var(--error-color);
+   font-size: var(--font-icon-sm);
+   flex-shrink: 0;
+}
+
+.notification-instruction {
+   font-size: var(--font-sm);
+   color: var(--text-secondary);
+   margin-bottom: var(--spacing-xxl);
+   padding: var(--spacing-md);
+   background: rgba(255, 193, 7, 0.1);
+   border-radius: var(--radius-md);
+   border: 1px solid rgba(255, 193, 7, 0.3);
+   position: relative;
+   z-index: 1;
+   display: flex;
+   align-items: center;
+   gap: var(--spacing-sm);
+   justify-content: center;
+}
+
+.notification-instruction i {
+   color: var(--accent-primary);
+   font-size: var(--font-icon-sm);
+}
+
+/* Button */
+.permission-button {
+   background: linear-gradient(135deg, var(--accent-primary), var(--accent-focus));
+   color: var(--accent-button-text);
+   border: none;
+   padding: var(--spacing-md) var(--spacing-xxxl);
+   border-radius: var(--radius-lg);
+   font-size: var(--font-md);
+   font-weight: 700;
+   cursor: pointer;
+   transition: all var(--transition-base);
+   position: relative;
+   z-index: 1;
+   display: inline-flex;
+   align-items: center;
+   gap: var(--spacing-sm);
+   text-transform: uppercase;
+   letter-spacing: 1px;
+   overflow: hidden;
+   width: 100%;
+   justify-content: center;
+}
+
+.permission-button::before {
+   content: '';
+   position: absolute;
+   top: 0;
+   left: -100%;
+   width: 100%;
+   height: 100%;
+   background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent);
+   transition: left var(--transition-base);
+}
+
+.permission-button:hover::before {
+   left: 100%;
+}
+
+.permission-button:hover {
+   background: linear-gradient(135deg, var(--accent-hover), var(--accent-primary));
+   transform: translateY(-3px);
+   box-shadow: 0 10px 30px var(--shadow-medium);
+}
+
+.permission-button:active {
+   transform: translateY(-1px);
+}
+
+.permission-button i {
+   font-size: var(--font-icon-sm);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+   .notification-content {
+      margin: var(--spacing-xl);
+      padding: var(--spacing-xxl);
+   }
+
+   .notification-icon {
+      font-size: 48px;
+   }
+
+   .notification-title {
+      font-size: var(--font-xl);
+   }
+
+   .pulse-rings {
+      width: 80px;
+      height: 80px;
+   }
+
+   .notification-warning,
+   .notification-instruction {
+      font-size: 0.85rem;
+   }
+}
