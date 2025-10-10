@@ -127,6 +127,75 @@ const DOMUtils = {
 };
 
 // =============================================================================
+// Notification Badge Manager
+// =============================================================================
+
+const NotificationBadge = {
+  bellIcon: null,
+  badgeElement: null,
+  rippleElement: null,
+
+  init() {
+    this.bellIcon = document.querySelector('.notification-btn');
+
+    if (!this.bellIcon) {
+      console.error('Notification bell icon not found');
+      return;
+    }
+
+    // Create badge element using DOMUtils
+    this.badgeElement = DOMUtils.createElement('span', 'notification-badge');
+    DOMUtils.hide(this.badgeElement);
+
+    // Create ripple element using DOMUtils
+    this.rippleElement = DOMUtils.createElement('span', 'notification-ripple');
+
+    // Wrap bell icon content and add elements
+    this.bellIcon.style.position = 'relative';
+    this.bellIcon.appendChild(this.badgeElement);
+    this.bellIcon.appendChild(this.rippleElement);
+  },
+
+  updateNotificationCount(count) {
+    if (!this.badgeElement || !this.rippleElement) {
+      this.init();
+    }
+
+    if (count > 0) {
+      // Show badge with count
+      this.badgeElement.textContent = count > 99 ? '99+' : count;
+      DOMUtils.setDisplay(this.badgeElement, 'flex');
+
+      // Activate ripple animation
+      this.rippleElement.classList.add('active');
+
+      // Optional: Stop ripple after 10 seconds
+      setTimeout(() => {
+        this.rippleElement.classList.remove('active');
+      }, 10000);
+    } else {
+      // Hide badge and stop ripple
+      DOMUtils.hide(this.badgeElement);
+      this.rippleElement.classList.remove('active');
+    }
+  },
+
+  clearNotifications() {
+    this.updateNotificationCount(0);
+  },
+
+  // Manually restart ripple animation
+  restartRipple() {
+    if (this.rippleElement) {
+      this.rippleElement.classList.remove('active');
+      // Force reflow
+      void this.rippleElement.offsetWidth;
+      this.rippleElement.classList.add('active');
+    }
+  }
+};
+
+// =============================================================================
 // UI COMPONENTS
 // =============================================================================
 
