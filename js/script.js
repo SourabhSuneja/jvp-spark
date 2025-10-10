@@ -603,7 +603,8 @@ NotificationBadge.updateNotificationCount(4);
       elements.screenName.innerText = `${APP_CONFIG.name} `;
       elements.content.classList.remove('externalPage');
 
-      AppManager.initialize(); // This still handles profile and menu setup
+      //AppManager.initialize(); 
+      // This still handles profile and menu setup
 
       // Setup switcher and render the dashboard for the current subject
       setupSubjectSwitcher();
