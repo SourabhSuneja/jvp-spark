@@ -6,7 +6,7 @@
 	height: 100%;
 	background: var(--bg-primary);
 	z-index: var(--z-loading);
-	display: flex;
+	display: none;
 	align-items: center;
 	justify-content: center;
 	opacity: 0;
@@ -17,6 +17,7 @@
 .offline-overlay.show {
 	opacity: 1;
 	visibility: visible;
+ display: flex;
 }
 
 .offline-content {
