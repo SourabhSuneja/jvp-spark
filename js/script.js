@@ -589,6 +589,7 @@ const PageManager = {
    },
 
    loadHomePage: (elements) => {
+NotificationBadge.updateNotificationCount(4);
       // Theme restoration logic
       if (ThemeManager.userPreferredTheme !== null) {
          ThemeManager.setTheme(ThemeManager.userPreferredTheme, false); // Restore theme, don't save
@@ -870,6 +871,7 @@ const AppManager = {
       SUBSCRIPTION_DATA = await BackendManager.getSubscriptionData(); // Fetch and store subscription data
       USER_DATA['subscriptions'] = SUBSCRIPTION_DATA;
       MenuManager.initialize();
+      NotificationBadge.init();
    }
 };
 
