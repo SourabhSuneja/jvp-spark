@@ -17,7 +17,7 @@ webpush.setVapidDetails(
 
 // Common headers for CORS
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "https://jvp-spark.netlify.app",
+  "Access-Control-Allow-Origin": "https://sourabhsuneja.github.io",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type"
 };
