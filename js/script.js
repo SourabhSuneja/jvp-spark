@@ -589,7 +589,7 @@ const PageManager = {
    },
 
    loadHomePage: (elements) => {
-NotificationBadge.updateNotificationCount(4);
+NotificationBadge.updateNotificationCount(104);
       // Theme restoration logic
       if (ThemeManager.userPreferredTheme !== null) {
          ThemeManager.setTheme(ThemeManager.userPreferredTheme, false); // Restore theme, don't save
