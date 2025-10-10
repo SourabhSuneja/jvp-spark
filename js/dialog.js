@@ -172,7 +172,7 @@ const getRandomLoadingPhrase = (() => {
             } else if (type === 'processing') {
                 dialogBox.classList.add('dialog-minimal-padding');
                 dialogMessage.classList.add('dialog-processing');
-                dialogMessage.innerHTML = `<img src="/images/loading.gif" style="height: 30px"> ${getRandomLoadingPhrase()}`;
+                dialogMessage.innerHTML = `<img src="https://sourabhsuneja.github.io/jvp-spark/images/loading.gif" style="height: 30px"> ${getRandomLoadingPhrase()}`;
             }
 
             // Show the dialog
