@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en" class="noselect">
+   <head>
+      <meta charset="utf-8">
+      <title>Flashcard Memory Game</title>
+      <meta name="description" content="Boost your memory with this fun flashcard game. Perfect for students to test and improve recall skills through card matching.">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta http-equiv="X-UA-Compatible" content="ie=edge">
+      <link rel="stylesheet prefetch" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+      <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+      <style>
+         :root {
+         /* Colors - Dark Theme */
+         --bg-primary: #121212;
+         --bg-secondary: #1f1f1f;
+         --bg-tertiary: #333333;
+         --bg-gradient-dark: linear-gradient(145deg, #1e1e1e, #333333);
+         --bg-input: #2c2c2c;
+         /* Text Colors - Dark Theme */
+         --text-primary: #fff;
+         --text-secondary: #ddd;
+         --text-tertiary: #b0bec5;
+         --text-muted: rgb(230, 230, 230);
+         /* Accent Colors */
+         --accent-primary: #ffc107;
+         --accent-hover: #e0a800;
+         --accent-focus: #ffd54f;
+         --accent-button-text: black;
+         /* Game Specific Colors */
+         --card-back: #2c2c2c;
+         --card-back-gradient: linear-gradient(145deg, #2c2c2c, #1f1f1f);
+         --card-face: #ffc107;
+         --card-match: #4caf50;
+         --card-no-match: #f44336;
+         --deck-bg: linear-gradient(145deg, #1e1e1e, #2c2c2c);
+         --modal-bg: #1f1f1f;
+         --modal-overlay: rgba(0, 0, 0, 0.8);
+         /* Shadow Colors */
+         --shadow-dark: rgba(0, 0, 0, 0.5);
+         --shadow-medium: rgba(0, 0, 0, 0.6);
+         --shadow-light: rgba(0, 0, 0, 0.4);
+         /* Spacing Values */
+         --spacing-xs: 4px;
+         --spacing-sm: 8px;
+         --spacing-md: 12px;
+         --spacing-lg: 16px;
+         --spacing-xl: 20px;
+         --spacing-xxl: 25px;
+         --spacing-xxxl: 30px;
+         /* Border Radius */
+         --radius-sm: 5px;
+         --radius-md: 8px;
+         --radius-lg: 10px;
+         --radius-xl: 12px;
+         --radius-full: 50%;
+         /* Font Sizes */
+         --font-sm: 0.9rem;
+         --font-base: 1rem;
+         --font-md: 1.1rem;
+         --font-lg: 1.2rem;
+         --font-xl: 1.6rem;
+         --font-xxl: 1.7rem;
+         --font-xxxl: 1.8rem;
+         --font-icon-sm: 1.2rem;
+         /* Transitions */
+         --transition-fast: 0.2s ease;
+         --transition-base: 0.3s ease;
+         --transition-slow: 0.4s all;
+         }
+         /* Light theme overrides */
+         body.light-theme {
+         --bg-primary: #ffffff;
+         --bg-secondary: rgb(253, 253, 253);
+         --bg-tertiary: rgb(240, 240, 240);
+         --bg-gradient-dark: linear-gradient(145deg, #ffffff, #f0f0f0);
+         --bg-input: #ffffff;
+         --text-primary: #333;
+         --text-secondary: rgb(50, 50, 50);
+         --text-tertiary: rgb(80, 80, 80);
+         --text-muted: #333;
+         --accent-button-text: rgb(30, 30, 30);
+         --shadow-dark: rgba(0, 0, 0, 0.1);
+         --shadow-medium: rgba(0, 0, 0, 0.1);
+         --shadow-light: rgba(0, 0, 0, 0.1);
+         /* Game Specific - Light Theme */
+         --card-back: #e0e0e0;
+         --card-back-gradient: linear-gradient(145deg, #f5f5f5, #e0e0e0);
+         --card-face: #ffc107;
+         --card-match: #66bb6a;
+         --card-no-match: #ef5350;
+         --deck-bg: linear-gradient(145deg, #ffffff, #f0f0f0);
+         --modal-bg: #ffffff;
+         --modal-overlay: rgba(0, 0, 0, 0.5);
+         }
+         * {
+         box-sizing: border-box;
+         margin: 0;
+         padding: 0;
+         max-height: 9999999px;
+         font-family: 'Roboto', sans-serif;
+         transition: var(--transition-base) all;
+         }
+         .noselect {
+         -webkit-user-select: none;
+         -moz-user-select: none;
+         -ms-user-select: none;
+         user-select: none;
+         -webkit-touch-callout: none;
+         -webkit-user-drag: none;
+         -webkit-tap-highlight-color: transparent;
+         }
+         html, body {
+         width: 100%;
+         height: 100%;
+         }
+         body {
+         background-color: var(--bg-primary);
+         color: var(--text-primary);
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         min-height: 100vh;
+         padding: var(--spacing-xl);
+         overflow-x: hidden;
+         }
+         .theme-toggle {
+         position: fixed;
+         top: var(--spacing-xl);
+         right: var(--spacing-xl);
+         background-color: var(--bg-secondary);
+         border: none;
+         border-radius: var(--radius-lg);
+         padding: var(--spacing-md);
+         cursor: pointer;
+         color: var(--text-primary);
+         font-size: var(--font-icon-sm);
+         box-shadow: 0 2px 8px var(--shadow-light);
+         transition: var(--transition-base);
+         z-index: 1000;
+         }
+         .theme-toggle:hover {
+         background-color: var(--bg-tertiary);
+         transform: scale(1.1);
+         }
+         .theme-toggle:active {
+         transform: scale(0.95);
+         }
+         .container {
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         flex-direction: column;
+         width: 100%;
+         max-width: 900px;
+         }
+         h1 {
+         font-size: var(--font-xl);
+         font-weight: 700;
+         margin-bottom: var(--spacing-xl);
+         color: var(--text-primary);
+         text-align: center;
+         }
+         .score-table {
+         background: var(--bg-gradient-dark);
+         border-radius: var(--radius-lg);
+         padding: var(--spacing-lg) var(--spacing-xl);
+         margin-bottom: var(--spacing-xl);
+         box-shadow: 0 4px 12px var(--shadow-light);
+         width: 100%;
+         max-width: 612px;
+         display: flex;
+         flex-direction: row;
+         justify-content: space-around;
+         align-items: center;
+         gap: var(--spacing-md);
+         }
+         .stars {
+         display: flex;
+         list-style: none;
+         gap: var(--spacing-xs);
+         }
+         .stars i {
+         color: var(--accent-primary);
+         font-size: var(--font-lg);
+         }
+         .moves, .timer {
+         font-size: var(--font-base);
+         color: var(--text-secondary);
+         font-weight: 500;
+         }
+         .restart {
+         cursor: pointer;
+         color: var(--text-primary);
+         font-size: var(--font-lg);
+         padding: var(--spacing-sm);
+         background-color: var(--bg-secondary);
+         border-radius: var(--radius-md);
+         transition: var(--transition-base);
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         }
+         .restart:hover {
+         background-color: var(--bg-tertiary);
+         transform: scale(1.1);
+         }
+         .restart:active {
+         transform: scale(0.95);
+         }
+         .deck {
+         background: var(--deck-bg);
+         margin: 0;
+         width: 100%;
+         max-width: 612px;
+         min-height: 500px;
+         box-shadow: 0 8px 30px var(--shadow-medium);
+         border-radius: var(--radius-lg);
+         display: flex;
+         justify-content: space-around;
+         flex-wrap: wrap;
+         padding: var(--spacing-xl);
+         margin-bottom: var(--spacing-lg);
+         align-items: center;
+         gap: var(--spacing-md);
+         }
+         .card {
+         transform: rotateY(0);
+         transition: transform 0.5s ease;
+         width: 125px;
+         height: 125px;
+         background: var(--card-back-gradient);
+         box-shadow: 0 4px 12px var(--shadow-light);
+         border-radius: var(--radius-md);
+         font-size: 0;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         list-style: none;
+         cursor: pointer;
+         border: 2px solid var(--bg-tertiary);
+         }
+         .card:hover {
+         transform: translateY(-2px);
+         box-shadow: 0 6px 16px var(--shadow-medium);
+         }
+         .show {
+         transform: rotateY(180deg);
+         background: var(--card-face);
+         font-size: 33px;
+         color: var(--accent-button-text);
+         cursor: default;
+         border-color: var(--accent-primary);
+         }
+         .show:hover {
+         transform: rotateY(180deg);
+         }
+         .match {
+         background: var(--card-match);
+         color: white;
+         border-color: var(--card-match);
+         }
+         .no-match {
+         background: var(--card-no-match);
+         color: white;
+         border-color: var(--card-no-match);
+         transition: 0.1s;
+         }
+         .modal {
+         z-index: 1000;
+         position: fixed;
+         left: 0;
+         top: 0;
+         width: 100%;
+         height: 100%;
+         background-color: var(--modal-overlay);
+         opacity: 0;
+         visibility: hidden;
+         transform: scale(1.1);
+         transition: visibility 0s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
+         }
+         .modal-content {
+         position: absolute;
+         top: 50%;
+         left: 50%;
+         transform: translate(-50%, -50%);
+         background: var(--bg-gradient-dark);
+         color: var(--text-primary);
+         padding: var(--spacing-xxxl);
+         width: 90%;
+         max-width: 35rem;
+         border-radius: var(--radius-lg);
+         text-align: center;
+         box-shadow: 0 8px 30px var(--shadow-medium);
+         }
+         .close-button {
+         float: right;
+         width: 2rem;
+         height: 2rem;
+         line-height: 2rem;
+         text-align: center;
+         cursor: pointer;
+         border-radius: var(--radius-md);
+         background-color: var(--bg-tertiary);
+         color: var(--text-primary);
+         font-weight: bold;
+         font-size: var(--font-lg);
+         transition: var(--transition-base);
+         }
+         .close-button:hover {
+         background-color: var(--accent-primary);
+         color: var(--accent-button-text);
+         transform: scale(1.1);
+         }
+         .show-modal {
+         opacity: 1;
+         visibility: visible;
+         transform: scale(1.0);
+         transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
+         }
+         .tick {
+         color: var(--card-match);
+         font-size: 60px;
+         margin: var(--spacing-xl) 0;
+         }
+         .modal-heading {
+         font-size: var(--font-xl);
+         letter-spacing: 1px;
+         margin: var(--spacing-lg) 0;
+         color: var(--text-primary);
+         }
+         .stats {
+         color: var(--text-secondary);
+         margin-top: var(--spacing-xl);
+         font-size: var(--font-base);
+         }
+         .new-game {
+         display: inline-block;
+         margin-top: var(--spacing-xl);
+         padding: var(--spacing-lg) var(--spacing-xxl);
+         font-size: var(--font-lg);
+         color: var(--accent-button-text);
+         background: var(--accent-primary);
+         border: none;
+         border-radius: var(--radius-lg);
+         cursor: pointer;
+         font-weight: bold;
+         transition: var(--transition-base);
+         }
+         .new-game:hover {
+         background: var(--accent-hover);
+         transform: translateY(-2px);
+         box-shadow: 0 4px 15px var(--shadow-medium);
+         }
+         .new-game:active {
+         transform: translateY(0);
+         box-shadow: 0 2px 8px var(--shadow-light);
+         }
+         @media (max-width: 768px) {
+         body {
+         padding: var(--spacing-md);
+         }
+         .theme-toggle {
+         top: var(--spacing-md);
+         right: var(--spacing-md);
+         }
+         h1 {
+         font-size: var(--font-lg);
+         }
+         .score-table {
+         flex-wrap: wrap;
+         gap: var(--spacing-sm);
+         padding: var(--spacing-md);
+         }
+         .deck {
+         width: 100%;
+         max-width: 350px;
+         min-height: 280px;
+         padding: var(--spacing-md);
+         }
+         .card {
+         width: 68px;
+         height: 68px;
+         }
+         .show {
+         font-size: 30px;
+         }
+         .modal-content {
+         width: 90%;
+         padding: var(--spacing-xl);
+         }
+         .tick {
+         font-size: 45px;
+         }
+         .modal-heading {
+         font-size: var(--font-lg);
+         }
+         .stats {
+         font-size: var(--font-sm);
+         }
+         .new-game {
+         font-size: var(--font-base);
+         padding: var(--spacing-md) var(--spacing-xl);
+         width: 100%;
+         }
+         }
+         @media (max-width: 480px) {
+         .moves, .timer {
+         font-size: var(--font-sm);
+         }
+         .stars i {
+         font-size: var(--font-base);
+         }
+         }
+      </style>
+   </head>
+   <body>
+      <button style="display: none" class="theme-toggle" onclick="document.body.classList.toggle('light-theme')">
+      </button>
+      <div class="container">
+         <header>
+            <h1>Match the Cards</h1>
+         </header>
+         <section class="score-table">
+            <ul class="stars">
+               <li>
+                  <i id="star1" class="fa fa-star"></i>
+               </li>
+               <li>
+                  <i id="star2" class="fa fa-star"></i>
+               </li>
+               <li>
+                  <i id="star3" class="fa fa-star"></i>
+               </li>
+            </ul>
+            <span class="moves">Moves: 0</span>
+            <span class="timer">Elapsed Time: 0:00</span>
+            <div class="restart">
+               <i class="fa fa-repeat"></i>
+            </div>
+         </section>
+         <main>
+            <ul class="deck"></ul>
+         </main>
+         <div class="modal">
+            <div class="modal-content">
+               <span class="close-button">×</span>
+               <i class="fa fa-check-circle tick"></i>
+               <h1 class="modal-heading">Congratulations! You Won!!</h1>
+               <h3 class="stats"></h3>
+               <button class="new-game">Play Again!</button>
+            </div>
+         </div>
+      </div>
+      <script>
+         function shuffle(array) {
+           var currentIndex = array.length, temporaryValue, randomIndex;
+         
+           while (currentIndex !== 0) {
+               randomIndex = Math.floor(Math.random() * currentIndex);
+               currentIndex -= 1;
+               temporaryValue = array[currentIndex];
+               array[currentIndex] = array[randomIndex];
+               array[randomIndex] = temporaryValue;
+           }
+         
+           return array;
+         }
+         
+         const modal = document.querySelector(".modal");
+         const closeButton = document.querySelector(".close-button");
+         
+         function toggleModal() {
+           modal.classList.toggle("show-modal");
+         }
+         
+         function windowOnClick(event) {
+           if (event.target === modal) {
+               toggleModal();
+           }
+         }
+         
+         closeButton.addEventListener("click", toggleModal);
+         window.addEventListener("click", windowOnClick);
+         
+         let cardTest = [];
+         let cards = ["diamond", "diamond", "plane", "plane", "anchor", "anchor", "bolt", "bolt", "leaf", "leaf"
+           , "bicycle", "bicycle", "cube", "cube", "bomb", "bomb"];
+         
+         let shuffledCards = shuffle(cards);
+         
+         function createCards() {
+           for (let card of shuffledCards) {
+               const li = document.createElement("LI");
+               li.classList.toggle("card");
+               const i = document.createElement("i");
+               i.classList.toggle("fa");
+               if (card === "plane") {
+                   i.classList.toggle("fa-paper-plane-o");
+               } else {
+                   i.classList.toggle("fa-" + card);
+               }
+               const deck = document.querySelector('.deck');
+               li.appendChild(i);
+               deck.appendChild(li);
+         
+           }
+         }
+         
+         const ul = document.querySelector('.deck');
+         let moves = document.querySelector(".moves");
+         let movesCounter = 0;
+         let stars = 3;
+         let match = 0;
+         let isfirstClick = true;
+         let timerID;
+         let isRestart = false;
+         
+         function initGame() {
+           createCards();
+           const card = document.querySelectorAll('.card');
+           for (let i = 0; i < card.length; i++) {
+               card[i].addEventListener("click", function (event) {
+                   if (card[i] !== event.target) return;
+                   if (event.target.classList.contains("show")) return;
+                   if (isfirstClick) {
+                       timerID = setInterval(timer, 1000);
+                       isfirstClick = false;
+                   }
+                   showCard(event.target);
+                   setTimeout(addCard, 550, shuffledCards[i], event.target, cardTest, i);
+               }, false);
+           }
+         }
+         
+         function showCard(card) {
+           card.classList.add('show');
+         
+         }
+         
+         function addCard(card, cardHTML, testList, pos) {
+           if (isRestart) {
+               testList.length = 0;
+               isRestart = false;
+           }
+           testList.push(card);
+           testList.push(cardHTML)
+           testList.push(pos);
+           if (testList.length === 6) {
+               updateMoveCounter();
+               testCards(testList[0], testList[1], testList[2], testList[3], testList[4], testList[5]);
+               testList.length = 0;
+           }
+         }
+         
+         function testCards(card1, html1, x1, card2, html2, x2) {
+           if (card1 === card2 && x1 != x2) {
+               cardsMatch(html1, html2);
+           } else {
+               cardsDontMatch(html1, html2);
+           }
+         }
+         
+         function cardsMatch(card1, card2) {
+           card1.classList.add('match');
+           card2.classList.add('match');
+           match++;
+           if (match === 8) {
+               win();
+           }
+         }
+         
+         function cardsDontMatch(card1, card2) {
+           card1.classList.toggle('no-match');
+           card2.classList.toggle('no-match');
+           setTimeout(function () {
+               card1.classList.toggle('no-match');
+               card2.classList.toggle('no-match');
+               card1.classList.toggle('show');
+               card2.classList.toggle('show');
+         
+           }, 300);
+         }
+         
+         function win() {
+           clearInterval(timerID);
+           toggleModal();
+           const stats = document.querySelector(".stats");
+           if (s % 60 < 10) {
+               stats.textContent = "You won with: " + stars + " stars in " + movesCounter + " moves with time: " + m + ":0" + s % 60;
+           } else {
+               stats.textContent = "You won with: " + stars + " stars in " + movesCounter + " moves with time: " + m + ":" + s % 60;
+           }
+         }
+         
+         function updateMoveCounter() {
+           movesCounter++;
+           moves.textContent = "Moves: " + movesCounter;
+           if (movesCounter === 13) {
+               let star = document.querySelector("#star3");
+               star.classList.toggle("fa-star");
+               star.classList.add("fa-star-o");
+               stars--;
+           } else if (movesCounter === 25) {
+               let star = document.querySelector("#star2");
+               star.classList.toggle("fa-star");
+               star.classList.add("fa-star-o");
+               stars--;
+           } else if (movesCounter === 35) {
+               let star = document.querySelector("#star1");
+               star.classList.toggle("fa-star");
+               star.classList.add("fa-star-o");
+               stars--;
+           }
+         }
+         
+         let s = 0;
+         let m = 0;
+         function timer() {
+           ++s;
+           m = Math.floor(s / 60);
+           let timer = document.querySelector(".timer");
+           if (s % 60 < 10) {
+               timer.textContent = "Elapsed Time: " + m + ":0" + s % 60;
+           } else {
+               timer.textContent = "Elapsed Time: " + m + ":" + s % 60;
+           }
+         
+         }
+         
+         let restart = document.querySelector(".restart");
+         restart.addEventListener("click", restartGame, false);
+         function restartGame() {
+           clearInterval(timerID);
+           movesCounter = 0;
+           match = 0;
+           s = 0;
+           m = 0;
+           isfirstClick = true;
+           isRestart = true;
+           const deck = document.querySelector('.deck');
+           var elements = deck.getElementsByClassName("card");
+         
+           while (elements[0]) {
+               elements[0].parentNode.removeChild(elements[0]);
+           }
+           shuffledCards = shuffle(cards);
+           let timer = document.querySelector(".timer");
+           timer.textContent = "Elapsed Time: 0:00";
+           moves.textContent = "Moves: " + movesCounter;
+         
+           resetStars();
+           initGame();
+         }
+         
+         function resetStars() {
+           stars = 3;
+           let star = document.querySelector("#star3");
+           star.classList.remove("fa-star");
+           star.classList.remove("fa-star-o");
+           star.classList.add("fa-star");
+         
+           star = document.querySelector("#star2");
+           star.classList.remove("fa-star");
+           star.classList.remove("fa-star-o");
+           star.classList.add("fa-star");
+         
+           star = document.querySelector("#star1");
+           star.classList.remove("fa-star");
+           star.classList.remove("fa-star-o");
+           star.classList.add("fa-star");
+         }
+         
+         const newGameButton = document.querySelector(".new-game");
+         newGameButton.addEventListener("click", newGame);
+         function newGame() {
+           toggleModal();
+           restartGame();
+         }
+         
+         initGame();
+             
+      </script>
+   </body>
+</html>
