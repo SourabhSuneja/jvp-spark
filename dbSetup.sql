@@ -381,66 +381,70 @@ DECLARE
     v_target_tokens jsonb;
     v_is_eligible boolean := false;
     v_grade_section text;
-    v_target_grade int;
-    v_target_section text;
 BEGIN
     -- Get the authenticated user's ID
     v_student_id := auth.uid();
-    
+
     -- If no authenticated user, return nothing
     IF v_student_id IS NULL THEN
         RETURN;
     END IF;
-    
+
     -- Get student details
     SELECT s.grade, s.section, s.access_token
     INTO v_student_grade, v_student_section, v_student_access_token
     FROM students s
     WHERE s.id = v_student_id;
-    
+
     -- If student not found, return nothing
     IF NOT FOUND THEN
         RETURN;
     END IF;
-    
+
     -- Get notification details
     SELECT nl.target_type, nl.target_tokens
     INTO v_target_type, v_target_tokens
     FROM notification_logs nl
     WHERE nl.id = p_notification_id::uuid;
-    
+
     -- If notification not found, return nothing
     IF NOT FOUND THEN
         RETURN;
     END IF;
-    
+
     -- Check eligibility based on target_type
     CASE v_target_type
         WHEN 'all' THEN
             v_is_eligible := true;
-            
+
         WHEN 'token' THEN
-            -- Check if student's access_token is in the target_tokens array
             v_is_eligible := v_target_tokens ? v_student_access_token::text;
-            
+
         WHEN 'grade' THEN
-            -- Check if student's grade is in the target_tokens array
-            v_is_eligible := v_target_tokens ? v_student_grade::text;
-            
+            -- This check now works for both numbers (e.g., [6]) and strings (e.g., ["6"])
+            SELECT EXISTS (
+                SELECT 1
+                FROM jsonb_array_elements_text(v_target_tokens) AS elem
+                WHERE elem = v_student_grade::text
+            ) INTO v_is_eligible;
+
         WHEN 'grade-section' THEN
-            -- Construct the grade-section string for this student
             v_grade_section := v_student_grade::text || '-' || v_student_section;
-            -- Check if this grade-section combination is in target_tokens
-            v_is_eligible := v_target_tokens ? v_grade_section;
-            
+            -- This check is robust for grade-section strings
+            SELECT EXISTS (
+                SELECT 1
+                FROM jsonb_array_elements_text(v_target_tokens) AS elem
+                WHERE elem = v_grade_section
+            ) INTO v_is_eligible;
+
         ELSE
             v_is_eligible := false;
     END CASE;
-    
+
     -- If eligible, return the notification
     IF v_is_eligible THEN
         RETURN QUERY
-        SELECT 
+        SELECT
             nl.id,
             nl.created_at,
             nl.message_title,
@@ -454,10 +458,11 @@ BEGIN
         FROM notification_logs nl
         WHERE nl.id = p_notification_id::uuid;
     END IF;
-    
+
     RETURN;
 END;
 $$;
+
 
 
 -- =========================
