@@ -1,5 +1,5 @@
 #1
-bubblewrap init --manifest=https://jvp-spark.netlify.app/manifest.json
+bubblewrap init --manifest=https://sourabhsuneja.github.io/jvp-spark/manifest.json
 
 #2
 bubblewrap build
@@ -8,3 +8,4 @@ bubblewrap build
 keytool -list -v -keystore android.keystore -alias android
 
 #Final: Create assetlogs.json with the SHA-256 key obtained from Step #3 inside a folder .well-known in the root folder of the site
+
