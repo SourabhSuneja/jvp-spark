@@ -2,7 +2,7 @@
   "name": "JVP Spark",
   "short_name": "JVP Spark",
   "description": "Discover the ultimate student learning app crafted by Sourabh sir! Engage with interactive quizzes, fun games, insightful notes, and hands-on projects designed to make learning exciting and effective.",
-  "start_url": "/jvp-spark/",
+  "start_url": "/jvp-spark/index.html",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",
