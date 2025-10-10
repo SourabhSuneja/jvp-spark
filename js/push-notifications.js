@@ -38,6 +38,8 @@ async function subscribeToPush(studentId) {
         // 1. If no subscription exists, create one.
         if (subscription === null) {
             console.log('User is not subscribed. Requesting permission...');
+            // Show the custom overlay and wait for user to click "Request Permission"
+            await notificationPermission.show();
             const permission = await Notification.requestPermission();
 
             if (permission !== 'granted') {
