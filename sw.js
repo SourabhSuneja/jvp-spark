@@ -1,27 +1,27 @@
 // Bump the version number when you deploy a new service worker
 const CACHE_NAME = 'jvp-spark-v1.0.0.dev.91';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/css/style.css',
-  '/css/offline-overlay.css',
-  '/css/install-popup-styles.css',
-  '/css/qr-scan.css',
-  '/css/dialog.css',
-  '/css/word-card-styles.css',
-  '/js/script.js',
-  '/js/dialog.js',
-  '/js/offline-manager.js',
-  '/js/pwa-utils.js',
-  '/js/qr-scan.js',
-  '/js/supabase-crud.js',
-  '/js/word-card.js',
-  '/favicon-16x16.png',
-  '/favicon-32x32.png',
-  '/android-chrome-192x192.png',
-  '/android-chrome-512x512.png',
-  '/apple-touch-icon.png',
-  '/favicon.ico',
+  '/jvp-spark/',
+  '/jvp-spark/index.html',
+  '/jvp-spark/css/style.css',
+  '/jvp-spark/css/offline-overlay.css',
+  '/jvp-spark/css/install-popup-styles.css',
+  '/jvp-spark/css/qr-scan.css',
+  '/jvp-spark/css/dialog.css',
+  '/jvp-spark/css/word-card-styles.css',
+  '/jvp-spark/js/script.js',
+  '/jvp-spark/js/dialog.js',
+  '/jvp-spark/js/offline-manager.js',
+  '/jvp-spark/js/pwa-utils.js',
+  '/jvp-spark/js/qr-scan.js',
+  '/jvp-spark/js/supabase-crud.js',
+  '/jvp-spark/js/word-card.js',
+  '/jvp-spark/favicon-16x16.png',
+  '/jvp-spark/favicon-32x32.png',
+  '/jvp-spark/android-chrome-192x192.png',
+  '/jvp-spark/android-chrome-512x512.png',
+  '/jvp-spark/apple-touch-icon.png',
+  '/jvp-spark/favicon.ico',
   // External resources that need to be cached
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css',
   'https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css',
@@ -74,7 +74,7 @@ self.addEventListener('fetch', event => {
   // This ensures both the main page and its embedded pages are always fresh when online.
   if (request.mode === 'navigate' || request.destination === 'iframe' || request.destination === 'document') {
     // A specific fallback is only needed for the main page navigation.
-    const fallbackUrl = (request.mode === 'navigate') ? '/index.html' : undefined;
+    const fallbackUrl = (request.mode === 'navigate') ? '/jvp-spark/index.html' : undefined;
     event.respondWith(networkFirst(request, fallbackUrl));
     return;
   }
@@ -166,8 +166,8 @@ self.addEventListener('push', event => {
 
   const options = {
     body: data.body || 'New update available!',
-    icon: '/android-chrome-192x192.png',
-    badge: '/favicon-32x32.png',
+    icon: '/jvp-spark/android-chrome-192x192.png',
+    badge: '/jvp-spark/favicon-32x32.png',
     vibrate: [200, 100, 200],
     data: data.data
   };
@@ -186,7 +186,7 @@ self.addEventListener('notificationclick', event => {
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
       for (const client of clientList) {
-        if (client.url.includes('/index.html') && 'focus' in client) {
+        if (client.url.includes('/jvp-spark/') && 'focus' in client) {
           client.focus();
           if (notificationID) {
             client.postMessage({ type: 'NOTIFICATION_CLICK', id: notificationID });
@@ -196,8 +196,8 @@ self.addEventListener('notificationclick', event => {
       }
       if (clients.openWindow) {
         const urlToOpen = notificationID ?
-          `/index.html?notification_id=${notificationID}` :
-          '/index.html';
+          `/jvp-spark/index.html?notification_id=${notificationID}` :
+          '/jvp-spark/index.html';
         return clients.openWindow(urlToOpen);
       }
     })
