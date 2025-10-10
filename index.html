@@ -35,6 +35,7 @@
       <link rel="stylesheet" href="./css/dialog.css">
       <link rel="stylesheet" href="./css/word-card-styles.css">
       <link rel="stylesheet" href="./css/install-popup-styles.css">
+      <link rel="stylesheet" href="./css/notification-overlay.css">
       <link rel="stylesheet" href="./css/offline-overlay.css">
    </head>
    <body class="custom-scroll">
@@ -167,6 +168,36 @@
          <button id="close-word-card">Close</button>
       </div>
       <!-- Word of the Day Card Ends -->
+      <!-- Notification Permission Dialog Overlay Starts -->
+      <div class="notification-overlay" id="notificationOverlay">
+         <div class="notification-content">
+            <div class="notification-icon-container">
+               <div class="pulse-rings">
+                  <div class="pulse-ring"></div>
+                  <div class="pulse-ring"></div>
+                  <div class="pulse-ring"></div>
+               </div>
+               <i class="fas fa-bell notification-icon"></i>
+            </div>
+            <h2 class="notification-title">Stay Connected!</h2>
+            <p class="notification-message">
+               This app needs notification permissions to keep you updated with important messages and announcements from the school.
+            </p>
+            <div class="notification-warning">
+               <i class="fas fa-exclamation-triangle"></i>
+               <span><strong>Important:</strong> Without notifications, you won't receive any updates or messages from the school.</span>
+            </div>
+            <div class="notification-instruction">
+               <i class="fas fa-hand-pointer"></i>
+               When prompted, please click <strong>"Allow"</strong> to enable notifications
+            </div>
+            <button class="permission-button" onclick="notificationPermission.requestPermission()">
+            <i class="fas fa-check-circle"></i>
+            Request Permission
+            </button>
+         </div>
+      </div>
+      <!-- Notification Permission Dialog Overlay Ends -->
       <!-- Offline Dialog Overlay Starts -->
       <div class="offline-overlay" id="offlineOverlay">
          <div class="offline-content">
@@ -204,6 +235,8 @@
       <script type="module" src="./js/supabase-crud.js"></script>
       <!-- Dialog box script -->
       <script src="./js/dialog.js"></script>
+      <!-- Notification permission dialog script -->
+      <script src="./js/notification-dialog.js"></script>
       <!-- Offline dialog script -->
       <script src="./js/offline-manager.js"></script>
       <!-- Main JS script -->
