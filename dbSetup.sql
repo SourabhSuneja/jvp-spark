@@ -70,8 +70,8 @@ CREATE TABLE notification_logs (
     target_tokens jsonb,       -- The specific tokens/grades/sections used for filtering
 
     -- Result Metrics
-    targeted_recipients integer NOT NULL, -- The number of subscriptions found
-    success_count integer NOT NULL,       -- The number of devices successfully reached
+    targeted_recipients integer, -- The number of subscriptions found
+    success_count integer,       -- The number of devices successfully reached
 
     sent_by text NOT NULL
 );
