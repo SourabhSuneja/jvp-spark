@@ -10,8 +10,6 @@
       <!-- ion icons link -->
       <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
       <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-      <!-- Supabase CRUD Functions -->
-      <script type="module" src="https://sourabhsuneja.github.io/ion-spark/js/supabase-crud.js"></script>
       <style>
          :root {
      /* Colors - Dark Theme */
@@ -598,7 +596,7 @@
          
          // Fetch blueprints from My JVP Supabase backend
          async function fetchBlueprint(grade, examName) {
-            const data = await invokeFunctionJVP('get_blueprint_data', {'p_class': grade, 'p_exam': examName});
+            const data = await parent.invokeFunctionJVP('get_blueprint_data', {'p_class': grade, 'p_exam': examName});
             return data;
          }
          
