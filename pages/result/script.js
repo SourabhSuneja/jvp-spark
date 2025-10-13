@@ -269,7 +269,7 @@
          // Function to pre-load all custom exams
          async function preloadCustomExams(classVal='') {
          // Pre-load all custom exams
-         customExams = await selectData(
+         customExams = await parent.selectData(
                        'custom_exams',
                        fetchSingle = false,
                        columns = "*",
