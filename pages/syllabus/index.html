@@ -598,7 +598,7 @@
          
          // Fetch syllabus from My JVP Supabase backend
          async function fetchSyllabus(grade, examName) {
-            const data = await invokeFunctionJVP('get_syllabus_data', {'p_class': grade, 'p_exam': examName});
+            const data = await parent.invokeFunctionJVP('get_syllabus_data', {'p_class': grade, 'p_exam': examName});
             return data;
          }
          
