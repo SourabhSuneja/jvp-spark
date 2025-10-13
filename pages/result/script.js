@@ -38,7 +38,7 @@
          };
          
          // Invoke the secure_join
-         const studentMarks = await invokeFunction('restricted_secure_join_tables', functionArgs, false);
+         const studentMarks = await parent.invokeFunctionJVP('restricted_secure_join_tables', functionArgs, false);
          
          // Process the results
          if (studentMarks) {
