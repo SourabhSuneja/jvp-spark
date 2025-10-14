@@ -323,7 +323,7 @@
             }
          }
 
-         function renderNotification(notification) {
+         async function renderNotification(notification) {
             const contentDiv = document.getElementById('notification-content');
             
             if (!notification || !notification.message_title) {
@@ -367,8 +367,12 @@
                   <i class="fas fa-arrow-left"></i> Back to Notifications
                </button>
             `;
+
              // Log in notification read logs
-             parent.upsertData('notification_read_logs', {'student_id': parent.userId, 'notification_id': notification.id}, ['student_id', 'notification_id']);
+             await parent.upsertData('notification_read_logs', {'student_id': parent.userId, 'notification_id': notification.id}, ['student_id', 'notification_id']);
+
+             // Also refresh the unread notification count in the notification badge
+           window.parent.refreshNotificationBadge();
          }
 
          function navigateBack() {
