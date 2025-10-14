@@ -323,7 +323,9 @@ const UIComponents = {
          grade: USER_DATA['grade']
       };
 
-      iframe.src = StringUtils.addUrlParams(src, paramData);
+      //iframe.src = StringUtils.addUrlParams(src, paramData);
+
+      iframe.src = src;
 
       iframe.addEventListener('load', function () {
          hideProcessingDialog();
