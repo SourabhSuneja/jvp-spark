@@ -37,8 +37,8 @@ let currentSubject = 'General';
 // Variable to hold all menu items fetched from the backend for the side navigation drawer
 let MENU_ITEMS = [];
 
-// Variable to hold notifications
-let notifications = {};
+// Variable to hold notifications, attached to window to allow the notifications page (iframe) to access it directly
+window.notifications = {};
 
 // =============================================================================
 // BACKEND MANAGEMENT
@@ -873,8 +873,8 @@ const AppManager = {
       SUBSCRIPTION_DATA = await BackendManager.getSubscriptionData(); // Fetch and store subscription data
       USER_DATA['subscriptions'] = SUBSCRIPTION_DATA;
       MenuManager.initialize();
-      notifications = await invokeFunction('get_unread_notifications', {}, true);
-      NotificationBadge.updateNotificationCount(notifications.count);
+      window.notifications = await invokeFunction('get_unread_notifications', {}, true);
+      NotificationBadge.updateNotificationCount(window.notifications.count);
    }
 };
 
