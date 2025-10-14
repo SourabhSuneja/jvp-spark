@@ -972,8 +972,8 @@ async function getNotifications(lastNotifID = null, pageSize = 5) {
    return data;
 }
 
-function refreshNotificationBadge() {
-   const data = BackendManager.getNotifications(null, 0);
+async function refreshNotificationBadge() {
+   const data = await BackendManager.getNotifications(null, 0);
    if(data) {
       NotificationBadge.updateNotificationCount(data.count_unread);
    }
