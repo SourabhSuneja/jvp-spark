@@ -19,6 +19,18 @@ const USER_DATA = {
    avatar: ''
 };
 
+const BASE_URL = 'https://sourabhsuneja.github.io/jvp-spark/';
+
+// Resources (including page links) mentioned here will be preloaded in the background for faster rendering later
+const PRELOADABLE_RESOURCES = [
+   'pages/notifications/index.html',
+   'pages/result/index.html',
+   'pages/account/index.html',
+   'pages/syllabus/index.html',
+   'pages/blueprint/index.html',
+   'pages/sarthak/index.html'
+]
+
 // Variable to store notification ID in case the app was opened by notification click
 let notifId = null;
 
@@ -79,7 +91,10 @@ const BackendManager = {
    // Function to fetch notifications (defaults to latest 5 if nothing specified)
    getNotifications: async (lastNotifID = null, pageSize = 5) => {
       try {
-         const params =  {'last_notification_id': lastNotifID, 'page_size': pageSize};
+         const params = {
+            'last_notification_id': lastNotifID,
+            'page_size': pageSize
+         };
          const data = await invokeFunction('get_all_notifications', params, true);
          return data || {}; // Return data or an empty object
       } catch (err) {
@@ -143,68 +158,68 @@ const DOMUtils = {
 // =============================================================================
 
 const NotificationBadge = {
-  bellIcon: null,
-  badgeElement: null,
-  rippleElement: null,
+   bellIcon: null,
+   badgeElement: null,
+   rippleElement: null,
 
-  init() {
-    this.bellIcon = document.querySelector('.notification-btn');
+   init() {
+      this.bellIcon = document.querySelector('.notification-btn');
 
-    if (!this.bellIcon) {
-      console.error('Notification bell icon not found');
-      return;
-    }
+      if (!this.bellIcon) {
+         console.error('Notification bell icon not found');
+         return;
+      }
 
-    // Create badge element using DOMUtils
-    this.badgeElement = DOMUtils.createElement('span', 'notification-badge');
-    DOMUtils.hide(this.badgeElement);
-
-    // Create ripple element using DOMUtils
-    this.rippleElement = DOMUtils.createElement('span', 'notification-ripple');
-
-    // Wrap bell icon content and add elements
-    this.bellIcon.style.position = 'relative';
-    this.bellIcon.appendChild(this.badgeElement);
-    this.bellIcon.appendChild(this.rippleElement);
-  },
-
-  updateNotificationCount(count) {
-    if (!this.badgeElement || !this.rippleElement) {
-      this.init();
-    }
-
-    if (count > 0) {
-      // Show badge with count
-      this.badgeElement.textContent = count > 99 ? '99+' : count;
-      DOMUtils.setDisplay(this.badgeElement, 'flex');
-
-      // Activate ripple animation
-      this.rippleElement.classList.add('active');
-
-      // Optional: Stop ripple after 10 seconds
-      setTimeout(() => {
-        this.rippleElement.classList.remove('active');
-      }, 10000);
-    } else {
-      // Hide badge and stop ripple
+      // Create badge element using DOMUtils
+      this.badgeElement = DOMUtils.createElement('span', 'notification-badge');
       DOMUtils.hide(this.badgeElement);
-      this.rippleElement.classList.remove('active');
-    }
-  },
 
-  clearNotifications() {
-    this.updateNotificationCount(0);
-  },
+      // Create ripple element using DOMUtils
+      this.rippleElement = DOMUtils.createElement('span', 'notification-ripple');
 
-  // Manually restart ripple animation
-  restartRipple() {
-    if (this.rippleElement) {
-      this.rippleElement.classList.remove('active');
-      // Force reflow
-      void this.rippleElement.offsetWidth;
-      this.rippleElement.classList.add('active');
-    }
-  }
+      // Wrap bell icon content and add elements
+      this.bellIcon.style.position = 'relative';
+      this.bellIcon.appendChild(this.badgeElement);
+      this.bellIcon.appendChild(this.rippleElement);
+   },
+
+   updateNotificationCount(count) {
+      if (!this.badgeElement || !this.rippleElement) {
+         this.init();
+      }
+
+      if (count > 0) {
+         // Show badge with count
+         this.badgeElement.textContent = count > 99 ? '99+' : count;
+         DOMUtils.setDisplay(this.badgeElement, 'flex');
+
+         // Activate ripple animation
+         this.rippleElement.classList.add('active');
+
+         // Optional: Stop ripple after 10 seconds
+         setTimeout(() => {
+            this.rippleElement.classList.remove('active');
+         }, 10000);
+      } else {
+         // Hide badge and stop ripple
+         DOMUtils.hide(this.badgeElement);
+         this.rippleElement.classList.remove('active');
+      }
+   },
+
+   clearNotifications() {
+      this.updateNotificationCount(0);
+   },
+
+   // Manually restart ripple animation
+   restartRipple() {
+      if (this.rippleElement) {
+         this.rippleElement.classList.remove('active');
+         // Force reflow
+         void this.rippleElement.offsetWidth;
+         this.rippleElement.classList.add('active');
+      }
+   }
 };
 
 // =============================================================================
@@ -613,7 +628,7 @@ const PageManager = {
 
       elements.screenName.innerText = `${APP_CONFIG.name} `;
       elements.content.classList.remove('externalPage');
- 
+
       // This still handles profile and menu setup
 
       // Setup switcher and render the dashboard for the current subject
@@ -664,13 +679,13 @@ const AuthManager = {
          await PageManager.loadPage('home'); // Load home page to trigger correct setup
 
          // Load notification page immediately, if notifId is available
-          if(notifId) {
+         if (notifId) {
             PageManager.loadManualPage({
-    link: './pages/notifications/show.html?notification_id=' + notifId,
-    title: 'Notification',
-    page_key: 'show-notification'
-             });
-          }
+               link: './pages/notifications/show.html?notification_id=' + notifId,
+               title: 'Notification',
+               page_key: 'show-notification'
+            });
+         }
 
       } catch (error) {
          AuthManager.showError(elements, errorIcon, error.message);
@@ -753,7 +768,7 @@ const AuthManager = {
          const isAuthenticated = await checkAuth();
 
          if (isAuthenticated) {
-             // Handle push notification subscription
+            // Handle push notification subscription
             await subscribeToPush();
             // Load profile AND dashboard data before showing the page
             await AppManager.initialize();
@@ -761,13 +776,13 @@ const AuthManager = {
             await PageManager.loadPage('home'); // Load home page to trigger correct setup
 
             // Load notification page immediately, if notifId is available
-             if(notifId) {
+            if (notifId) {
                PageManager.loadManualPage({
-    link: './pages/notifications/show.html?notification_id=' + notifId,
-    title: 'Notification',
-    page_key: 'show-notification'
-                });
-             }
+                  link: './pages/notifications/show.html?notification_id=' + notifId,
+                  title: 'Notification',
+                  page_key: 'show-notification'
+               });
+            }
          } else {
             DOMUtils.setDisplay(signInScreen, 'flex');
          }
@@ -885,6 +900,40 @@ const AppManager = {
       console.log('Notifications: ', USER_DATA['notifications']);
       MenuManager.initialize();
       NotificationBadge.updateNotificationCount(USER_DATA['notifications']['count_unread']);
+      // Preload certain pages for caching and performance
+      AppManager.preloadIframes(PRELOADABLE_RESOURCES);
+   },
+
+   // Preloads an array of URLs by creating and appending hidden iframes
+   preloadIframes: (urlArray) => {
+      // Create a hidden container for the preloading iframes.
+      // This keeps the DOM clean and ensures they are not visible or interactive.
+      const preloadContainer = document.createElement('div');
+      preloadContainer.style.display = 'none';
+      preloadContainer.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(preloadContainer);
+
+      console.log('Starting iframe preloading...');
+
+      urlArray.forEach(url => {
+         const iframe = document.createElement('iframe');
+         // Set attributes to ensure they don't affect accessibility or user interaction.
+         iframe.setAttribute('role', 'presentation');
+         iframe.setAttribute('aria-hidden', 'true');
+         iframe.setAttribute('tabindex', '-1');
+
+         iframe.loading = 'eager';
+         iframe.src = BASE_URL + url;
+
+         iframe.onload = () => {
+            console.log(`Successfully preloaded: ${url}`);
+         };
+         iframe.onerror = () => {
+            console.error(`Failed to preload: ${url}`);
+         };
+
+         preloadContainer.appendChild(iframe);
+      });
    }
 };
 
@@ -916,7 +965,7 @@ async function login() {
    await AuthManager.login();
 }
 
-async function getNotifications(lastNotifID=null, pageSize=5) {
+async function getNotifications(lastNotifID = null, pageSize = 5) {
    const data = await BackendManager.getNotifications(lastNotifID, pageSize);
    return data;
 }
@@ -935,7 +984,7 @@ function createUserProfile() {
 
 // Function to filter out cards based on custom logic (such as, allowing certain cards only for the students of a specific school)
 function shouldDisplayCard(card) {
-  return !card?.extra?.hasOwnProperty("jvpOnly") || card.extra.jvpOnly === true;
+   return !card?.extra?.hasOwnProperty("jvpOnly") || card.extra.jvpOnly === true;
 }
 
 function createAndAppendCards() {
@@ -1004,7 +1053,11 @@ window.addEventListener("popstate", (event) => {
       PageManager.manualHistory.pop(); // Remove current state as we're going back
       const previousState = PageManager.manualHistory[PageManager.manualHistory.length - 1];
       if (previousState) {
-         PageManager.loadManualPage({link: previousState.url, title: previousState.title, page_key: previousState.page});
+         PageManager.loadManualPage({
+            link: previousState.url,
+            title: previousState.title,
+            page_key: previousState.page
+         });
       } else {
          // If no manual pages are left in history, go home
          PageManager.loadPage("home");
