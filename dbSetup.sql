@@ -516,10 +516,37 @@ CREATE POLICY "Allow authenticated users to read resources"
 
 -- Notifications
 ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Allow authenticated users to read notifications"
-    ON notifications FOR SELECT
-    TO authenticated
-    USING (true);
+CREATE POLICY "Students can read only their own notifications"
+ON notifications
+FOR SELECT
+USING (
+    -- Rule 1: Allow if target is 'all'
+    (target_type = 'all')
+
+    OR
+
+    -- Rule 2: Allow if target is 'grade' and student's grade is in the list
+    (
+        target_type = 'grade' AND
+        target_tokens @> to_jsonb(ARRAY[(SELECT grade FROM students WHERE id = auth.uid())])
+    )
+
+    OR
+
+    -- Rule 3: Allow if target is 'grade-section' and student's G-S is in the list
+    (
+        target_type = 'grade-section' AND
+        target_tokens @> to_jsonb(ARRAY[(SELECT grade::text || '-' || section FROM students WHERE id = auth.uid())])
+    )
+
+    OR
+
+    -- Rule 4: Allow if target is 'token' and student's access_token is in the list
+    (
+        target_type = 'token' AND
+        target_tokens @> to_jsonb(ARRAY[(SELECT access_token::text FROM students WHERE id = auth.uid())])
+    )
+);
 
 -- Notification read logs
 ALTER TABLE notification_read_logs ENABLE ROW LEVEL SECURITY;
