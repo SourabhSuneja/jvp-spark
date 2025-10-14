@@ -322,7 +322,7 @@
 
   <script>
     // Global notifications array
-    let notifications = parent.notifications;
+    let notifications = JSON.parse(parent.notifications.notifications);
 
     const notificationsList = document.getElementById('notificationsList');
     const loadingSpinner = document.getElementById('loadingSpinner');
