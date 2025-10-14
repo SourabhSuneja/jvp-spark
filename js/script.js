@@ -972,6 +972,10 @@ async function getNotifications(lastNotifID = null, pageSize = 5) {
    return data;
 }
 
+function updateNotificationCount(count) {
+   NotificationBadge.updateNotificationCount(count);
+}
+
 function init() {
    PageManager.loadPage('home'); // MODIFIED: Point init to loadPage for consistency
 }
