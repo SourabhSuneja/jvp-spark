@@ -37,6 +37,9 @@ let currentSubject = 'General';
 // Variable to hold all menu items fetched from the backend for the side navigation drawer
 let MENU_ITEMS = [];
 
+// Variable to hold notifications
+let notifications = {};
+
 // =============================================================================
 // BACKEND MANAGEMENT
 // =============================================================================
@@ -589,7 +592,6 @@ const PageManager = {
    },
 
    loadHomePage: (elements) => {
-NotificationBadge.updateNotificationCount(104);
       // Theme restoration logic
       if (ThemeManager.userPreferredTheme !== null) {
          ThemeManager.setTheme(ThemeManager.userPreferredTheme, false); // Restore theme, don't save
@@ -602,8 +604,7 @@ NotificationBadge.updateNotificationCount(104);
 
       elements.screenName.innerText = `${APP_CONFIG.name} `;
       elements.content.classList.remove('externalPage');
-
-      //AppManager.initialize(); 
+ 
       // This still handles profile and menu setup
 
       // Setup switcher and render the dashboard for the current subject
@@ -872,7 +873,8 @@ const AppManager = {
       SUBSCRIPTION_DATA = await BackendManager.getSubscriptionData(); // Fetch and store subscription data
       USER_DATA['subscriptions'] = SUBSCRIPTION_DATA;
       MenuManager.initialize();
-      NotificationBadge.init();
+      notifications = await invokeFunction('get_unread_notifications', {}, true);
+      NotificationBadge.updateNotificationCount(notifications.count);
    }
 };
 
