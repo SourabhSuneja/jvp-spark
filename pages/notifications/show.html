@@ -336,7 +336,7 @@
                         <div class="empty-text">Nothing to show</div>
                      </div>
                   </div>
-                  <button class="action-button" onclick="navigateBack()">
+                  <button style="display: none" class="action-button" onclick="navigateBack()">
                      <i class="fas fa-arrow-left"></i> Back to Notifications
                   </button>
                `;
@@ -367,6 +367,8 @@
                   <i class="fas fa-arrow-left"></i> Back to Notifications
                </button>
             `;
+             // Log in notification read logs
+             parent.upsertData('notification_read_logs', {'student_id': parent.userId, 'notification_id': notification.id}, ['student_id', 'notification_id']);
          }
 
          function navigateBack() {
@@ -385,7 +387,7 @@
             const notification = await window.parent.selectData(
             'notifications',
             true,
-            'sent_by, created_at, message_title, message_body, detailed_message',
+            'id, sent_by, created_at, message_title, message_body, detailed_message',
             ['id'],
             [notificationId]
             );
