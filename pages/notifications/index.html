@@ -485,6 +485,9 @@
         // First, mark it as read in the notifications array in the main app page
         const notification = notifications.find(n => n.id === notificationId);
         if (notification) notification.is_read = 1;
+
+        // Also refresh the unread notification count in the notification badge
+        window.parent.refreshNotificationBadge();
         
         window.parent.loadManualPage({link: './pages/notifications/show.html?notification_id=' + notificationId, title: 'Notifications', page_key: 'show-notification'});
     }
