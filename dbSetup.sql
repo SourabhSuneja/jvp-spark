@@ -4,7 +4,7 @@
 -- =========================
 DROP TABLE IF EXISTS menu_resources CASCADE;
 DROP TABLE IF EXISTS subject_resources CASCADE;
-DROP TABLE IF EXISTS notification_logs CASCADE;
+DROP TABLE IF EXISTS notifications CASCADE;
 DROP TABLE IF EXISTS push_subscriptions CASCADE;
 DROP TABLE IF EXISTS settings CASCADE;
 DROP TABLE IF EXISTS subscriptions CASCADE;
@@ -55,7 +55,7 @@ CREATE TABLE subject_resources (
 );
 
 -- Notification Logs
-CREATE TABLE notification_logs (
+CREATE TABLE notifications (
     -- Primary Key and Logging
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     created_at TIMESTAMP NOT NULL DEFAULT now(),
@@ -404,7 +404,7 @@ BEGIN
     -- Get notification details
     SELECT nl.target_type, nl.target_tokens
     INTO v_target_type, v_target_tokens
-    FROM notification_logs nl
+    FROM notifications nl
     WHERE nl.id = p_notification_id::uuid;
 
     -- If notification not found, return nothing
@@ -455,7 +455,7 @@ BEGIN
             nl.targeted_recipients,
             nl.success_count,
             nl.sent_by
-        FROM notification_logs nl
+        FROM notifications nl
         WHERE nl.id = p_notification_id::uuid;
     END IF;
 
@@ -503,9 +503,9 @@ CREATE POLICY "Allow authenticated users to read resources"
     USING (true);
 
 -- Notification logs
-ALTER TABLE notification_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow authenticated users to read notifications"
-    ON notification_logs FOR SELECT
+    ON notifications FOR SELECT
     TO authenticated
     USING (true);
 
