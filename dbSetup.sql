@@ -54,7 +54,7 @@ CREATE TABLE subject_resources (
     extra JSONB
 );
 
--- Notification Logs
+-- Notifications table
 CREATE TABLE notifications (
     -- Primary Key and Logging
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -93,6 +93,17 @@ CREATE TABLE students (
     access_token UUID NOT NULL DEFAULT gen_random_uuid() UNIQUE,
     created_at   TIMESTAMP NOT NULL DEFAULT now(),
     extra JSONB
+);
+
+-- Notification read logs
+CREATE TABLE notification_read_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    notification_id UUID NOT NULL REFERENCES notifications(id) ON DELETE CASCADE,
+    student_id UUID NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+    read_at TIMESTAMP NOT NULL DEFAULT now(),
+
+    -- Prevent duplicate entries (same student reading same notification multiple times)
+    UNIQUE (notification_id, student_id)
 );
 
 -- Subscriptions table
