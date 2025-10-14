@@ -37,9 +37,6 @@ let currentSubject = 'General';
 // Variable to hold all menu items fetched from the backend for the side navigation drawer
 let MENU_ITEMS = [];
 
-// Variable to hold notifications, attached to window to allow the notifications page (iframe) to access it directly
-window.notifications = {};
-
 // =============================================================================
 // BACKEND MANAGEMENT
 // =============================================================================
@@ -79,11 +76,11 @@ const BackendManager = {
       }
    },
 
-   // Function to fetch notifications
-   getNotifications: async (lastNotifID = null) => {
+   // Function to fetch notifications (defaults to latest 5 if nothing specified)
+   getNotifications: async (lastNotifID = null, pageSize = 5) => {
       try {
-         const params = lastNotifID ? {'last_notification_id': lastNotifID} : {};
-         const data = await invokeFunction('get_unread_notifications', params, true);
+         const params =  {'last_notification_id': lastNotifID, 'page_size': pageSize};
+         const data = await invokeFunction('get_all_notifications', params, true);
          return data || {}; // Return data or an empty object
       } catch (err) {
          console.error("Error fetching notifications:", err);
@@ -884,10 +881,10 @@ const AppManager = {
       PAGELIST = extractPages(DASHBOARD_DATA);
       SUBSCRIPTION_DATA = await BackendManager.getSubscriptionData(); // Fetch and store subscription data
       USER_DATA['subscriptions'] = SUBSCRIPTION_DATA;
-      window.notifications = await BackendManager.getNotifications(null); // Get 5 latest unread notifications
-      console.log('Notifications: ', window.notifications);
+      USER_DATA['notifications'] = await BackendManager.getNotifications(null, 0); // Get unread notification count
+      console.log('Notifications: ', USER_DATA['notifications']);
       MenuManager.initialize();
-      NotificationBadge.updateNotificationCount(window.notifications.count);
+      NotificationBadge.updateNotificationCount(USER_DATA['notifications']['count_unread']);
    }
 };
 
