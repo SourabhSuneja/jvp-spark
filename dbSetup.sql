@@ -262,7 +262,8 @@ BEGIN
 END;
 $$;
 
--- Function to get unread notification count + 5 latest unread notifications
+-- Function to get unread notification count + 5 unread notifications
+-- with conditional sorting.
 CREATE OR REPLACE FUNCTION get_unread_notifications(last_notification_id uuid DEFAULT NULL)
 RETURNS TABLE(
     count bigint,
@@ -271,11 +272,11 @@ RETURNS TABLE(
 LANGUAGE sql
 SECURITY INVOKER
 AS $$
-    SELECT 
+    SELECT
         -- Total unread notifications count
         COUNT(*)::bigint AS count,
 
-        -- Latest 5 unread notifications (optionally after the last one fetched)
+        -- 5 unread notifications (optionally after the last one fetched)
         COALESCE(
             (
                 SELECT jsonb_agg(
@@ -285,9 +286,17 @@ AS $$
                         'created_at', n2.created_at,
                         'message_title', n2.message_title,
                         'message_body', n2.message_body
-                    ) ORDER BY n2.created_at DESC
+                    )
+                    -- Conditionally sort the final list of 5 notifications.
+                    -- If it's the first pull (last_notification_id is NULL), sort newest to oldest.
+                    -- For subsequent pulls, sort oldest to newest to maintain chronological order while scrolling down.
+                    ORDER BY
+                        CASE WHEN last_notification_id IS NULL THEN n2.created_at END DESC,
+                        CASE WHEN last_notification_id IS NOT NULL THEN n2.created_at END ASC
                 )
                 FROM (
+                    -- This subquery fetches the correct page of 5 notifications.
+                    -- It always orders by DESC to get the 5 newest items relative to the last fetched ID.
                     SELECT n2.*
                     FROM notifications n2
                     WHERE NOT EXISTS (
@@ -298,7 +307,7 @@ AS $$
                     )
                     AND (
                         last_notification_id IS NULL
-                        OR n2.created_at > (
+                        OR n2.created_at < (
                             SELECT created_at FROM notifications WHERE id = last_notification_id
                         )
                     )
@@ -317,6 +326,7 @@ AS $$
           AND r.student_id = auth.uid()
     );
 $$;
+
 
 
 
