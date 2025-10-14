@@ -523,10 +523,16 @@ CREATE POLICY "Allow authenticated users to read notifications"
 
 -- Notification read logs
 ALTER TABLE notification_read_logs ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Allow authenticated users to read their own notification read logs"
+CREATE POLICY "Students can read only their own notification read logs"
     ON notification_read_logs FOR SELECT
     TO authenticated
     USING (auth.uid() = student_id);
+
+CREATE POLICY "Students can insert only their own notification read logs"
+    ON notification_read_logs
+    FOR INSERT
+    WITH CHECK (student_id = auth.uid());
+
 
 -- Teachers
 ALTER TABLE teachers ENABLE ROW LEVEL SECURITY;
