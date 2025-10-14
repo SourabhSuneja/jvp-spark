@@ -972,8 +972,11 @@ async function getNotifications(lastNotifID = null, pageSize = 5) {
    return data;
 }
 
-function updateNotificationCount(count) {
-   NotificationBadge.updateNotificationCount(count);
+function refreshNotificationBadge() {
+   const data = BackendManager.getNotifications(null, 0);
+   if(data) {
+      NotificationBadge.updateNotificationCount(data.count_unread);
+   }
 }
 
 function init() {
