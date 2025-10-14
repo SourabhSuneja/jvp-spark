@@ -881,7 +881,7 @@ const AppManager = {
       PAGELIST = extractPages(DASHBOARD_DATA);
       SUBSCRIPTION_DATA = await BackendManager.getSubscriptionData(); // Fetch and store subscription data
       USER_DATA['subscriptions'] = SUBSCRIPTION_DATA;
-      USER_DATA['notifications'] = await BackendManager.getNotifications(null, 0); // Get unread notification count
+      USER_DATA['notifications'] = await BackendManager.getNotifications(null, 5); // Get latest 5 notifications
       console.log('Notifications: ', USER_DATA['notifications']);
       MenuManager.initialize();
       NotificationBadge.updateNotificationCount(USER_DATA['notifications']['count_unread']);
