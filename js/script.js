@@ -916,6 +916,11 @@ async function login() {
    await AuthManager.login();
 }
 
+async function getNotifications(lastNotifID=null, pageSize=5) {
+   const data = await BackendManager.getNotifications(lastNotifID, pageSize);
+   return data;
+}
+
 function init() {
    PageManager.loadPage('home'); // MODIFIED: Point init to loadPage for consistency
 }
