@@ -261,6 +261,63 @@ BEGIN
 END;
 $$;
 
+-- Function to get unread notification count + 5 latest unread notifications
+CREATE OR REPLACE FUNCTION get_unread_notifications(last_notification_id uuid DEFAULT NULL)
+RETURNS TABLE(
+    count bigint,
+    notifications jsonb
+)
+LANGUAGE sql
+SECURITY INVOKER
+AS $$
+    SELECT 
+        -- Total unread notifications count
+        COUNT(*)::bigint AS count,
+
+        -- Latest 5 unread notifications (optionally after the last one fetched)
+        COALESCE(
+            (
+                SELECT jsonb_agg(
+                    jsonb_build_object(
+                        'id', n2.id,
+                        'sent_by', n2.sent_by,
+                        'created_at', n2.created_at,
+                        'message_title', n2.message_title,
+                        'message_body', n2.message_body
+                    ) ORDER BY n2.created_at DESC
+                )
+                FROM (
+                    SELECT n2.*
+                    FROM notifications n2
+                    WHERE NOT EXISTS (
+                        SELECT 1
+                        FROM notification_read_logs r2
+                        WHERE r2.notification_id = n2.id
+                          AND r2.student_id = auth.uid()
+                    )
+                    AND (
+                        last_notification_id IS NULL
+                        OR n2.created_at > (
+                            SELECT created_at FROM notifications WHERE id = last_notification_id
+                        )
+                    )
+                    ORDER BY n2.created_at DESC
+                    LIMIT 5
+                ) n2
+            ),
+            '[]'::jsonb
+        ) AS notifications
+
+    FROM notifications n
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM notification_read_logs r
+        WHERE r.notification_id = n.id
+          AND r.student_id = auth.uid()
+    );
+$$;
+
+
 
 -- =========================
 -- TRIGGER FUNCTIONS
