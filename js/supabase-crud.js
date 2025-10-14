@@ -241,6 +241,65 @@ async function selectData(
    }
 }
 
+async function selectDataJVP (
+   tableName,
+   fetchSingle = false,
+   columns = "*",
+   matchColumns = [],
+   matchValues = [],
+   orderByColumn = null,
+   orderDirection = "asc",
+   customFilters = []
+) {
+   try {
+      // Create a separate client for JVP
+      const supabaseJVP = createClient(supabaseUrlJVP, supabaseKeyJVP);
+      let query = supabaseJVP.from(tableName).select(columns);
+
+      // Apply exact match filters
+      if (matchColumns.length > 0 && matchValues.length > 0) {
+         if (matchColumns.length !== matchValues.length) {
+            throw new Error("matchColumns and matchValues arrays must have the same length.");
+         }
+         const matchConditions = {};
+         for (let i = 0; i < matchColumns.length; i++) {
+            matchConditions[matchColumns[i]] = matchValues[i];
+         }
+         query = query.match(matchConditions);
+      }
+
+      // Apply custom filters (e.g., gte, lte, etc.)
+      for (const filter of customFilters) {
+         if (filter.operator === "gte") query = query.gte(filter.column, filter.value);
+         else if (filter.operator === "lte") query = query.lte(filter.column, filter.value);
+         else if (filter.operator === "eq") query = query.eq(filter.column, filter.value);
+         else if (filter.operator === "lt") query = query.lt(filter.column, filter.value);
+         else if (filter.operator === "gt") query = query.gt(filter.column, filter.value);
+         else if (filter.operator === "cs") query = query.cs(filter.column, filter.value);  // contains
+         else if (filter.operator === "ov") query = query.overlaps(filter.column, filter.value);  // overlaps
+         // Add more operators if needed
+      }
+
+      // Apply sorting
+      if (orderByColumn) {
+         query = query.order(orderByColumn, {
+            ascending: orderDirection.toLowerCase() === "asc"
+         });
+      }
+
+      const {
+         data,
+         error
+      } = fetchSingle ? await query.single() : await query;
+
+      if (error) throw error;
+      return data;
+   } catch (error) {
+      console.error("Error fetching data:", error.message);
+      return null;
+   }
+}
+
 // delete data
 async function deleteRow(
    tableName,
@@ -466,3 +525,4 @@ window.invokeEdgeFunction = invokeEdgeFunction;
 window.subscribeToTable = subscribeToTable;
 window.createUserWithoutSession = createUserWithoutSession;
 window.invokeFunctionJVP = invokeFunctionJVP;
+window.selectDataJVP = selectDataJVP;
