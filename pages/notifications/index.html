@@ -435,8 +435,7 @@
         const newNotifications = await fetchNotifications(lastId);
 
         if (newNotifications && newNotifications.length > 0) {
-          userData['notifications']['notifications'] = userData['notifications']['notifications'].concat(newNotifications);
-          notifications = userData['notifications']['notifications'];
+          notifications.push(...newNotifications);
           renderNotifications(newNotifications, true);
         } else {
           hasMore = false;
