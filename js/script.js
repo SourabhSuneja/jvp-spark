@@ -79,6 +79,18 @@ const BackendManager = {
       }
    },
 
+   // Function to fetch notifications
+   getNotifications: async (lastNotifID = null) => {
+      try {
+         const params = lastNotifID ? {'last_notification_id': lastNotifID} : {};
+         const data = await invokeFunction('get_unread_notifications', params, true);
+         return data || {}; // Return data or an empty object
+      } catch (err) {
+         console.error("Error fetching notifications:", err);
+         return {}; // Return empty object on error
+      }
+   },
+
    // Function to get all menu item resources for the side navigation drawer
    getMenuItems: async () => {
       try {
@@ -872,8 +884,9 @@ const AppManager = {
       PAGELIST = extractPages(DASHBOARD_DATA);
       SUBSCRIPTION_DATA = await BackendManager.getSubscriptionData(); // Fetch and store subscription data
       USER_DATA['subscriptions'] = SUBSCRIPTION_DATA;
+      window.notifications = await BackendManager.getNotifications(null); // Get 5 latest unread notifications
+      console.log('Notifications: ', window.notifications);
       MenuManager.initialize();
-      window.notifications = await invokeFunction('get_unread_notifications', {}, true);
       NotificationBadge.updateNotificationCount(window.notifications.count);
    }
 };
