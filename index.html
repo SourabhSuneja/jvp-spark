@@ -79,7 +79,7 @@
             </div>
             <div class="right-section avatar">
                <ion-icon id="theme-toggle-btn" class="theme-toggle header-btn" name="sunny-outline" onclick="toggleTheme()"></ion-icon>
-               <div class="notification-btn header-btn">
+               <div class="notification-btn header-btn" onclick="PageManager.loadManualPage({link: './pages/notifications/index.html', title: 'Notifications', page_key: 'notifications'})">
                  <ion-icon name="notifications"></ion-icon>
                </div>
                <img id="header-avatar" alt="Avatar" onclick="PageManager.loadManualPage({link: './pages/account/index.html', title: 'Settings', page_key: 'settings'})">
