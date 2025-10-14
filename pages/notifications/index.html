@@ -322,7 +322,7 @@
 
   <script>
     // Global notifications array
-    let notifications = parent.notifications.notifications;
+    let notifications = [];
 
     const notificationsList = document.getElementById('notificationsList');
     const loadingSpinner = document.getElementById('loadingSpinner');
@@ -401,7 +401,7 @@
       const lastId = lastNotification.dataset.id;
 
       try {
-        // Call the user-provided function
+        // Call the fetchNotifications function
         const newNotifications = await fetchNotifications(lastId);
 
         if (newNotifications && newNotifications.length > 0) {
@@ -419,7 +419,8 @@
     }
 
     // Initialize and load until scrollable
-    async function initialize() {
+    async function initializePage(userData) {
+       notifications = userData['notifications']['notifications'];
       // Sort by newest first
       notifications.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
       renderNotifications(notifications);
@@ -444,22 +445,15 @@
     // Observe the loading spinner
     observer.observe(loadingSpinner);
 
-    // Placeholder function for user to implement
+    // Function to lazy load more notifications for the page
     async function fetchNotifications(lastNotifId) {
-      // User will implement this function
-      // For demo purposes, returning empty array
-      console.log('fetchNotifications called with ID:', lastNotifId);
-      return [];
+      const data = await parent.getNotifications(lastNotifId, 5);
+      return data || [];
     }
 
-    // Placeholder function for user to implement
     function loadNotification(notificationId) {
-      // User will implement this function
-      console.log('loadNotification called with ID:', notificationId);
+        window.parent.loadManualPage({link: './pages/notifications/show.html?notification_id=' + notificationId, title: 'Notifications', page_key: 'show-notification'});
     }
-
-    // Initialize on load
-    initialize();
 
     // Update timestamps periodically
     setInterval(() => {
