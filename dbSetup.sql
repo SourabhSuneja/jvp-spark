@@ -23,6 +23,7 @@ DROP FUNCTION IF EXISTS create_settings_for_student();
 DROP FUNCTION IF EXISTS set_default_avatar();
 DROP FUNCTION IF EXISTS handle_new_student_subscriptions();
 DROP FUNCTION IF EXISTS get_specific_notification(p_notification_id text);
+DROP FUNCTION IF EXISTS get_unread_notifications(uuid);
 
 
 -- =========================
