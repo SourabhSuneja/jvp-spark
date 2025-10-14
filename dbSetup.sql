@@ -5,11 +5,11 @@
 DROP TABLE IF EXISTS menu_resources CASCADE;
 DROP TABLE IF EXISTS subject_resources CASCADE;
 DROP TABLE IF EXISTS notifications CASCADE;
-DROP TABLE IF EXISTS notification_read_logs CASCADE;
 DROP TABLE IF EXISTS push_subscriptions CASCADE;
 DROP TABLE IF EXISTS settings CASCADE;
 DROP TABLE IF EXISTS subscriptions CASCADE;
 DROP TABLE IF EXISTS students CASCADE;
+DROP TABLE IF EXISTS notification_read_logs CASCADE;
 DROP TABLE IF EXISTS teachers CASCADE;
 
 -- =========================
