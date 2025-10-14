@@ -348,7 +348,6 @@
     // Global notifications array
     let notifications = [];
 
-    let temp = [{"id":"fc876b06-5223-4e5e-8077-cfd733b20b62","is_read":0,"sent_by":"Sourabh Suneja","created_at":"2025-10-14T19:33:59.825281","message_body":"Your ward hasn't submitted his/her English work (Chapter 5) despite repeated reminders.","message_title":"English Work Pending"},{"id":"ca1e695b-23e3-44b6-a11b-e7cd051af67d","is_read":0,"sent_by":"Sourabh Suneja","created_at":"2025-10-14T19:14:33.517919","message_body":"Your ward hasn't submitted his computer work (Chapter 4) despite repeated reminders.","message_title":"Computer Work Pending"},{"id":"e93ad806-656f-4639-8b0f-70096ed88908","is_read":0,"sent_by":"Sourabh Suneja","created_at":"2025-10-14T19:12:11.695924","message_body":"The school will remain off tomorrow to give students a day to prepare for the Term-1 exams.","message_title":"Preparatory Leave Tomorrow"},{"id":"4e50f563-607e-4ddd-ba8c-2b798433a797","is_read":0,"sent_by":"Sourabh Suneja","created_at":"2025-10-14T15:44:18.212063","message_body":"Class Test of Chapter 8 in Maths Tomorrow!","message_title":"Reminder"},{"id":"5baf6b2e-5c8b-4e9b-9fca-eeb17d86c8af","is_read":0,"sent_by":"Sourabh Suneja","created_at":"2025-10-14T09:48:08.094057","message_body":"Participations for the sports meet begin from tomorrow!","message_title":"Announcement"}];
 
     const notificationsList = document.getElementById('notificationsList');
     const loadingSpinner = document.getElementById('loadingSpinner');
@@ -436,7 +435,8 @@
         const newNotifications = await fetchNotifications(lastId);
 
         if (newNotifications && newNotifications.length > 0) {
-          notifications = notifications.concat(newNotifications);
+          userData['notifications']['notifications'] = userData['notifications']['notifications'].concat(newNotifications);
+          notifications = userData['notifications']['notifications'];
           renderNotifications(newNotifications, true);
         } else {
           hasMore = false;
@@ -478,9 +478,8 @@
 
     // Function to lazy load more notifications for the page
     async function fetchNotifications(lastNotifId) {
-      return temp;
       const data = await parent.getNotifications(lastNotifId, 5);
-      return data || [];
+      return data.notifications || [];
     }
 
     function loadNotification(notificationId) {
