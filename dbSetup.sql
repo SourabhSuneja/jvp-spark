@@ -514,12 +514,19 @@ CREATE POLICY "Allow authenticated users to read resources"
     TO authenticated
     USING (true);
 
--- Notification logs
+-- Notifications
 ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow authenticated users to read notifications"
     ON notifications FOR SELECT
     TO authenticated
     USING (true);
+
+-- Notification read logs
+ALTER TABLE notification_read_logs ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow authenticated users to read their own notification read logs"
+    ON notification_read_logs FOR SELECT
+    TO authenticated
+    USING (auth.uid() = student_id);
 
 -- Teachers
 ALTER TABLE teachers ENABLE ROW LEVEL SECURITY;
