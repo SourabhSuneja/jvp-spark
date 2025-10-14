@@ -59,7 +59,7 @@ serve(async (req) => {
 
     // Step 4: Insert the notification first
     const notificationID = message?.data?.notificationID || crypto.randomUUID();
-    const { error: insertError } = await supabase.from("notification_logs").insert([{
+    const { error: insertError } = await supabase.from("notifications").insert([{
       id: notificationID,
       message_title: message.title,
       message_body: message.body,
@@ -119,7 +119,7 @@ serve(async (req) => {
 
     // Step 9: Update the aggregated notification details
     const { error: updateError } = await supabase
-      .from("notification_logs")
+      .from("notifications")
       .update({
         targeted_recipients: subscriptions.length,
         success_count: totalSuccessCount
