@@ -564,61 +564,69 @@ const PageManager = {
       elements.content.appendChild(iframe);
    },
 
+_renderManualPage: (itemData) => {
+    const {
+       link: url,
+       title,
+       page_key: pageKey,
+       min_width: minWidth,
+       extra
+    } = itemData;
+
+    if (!url) return;
+
+    showProcessingDialog();
+    APP_CONFIG.currentPage = pageKey;
+
+    const elements = {
+       content: DOMUtils.getElementById('content'),
+       screenName: DOMUtils.getElementById('screen-name'),
+       studentProfile: DOMUtils.getElementById('student-profile'),
+       menuBtn: DOMUtils.getElementById('menu-btn'),
+       backBtn: DOMUtils.getElementById('back-btn'),
+       subjectSwitcher: DOMUtils.getElementById('subject-switcher')
+    };
+
+    // Set up the page layout like other external pages
+    elements.content.innerHTML = '';
+    DOMUtils.hide(elements.subjectSwitcher);
+    elements.content.classList.add('externalPage');
+    elements.screenName.innerText = `${title} `;
+    DOMUtils.hide(elements.studentProfile);
+    DOMUtils.hide(elements.menuBtn);
+    DOMUtils.show(elements.backBtn);
+
+    // Theme forcing logic for manual pages
+    if (extra && extra.forcedTheme) {
+       if (ThemeManager.userPreferredTheme === null) {
+          ThemeManager.userPreferredTheme = APP_CONFIG.theme;
+       }
+       ThemeManager.setTheme(extra.forcedTheme, false);
+    }
+
+    // Create and append the iframe
+    const iframe = UIComponents.createIframe(url, pageKey, minWidth);
+    elements.content.appendChild(iframe);
+},
+
    // Function to load custom URLs into an iframe
-   loadManualPage: (itemData) => {
-      const {
-         link: url,
-         title,
-         page_key: pageKey,
-         min_width: minWidth,
-         extra
-      } = itemData;
+// Replace the old loadManualPage with this one
 
-      if (!url) return;
+loadManualPage: (itemData) => {
+    // 1. Render the page without touching history
+    PageManager._renderManualPage(itemData);
 
-      showProcessingDialog();
-      APP_CONFIG.currentPage = pageKey;
+    // 2. Push state to browser history for back button functionality
+    const state = {
+        page: itemData.page_key,
+        manual: true,
+        // We store the full itemData to easily restore it
+        itemData: itemData
+    };
+    PageManager.manualHistory.push(state); // Keep track internally
+    window.history.pushState(state, itemData.title, `#${itemData.page_key}`);
+},
 
-      const elements = {
-         content: DOMUtils.getElementById('content'),
-         screenName: DOMUtils.getElementById('screen-name'),
-         studentProfile: DOMUtils.getElementById('student-profile'),
-         menuBtn: DOMUtils.getElementById('menu-btn'),
-         backBtn: DOMUtils.getElementById('back-btn'),
-         subjectSwitcher: DOMUtils.getElementById('subject-switcher')
-      };
-
-      // Set up the page layout like other external pages
-      elements.content.innerHTML = '';
-      DOMUtils.hide(elements.subjectSwitcher);
-      elements.content.classList.add('externalPage');
-      elements.screenName.innerText = `${title} `;
-      DOMUtils.hide(elements.studentProfile);
-      DOMUtils.hide(elements.menuBtn);
-      DOMUtils.show(elements.backBtn);
-
-      // Theme forcing logic for manual pages
-      if (extra && extra.forcedTheme) {
-         if (ThemeManager.userPreferredTheme === null) {
-            ThemeManager.userPreferredTheme = APP_CONFIG.theme;
-         }
-         ThemeManager.setTheme(extra.forcedTheme, false);
-      }
-
-      // Create and append the iframe
-      const iframe = UIComponents.createIframe(url, pageKey, minWidth);
-      elements.content.appendChild(iframe);
-
-      // Push state to browser history for back button functionality
-      const state = {
-         page: pageKey,
-         manual: true,
-         url: url,
-         title: title
-      };
-      PageManager.manualHistory.push(state); // Keep track internally
-      window.history.pushState(state, title, `#${pageKey}`);
-   },
 
    loadHomePage: (elements) => {
       // Theme restoration logic
@@ -1054,28 +1062,28 @@ PageManager.loadPage = (page) => {
    }
 };
 
-// MODIFIED: Update the popstate listener
+// Popstate event listener
 window.addEventListener("popstate", (event) => {
    const state = event.state;
 
+   // If there's no state or we're at the home page, load home.
    if (!state || state.page === "home") {
+      PageManager.manualHistory = []; // Clear the manual history
       PageManager.loadPage("home");
-   } else if (state.manual) {
-      // If the page was manually loaded, use the state's info to reload it
-      PageManager.manualHistory.pop(); // Remove current state as we're going back
-      const previousState = PageManager.manualHistory[PageManager.manualHistory.length - 1];
-      if (previousState) {
-         PageManager.loadManualPage({
-            link: previousState.url,
-            title: previousState.title,
-            page_key: previousState.page
-         });
-      } else {
-         // If no manual pages are left in history, go home
-         PageManager.loadPage("home");
-      }
+      return;
+   }
+   
+   // If the state indicates a manually loaded page
+   if (state.manual) {
+      // We are going back to a previous manual page.
+      // Pop the last entry from our internal history tracker.
+      PageManager.manualHistory.pop(); 
+      
+      // Render the page using the data from the state object,
+      // without pushing a new history state.
+      PageManager._renderManualPage(state.itemData); 
    } else {
-      // Otherwise, it's a regular dashboard page
+      // It's a regular dashboard page, so load it normally.
       PageManager.loadPage(state.page);
    }
 });
