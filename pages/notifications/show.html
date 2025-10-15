@@ -372,7 +372,7 @@
              await parent.upsertData('notification_read_logs', {'student_id': parent.userId, 'notification_id': notification.id}, ['student_id', 'notification_id']);
 
              // Also refresh the unread notification count in the notification badge
-           window.parent.refreshNotificationBadge();
+           window.parent.refreshNotificationBadge(false);
          }
 
          function navigateBack() {
