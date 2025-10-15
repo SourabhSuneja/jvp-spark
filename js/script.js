@@ -26,6 +26,7 @@ const PRELOADABLE_RESOURCES = [
    'pages/notifications/index.html',
    'pages/result/index.html',
    'pages/account/index.html',
+   'pages/avatar-generator/index.html',
    'pages/syllabus/index.html',
    'pages/blueprint/index.html',
    'pages/sarthak/index.html'
