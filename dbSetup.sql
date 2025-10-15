@@ -75,7 +75,8 @@ CREATE TABLE notifications (
     targeted_recipients integer, -- The number of subscriptions found
     success_count integer,       -- The number of devices successfully reached
 
-    sent_by text NOT NULL
+    sent_by text NOT NULL,
+    extra JSONB
 );
 
 -- Students table
@@ -103,6 +104,7 @@ CREATE TABLE notification_read_logs (
     notification_id UUID NOT NULL REFERENCES notifications(id) ON DELETE CASCADE,
     student_id UUID NOT NULL REFERENCES students(id) ON DELETE CASCADE,
     read_at TIMESTAMP NOT NULL DEFAULT now(),
+    extra JSONB,
 
     -- Prevent duplicate entries (same student reading same notification multiple times)
     UNIQUE (notification_id, student_id)
