@@ -23,7 +23,7 @@ DROP FUNCTION IF EXISTS create_settings_for_student();
 DROP FUNCTION IF EXISTS set_default_avatar();
 DROP FUNCTION IF EXISTS handle_new_student_subscriptions();
 DROP FUNCTION IF EXISTS get_specific_notification(p_notification_id text);
-DROP FUNCTION IF EXISTS get_unread_notifications(uuid);
+DROP FUNCTION IF EXISTS get_all_notifications(uuid, integer);
 
 
 -- =========================
@@ -262,21 +262,29 @@ BEGIN
 END;
 $$;
 
--- Function to get unread notification count + 5 unread notifications
+-- Function to get unread notification count + 5 or a specified number of notifications
 -- with conditional sorting.
-CREATE OR REPLACE FUNCTION get_unread_notifications(last_notification_id uuid DEFAULT NULL)
+CREATE OR REPLACE FUNCTION get_all_notifications(
+    last_notification_id uuid DEFAULT NULL,
+    page_size integer DEFAULT 5
+)
 RETURNS TABLE(
-    count bigint,
+    count_unread bigint,
     notifications jsonb
 )
 LANGUAGE sql
 SECURITY INVOKER
 AS $$
     SELECT
-        -- Total unread notifications count
-        COUNT(*)::bigint AS count,
-
-        -- 5 unread notifications (optionally after the last one fetched)
+        (
+            SELECT COUNT(*)::bigint
+            FROM notifications n
+            WHERE NOT EXISTS (
+                SELECT 1 FROM notification_read_logs r
+                WHERE r.notification_id = n.id
+                  AND r.student_id = auth.uid()
+            )
+        ) AS count_unread,
         COALESCE(
             (
                 SELECT jsonb_agg(
@@ -285,48 +293,35 @@ AS $$
                         'sent_by', n2.sent_by,
                         'created_at', n2.created_at,
                         'message_title', n2.message_title,
-                        'message_body', n2.message_body
+                        'message_body', n2.message_body,
+                        'is_read', n2.is_read
                     )
-                    -- Conditionally sort the final list of 5 notifications.
-                    -- If it's the first pull (last_notification_id is NULL), sort newest to oldest.
-                    -- For subsequent pulls, sort oldest to newest to maintain chronological order while scrolling down.
-                    ORDER BY
-                        CASE WHEN last_notification_id IS NULL THEN n2.created_at END DESC,
-                        CASE WHEN last_notification_id IS NOT NULL THEN n2.created_at END ASC
+                    ORDER BY n2.created_at DESC
                 )
                 FROM (
-                    -- This subquery fetches the correct page of 5 notifications.
-                    -- It always orders by DESC to get the 5 newest items relative to the last fetched ID.
-                    SELECT n2.*
+                    SELECT 
+                        n2.*,
+                        CASE 
+                            WHEN EXISTS (
+                                SELECT 1 FROM notification_read_logs r2
+                                WHERE r2.notification_id = n2.id
+                                  AND r2.student_id = auth.uid()
+                            ) THEN 1 ELSE 0
+                        END AS is_read
                     FROM notifications n2
-                    WHERE NOT EXISTS (
-                        SELECT 1
-                        FROM notification_read_logs r2
-                        WHERE r2.notification_id = n2.id
-                          AND r2.student_id = auth.uid()
-                    )
-                    AND (
+                    WHERE (
                         last_notification_id IS NULL
                         OR n2.created_at < (
                             SELECT created_at FROM notifications WHERE id = last_notification_id
                         )
                     )
                     ORDER BY n2.created_at DESC
-                    LIMIT 5
+                    LIMIT page_size
                 ) n2
             ),
             '[]'::jsonb
-        ) AS notifications
-
-    FROM notifications n
-    WHERE NOT EXISTS (
-        SELECT 1
-        FROM notification_read_logs r
-        WHERE r.notification_id = n.id
-          AND r.student_id = auth.uid()
-    );
+        ) AS notifications;
 $$;
-
 
 
 
