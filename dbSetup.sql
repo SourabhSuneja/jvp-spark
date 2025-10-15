@@ -369,6 +369,62 @@ BEGIN
 END;
 $$;
 
+-- Automatically insert a personalized welcome message when a new student registers
+CREATE OR REPLACE FUNCTION log_welcome_notification()
+RETURNS TRIGGER
+SECURITY DEFINER
+AS $$
+DECLARE
+  first_name TEXT;
+BEGIN
+  -- Extract first name and capitalize properly
+  first_name := INITCAP(SPLIT_PART(LOWER(NEW.name), ' ', 1));
+
+  -- Insert personalized welcome message
+  INSERT INTO notifications (
+    message_title,
+    message_body,
+    detailed_message,
+    target_type,
+    target_tokens,
+    sent_by
+  )
+  VALUES (
+    'Welcome to JVP Spark! ✨',
+    'Welcome aboard JVP Spark — your personal hub for learning, creativity, and achievements. Let’s make every day count!',
+    FORMAT(
+      'Dear %s,
+
+*JVP Spark is your unified school app — bringing everything you need in one place!* 
+
+Access results, exam syllabus, blueprints, and explore interactive tools like games, quizzes, and memory challenges that make learning truly joyful.
+
+*Getting Started:*
+
+1. Find all general resources (exam blueprints, results, memory games, etc.) under the “General” tab.
+
+2. Explore subject-specific content like worksheets and quizzes in each subject’s tab — for example, all Computer Science resources in the “Computer” tab.
+
+3. We’re constantly adding new subjects and features, so stay tuned!
+
+Make the most of JVP Spark and keep learning with enthusiasm.
+All the best! 💫
+
+
+Best wishes,
+Sourabh
+Educator & Developer',
+      first_name
+    ),
+    'token',
+    jsonb_build_array(NEW.access_token),
+    'Sourabh Sir'
+  );
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
 
 -- Auto-subscribe Jamna Vidyapeeth students
 CREATE OR REPLACE FUNCTION handle_new_student_subscriptions()
@@ -546,20 +602,25 @@ $$;
 -- =========================
 -- TRIGGERS
 -- =========================
-CREATE TRIGGER after_student_insert
+CREATE TRIGGER after_student_insert_create_settings
 AFTER INSERT ON students
 FOR EACH ROW
 EXECUTE FUNCTION create_settings_for_student();
 
-CREATE TRIGGER trg_set_default_avatar
+CREATE TRIGGER after_settings_created_set_default_avatar
 BEFORE INSERT ON settings
 FOR EACH ROW
 EXECUTE FUNCTION set_default_avatar();
 
-CREATE TRIGGER on_student_insert_create_subscriptions
+CREATE TRIGGER after_student_insert_create_subscriptions
 AFTER INSERT ON students
 FOR EACH ROW
 EXECUTE FUNCTION handle_new_student_subscriptions();
+
+CREATE TRIGGER after_student_insert_log_welcome_msg
+AFTER INSERT ON students
+FOR EACH ROW
+EXECUTE FUNCTION log_welcome_notification();
 
 
 -- =========================
