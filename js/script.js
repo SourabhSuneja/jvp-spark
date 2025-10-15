@@ -184,7 +184,7 @@ const NotificationBadge = {
       this.bellIcon.appendChild(this.rippleElement);
    },
 
-   updateNotificationCount(count) {
+   updateNotificationCount(count, showRipples=true) {
       if (!this.badgeElement || !this.rippleElement) {
          this.init();
       }
@@ -194,13 +194,15 @@ const NotificationBadge = {
          this.badgeElement.textContent = count > 99 ? '99+' : count;
          DOMUtils.setDisplay(this.badgeElement, 'flex');
 
-         // Activate ripple animation
-         this.rippleElement.classList.add('active');
+         // Activate ripple animation if showRipples is set to true
+         if(showRipples) {
+            this.rippleElement.classList.add('active');
 
-         // Optional: Stop ripple after 10 seconds
-         setTimeout(() => {
-            this.rippleElement.classList.remove('active');
-         }, 10000);
+            // Stop ripple after 10 seconds
+            setTimeout(() => {
+               this.rippleElement.classList.remove('active');
+            }, 10000);
+         }
       } else {
          // Hide badge and stop ripple
          DOMUtils.hide(this.badgeElement);
