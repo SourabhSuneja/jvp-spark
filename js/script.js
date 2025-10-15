@@ -975,15 +975,15 @@ async function getNotifications(lastNotifID = null, pageSize = 5) {
    return data;
 }
 
-async function refreshNotificationBadge() {
+async function refreshNotificationBadge(showRipples=true) {
    const data = await BackendManager.getNotifications(null, 0);
    if(data) {
-      NotificationBadge.updateNotificationCount(data.count_unread);
+      NotificationBadge.updateNotificationCount(data.count_unread, showRipples);
    }
 }
 
 function init() {
-   PageManager.loadPage('home'); // MODIFIED: Point init to loadPage for consistency
+   PageManager.loadPage('home');
 }
 
 function capitalizeFirstLetter(str) {
