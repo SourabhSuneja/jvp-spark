@@ -21,6 +21,7 @@ DROP FUNCTION IF EXISTS get_student_by_access_token(TEXT);
 DROP FUNCTION IF EXISTS get_student_profile(UUID);
 DROP FUNCTION IF EXISTS create_settings_for_student();
 DROP FUNCTION IF EXISTS set_default_avatar();
+DROP FUNCTION IF EXISTS log_welcome_notification();
 DROP FUNCTION IF EXISTS handle_new_student_subscriptions();
 DROP FUNCTION IF EXISTS get_specific_notification(p_notification_id text);
 DROP FUNCTION IF EXISTS get_all_notifications(uuid, integer);
