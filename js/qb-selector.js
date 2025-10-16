@@ -5,13 +5,15 @@ let questionBanks = [
       { id: 4, display_name: "Ch-4: Cyber Safety", subject: "Social Studies", grade: 6, chapter: "Geography", topic: "States and Capitals" }
     ];
 
-// Question Bank Selector Module
+// Question Bank Selector Module (Multi-select version)
 const QuestionBankSelector = {
   // Configuration
   config: {
     overlayId: 'questionBankOverlay',
     contentId: 'qbContent',
     searchInputId: 'qbSearchInput',
+    confirmBtnId: 'qbConfirmBtn',
+    selectionCountId: 'qbSelectionCount',
     onSelectCallback: null
   },
 
@@ -19,6 +21,7 @@ const QuestionBankSelector = {
   state: {
     questionBanks: [],
     filteredBanks: [],
+    selectedBankIds: [],
     isVisible: false
   },
 
@@ -34,7 +37,9 @@ const QuestionBankSelector = {
     this.elements = {
       overlay: document.getElementById(this.config.overlayId),
       content: document.getElementById(this.config.contentId),
-      searchInput: document.getElementById(this.config.searchInputId)
+      searchInput: document.getElementById(this.config.searchInputId),
+      confirmBtn: document.getElementById(this.config.confirmBtnId),
+      selectionCount: document.getElementById(this.config.selectionCountId),
     };
   },
 
@@ -42,9 +47,7 @@ const QuestionBankSelector = {
   attachEventListeners() {
     // Close on overlay click
     this.elements.overlay.addEventListener('click', (e) => {
-      if (e.target === this.elements.overlay) {
-        this.hide();
-      }
+      if (e.target === this.elements.overlay) this.hide();
     });
 
     // Search functionality
@@ -54,25 +57,39 @@ const QuestionBankSelector = {
 
     // Close on Escape key
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && this.state.isVisible) {
-        this.hide();
+      if (e.key === 'Escape' && this.state.isVisible) this.hide();
+    });
+
+    // Handle item selection via event delegation
+    this.elements.content.addEventListener('click', (e) => {
+      const item = e.target.closest('.qb-item');
+      if (item) {
+        const bankId = parseInt(item.dataset.id, 10);
+        if (!isNaN(bankId)) this.toggleSelection(bankId);
       }
+    });
+      
+    // Handle confirm button click
+    this.elements.confirmBtn.addEventListener('click', () => {
+      this.confirmSelection();
     });
   },
 
   // Show the selector
   show() {
-    // Load question banks from global variable
     if (typeof questionBanks !== 'undefined') {
       this.state.questionBanks = questionBanks;
       this.state.filteredBanks = [...questionBanks];
-      this.renderQuestionBanks();
     } else {
       console.error('questionBanks variable not found');
       this.renderEmpty('No question banks available');
       return;
     }
-
+    
+    this.state.selectedBankIds = [];
+    this.renderQuestionBanks();
+    this.updateFooter();
+    
     this.elements.overlay.classList.add('active');
     this.state.isVisible = true;
     this.elements.searchInput.value = '';
@@ -85,29 +102,44 @@ const QuestionBankSelector = {
     this.elements.overlay.classList.remove('active');
     this.state.isVisible = false;
     document.body.style.overflow = '';
-    this.elements.searchInput.value = '';
   },
 
   // Filter question banks based on search query
   filterQuestionBanks(query) {
     const searchTerm = query.toLowerCase().trim();
     
-    if (!searchTerm) {
-      this.state.filteredBanks = [...this.state.questionBanks];
-    } else {
-      this.state.filteredBanks = this.state.questionBanks.filter(bank => {
-        return (
-          bank.display_name.toLowerCase().includes(searchTerm) ||
-          bank.subject.toLowerCase().includes(searchTerm) ||
-          bank.grade.toString().includes(searchTerm) ||
-          (bank.book && bank.book.toLowerCase().includes(searchTerm)) ||
-          (bank.chapter && bank.chapter.toLowerCase().includes(searchTerm)) ||
-          (bank.topic && bank.topic.toLowerCase().includes(searchTerm))
-        );
-      });
-    }
+    this.state.filteredBanks = searchTerm
+      ? this.state.questionBanks.filter(bank =>
+          Object.values(bank).some(value =>
+            String(value).toLowerCase().includes(searchTerm)
+          )
+        )
+      : [...this.state.questionBanks];
     
     this.renderQuestionBanks();
+  },
+
+  // Toggle a bank's selection state
+  toggleSelection(bankId) {
+    const index = this.state.selectedBankIds.indexOf(bankId);
+    
+    if (index > -1) {
+      this.state.selectedBankIds.splice(index, 1); // Deselect
+    } else {
+      this.state.selectedBankIds.push(bankId); // Select
+    }
+    
+    // Visually update the specific item without re-rendering the whole list
+    const itemElement = this.elements.content.querySelector(`.qb-item[data-id="${bankId}"]`);
+    itemElement?.classList.toggle('selected');
+    this.updateFooter();
+  },
+
+  // Update footer counter and button state
+  updateFooter() {
+    const count = this.state.selectedBankIds.length;
+    this.elements.selectionCount.textContent = `${count} selected`;
+    this.elements.confirmBtn.disabled = count === 0;
   },
 
   // Render question banks
@@ -117,8 +149,14 @@ const QuestionBankSelector = {
       return;
     }
 
-    const html = this.state.filteredBanks.map(bank => `
-      <div class="qb-item" onclick="QuestionBankSelector.selectBank(${bank.id})">
+    const html = this.state.filteredBanks.map(bank => {
+      const isSelected = this.state.selectedBankIds.includes(bank.id);
+      return `
+      <div class="qb-item ${isSelected ? 'selected' : ''}" data-id="${bank.id}">
+        <div class="qb-item-checkbox">
+          <i class="far fa-square"></i>
+          <i class="fas fa-check-square"></i>
+        </div>
         <div class="qb-item-icon">
           <i class="fas fa-graduation-cap"></i>
         </div>
@@ -127,30 +165,14 @@ const QuestionBankSelector = {
             ${this.escapeHtml(bank.display_name)}
           </div>
           <div class="qb-item-meta">
-            <span class="qb-item-tag">
-              <i class="fas fa-layer-group"></i>
-              Grade ${bank.grade}
-            </span>
-            <span class="qb-item-tag">
-              <i class="fas fa-book"></i>
-              ${this.escapeHtml(bank.subject)}
-            </span>
-            ${bank.chapter ? `
-              <span class="qb-item-tag">
-                <i class="fas fa-bookmark"></i>
-                ${this.escapeHtml(bank.chapter)}
-              </span>
-            ` : ''}
-            ${bank.topic ? `
-              <span class="qb-item-tag">
-                <i class="fas fa-tag"></i>
-                ${this.escapeHtml(bank.topic)}
-              </span>
-            ` : ''}
+            <span class="qb-item-tag"><i class="fas fa-layer-group"></i>Grade ${bank.grade}</span>
+            <span class="qb-item-tag"><i class="fas fa-book"></i>${this.escapeHtml(bank.subject)}</span>
+            ${bank.chapter ? `<span class="qb-item-tag"><i class="fas fa-bookmark"></i>${this.escapeHtml(bank.chapter)}</span>` : ''}
+            ${bank.topic ? `<span class="qb-item-tag"><i class="fas fa-tag"></i>${this.escapeHtml(bank.topic)}</span>` : ''}
           </div>
         </div>
       </div>
-    `).join('');
+    `}).join('');
 
     this.elements.content.innerHTML = html;
   },
@@ -165,12 +187,14 @@ const QuestionBankSelector = {
     `;
   },
 
-  // Handle bank selection
-  selectBank(bankId) {
+  // Handle final selection confirmation
+  confirmSelection() {
+    if (this.state.selectedBankIds.length === 0) return;
+    
     this.hide();
     
     if (this.config.onSelectCallback && typeof this.config.onSelectCallback === 'function') {
-      this.config.onSelectCallback(bankId);
+      this.config.onSelectCallback([...this.state.selectedBankIds]); // Pass a copy
     } else {
       console.warn('No callback function provided for bank selection');
     }
@@ -193,9 +217,9 @@ if (document.readyState === 'loading') {
   QuestionBankSelector.init(handleBankSelection);
 }
 
-// Example callback function - replace with your own implementation
-function handleBankSelection(bankId) {
-  console.log('Selected question bank ID:', bankId);
+// Example callback function - updated to handle an array of IDs
+function handleBankSelection(bankIds) {
+  console.log('Selected question bank IDs:', bankIds);
   // Your custom logic here
-  // e.g., loadQuestions(bankId);
+  // e.g., loadQuestionsFromBanks(bankIds);
 }
