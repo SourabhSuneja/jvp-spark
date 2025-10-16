@@ -613,6 +613,9 @@ _renderManualPage: (itemData) => {
 // Replace the old loadManualPage with this one
 
 loadManualPage: (itemData) => {
+// Testing
+QuestionBankSelector.show();
+return;
     // 1. Render the page without touching history
     PageManager._renderManualPage(itemData);
 
