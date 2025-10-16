@@ -290,7 +290,7 @@
             if (!text) return '';
             
             // Replace *text* with <strong>text</strong>
-            text = text.replace(/\*([^*]+)\*/g, '<span class="highlight">$1</span>');
+            text = text.replace(/\*([^*]+)\*/g, '<strong>$1</strong>');
             
             // Replace _text_ with <em>text</em>
             text = text.replace(/_([^_]+)_/g, '<em>$1</em>');
