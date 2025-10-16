@@ -695,8 +695,18 @@ searchToggle.addEventListener('click', () => {
     searchQuery = '';
     isSearchActive = false;
     isBackgroundLoading = false;
-    filterNotifications('');
+    
+    // Remove highlights by re-rendering all visible notifications
+    const visibleNotifications = notifications.concat(allLoadedNotifications.filter(n => 
+      !notifications.find(existing => existing.id === n.id)
+    ));
+    
+    notificationsList.innerHTML = '';
+    renderNotifications(visibleNotifications, false);
+    allLoadedNotifications = [];
+    
     searchClear.classList.remove('visible');
+    document.getElementById('searchStatus').classList.remove('visible');
   } else {
     // Expand search
     searchInputWrapper.classList.add('expanded');
@@ -740,9 +750,21 @@ searchClear.addEventListener('click', () => {
   isSearchActive = false;
   isBackgroundLoading = false;
   allLoadedNotifications = [];
-  filterNotifications('');
+  
+  // Remove highlights by re-rendering all visible notifications
+  const visibleNotifications = notifications.concat(allLoadedNotifications.filter(n => 
+    !notifications.find(existing => existing.id === n.id)
+  ));
+  
+  notificationsList.innerHTML = '';
+  renderNotifications(visibleNotifications, false);
+  
   searchClear.classList.remove('visible');
-  searchInput.focus();
+  document.getElementById('searchStatus').classList.remove('visible');
+  
+  // Collapse the search input
+  searchInputWrapper.classList.remove('expanded');
+  searchToggle.classList.remove('active');
 });
 
 // Close search on Escape key
