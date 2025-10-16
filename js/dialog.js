@@ -132,6 +132,7 @@ const getRandomLoadingPhrase = (() => {
 
             // remove processing specific classes
             dialogBox.classList.remove('dialog-minimal-padding');
+dialogBox.classList.remove('dark');
 
             // Set the content
             dialogHeader.textContent = title;
