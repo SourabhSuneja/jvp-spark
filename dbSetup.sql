@@ -1,5 +1,5 @@
 -- =========================
--- DROP TABLES (parent → child)
+-- DROP TABLES (parent –> child)
 -- This will also automatically drop associated triggers, policies, and constraints.
 -- =========================
 DROP TABLE IF EXISTS menu_resources CASCADE;
@@ -11,6 +11,9 @@ DROP TABLE IF EXISTS subscriptions CASCADE;
 DROP TABLE IF EXISTS students CASCADE;
 DROP TABLE IF EXISTS notification_read_logs CASCADE;
 DROP TABLE IF EXISTS teachers CASCADE;
+DROP TABLE IF EXISTS subscription_plans CASCADE;
+DROP TABLE IF EXISTS questions CASCADE;
+DROP TABLE IF EXISTS question_banks CASCADE;
 
 -- =========================
 -- DROP FUNCTIONS
@@ -25,11 +28,43 @@ DROP FUNCTION IF EXISTS log_welcome_notification();
 DROP FUNCTION IF EXISTS handle_new_student_subscriptions();
 DROP FUNCTION IF EXISTS get_specific_notification(p_notification_id text);
 DROP FUNCTION IF EXISTS get_all_notifications(uuid, integer);
+DROP FUNCTION IF EXISTS check_question_access(BIGINT);
 
 
 -- =========================
 -- TABLE CREATION
 -- =========================
+
+-- Subscription plans: To store details and limits of each subscription plan
+CREATE TABLE subscription_plans (
+    plan_name TEXT PRIMARY KEY,
+    question_cap INT NOT NULL,
+    description TEXT,
+    extra JSONB
+);
+
+-- Question banks: Organize questions into groups by grade, subject, book, etc.
+CREATE TABLE question_banks (
+    id BIGSERIAL PRIMARY KEY,
+    bank_key TEXT NOT NULL UNIQUE, -- The unique key for referencing in front-end
+    display_name TEXT NOT NULL UNIQUE,
+    grade INT NOT NULL,
+    subject TEXT NOT NULL,
+    book TEXT NOT NULL DEFAULT 'Generic',
+    chapter TEXT,
+    topic TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT now()
+);
+
+-- Questions: Store the individual questions
+CREATE TABLE questions (
+    id BIGSERIAL PRIMARY KEY,
+    question_bank_id BIGINT NOT NULL REFERENCES question_banks(id) ON DELETE CASCADE,
+    question_text TEXT NOT NULL,
+    question_type TEXT NOT NULL CHECK (question_type IN ('MCQ', 'Fill up', 'True/False', 'Match items', 'Very Short Answer Type', 'Short Answer Type', 'Long Answer Type', 'Very Long Answer Type', 'Diagram/Picture/Map Based')),
+    details JSONB, -- Stores all other data: options, answers, explanations, etc.
+    created_at TIMESTAMP NOT NULL DEFAULT now()
+);
 
 -- Table to store menu items for app's navigation drawer
 CREATE TABLE menu_resources (
@@ -117,7 +152,7 @@ CREATE TABLE subscriptions (
     student_id          UUID REFERENCES students(id) ON DELETE CASCADE,
     grade               INT NOT NULL,
     subject             TEXT NOT NULL,
-    subscription_plan   TEXT NOT NULL DEFAULT 'Free',
+    subscription_plan   TEXT NOT NULL DEFAULT 'Free' REFERENCES subscription_plans(plan_name) ON UPDATE CASCADE ON DELETE RESTRICT,
     subscription_ends_at TIMESTAMP NOT NULL DEFAULT '2026-03-31 23:59:59',
     extra               JSONB,
 
@@ -206,7 +241,7 @@ BEGIN
     BEGIN
         token_uuid := access_token_param::UUID;
     EXCEPTION WHEN invalid_text_representation THEN
-        RETURN; -- invalid token string → return nothing
+        RETURN; -- invalid token string â†’ return nothing
     END;
 
     RETURN QUERY
@@ -326,7 +361,59 @@ AS $$
         ) AS notifications;
 $$;
 
+-- This function checks if the current user can access a given question_id (to be used in RLS policies)
+CREATE OR REPLACE FUNCTION check_question_access(question_id_to_check BIGINT)
+RETURNS BOOLEAN AS $$
+DECLARE
+    v_student_id UUID := auth.uid();
+    v_question_cap INT;
+    v_question_rank BIGINT;
+    v_question_grade INT;
+    v_question_subject TEXT;
+BEGIN
+    -- Step 1: Get the grade and subject for the question being checked.
+    SELECT qb.grade, qb.subject
+    INTO v_question_grade, v_question_subject
+    FROM questions q
+    JOIN question_banks qb ON q.question_bank_id = qb.id
+    WHERE q.id = question_id_to_check;
 
+    -- If the question doesn't exist, deny access.
+    IF NOT FOUND THEN
+        RETURN FALSE;
+    END IF;
+
+    -- Step 2: Get the student's question cap from their active subscription.
+    SELECT sp.question_cap
+    INTO v_question_cap
+    FROM subscriptions s
+    JOIN subscription_plans sp ON s.subscription_plan = sp.plan_name
+    WHERE s.student_id = v_student_id
+      AND s.grade = v_question_grade
+      AND s.subject = v_question_subject
+      AND s.subscription_ends_at > now(); -- Ensure the subscription is active
+
+    -- If no active subscription is found for this subject/grade, deny access.
+    IF NOT FOUND THEN
+        RETURN FALSE;
+    END IF;
+
+    -- Step 3: Calculate the "rank" of the question (e.g., is it the 5th or 105th question).
+    -- We rank questions by their ID, partitioned by grade and subject.
+    WITH ranked_questions AS (
+        SELECT
+            q.id,
+            ROW_NUMBER() OVER (PARTITION BY qb.grade, qb.subject ORDER BY q.id ASC) as rn
+        FROM questions q
+        JOIN question_banks qb ON q.question_bank_id = qb.id
+        WHERE qb.grade = v_question_grade AND qb.subject = v_question_subject
+    )
+    SELECT rn INTO v_question_rank FROM ranked_questions WHERE id = question_id_to_check;
+
+    -- Step 4: Compare the question's rank with the student's cap.
+    RETURN v_question_rank <= v_question_cap;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- =========================
 -- TRIGGER FUNCTIONS
@@ -390,12 +477,12 @@ BEGIN
     sent_by
   )
   VALUES (
-    'Welcome to JVP Spark! ✨',
+    'Welcome to JVP Spark!',
     'Welcome aboard JVP Spark — your personal hub for learning, creativity, and achievements. Let’s make every day count!',
     FORMAT(
       'Dear %s,
 
-*JVP Spark is your unified school app — bringing everything you need in one place!* 
+*JVP Spark is your unified school app, bringing everything you need in one place!* 
 
 Access results, exam syllabus, blueprints, and explore interactive tools like games, quizzes, and memory challenges that make learning truly joyful.
 
@@ -403,12 +490,12 @@ Access results, exam syllabus, blueprints, and explore interactive tools like ga
 
 1. Find all general resources (exam blueprints, results, memory games, etc.) under the “General” tab.
 
-2. Explore subject-specific content like worksheets and quizzes in each subject’s tab — for example, all Computer Science resources in the “Computer” tab.
+2. Explore subject-specific content like worksheets and quizzes in each subject’s tab. for example, all Computer Science resources in the “Computer” tab.
 
 3. We’re constantly adding new subjects and features, so stay tuned!
 
 Make the most of JVP Spark and keep learning with enthusiasm.
-All the best! 💫
+All the best!
 
 
 Best wishes,
@@ -627,6 +714,23 @@ EXECUTE FUNCTION log_welcome_notification();
 -- RLS POLICIES
 -- =========================
 
+-- Subscription plans
+ALTER TABLE subscription_plans ENABLE ROW LEVEL SECURITY;
+
+-- Question banks
+ALTER TABLE question_banks ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow authenticated users to read question banks"
+    ON question_banks FOR SELECT
+    TO authenticated
+    USING (true);
+
+-- Questions
+ALTER TABLE questions ENABLE ROW LEVEL SECURITY;
+-- Create the policy for SELECT (read) access.
+CREATE POLICY "Students can view questions based on their subscription"
+ON questions FOR SELECT
+USING ( check_question_access(id) );
+
 -- Menu resources
 ALTER TABLE menu_resources ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow authenticated users to read resources"
@@ -744,7 +848,7 @@ INSERT INTO menu_resources (
 VALUES
     ('Dashboard',     'home',               'dashboard',      '',                                      1),
     ('My Progress',   'bar-chart',  'my-progress',    'pages/coming-soon/index.html',      2),
-    ('Notifications', 'notifications',      'notifications',  'pages/coming-soon/index.html',        3),
+    ('Notifications', 'notifications',      'notifications',  'pages/notifications/index.html',        3),
     ('Subscriptions',   'ribbon',  'subscriptions',    'pages/coming-soon/index.html',      4),
     ('Settings',      'settings',           'settings',       'pages/account/index.html',              5),
     ('Developer',     'code',       'about-developer','pages/about-developer/index.html',      6);
@@ -909,3 +1013,11 @@ VALUES
         1, 
         NULL
 );
+
+
+-- Available subscription plans
+INSERT INTO subscription_plans (plan_name, question_cap, description)
+VALUES
+    ('Free', 2, 'Access to the first 2 questions per subject.'),
+    ('Basic', 5, 'Access to 5 questions per subject.'),
+    ('Premium', 1000000, 'Effectively unlimited access to all questions.'); -- Use a very large number for unlimited
