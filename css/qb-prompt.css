@@ -36,7 +36,7 @@
   flex-direction: column;
   transform: scale(0.9) translateY(20px);
   transition: transform var(--transition-base);
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 .qb-overlay.active .qb-card {
