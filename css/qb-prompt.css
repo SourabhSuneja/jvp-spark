@@ -30,7 +30,8 @@
   box-shadow: 0 10px 40px var(--shadow-dark);
   max-width: 600px;
   width: 100%;
-  height: 70vh;
+  height: 85vh;
+  max-height: 340px;
   display: flex;
   flex-direction: column;
   transform: scale(0.9) translateY(20px);
