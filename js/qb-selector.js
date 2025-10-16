@@ -10,7 +10,12 @@ const QuestionBankSelector = {
 
   // Internal state
   state: {
-    questionBanks: [],
+    questionBanks: [
+      { id: 1, display_name: "English Grammar Basics", subject: "English", grade: 5, book: "Oxford Grammar", chapter: "Verbs", topic: "Tenses" },
+      { id: 2, display_name: "Mathematics Algebra", subject: "Maths", grade: 8, book: "NCERT", chapter: "Linear Equations", topic: "Variables" },
+      { id: 3, display_name: "Science - Forces and Motion", subject: "Science", grade: 9, book: "NCERT", chapter: "Force", topic: "Newton's Laws" },
+      { id: 4, display_name: "Social Studies - India", subject: "Social Studies", grade: 6, chapter: "Geography", topic: "States and Capitals" }
+    ],
     filteredBanks: [],
     isVisible: false
   },
