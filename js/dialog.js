@@ -174,9 +174,9 @@ const getRandomLoadingPhrase = (() => {
                 dialogMessage.classList.add('dialog-processing');
                 dialogMessage.innerHTML = `<img src="https://sourabhsuneja.github.io/jvp-spark/images/loading.gif" style="height: 30px"> ${getRandomLoadingPhrase()}`;
                 if(APP_CONFIG.theme === 'dark') {
-                    dialogMessage.classList.add('dark');
+                    dialogBox.classList.add('dark');
                 } else {
-                    dialogMessage.classList.remove('dark');
+                    dialogBox.classList.remove('dark');
                 }
             }
 
