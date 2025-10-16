@@ -7,7 +7,7 @@
   bottom: 0;
   background: var(--overlay-bg);
   backdrop-filter: blur(4px);
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   z-index: var(--z-signin);
@@ -20,6 +20,7 @@
 .qb-overlay.active {
   opacity: 1;
   visibility: visible;
+  display: flex;
 }
 
 /* Card Container */
@@ -190,6 +191,7 @@
   flex-wrap: wrap;
   gap: var(--spacing-sm);
   margin-top: var(--spacing-sm);
+  display: none;
 }
 
 .qb-item-tag {
