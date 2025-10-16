@@ -546,10 +546,13 @@ const PageManager = {
 
       // Show question bank selector if card requires selection
       if(cardData.extra && cardData.extra.qbRequired) {
+         hideProcessingDialog();
          const selectedQbIds = await QuestionBankSelector.show();
          if(!selectedQbIds) {
              return;
          }
+
+         showProcessingDialog();
          USER_DATA['selectedQbIds'] = selectedQbIds;
          console.log(USER_DATA);
        }
