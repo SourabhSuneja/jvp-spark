@@ -331,10 +331,197 @@
         font-size: var(--font-xl);
       }
     }
+
+/* Search Container */
+.search-container {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-xl);
+  padding: var(--spacing-sm) 0;
+}
+
+.search-toggle {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-fast);
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px var(--shadow-light);
+}
+
+.search-toggle:hover {
+  background: var(--bg-tertiary);
+  transform: scale(1.05);
+}
+
+.search-toggle:active {
+  transform: scale(0.95);
+}
+
+.search-toggle.active {
+  background: var(--accent-primary);
+}
+
+.search-toggle.active .search-icon {
+  stroke: var(--accent-button-text);
+}
+
+.search-icon {
+  stroke: var(--text-primary);
+  transition: var(--transition-fast);
+}
+
+.search-input-wrapper {
+  position: relative;
+  flex: 1;
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-width var(--transition-base), opacity var(--transition-base);
+}
+
+.search-input-wrapper.expanded {
+  max-width: 600px;
+  opacity: 1;
+}
+
+.search-input {
+  width: 100%;
+  padding: var(--spacing-md) var(--spacing-xl);
+  padding-right: 40px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-input);
+  border: 2px solid transparent;
+  color: var(--text-primary);
+  font-size: var(--font-base);
+  outline: none;
+  transition: var(--transition-fast);
+  box-shadow: 0 2px 8px var(--shadow-light);
+}
+
+.search-input:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 4px 12px var(--shadow-medium);
+}
+
+.search-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.search-clear {
+  position: absolute;
+  right: var(--spacing-sm);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-fast);
+  padding: 0;
+}
+
+.search-clear:hover {
+  background: var(--bg-tertiary);
+}
+
+.search-clear.visible {
+  display: flex;
+}
+
+.search-clear svg {
+  stroke: var(--text-tertiary);
+}
+
+.search-clear:hover svg {
+  stroke: var(--text-primary);
+}
+
+/* Search Status */
+.search-status {
+  padding: var(--spacing-md) 0;
+  text-align: center;
+  color: var(--text-tertiary);
+  font-size: var(--font-sm);
+  display: none;
+}
+
+.search-status.visible {
+  display: block;
+}
+
+/* Highlight matched text */
+.highlight {
+  background: var(--accent-primary);
+  color: var(--accent-button-text);
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-weight: 500;
+}
+
+/* Hide notification cards with display none for better performance */
+.notification-card.hidden {
+  display: none;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .search-container {
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  .search-toggle {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .search-input {
+    padding: var(--spacing-sm) var(--spacing-md);
+    padding-right: 36px;
+    font-size: var(--font-sm);
+  }
+}
   </style>
 </head>
 <body>
   <div class="container">
+<!-- Search Bar -->
+<div class="search-container">
+  <button class="search-toggle noselect" id="searchToggle" aria-label="Toggle search">
+    <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="11" cy="11" r="8"></circle>
+      <path d="m21 21-4.35-4.35"></path>
+    </svg>
+  </button>
+  <div class="search-input-wrapper" id="searchInputWrapper">
+    <input 
+      type="text" 
+      class="search-input" 
+      id="searchInput" 
+      placeholder="Search notifications..."
+      autocomplete="off"
+    />
+    <button class="search-clear noselect" id="searchClear" aria-label="Clear search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+  </div>
+</div>
+<div class="search-status" id="searchStatus"></div>
     <div class="header">
       <h1>Notifications</h1>
     </div>
@@ -347,6 +534,12 @@
   <script>
     // Global notifications array
     let notifications = [];
+
+// Search state
+let isSearchActive = false;
+let searchQuery = '';
+let allLoadedNotifications = []; // Store all loaded notifications during search
+let isBackgroundLoading = false;
 
 
     const notificationsList = document.getElementById('notificationsList');
@@ -369,35 +562,45 @@
     }
 
     // Create notification card element
-    function createNotificationCard(notification) {
-      const card = document.createElement('div');
-      card.className = 'notification-card';
-      card.dataset.id = notification.id;
+function createNotificationCard(notification, highlightText = '') {
+  const card = document.createElement('div');
+  card.className = 'notification-card';
+  card.dataset.id = notification.id;
 
   // Add 'unread' class if is_read is 0
   if (notification.is_read === 0) {
     card.className += ' unread';
   }
-      
-      card.innerHTML = `
-        <div class="notification-header">
-          <div class="notification-title">${notification.message_title}</div>
-          <div class="notification-time">${timeAgo(notification.created_at)}</div>
-        </div>
-        <div class="notification-body">${notification.message_body}</div>
-        <div class="notification-sender">From: ${notification.sent_by}</div>
-      `;
+  
+  // Function to highlight matching text
+  const highlight = (text, query) => {
+    if (!query) return text;
+    const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    return text.replace(regex, '<span class="highlight">$1</span>');
+  };
+  
+  const title = highlightText ? highlight(notification.message_title, highlightText) : notification.message_title;
+  const body = highlightText ? highlight(notification.message_body, highlightText) : notification.message_body;
+  
+  card.innerHTML = `
+    <div class="notification-header">
+      <div class="notification-title">${title}</div>
+      <div class="notification-time">${timeAgo(notification.created_at)}</div>
+    </div>
+    <div class="notification-body">${body}</div>
+    <div class="notification-sender">From: ${notification.sent_by}</div>
+  `;
 
-      card.addEventListener('click', () => {
-        if (typeof loadNotification === 'function') {
-          loadNotification(notification.id);
-        }
-      });
-
-      return card;
+  card.addEventListener('click', () => {
+    if (typeof loadNotification === 'function') {
+      loadNotification(notification.id);
     }
+  });
 
-    // Render notifications (newest first for initial, oldest first for lazy load)
+  return card;
+}
+
+    // Render notifications (newest first)
     function renderNotifications(notifs, append = false) {
       if (!append) {
         notificationsList.innerHTML = '';
@@ -474,6 +677,187 @@
 
     // Observe the loading spinner
     observer.observe(loadingSpinner);
+
+// Search UI Event Listeners
+const searchToggle = document.getElementById('searchToggle');
+const searchInputWrapper = document.getElementById('searchInputWrapper');
+const searchInput = document.getElementById('searchInput');
+const searchClear = document.getElementById('searchClear');
+
+searchToggle.addEventListener('click', () => {
+  const isExpanded = searchInputWrapper.classList.contains('expanded');
+  
+  if (isExpanded) {
+    // Collapse search
+    searchInputWrapper.classList.remove('expanded');
+    searchToggle.classList.remove('active');
+    searchInput.value = '';
+    searchQuery = '';
+    isSearchActive = false;
+    isBackgroundLoading = false;
+    filterNotifications('');
+    searchClear.classList.remove('visible');
+  } else {
+    // Expand search
+    searchInputWrapper.classList.add('expanded');
+    searchToggle.classList.add('active');
+    setTimeout(() => searchInput.focus(), 300);
+  }
+});
+
+searchInput.addEventListener('input', (e) => {
+  searchQuery = e.target.value.trim();
+  
+  // Show/hide clear button
+  if (searchQuery) {
+    searchClear.classList.add('visible');
+  } else {
+    searchClear.classList.remove('visible');
+  }
+
+  // Activate search mode on first keystroke
+  if (searchQuery && !isSearchActive) {
+    isSearchActive = true;
+    allLoadedNotifications = [...notifications];
+    // Start background loading
+    backgroundLoadNotifications();
+  }
+
+  // Filter notifications as user types
+  filterNotifications(searchQuery);
+
+  // Deactivate search if query is cleared
+  if (!searchQuery && isSearchActive) {
+    isSearchActive = false;
+    isBackgroundLoading = false;
+    allLoadedNotifications = [];
+  }
+});
+
+searchClear.addEventListener('click', () => {
+  searchInput.value = '';
+  searchQuery = '';
+  isSearchActive = false;
+  isBackgroundLoading = false;
+  allLoadedNotifications = [];
+  filterNotifications('');
+  searchClear.classList.remove('visible');
+  searchInput.focus();
+});
+
+// Close search on Escape key
+searchInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    searchToggle.click();
+  }
+});
+
+// Search functionality
+function filterNotifications(query) {
+  if (!query) {
+    // Show all loaded notifications
+    const cards = document.querySelectorAll('.notification-card');
+    cards.forEach(card => card.classList.remove('hidden'));
+    updateSearchStatus('');
+    return;
+  }
+
+  const searchLower = query.toLowerCase();
+  const allNotifs = isSearchActive ? allLoadedNotifications : notifications;
+  let visibleCount = 0;
+
+  allNotifs.forEach(notification => {
+    const card = document.querySelector(`.notification-card[data-id="${notification.id}"]`);
+    if (!card) return;
+
+    const titleMatch = notification.message_title.toLowerCase().includes(searchLower);
+    const bodyMatch = notification.message_body.toLowerCase().includes(searchLower);
+
+    if (titleMatch || bodyMatch) {
+      card.classList.remove('hidden');
+      visibleCount++;
+      // Update card with highlighting
+      const newCard = createNotificationCard(notification, query);
+      card.innerHTML = newCard.innerHTML;
+    } else {
+      card.classList.add('hidden');
+    }
+  });
+
+  updateSearchStatus(query, visibleCount);
+}
+
+function updateSearchStatus(query, count = 0) {
+  const status = document.getElementById('searchStatus');
+  if (!query) {
+    status.classList.remove('visible');
+    return;
+  }
+
+  if (isBackgroundLoading) {
+    status.textContent = `Found ${count} results (loading more...)`;
+  } else if (count === 0) {
+    status.textContent = 'No notifications found';
+  } else if (count === 1) {
+    status.textContent = '1 notification found';
+  } else {
+    status.textContent = `${count} notifications found`;
+  }
+  status.classList.add('visible');
+}
+
+// Background loading during search
+async function backgroundLoadNotifications() {
+  if (isBackgroundLoading || !hasMore) return;
+  
+  isBackgroundLoading = true;
+
+  try {
+    const lastNotif = allLoadedNotifications[allLoadedNotifications.length - 1];
+    const lastId = lastNotif ? lastNotif.id : (notifications[notifications.length - 1]?.id);
+    
+    if (!lastId) {
+      isBackgroundLoading = false;
+      return;
+    }
+
+    const newNotifications = await fetchNotifications(lastId);
+
+    if (newNotifications && newNotifications.length > 0) {
+      allLoadedNotifications.push(...newNotifications);
+      
+      // Render new notifications (they will be filtered immediately)
+      newNotifications.forEach(notification => {
+        const card = createNotificationCard(notification, searchQuery);
+        notificationsList.appendChild(card);
+      });
+
+      // Apply current search filter to new cards
+      if (searchQuery) {
+        filterNotifications(searchQuery);
+      }
+
+      // Continue loading if still searching
+      if (isSearchActive && hasMore) {
+        setTimeout(() => {
+          isBackgroundLoading = false;
+          backgroundLoadNotifications();
+        }, 300); // Small delay between requests
+      } else {
+        isBackgroundLoading = false;
+      }
+    } else {
+      hasMore = false;
+      isBackgroundLoading = false;
+      if (searchQuery) {
+        updateSearchStatus(searchQuery, document.querySelectorAll('.notification-card:not(.hidden)').length);
+      }
+    }
+  } catch (error) {
+    console.error('Error loading notifications:', error);
+    isBackgroundLoading = false;
+  }
+}
 
     // Function to lazy load more notifications for the page
     async function fetchNotifications(lastNotifId) {
