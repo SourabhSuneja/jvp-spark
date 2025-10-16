@@ -107,17 +107,18 @@
   width: 100%;
   padding: var(--spacing-md) var(--spacing-md) var(--spacing-md) 40px;
   background: var(--bg-input);
-  border: 1px solid var(--bg-tertiary);
-  border-radius: var(--radius-md);
+  border: 2px solid transparent;
+  border-radius: var(--radius-lg);
   color: var(--text-primary);
   font-size: var(--font-base);
   outline: none;
+  box-shadow: 0 2px 8px var(--shadow-light);
   transition: all var(--transition-fast);
 }
 
 .qb-search-input:focus {
   border-color: var(--accent-primary);
-  box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.1);
+  box-shadow: 0 4px 12px var(--shadow-medium);
 }
 
 .qb-search-input::placeholder {
