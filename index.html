@@ -81,7 +81,7 @@
             <div class="right-section avatar">
                <ion-icon id="theme-toggle-btn" class="theme-toggle header-btn" name="sunny-outline" onclick="toggleTheme()"></ion-icon>
                <div class="notification-btn header-btn" onclick="PageManager.loadManualPage({link: './pages/notifications/index.html', title: 'Notifications', page_key: 'notifications'})">
-                 <ion-icon name="notifications"></ion-icon>
+                  <ion-icon name="notifications"></ion-icon>
                </div>
                <img id="header-avatar" alt="Avatar" onclick="PageManager.loadManualPage({link: './pages/account/index.html', title: 'Settings', page_key: 'settings'})">
                <div id="name-in-header" class="name" onclick="PageManager.loadManualPage({link: './pages/account/index.html', title: 'Settings', page_key: 'settings'})"></div>
@@ -171,35 +171,39 @@
          <button id="close-word-card">Close</button>
       </div>
       <!-- Word of the Day Card Ends -->
-<!-- Question Bank Prompt Starts -->
-<div id="questionBankOverlay" class="qb-overlay">
-  <div class="qb-card">
-    <div class="qb-header">
-      <h2 class="qb-title">
-        <i class="fas fa-book-open"></i>
-        Select Question Bank
-      </h2>
-      <button class="qb-close-btn" onclick="QuestionBankSelector.hide()">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-    
-    <div class="qb-search-container">
-      <i class="fas fa-search qb-search-icon"></i>
-      <input 
-        type="text" 
-        id="qbSearchInput" 
-        class="qb-search-input" 
-        placeholder="Search by subject, grade, or topic..."
-      >
-    </div>
-    
-    <div class="qb-content" id="qbContent">
-      <!-- Question banks will be dynamically inserted here -->
-    </div>
-  </div>
-</div>
-<!-- Question Bank Prompt Ends -->
+      <!-- Question Bank Prompt Starts -->
+      <div id="questionBankOverlay" class="qb-overlay">
+         <div class="qb-card">
+            <div class="qb-header">
+               <h2 class="qb-title">
+                  <i class="fas fa-book-open"></i>
+                  Select Question Bank
+               </h2>
+               <button class="qb-close-btn" onclick="QuestionBankSelector.hide()">
+               <i class="fas fa-times"></i>
+               </button>
+            </div>
+            <div class="qb-search-container">
+               <i class="fas fa-search qb-search-icon"></i>
+               <input 
+                  type="text" 
+                  id="qbSearchInput" 
+                  class="qb-search-input" 
+                  placeholder="Search by subject, grade, or topic..."
+                  >
+            </div>
+            <div class="qb-content" id="qbContent">
+               <!-- Question banks will be dynamically inserted here -->
+            </div>
+            <div class="qb-footer">
+               <span id="qbSelectionCount" class="qb-selection-count">0 selected</span>
+               <button id="qbConfirmBtn" class="qb-confirm-btn" disabled>
+               <i class="fas fa-check"></i> Confirm Selection
+               </button>
+            </div>
+         </div>
+      </div>
+      <!-- Question Bank Prompt Ends -->
       <!-- Notification Permission Dialog Overlay Starts -->
       <div class="notification-overlay" id="notificationOverlay">
          <div class="notification-content">
