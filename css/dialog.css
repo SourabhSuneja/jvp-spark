@@ -30,6 +30,10 @@
             transition: transform 0.3s ease, opacity 0.3s ease;
         }
 
+        .dialog-box.dark {
+            background-color: transparent;
+        }
+
         .dialog-minimal-padding {
             padding: 6px;
         }
