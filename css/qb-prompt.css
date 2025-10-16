@@ -228,6 +228,88 @@
   margin-top: var(--spacing-md);
 }
 
+/* Selected State for Question Bank Item */
+.qb-item {
+  /* Add position relative for checkbox alignment */
+  position: relative; 
+}
+
+.qb-item.selected {
+  border-color: var(--accent-primary);
+  background: var(--bg-input);
+  transform: translateX(0); /* Override hover effect */
+  box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.2);
+}
+
+/* Checkbox for selection */
+.qb-item-checkbox {
+  font-size: var(--font-xl);
+  color: var(--text-tertiary);
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.qb-item .qb-item-checkbox .fa-check-square {
+  display: none;
+}
+
+.qb-item.selected .qb-item-checkbox {
+  color: var(--accent-primary);
+}
+
+.qb-item.selected .qb-item-checkbox .fa-check-square {
+  display: block;
+}
+
+.qb-item.selected .qb-item-checkbox .fa-square {
+  display: none;
+}
+
+
+/* Footer */
+.qb-footer {
+  padding: var(--spacing-lg) var(--spacing-xxl);
+  border-top: 1px solid var(--bg-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-secondary);
+}
+
+.qb-selection-count {
+  color: var(--text-secondary);
+  font-size: var(--font-base);
+  font-weight: 500;
+}
+
+/* Confirm Button */
+.qb-confirm-btn {
+  background: var(--accent-primary);
+  color: var(--bg-primary, #121212);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-size: var(--font-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.qb-confirm-btn:not(:disabled):hover {
+  filter: brightness(1.1);
+  box-shadow: 0 4px 12px var(--shadow-light);
+}
+
+.qb-confirm-btn:disabled {
+  background: var(--bg-tertiary);
+  color: var(--text-tertiary);
+  cursor: not-allowed;
+}
+
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .qb-card {
