@@ -687,6 +687,12 @@ CREATE POLICY "Students can insert only their own notification read logs"
     FOR INSERT
     WITH CHECK (student_id = auth.uid());
 
+CREATE POLICY "Students can update only their own notification read logs"
+    ON notification_read_logs
+    FOR UPDATE
+    USING (student_id = auth.uid())
+    WITH CHECK (student_id = auth.uid());
+
 
 -- Teachers
 ALTER TABLE teachers ENABLE ROW LEVEL SECURITY;
