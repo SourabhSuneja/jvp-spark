@@ -505,6 +505,7 @@
          
          const title = highlightText ? highlight(notification.message_title, highlightText) : notification.message_title;
          const body = highlightText ? highlight(notification.message_body, highlightText) : notification.message_body;
+         const sender = highlightText ? highlight(notification.sent_by, highlightText) : notification.sent_by;
          
          card.innerHTML = `
          <div class="notification-header">
@@ -512,7 +513,7 @@
            <div class="notification-time">${timeAgo(notification.created_at)}</div>
          </div>
          <div class="notification-body">${body}</div>
-         <div class="notification-sender">From: ${notification.sent_by}</div>
+         <div class="notification-sender">From: ${sender}</div>
          `;
          
          card.addEventListener('click', () => {
@@ -698,52 +699,52 @@
          }
          });
          
-// Search functionality
-function filterNotifications(query) {
-    if (!query) {
-        // Show all loaded notifications and remove highlights
-        const cards = document.querySelectorAll('.notification-card');
-        cards.forEach(card => {
+         // Search functionality
+         function filterNotifications(query) {
+         if (!query) {
+         // Show all loaded notifications and remove highlights
+         const cards = document.querySelectorAll('.notification-card');
+         cards.forEach(card => {
             const notification = allLoadedNotifications.find(n => n.id === card.dataset.id) || notifications.find(n => n.id === card.dataset.id);
             if (notification) {
                 const newCard = createNotificationCard(notification, ''); // Re-render without highlight
                 card.innerHTML = newCard.innerHTML;
             }
             card.classList.remove('hidden');
-        });
-        updateSearchStatus('');
-        return;
-    }
-
-    const searchLower = query.toLowerCase();
-    const allNotifs = isSearchActive ? allLoadedNotifications : notifications;
-    let visibleCount = 0;
-
-    allNotifs.forEach(notification => {
-        const card = document.querySelector(`.notification-card[data-id="${notification.id}"]`);
-        if (!card) return;
-
-        // Enhancement: Added sender match
-        const titleMatch = notification.message_title.toLowerCase().includes(searchLower);
-        const bodyMatch = notification.message_body.toLowerCase().includes(searchLower);
-        const senderMatch = notification.sent_by.toLowerCase().includes(searchLower);
-
-        if (titleMatch || bodyMatch || senderMatch) {
+         });
+         updateSearchStatus('');
+         return;
+         }
+         
+         const searchLower = query.toLowerCase();
+         const allNotifs = isSearchActive ? allLoadedNotifications : notifications;
+         let visibleCount = 0;
+         
+         allNotifs.forEach(notification => {
+         const card = document.querySelector(`.notification-card[data-id="${notification.id}"]`);
+         if (!card) return;
+         
+         // Enhancement: Added sender match
+         const titleMatch = notification.message_title.toLowerCase().includes(searchLower);
+         const bodyMatch = notification.message_body.toLowerCase().includes(searchLower);
+         const senderMatch = notification.sent_by.toLowerCase().includes(searchLower);
+         
+         if (titleMatch || bodyMatch || senderMatch) {
             // A match is found: highlight the content and show the card
             const newCard = createNotificationCard(notification, query);
             card.innerHTML = newCard.innerHTML;
             card.classList.remove('hidden');
             visibleCount++;
-        } else {
+         } else {
             // No match: remove highlights and hide the card
             const newCard = createNotificationCard(notification, ''); // Re-render without highlights
             card.innerHTML = newCard.innerHTML;
             card.classList.add('hidden');
-        }
-    });
-
-    updateSearchStatus(query, visibleCount);
-}
+         }
+         });
+         
+         updateSearchStatus(query, visibleCount);
+         }
          
          function updateSearchStatus(query, count = 0) {
          const status = document.getElementById('searchStatus');
