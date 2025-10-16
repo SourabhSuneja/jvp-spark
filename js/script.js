@@ -549,6 +549,7 @@ const PageManager = {
          hideProcessingDialog();
          const selectedQbIds = await QuestionBankSelector.show();
          if(!selectedQbIds) {
+             PageManager.loadPage("home");
              return;
          }
 
