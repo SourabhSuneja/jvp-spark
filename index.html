@@ -34,6 +34,7 @@
       <link rel="stylesheet" href="./css/qr-scan.css">
       <link rel="stylesheet" href="./css/dialog.css">
       <link rel="stylesheet" href="./css/word-card-styles.css">
+      <link rel="stylesheet" href="./css/qb-prompt.css">
       <link rel="stylesheet" href="./css/install-popup-styles.css">
       <link rel="stylesheet" href="./css/notification-overlay.css">
       <link rel="stylesheet" href="./css/offline-overlay.css">
@@ -170,6 +171,35 @@
          <button id="close-word-card">Close</button>
       </div>
       <!-- Word of the Day Card Ends -->
+<!-- Question Bank Prompt Starts -->
+<div id="questionBankOverlay" class="qb-overlay">
+  <div class="qb-card">
+    <div class="qb-header">
+      <h2 class="qb-title">
+        <i class="fas fa-book-open"></i>
+        Select Question Bank
+      </h2>
+      <button class="qb-close-btn" onclick="QuestionBankSelector.hide()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="qb-search-container">
+      <i class="fas fa-search qb-search-icon"></i>
+      <input 
+        type="text" 
+        id="qbSearchInput" 
+        class="qb-search-input" 
+        placeholder="Search by subject, grade, or topic..."
+      >
+    </div>
+    
+    <div class="qb-content" id="qbContent">
+      <!-- Question banks will be dynamically inserted here -->
+    </div>
+  </div>
+</div>
+<!-- Question Bank Prompt Ends -->
       <!-- Notification Permission Dialog Overlay Starts -->
       <div class="notification-overlay" id="notificationOverlay">
          <div class="notification-content">
@@ -250,6 +280,8 @@
       <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
       <!-- Word of the Day -->
       <script type="module" src="./js/word-card.js"></script>
+      <!-- Question Bank Selection -->
+      <script src="./js/qb-selector.js"></script>
       <!-- Scripts End -->
    </body>
 </html>
