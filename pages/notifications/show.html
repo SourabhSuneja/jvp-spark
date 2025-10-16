@@ -272,16 +272,13 @@
       <div class="container">
          <div style="display: none" class="header">
             <button class="back-button noselect" onclick="navigateBack()">
-               <i class="fas fa-arrow-left"></i>
+            <i class="fas fa-arrow-left"></i>
             </button>
             <h1>Notification</h1>
          </div>
-         
          <div id="notification-content"></div>
       </div>
-
       <script>
-
          function formatText(text) {
             if (!text) return '';
             
@@ -293,36 +290,41 @@
             
             return text;
          }
-
+         
          function formatTimestamp(timestamp) {
-            if (!timestamp) return '';
-            
-            const date = new Date(timestamp.replace(' ', 'T'));
-            const now = new Date();
-            const diffInSeconds = Math.floor((now - date) / 1000);
-            
-            if (diffInSeconds < 60) {
-               return 'Just now';
-            } else if (diffInSeconds < 3600) {
-               const minutes = Math.floor(diffInSeconds / 60);
-               return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
-            } else if (diffInSeconds < 86400) {
-               const hours = Math.floor(diffInSeconds / 3600);
-               return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-            } else if (diffInSeconds < 604800) {
-               const days = Math.floor(diffInSeconds / 86400);
-               return `${days} day${days > 1 ? 's' : ''} ago`;
-            } else {
-               return date.toLocaleDateString('en-US', { 
-                  year: 'numeric', 
-                  month: 'short', 
-                  day: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit'
-               });
-            }
+         if (!timestamp) return '';
+         
+         const date = new Date(timestamp.replace(' ', 'T'));
+         const now = new Date();
+         
+         const isSameDay = (d1, d2) =>
+         d1.getFullYear() === d2.getFullYear() &&
+         d1.getMonth() === d2.getMonth() &&
+         d1.getDate() === d2.getDate();
+         
+         const yesterday = new Date();
+         yesterday.setDate(now.getDate() - 1);
+         
+         // Format time like "08:45 AM"
+         const timeString = date.toLocaleTimeString('en-US', {
+         hour: '2-digit',
+         minute: '2-digit',
+         hour12: true
+         });
+         
+         if (isSameDay(date, now)) {
+         return `Today, ${timeString}`;
+         } else if (isSameDay(date, yesterday)) {
+         return `Yesterday, ${timeString}`;
+         } else {
+         const day = date.getDate();
+         const month = date.toLocaleString('en-US', { month: 'short' });
+         const includeYear = date.getFullYear() !== now.getFullYear();
+         const yearPart = includeYear ? `, ${date.getFullYear()}` : '';
+         return `${day} ${month}${yearPart}, ${timeString}`;
          }
-
+         }
+         
          async function renderNotification(notification) {
             const contentDiv = document.getElementById('notification-content');
             
@@ -342,11 +344,11 @@
                `;
                return;
             }
-
+         
             const messageContent = notification.detailed_message || notification.message_body || '';
             const formattedMessage = formatText(messageContent);
             const formattedTime = formatTimestamp(notification.created_at);
-
+         
             contentDiv.innerHTML = `
                <div class="notification-card">
                   <div class="notification-header">
@@ -367,14 +369,14 @@
                   <i class="fas fa-arrow-left"></i> Back to Notifications
                </button>
             `;
-
+         
              // Log in notification read logs
              await parent.upsertData('notification_read_logs', {'student_id': parent.userId, 'notification_id': notification.id}, ['student_id', 'notification_id']);
-
+         
              // Also refresh the unread notification count in the notification badge
            window.parent.refreshNotificationBadge(false);
          }
-
+         
          function navigateBack() {
             // Replace with your actual navigation logic
             if (window.parent && window.parent.navigateToNotifications) {
@@ -383,7 +385,7 @@
                window.history.back();
             }
          }
-
+         
          // Initialize the page
          async function initializePage(userData) {
             const urlParams = new URLSearchParams(window.location.search);
