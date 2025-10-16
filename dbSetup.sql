@@ -62,6 +62,7 @@ CREATE TABLE questions (
     question_bank_id BIGINT NOT NULL REFERENCES question_banks(id) ON DELETE CASCADE,
     question_text TEXT NOT NULL,
     question_type TEXT NOT NULL CHECK (question_type IN ('MCQ', 'Fill up', 'True/False', 'Match items', 'Very Short Answer Type', 'Short Answer Type', 'Long Answer Type', 'Very Long Answer Type', 'Diagram/Picture/Map Based')),
+    difficulty_level SMALLINT NOT NULL DEFAULT 1,
     details JSONB, -- Stores all other data: options, answers, explanations, etc.
     created_at TIMESTAMP NOT NULL DEFAULT now()
 );
@@ -1021,3 +1022,4 @@ VALUES
     ('Free', 2, 'Access to the first 2 questions per subject.'),
     ('Basic', 5, 'Access to 5 questions per subject.'),
     ('Premium', 1000000, 'Effectively unlimited access to all questions.'); -- Use a very large number for unlimited
+
