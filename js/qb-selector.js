@@ -93,7 +93,6 @@ const QuestionBankSelector = {
     this.elements.overlay.classList.add('active');
     this.state.isVisible = true;
     this.elements.searchInput.value = '';
-    this.elements.searchInput.focus();
     document.body.style.overflow = 'hidden';
   },
 
