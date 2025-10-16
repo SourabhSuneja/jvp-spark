@@ -197,6 +197,13 @@
          white-space: pre-wrap;
          word-wrap: break-word;
          }
+         .highlight {
+         background: var(--accent-primary);
+         color: var(--accent-button-text);
+         padding: 2px 4px;
+         border-radius: 3px;
+         font-weight: 500;
+         }
          .empty-state {
          text-align: center;
          padding: var(--spacing-xxxl);
@@ -283,7 +290,7 @@
             if (!text) return '';
             
             // Replace *text* with <strong>text</strong>
-            text = text.replace(/\*([^*]+)\*/g, '<strong>$1</strong>');
+            text = text.replace(/\*([^*]+)\*/g, '<span class="highlight">$1</span>');
             
             // Replace _text_ with <em>text</em>
             text = text.replace(/_([^_]+)_/g, '<em>$1</em>');
