@@ -16,7 +16,8 @@ const USER_DATA = {
    grade: '',
    section: '',
    accountType: 'Student',
-   avatar: ''
+   avatar: '',
+   selectedQbIds: null
 };
 
 const BASE_URL = 'https://sourabhsuneja.github.io/jvp-spark/';
@@ -525,10 +526,11 @@ const PageManager = {
       }
    },
 
-   loadExternalPage: (page, elements) => {
+   loadExternalPage: async (page, elements) => {
       // Hide subject switcher on external pages
       DOMUtils.hide(elements.subjectSwitcher);
       elements.content.classList.add('externalPage');
+      
 
       // Find card data from the new SUBJECT_DASHBOARDS object
       const allCards = Object.values(DASHBOARD_DATA).flat();
@@ -541,6 +543,16 @@ const PageManager = {
          elements.content.innerHTML = '<p class="error-message">Could not load this page.</p>';
          return;
       }
+
+      // Show question bank selector if card requires selection
+      if(cardData.extra && cardData.extra.qbRequired) {
+         const selectedQbIds = await QuestionBankSelector.show();
+         if(!selectedQbIds) {
+             return;
+         }
+         USER_DATA['selectedQbIds'] = selectedQbIds;
+         console.log(USER_DATA);
+       }
 
       // Theme forcing logic
       if (cardData.extra && cardData.extra.forcedTheme) {
@@ -610,12 +622,9 @@ _renderManualPage: (itemData) => {
 },
 
    // Function to load custom URLs into an iframe
-// Replace the old loadManualPage with this one
 
 loadManualPage: (itemData) => {
-// Testing
-QuestionBankSelector.show();
-return;
+
     // 1. Render the page without touching history
     PageManager._renderManualPage(itemData);
 
@@ -913,8 +922,8 @@ const AppManager = {
       SUBSCRIPTION_DATA = await BackendManager.getSubscriptionData(); // Fetch and store subscription data
       USER_DATA['subscriptions'] = SUBSCRIPTION_DATA;
       USER_DATA['notifications'] = await BackendManager.getNotifications(null, 5); // Get latest 5 notifications
-      console.log('Notifications: ', USER_DATA['notifications']);
       MenuManager.initialize();
+      QuestionBankSelector.init();
       NotificationBadge.updateNotificationCount(USER_DATA['notifications']['count_unread']);
       // Preload certain pages for caching and performance
       AppManager.preloadIframes(PRELOADABLE_RESOURCES);
