@@ -171,6 +171,7 @@
   font-size: var(--font-icon-sm);
   margin-top: 2px;
   flex-shrink: 0;
+  display: none;
 }
 
 .qb-item-content {
