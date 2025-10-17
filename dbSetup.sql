@@ -489,6 +489,100 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER STABLE;
 
+-- Function to fetch questions based on supplied parameters
+CREATE OR REPLACE FUNCTION get_custom_question_set(
+    p_bank_ids BIGINT[],
+    p_bank_counts JSONB DEFAULT NULL,
+    p_type_counts JSONB DEFAULT NULL,
+    p_shuffle BOOLEAN DEFAULT FALSE,
+    p_total_count INT DEFAULT 10
+)
+RETURNS TABLE (
+    question_bank_id BIGINT,
+    question_bank TEXT,
+    question TEXT,
+    question_type TEXT,
+    difficulty_level SMALLINT,
+    details JSONB
+)
+LANGUAGE plpgsql
+SECURITY INVOKER
+AS $$
+BEGIN
+    -- This check prevents a division by zero error if an empty array is passed
+    IF array_length(p_bank_ids, 1) IS NULL OR array_length(p_bank_ids, 1) = 0 THEN
+        RETURN;
+    END IF;
+
+    RETURN QUERY
+    WITH numbered_questions AS (
+        -- Step 1: Fetch all questions from the specified banks.
+        -- We apply shuffling here using random() if requested, which is the most
+        -- efficient place to do it. We also number each question within its bank.
+        SELECT
+            qb.id AS qb_id,
+            qb.display_name,
+            q.question_text,
+            q.question_type AS q_type,
+            q.difficulty_level,
+            q.details,
+            ROW_NUMBER() OVER (
+                PARTITION BY q.question_bank_id
+                ORDER BY CASE WHEN p_shuffle THEN random() ELSE q.id END
+            ) AS rn_bank
+        FROM questions q
+        JOIN question_banks qb ON q.question_bank_id = qb.id
+        WHERE q.question_bank_id = ANY(p_bank_ids)
+    ),
+    bank_filtered_questions AS (
+        -- Step 2: Filter the questions based on the per-bank count logic.
+        SELECT *
+        FROM numbered_questions
+        WHERE
+            CASE
+                WHEN p_bank_counts IS NOT NULL THEN
+                    -- Logic for when a specific count per bank is provided.
+                    -- We use COALESCE to gracefully handle banks that are in the input
+                    -- array but not in the JSONB map, by effectively excluding them.
+                    rn_bank <= COALESCE((p_bank_counts->>(qb_id::text))::int, 0)
+                ELSE
+                    -- Logic for equal distribution if no specific count is given.
+                    -- We calculate the average number of questions needed from each bank.
+                    rn_bank <= CEIL(p_total_count::numeric / array_length(p_bank_ids, 1))
+            END
+    ),
+    type_numbered_questions AS (
+      -- Step 3: If filtering by type is needed, re-number the already-filtered
+      -- results, this time partitioned by question type.
+      SELECT *,
+            ROW_NUMBER() OVER (PARTITION BY q_type ORDER BY random()) as rn_type
+      FROM bank_filtered_questions
+    )
+    -- Step 4: Perform the final selection.
+    -- We filter by type count (if provided) and apply the final total limit.
+    SELECT
+        tnq.qb_id,
+        tnq.display_name,
+        tnq.question_text,
+        tnq.q_type,
+        tnq.difficulty_level,
+        tnq.details
+    FROM type_numbered_questions tnq
+    WHERE
+        CASE
+            WHEN p_type_counts IS NOT NULL THEN
+                -- Logic for when a specific count per question type is provided.
+                rn_type <= COALESCE((p_type_counts->>(q_type))::int, 0)
+            ELSE
+                -- If no type filter is applied, include all rows from the previous step.
+                TRUE
+        END
+    LIMIT p_total_count;
+
+END;
+$$;
+
+
 
 -- =========================
 -- TRIGGER FUNCTIONS
