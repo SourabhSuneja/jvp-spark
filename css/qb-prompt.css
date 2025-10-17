@@ -311,6 +311,48 @@
   cursor: not-allowed;
 }
 
+/* Style for question count */
+.qb-item-qcount {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: #a0a0b0;
+  white-space: nowrap;
+}
+
+/* Style for the "Out of Plan" message */
+.qb-item-plan-limit-text {
+  color: #ff9a8b; /* A soft warning color */
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+/* Style for disabled (out of plan) items */
+.qb-item.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: #252535; /* Slightly different background */
+}
+
+/* Override hover effects for disabled items */
+.qb-item.disabled:hover {
+  background: #252535;
+  border-color: transparent;
+  transform: none;
+  box-shadow: none;
+}
+
+.qb-item.disabled .qb-item-title {
+  color: #a0a0b0; /* Dim the title color */
+}
+
+.qb-item.disabled .qb-item-checkbox .fa-lock {
+  color: #808090;
+}
+
 
 /* Responsive Design */
 @media (max-width: 768px) {
