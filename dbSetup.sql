@@ -425,9 +425,11 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
+
 -- Function to get details of all question banks for a given grade and subject
 CREATE OR REPLACE FUNCTION get_question_banks_with_details(p_grade INT, p_subject TEXT)
 RETURNS TABLE (
+    id BIGINT, -- MODIFIED: Added the question bank ID
     bank_key TEXT,
     display_name TEXT,
     grade INT,
@@ -479,6 +481,7 @@ BEGIN
     )
     -- Finally, join the base question_banks table with our calculated stats.
     SELECT
+        qb.id, -- MODIFIED: Added the question bank ID
         qb.bank_key,
         qb.display_name,
         qb.grade,
@@ -496,6 +499,7 @@ BEGIN
 
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER STABLE;
+
 
 -- Function to fetch questions based on supplied parameters
 CREATE OR REPLACE FUNCTION get_custom_question_set(
