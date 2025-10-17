@@ -1078,6 +1078,30 @@ INSERT INTO subject_resources (
 )
 VALUES
 (
+        'English', 
+        6, 
+        'Quiz', 
+        'help-outline', 
+        'quiz', 
+        'pages/quiz/index.html', 
+        NULL, 
+        1, 
+        NULL
+);
+
+INSERT INTO subject_resources (
+    subject,
+    grade,
+    title,
+    icon,
+    page_key,
+    link,
+    min_width,
+    display_order,
+    extra
+)
+VALUES
+(
         'Computer', 
         6, 
         'Quiz', 
@@ -1093,7 +1117,7 @@ VALUES
 -- Available subscription plans
 INSERT INTO subscription_plans (plan_name, question_cap, description)
 VALUES
-    ('Free', 2, 'Access to the first 2 questions per subject.'),
-    ('Basic', 5, 'Access to 5 questions per subject.'),
+    ('Free', 10, 'Access to the first 10 questions per subject.'),
+    ('Basic', 100, 'Access to 100 questions per subject.'),
     ('Premium', 1000000, 'Effectively unlimited access to all questions.'); -- Use a very large number for unlimited
 
