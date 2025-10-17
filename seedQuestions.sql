@@ -124,3 +124,77 @@ VALUES
   "answer": "He is playing the guitar.",
   "explanation": "Present Continuous tense uses ''is/am/are'' + verb-ing."
 }');
+
+
+
+-- Create the Question Bank entry for Verbs
+INSERT INTO question_banks (bank_key, display_name, grade, subject, book, chapter, topic)
+VALUES (
+    'grade6_english_verbs',
+    'Class 6: English Verbs',
+    6,
+    'English',
+    'Grammar Essentials',
+    'Verbs',
+    'Verbs'
+)
+RETURNING id;
+
+-- Assume returned id = 2
+-- Insert 5 MCQ questions for "Verbs"
+INSERT INTO questions (question_bank_id, question_text, question_type, difficulty_level, details)
+VALUES
+-- Q1
+(2,
+'Which of the following words is a verb?',
+'MCQ',
+1,
+'{
+  "options": ["quickly", "beautiful", "run", "happy"],
+  "answer": "run",
+  "explanation": "''Run'' is an action word, hence a verb."
+}'),
+
+-- Q2
+(2,
+'Identify the helping verb in this sentence: She is reading a book.',
+'MCQ',
+2,
+'{
+  "options": ["She", "is", "reading", "book"],
+  "answer": "is",
+  "explanation": "''Is'' helps the main verb ''reading'' to form present continuous tense."
+}'),
+
+-- Q3
+(2,
+'Choose the sentence that contains a linking verb.',
+'MCQ',
+3,
+'{
+  "options": ["He runs fast.", "She looks tired.", "They played cricket.", "I am eating food."],
+  "answer": "She looks tired.",
+  "explanation": "''Looks'' connects the subject to the adjective, showing a state rather than an action."
+}'),
+
+-- Q4
+(2,
+'Select the correct form of the verb: He ___ to the gym every morning.',
+'MCQ',
+1,
+'{
+  "options": ["go", "goes", "gone", "going"],
+  "answer": "goes",
+  "explanation": "The subject ''He'' takes the singular verb form ''goes''."
+}'),
+
+-- Q5
+(2,
+'Which sentence contains an irregular verb?',
+'MCQ',
+4,
+'{
+  "options": ["He walked home.", "She played the guitar.", "I ate an apple.", "They jumped high."],
+  "answer": "I ate an apple.",
+  "explanation": "''Ate'' is the past form of ''eat'' and does not follow the regular -ed pattern."
+}');
