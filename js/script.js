@@ -51,55 +51,8 @@ let currentSubject = 'General';
 // Variable to hold all menu items fetched from the backend for the side navigation drawer
 let MENU_ITEMS = [];
 
-// Variable to hold available question bank details for the selected grade and subject
-let qbDetails = [
-  {
-    "bank_key": "grade6_english_tenses",
-    "display_name": "Class 6: English Tenses",
-    "grade": 6,
-    "subject": "English",
-    "book": "Grammar Essentials",
-    "chapter": "Tenses",
-    "topic": "Tenses",
-    "question_count": 10,
-    "within_current_plan": true
-  },
-  {
-    "bank_key": "grade6_english_verbs",
-    "display_name": "Class 6: English Verbs",
-    "grade": 6,
-    "subject": "English",
-    "book": "Grammar Essentials",
-    "chapter": "Verbs",
-    "topic": "Verbs",
-    "question_count": 5,
-    "within_current_plan": true
-  },
-  {
-    "bank_key": "grade6_english_determiners",
-    "display_name": "Class 6: English Determiners",
-    "grade": 6,
-    "subject": "English",
-    "book": "Grammar Essentials",
-    "chapter": "Determiners",
-    "topic": "Determiners",
-    "question_count": 5,
-    "within_current_plan": false
-  },
-  {
-    "bank_key": "grade6_english_prepositions",
-    "display_name": "Class 6: English Prepositions",
-    "grade": 6,
-    "subject": "English",
-    "book": "Grammar Essentials",
-    "chapter": "Prepositions",
-    "topic": "Prepositions",
-    "question_count": 5,
-    "within_current_plan": false
-  }
-];
-
-qbDetails = [];
+// Variable to hold available question bank details keyed by subjects
+let QB_DETAILS = {};
 
 // =============================================================================
 // BACKEND MANAGEMENT
@@ -152,6 +105,17 @@ const BackendManager = {
       } catch (err) {
          console.error("Error fetching notifications:", err);
          return {}; // Return empty object on error
+      }
+   },
+
+   // Function to get details for the available question banks for a given grade & subject
+   getQbDetails: async (grade, subject) => {
+      try {
+         const data = await invokeFunction('get_question_banks_with_details', {'p_grade': parseInt(grade), 'p_subject': subject}, false);
+         return data || []; // Return data or an empty array
+      } catch (err) {
+         console.error("Error fetching dashboard data:", err);
+         return []; // Return empty array on error
       }
    },
 
@@ -508,10 +472,16 @@ function setupSubjectSwitcher() {
          button.classList.add('active');
       }
 
-      button.onclick = () => {
+      button.onclick = async () => {
          currentSubject = subject;
          document.querySelectorAll('.subject-btn').forEach(btn => btn.classList.remove('active'));
          button.classList.add('active');
+         // Pre-fetch available question banks for this subject
+         if(!(currentSubject in QB_DETAILS)) {
+             showProcessing(); QB_DETAILS[currentSubject] = await BackendManager.getQbDetails(USER_DATA['grade'], 'English');
+             hideProcessing();
+         }
+         
          renderDashboard(subject);
       };
       switcher.appendChild(button);
