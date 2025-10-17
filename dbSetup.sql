@@ -30,6 +30,13 @@ DROP FUNCTION IF EXISTS get_specific_notification(p_notification_id text);
 DROP FUNCTION IF EXISTS get_all_notifications(uuid, integer);
 DROP FUNCTION IF EXISTS check_question_access(BIGINT);
 DROP FUNCTION IF EXISTS get_question_banks_with_details(INT, TEXT);
+DROP FUNCTION IF EXISTS get_custom_question_set(
+    BIGINT[],
+    JSONB,
+    JSONB,
+    BOOLEAN,
+    INT
+);
 
 
 -- =========================
