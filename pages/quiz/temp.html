@@ -349,14 +349,105 @@
          }
 
          $(function() {
-             // --- QUIZ DATA (will be fetched from server) ---
-             let quizData = [];
+             // --- QUIZ DATA (NEW STRUCTURE) ---
+             const quizData = [
+                 {
+                     question_bank: 'Class 6: Excel',
+                     question: 'Which Excel feature highlights cells automatically based on certain rules?',
+                     question_type: 'MCQ',
+                     difficulty_level: 2,
+                     details: {
+                         "answer": "Conditional Formatting",
+                         "options": ["Conditional Formatting", "Data Validation", "Pivot Table", "Freeze Panes"],
+                         "explanation": "Conditional Formatting applies formatting to a range of cells and the formatting of each cell changes depending on its value or the value of another cell."
+                     }
+                 },
+                 {
+                     question_bank: 'Class 6: Computer Languages',
+                     question: 'C++ is a high-level language.',
+                     question_type: 'True/False',
+                     difficulty_level: 1,
+                     details: {
+                         "answer": true,
+                         "explanation": "C++ is considered a high-level language because its syntax is human-readable and it's machine-independent."
+                     }
+                 },
+                 {
+                     question_bank: 'Class 6: GK',
+                     question: 'Which country\'s aspirations for freedom were expressed in this song?',
+                     question_type: 'MCQ',
+                     difficulty_level: 5,
+                     details: {
+                         "answer": "Somalia",
+                         "options": ["South Africa", "India", "Somalia", "China"],
+                         "explanation": "This song was originally written to reflect the singer K'naan's experiences growing up in Somalia amidst the civil war and was intended to convey a message of hope and resilience for the people of Somalia.",
+                         "mediaEmbedded": "video",
+                         "mediaLink": "https://youtu.be/EngW7tLk6R8?si=JcBT2-GI2nKDIUij" // K'NAAN - Wavin' Flag
+                     }
+                 },
+                 {
+                     question_bank: 'Class 7: HTML',
+                     question: 'Which tag is used to create an ordered list in HTML?',
+                     question_type: 'MCQ',
+                     difficulty_level: 1,
+                     details: {
+                         "answer": "<ol>",
+                         "options": ["<ul>", "<li>", "<ol>", "<dl>"]
+                     }
+                 },
+                 {
+                     question_bank: 'Class 7: Internet',
+                     question: 'A URL stands for Uniform Resource Locator.',
+                     question_type: 'True/False',
+                     difficulty_level: 3,
+                     details: {
+                         "answer": true
+                     }
+                 },
+                 {
+                     question_bank: 'Class 7: Advertisement',
+                     question: 'Which brand is this radio advertisement associated with?',
+                     question_type: 'MCQ',
+                     difficulty_level: 5,
+                     details: {
+                         "answer": "Nike",
+                         "options": ["Adidas", "Nike", "Puma", "Reebok"],
+                         "explanation": "This audio snippet is from a classic Nike 'Just Do It' radio advertisement.",
+                         "mediaEmbedded": "audio",
+                         "mediaLink": "https://youtu.be/EngW7tLk6R8?si=JcBT2-GI2nKDIUij" // These CATS are too FUNNY! (using as audio example)
+                     }
+                 },
+                 {
+                     question_bank: 'Class 8: Python',
+                     question: 'What is the correct way to create a function in Python?',
+                     question_type: 'MCQ',
+                     difficulty_level: 4,
+                     details: {
+                         "answer": "def myFunction():",
+                         "options": ["function myFunction():", "def myFunction():", "create myFunction():", "function:myFunction()"],
+                         "explanation": "In Python, functions are defined using the 'def' keyword, followed by the function name and parentheses."
+                     }
+                 },
+                 {
+                     question_bank: 'Class 8: General Knowledge',
+                     question: 'What type of animal is shown in this image?',
+                     question_type: 'MCQ',
+                     difficulty_level: 3,
+                     details: {
+                         "answer": "Elephant",
+                         "options": ["Elephant", "Rhino", "Hippo", "Buffalo"],
+                         "explanation": "The image clearly depicts an African Elephant.",
+                         "mediaEmbedded": "image",
+                         "mediaLink": "https://myjvp.in/commons/school-logo.jpg"
+                     }
+                 }
+             ];
 
              // --- VARIABLES ---
              let currentQuestion = 0;
              let score = 0;
              let userName = '';
-             let userAnswers = [];
+             let userAnswers = new Array(quizData.length).fill(null);
              let youtubePlayer; // To store the YouTube player instance
 
              // --- DOM ELEMENTS ---
@@ -367,13 +458,9 @@
              const closeMediaOverlayButton = $('#close-media-overlay');
              const mediaPlayerContainer = $('#media-player-container');
 
-window.initializePage = async function(userData) {
-$('#name-input-box').val(userData['name']);
-nameBox.show();
-}
-
              // --- INITIALIZATION ---
-             function init() {
+             window.initializePage = async function(userData) {
+                 nameBox.val('Sourabh');
                  nameBox.show();
                  questionBox.hide();
                  resultBox.hide();
@@ -395,7 +482,7 @@ nameBox.show();
                  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
              }
 
-             
+             //init();
 
              // --- EVENT LISTENERS ---
              $('#name-form').on('submit', function(e) {
