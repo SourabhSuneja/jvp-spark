@@ -68,12 +68,8 @@ const QuestionBankSelector = {
             this.state.questionBanks = qbDetails.map((bank, index) => ({ ...bank, id: index }));
             this.state.filteredBanks = [...this.state.questionBanks];
         } else {
-            console.error('qbDetails variable not found');
+            console.log('qbDetails not found');
             this.renderEmpty('No question banks available');
-            if (this.state.promiseResolve) {
-                //this.state.promiseResolve(false);
-                //this.state.promiseResolve = null;
-            }
             return;
         }
         
@@ -105,7 +101,7 @@ const QuestionBankSelector = {
     this.renderQuestionBanks();
   },
 
-  // MODIFIED: Prevent selection of disabled banks
+  // Prevent selection of disabled banks
   toggleSelection(bankId) {
     // Find the bank object by its ID
     const bank = this.state.questionBanks.find(b => b.id === bankId);
@@ -133,7 +129,7 @@ const QuestionBankSelector = {
     this.elements.confirmBtn.disabled = count === 0;
   },
 
-  // MODIFIED: Render banks differently based on plan status
+  // Render banks differently based on plan status
   renderQuestionBanks() {
     if (this.state.filteredBanks.length === 0) {
       this.renderEmpty('No question banks match your search');
