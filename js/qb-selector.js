@@ -71,8 +71,8 @@ const QuestionBankSelector = {
             console.error('qbDetails variable not found');
             this.renderEmpty('No question banks available');
             if (this.state.promiseResolve) {
-                this.state.promiseResolve(false);
-                this.state.promiseResolve = null;
+                //this.state.promiseResolve(false);
+                //this.state.promiseResolve = null;
             }
             return;
         }
