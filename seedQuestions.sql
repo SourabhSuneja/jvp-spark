@@ -198,3 +198,151 @@ VALUES
   "answer": "I ate an apple.",
   "explanation": "''Ate'' is the past form of ''eat'' and does not follow the regular -ed pattern."
 }');
+
+
+
+-- Create the Question Bank entry for Determiners
+INSERT INTO question_banks (bank_key, display_name, grade, subject, book, chapter, topic)
+VALUES (
+    'grade6_english_determiners',
+    'Class 6: English Determiners',
+    6,
+    'English',
+    'Grammar Essentials',
+    'Determiners',
+    'Determiners'
+)
+RETURNING id;
+
+-- Assume returned id = 3
+-- Insert 5 MCQ questions for "Determiners"
+INSERT INTO questions (question_bank_id, question_text, question_type, difficulty_level, details)
+VALUES
+-- Q1
+(3,
+'Choose the correct determiner: I have ___ apples in my basket.',
+'MCQ',
+1,
+'{
+  "options": ["any", "a", "an", "some"],
+  "answer": "some",
+  "explanation": "''Some'' is used with plural nouns when quantity is not exact."
+}'),
+
+-- Q2
+(3,
+'Select the correct option: ___ book on the table is mine.',
+'MCQ',
+2,
+'{
+  "options": ["A", "An", "The", "That"],
+  "answer": "The",
+  "explanation": "''The'' is a definite article used for specific nouns."
+}'),
+
+-- Q3
+(3,
+'Identify the quantifier in this sentence: Few students attended the meeting.',
+'MCQ',
+3,
+'{
+  "options": ["Few", "students", "attended", "meeting"],
+  "answer": "Few",
+  "explanation": "''Few'' indicates quantity and acts as a quantifier."
+}'),
+
+-- Q4
+(3,
+'Choose the correct word: She doesn’t have ___ money left.',
+'MCQ',
+2,
+'{
+  "options": ["some", "any", "many", "each"],
+  "answer": "any",
+  "explanation": "''Any'' is used in negative sentences and questions."
+}'),
+
+-- Q5
+(3,
+'Which of these sentences uses a demonstrative determiner?',
+'MCQ',
+3,
+'{
+  "options": ["She is a teacher.", "That car belongs to me.", "He has many friends.", "I need some help."],
+  "answer": "That car belongs to me.",
+  "explanation": "''That'' points to a specific noun, hence a demonstrative determiner."
+}');
+
+
+
+-- Create the Question Bank entry for Prepositions
+INSERT INTO question_banks (bank_key, display_name, grade, subject, book, chapter, topic)
+VALUES (
+    'grade6_english_prepositions',
+    'Class 6: English Prepositions',
+    6,
+    'English',
+    'Grammar Essentials',
+    'Prepositions',
+    'Prepositions'
+)
+RETURNING id;
+
+-- Assume returned id = 4
+-- Insert 5 MCQ questions for "Prepositions"
+INSERT INTO questions (question_bank_id, question_text, question_type, difficulty_level, details)
+VALUES
+-- Q1
+(4,
+'Choose the correct preposition: The cat is ___ the table.',
+'MCQ',
+1,
+'{
+  "options": ["in", "on", "at", "for"],
+  "answer": "on",
+  "explanation": "''On'' shows position over a surface."
+}'),
+
+-- Q2
+(4,
+'Fill in the blank: She walked ___ the park.',
+'MCQ',
+1,
+'{
+  "options": ["to", "into", "over", "under"],
+  "answer": "through",
+  "explanation": "''Through'' indicates movement within a space from one end to another."
+}'),
+
+-- Q3
+(4,
+'Which of the following sentences uses a preposition of time?',
+'MCQ',
+3,
+'{
+  "options": ["He sat on the chair.", "She came at 5 PM.", "The book is under the table.", "He ran across the road."],
+  "answer": "She came at 5 PM.",
+  "explanation": "''At'' is a preposition used to indicate a specific time."
+}'),
+
+-- Q4
+(4,
+'Identify the correct sentence.',
+'MCQ',
+2,
+'{
+  "options": ["He is good in dancing.", "He is good at dancing.", "He is good for dancing.", "He is good with dancing."],
+  "answer": "He is good at dancing.",
+  "explanation": "''Good at'' is the correct prepositional phrase."
+}'),
+
+-- Q5
+(4,
+'Choose the correct option: The bird flew ___ the trees.',
+'MCQ',
+4,
+'{
+  "options": ["over", "on", "in", "for"],
+  "answer": "over",
+  "explanation": "''Over'' indicates movement from above or across something."
+}');
