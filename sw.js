@@ -1,5 +1,5 @@
 // Bump the version number when you deploy a new service worker
-const CACHE_NAME = 'jvp-spark-v1.0.0.dev.191';
+const CACHE_NAME = 'jvp-spark-v1.0.0.dev.192';
 const urlsToCache = [
   '/jvp-spark/',
   '/jvp-spark/index.html',
