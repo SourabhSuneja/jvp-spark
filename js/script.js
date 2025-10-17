@@ -51,6 +51,56 @@ let currentSubject = 'General';
 // Variable to hold all menu items fetched from the backend for the side navigation drawer
 let MENU_ITEMS = [];
 
+// Variable to hold available question bank details for the selected grade and subject
+let qbDetails = [
+  {
+    "bank_key": "grade6_english_tenses",
+    "display_name": "Class 6: English Tenses",
+    "grade": 6,
+    "subject": "English",
+    "book": "Grammar Essentials",
+    "chapter": "Tenses",
+    "topic": "Tenses",
+    "question_count": 10,
+    "within_current_plan": true
+  },
+  {
+    "bank_key": "grade6_english_verbs",
+    "display_name": "Class 6: English Verbs",
+    "grade": 6,
+    "subject": "English",
+    "book": "Grammar Essentials",
+    "chapter": "Verbs",
+    "topic": "Verbs",
+    "question_count": 5,
+    "within_current_plan": true
+  },
+  {
+    "bank_key": "grade6_english_determiners",
+    "display_name": "Class 6: English Determiners",
+    "grade": 6,
+    "subject": "English",
+    "book": "Grammar Essentials",
+    "chapter": "Determiners",
+    "topic": "Determiners",
+    "question_count": 5,
+    "within_current_plan": false
+  },
+  {
+    "bank_key": "grade6_english_prepositions",
+    "display_name": "Class 6: English Prepositions",
+    "grade": 6,
+    "subject": "English",
+    "book": "Grammar Essentials",
+    "chapter": "Prepositions",
+    "topic": "Prepositions",
+    "question_count": 5,
+    "within_current_plan": false
+  }
+];
+
+qbDetails = [];
+
 // =============================================================================
 // BACKEND MANAGEMENT
 // =============================================================================
