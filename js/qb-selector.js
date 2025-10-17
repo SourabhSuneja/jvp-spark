@@ -70,6 +70,7 @@ const QuestionBankSelector = {
         } else {
             console.log('qbDetails not found');
             this.renderEmpty('No question banks available');
+            this.showUi();
             return;
         }
         
@@ -77,10 +78,14 @@ const QuestionBankSelector = {
         this.renderQuestionBanks();
         this.updateFooter();
         
-        this.elements.overlay.classList.add('active');
-        this.state.isVisible = true;
-        document.body.style.overflow = 'hidden';
+        this.showUi();
     });
+  },
+
+  showUi() {
+    this.elements.overlay.classList.add('active');
+    this.state.isVisible = true;
+    document.body.style.overflow = 'hidden';
   },
 
   hideUi() {
