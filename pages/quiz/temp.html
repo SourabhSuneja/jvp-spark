@@ -888,7 +888,7 @@
             async function initializePage(userData) {
                   parent.showProcessingDialog();
                   const fullName = userData.name;
-                  const qbIds = USER_DATA['selectedQbIds'];
+                  const qbIds = userData['selectedQbIds'];
 
                   // Set student name
                   const firstName = fullName.split(" ")[0].toLowerCase().replace(/^./, c => c.toUpperCase());
