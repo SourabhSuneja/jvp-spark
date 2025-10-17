@@ -899,6 +899,7 @@ try {
          const data = await parent.invokeFunction('get_custom_question_set', {
             p_bank_ids: qbIds
          }, false);
+         console.log("Questions:", data);
          quizData = data;
       } catch (err) {
          console.error("Error fetching questions:", err);
