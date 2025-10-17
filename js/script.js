@@ -478,7 +478,7 @@ function setupSubjectSwitcher() {
          button.classList.add('active');
          // Pre-fetch available question banks for this subject
          if(!(currentSubject in QB_DETAILS)) {
-             showProcessingDialog(); QB_DETAILS[currentSubject] = await BackendManager.getQbDetails(USER_DATA['grade'], 'English');
+             showProcessingDialog(); QB_DETAILS[currentSubject] = await BackendManager.getQbDetails(USER_DATA['grade'], currentSubject);
              hideProcessingDialog();
          }
          
