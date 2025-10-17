@@ -506,98 +506,7 @@
 
     <script>
             // --- QUIZ DATA ---
-            const quizData = [
-                 {
-                     question_bank: 'Class 6: Excel',
-                     question: 'Which Excel feature highlights cells automatically based on certain rules?',
-                     question_type: 'MCQ',
-                     difficulty_level: 2,
-                     details: {
-                         "answer": "Conditional Formatting",
-                         "options": ["Conditional Formatting", "Data Validation", "Pivot Table", "Freeze Panes"],
-                         "explanation": "Conditional Formatting applies formatting to a range of cells and the formatting of each cell changes depending on its value or the value of another cell."
-                     }
-                 },
-                 {
-                     question_bank: 'Class 6: Computer Languages',
-                     question: 'C++ is a high-level language.',
-                     question_type: 'True/False',
-                     difficulty_level: 1,
-                     details: {
-                         "answer": true,
-                         "explanation": "C++ is considered a high-level language because its syntax is human-readable and it's machine-independent."
-                     }
-                 },
-                 {
-                     question_bank: 'Class 6: GK',
-                     question: 'Which country\'s aspirations for freedom were expressed in this song?',
-                     question_type: 'MCQ',
-                     difficulty_level: 5,
-                     details: {
-                         "answer": "Somalia",
-                         "options": ["South Africa", "India", "Somalia", "China"],
-                         "explanation": "This song was originally written to reflect the singer K'naan's experiences growing up in Somalia amidst the civil war and was intended to convey a message of hope and resilience for the people of Somalia.",
-                         "mediaEmbedded": "video",
-                         "mediaLink": "https://www.youtube.com/watch?v=EngW7tLk6R8" // K'NAAN - Wavin' Flag
-                     }
-                 },
-                 {
-                     question_bank: 'Class 7: HTML',
-                     question: 'Which tag is used to create an ordered list in HTML?',
-                     question_type: 'MCQ',
-                     difficulty_level: 1,
-                     details: {
-                         "answer": "<ol>",
-                         "options": ["<ul>", "<li>", "<ol>", "<dl>"]
-                     }
-                 },
-                 {
-                     question_bank: 'Class 7: Internet',
-                     question: 'A URL stands for Uniform Resource Locator.',
-                     question_type: 'True/False',
-                     difficulty_level: 3,
-                     details: {
-                         "answer": true
-                     }
-                 },
-                 {
-                     question_bank: 'Class 7: Advertisement',
-                     question: 'Which brand is this radio advertisement associated with?',
-                     question_type: 'MCQ',
-                     difficulty_level: 5,
-                     details: {
-                         "answer": "Nike",
-                         "options": ["Adidas", "Nike", "Puma", "Reebok"],
-                         "explanation": "This audio snippet is from a classic Nike 'Just Do It' radio advertisement.",
-                         "mediaEmbedded": "audio",
-                         "mediaLink": "https://www.youtube.com/watch?v=EngW7tLk6R8" // Example Audio from YT
-                     }
-                 },
-                 {
-                     question_bank: 'Class 8: Python',
-                     question: 'What is the correct way to create a function in Python?',
-                     question_type: 'MCQ',
-                     difficulty_level: 4,
-                     details: {
-                         "answer": "def myFunction():",
-                         "options": ["function myFunction():", "def myFunction():", "create myFunction():", "function:myFunction()"],
-                         "explanation": "In Python, functions are defined using the 'def' keyword, followed by the function name and parentheses."
-                     }
-                 },
-                 {
-                     question_bank: 'Class 8: General Knowledge',
-                     question: 'What type of animal is shown in this image?',
-                     question_type: 'MCQ',
-                     difficulty_level: 3,
-                     details: {
-                         "answer": "Elephant",
-                         "options": ["Elephant", "Rhino", "Hippo", "Buffalo"],
-                         "explanation": "The image clearly depicts an African Elephant.",
-                         "mediaEmbedded": "image",
-                         "mediaLink": "https://i.natgeofe.com/n/548467d8-c5f1-4551-9f58-6817a8d2c45e/NationalGeographic_2572187_3x2.jpg"
-                     }
-                 }
-            ];
+            let quizData = [];
 
             // --- VARIABLES ---
             let currentQuestion = 0;
@@ -977,10 +886,25 @@
             }
 
             async function initializePage(userData) {
+                  parent.showProcessingDialog();
                   const fullName = userData.name;
+                  const qbIds = USER_DATA['selectedQbIds'];
+
+                  // Set student name
                   const firstName = fullName.split(" ")[0].toLowerCase().replace(/^./, c => c.toUpperCase());
                   nameInput.value = firstName;
 
+                  // Fetch questions
+try {
+         const data = await parent.invokeFunction('get_custom_question_set', {
+            p_bank_ids: qbIds
+         }, false);
+         quizData = data;
+      } catch (err) {
+         console.error("Error fetching questions:", err);
+         return null;
+      }
+parent.hideProcessingDialog();
                   init();
             }
     </script>
