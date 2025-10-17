@@ -63,12 +63,12 @@ const QuestionBankSelector = {
     return new Promise(resolve => {
         this.state.promiseResolve = resolve;
 
-        if (typeof qbDetails !== 'undefined' && qbDetails.length > 0) {
+        if (QB_DETAILS[currentSubject] && QB_DETAILS[currentSubject].length > 0) {
             // Add a unique 'id' to each bank object for easier handling
-            this.state.questionBanks = qbDetails.map((bank, index) => ({ ...bank, id: index }));
+            this.state.questionBanks = QB_DETAILS[currentSubject].map((bank, index) => ({ ...bank, id: index }));
             this.state.filteredBanks = [...this.state.questionBanks];
         } else {
-            console.log('qbDetails not found');
+            console.log('QB_DETAILS[currentSubject] not found');
             this.renderEmpty('No question banks available');
             this.showUi();
             return;
