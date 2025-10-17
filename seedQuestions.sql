@@ -346,3 +346,77 @@ VALUES
   "answer": "over",
   "explanation": "''Over'' indicates movement from above or across something."
 }');
+
+
+-- Computer
+-- Create the Question Bank entry for Computer Languages
+INSERT INTO question_banks (bank_key, display_name, grade, subject, book, chapter, topic)
+VALUES (
+    'grade6_computer_languages',
+    'Class 6: Computer Languages',
+    6,
+    'Computer',
+    'Introduction to Computers',
+    'Computer Languages',
+    'Computer Languages'
+)
+RETURNING id;
+
+-- Assume returned id = 5
+-- Insert 5 MCQ questions for "Computer Languages"
+INSERT INTO questions (question_bank_id, question_text, question_type, difficulty_level, details)
+VALUES
+-- Q1
+(5,
+'Which of the following is a high-level programming language?',
+'MCQ',
+1,
+'{
+  "options": ["Python", "Machine Code", "Assembly", "Binary"],
+  "answer": "Python",
+  "explanation": "Python is a high-level language, easier for humans to read and write."
+}'),
+
+-- Q2
+(5,
+'Which language is primarily used for web page structure?',
+'MCQ',
+1,
+'{
+  "options": ["HTML", "C++", "Java", "Python"],
+  "answer": "HTML",
+  "explanation": "HTML is used to define the structure of web pages."
+}'),
+
+-- Q3
+(5,
+'Identify the low-level language from the options below.',
+'MCQ',
+2,
+'{
+  "options": ["Java", "Assembly", "Python", "JavaScript"],
+  "answer": "Assembly",
+  "explanation": "Assembly language is closer to machine code and considered low-level."
+}'),
+
+-- Q4
+(5,
+'Which language is mainly used to style web pages?',
+'MCQ',
+1,
+'{
+  "options": ["CSS", "C", "Python", "SQL"],
+  "answer": "CSS",
+  "explanation": "CSS (Cascading Style Sheets) is used for styling web pages."
+}'),
+
+-- Q5
+(5,
+'Which of the following languages is interpreted rather than compiled?',
+'MCQ',
+2,
+'{
+  "options": ["C++", "Python", "Java", "C"],
+  "answer": "Python",
+  "explanation": "Python is an interpreted language, meaning it runs line by line."
+}');
