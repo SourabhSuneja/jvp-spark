@@ -478,8 +478,8 @@ function setupSubjectSwitcher() {
          button.classList.add('active');
          // Pre-fetch available question banks for this subject
          if(!(currentSubject in QB_DETAILS)) {
-             showProcessing(); QB_DETAILS[currentSubject] = await BackendManager.getQbDetails(USER_DATA['grade'], 'English');
-             hideProcessing();
+             showProcessingDialog(); QB_DETAILS[currentSubject] = await BackendManager.getQbDetails(USER_DATA['grade'], 'English');
+             hideProcessingDialog();
          }
          
          renderDashboard(subject);
@@ -1123,3 +1123,4 @@ window.addEventListener("popstate", (event) => {
       PageManager.loadPage(state.page);
    }
 });
+
