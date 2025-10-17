@@ -1,50 +1,3 @@
-let questionBanks = [
-  {
-    "bank_key": "grade6_english_tenses",
-    "display_name": "Class 6: English Tenses",
-    "grade": 6,
-    "subject": "English",
-    "book": "Grammar Essentials",
-    "chapter": "Tenses",
-    "topic": "Tenses",
-    "question_count": 10,
-    "within_current_plan": true
-  },
-  {
-    "bank_key": "grade6_english_verbs",
-    "display_name": "Class 6: English Verbs",
-    "grade": 6,
-    "subject": "English",
-    "book": "Grammar Essentials",
-    "chapter": "Verbs",
-    "topic": "Verbs",
-    "question_count": 5,
-    "within_current_plan": true
-  },
-  {
-    "bank_key": "grade6_english_determiners",
-    "display_name": "Class 6: English Determiners",
-    "grade": 6,
-    "subject": "English",
-    "book": "Grammar Essentials",
-    "chapter": "Determiners",
-    "topic": "Determiners",
-    "question_count": 5,
-    "within_current_plan": false
-  },
-  {
-    "bank_key": "grade6_english_prepositions",
-    "display_name": "Class 6: English Prepositions",
-    "grade": 6,
-    "subject": "English",
-    "book": "Grammar Essentials",
-    "chapter": "Prepositions",
-    "topic": "Prepositions",
-    "question_count": 5,
-    "within_current_plan": false
-  }
-];
-
 // Question Bank Selector Module (Multi-select version)
 const QuestionBankSelector = {
   // Configuration
@@ -110,12 +63,12 @@ const QuestionBankSelector = {
     return new Promise(resolve => {
         this.state.promiseResolve = resolve;
 
-        if (typeof questionBanks !== 'undefined') {
-            // MODIFIED: Add a unique 'id' to each bank object for easier handling
-            this.state.questionBanks = questionBanks.map((bank, index) => ({ ...bank, id: index }));
+        if (typeof qbDetails !== 'undefined' && qbDetails.length > 0) {
+            // Add a unique 'id' to each bank object for easier handling
+            this.state.questionBanks = qbDetails.map((bank, index) => ({ ...bank, id: index }));
             this.state.filteredBanks = [...this.state.questionBanks];
         } else {
-            console.error('questionBanks variable not found');
+            console.error('qbDetails variable not found');
             this.renderEmpty('No question banks available');
             if (this.state.promiseResolve) {
                 this.state.promiseResolve(false);
