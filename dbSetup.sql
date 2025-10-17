@@ -416,6 +416,79 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
+-- Function to get details of all question banks for a given grade and subject
+CREATE OR REPLACE FUNCTION get_question_banks_with_details(p_grade INT, p_subject TEXT)
+RETURNS TABLE (
+    bank_key TEXT,
+    display_name TEXT,
+    grade INT,
+    subject TEXT,
+    book TEXT,
+    chapter TEXT,
+    topic TEXT,
+    question_count BIGINT,
+    within_current_plan BOOLEAN
+) AS $$
+DECLARE
+    v_question_cap INT;
+BEGIN
+    -- Step 1: Get the current user's question cap for the given grade and subject.
+    -- This requires checking their active subscription.
+    SELECT sp.question_cap
+    INTO v_question_cap
+    FROM subscriptions s
+    JOIN subscription_plans sp ON s.subscription_plan = sp.plan_name
+    WHERE s.student_id = auth.uid() -- Fetches the ID of the currently authenticated user
+      AND s.grade = p_grade
+      AND s.subject = p_subject
+      AND s.subscription_ends_at > now(); -- Ensures the subscription is not expired
+
+    -- If no active subscription is found, the user has no access. Coalesce NULL to 0.
+    v_question_cap := COALESCE(v_question_cap, 0);
+
+    -- Step 2: Return the query with all the required information.
+    -- We use Common Table Expressions (CTEs) for clarity.
+    RETURN QUERY
+    WITH ranked_questions AS (
+        -- First, rank all questions for the specified grade and subject by their ID.
+        SELECT
+            q.id,
+            q.question_bank_id,
+            ROW_NUMBER() OVER (ORDER BY q.id ASC) as rn
+        FROM questions q
+        JOIN question_banks qb ON q.question_bank_id = qb.id
+        WHERE qb.grade = p_grade AND qb.subject = p_subject
+    ),
+    bank_stats AS (
+        -- Next, for each question bank, count its questions and find the rank of its first question.
+        SELECT
+            rq.question_bank_id,
+            COUNT(rq.id) AS q_count,
+            MIN(rq.rn) AS min_question_rank
+        FROM ranked_questions rq
+        GROUP BY rq.question_bank_id
+    )
+    -- Finally, join the base question_banks table with our calculated stats.
+    SELECT
+        qb.bank_key,
+        qb.display_name,
+        qb.grade,
+        qb.subject,
+        qb.book,
+        qb.chapter,
+        qb.topic,
+        bs.q_count AS question_count,
+        -- A bank is "within the plan" if its first question's rank is within the user's cap.
+        (bs.min_question_rank <= v_question_cap) AS within_current_plan
+    FROM question_banks qb
+    JOIN bank_stats bs ON qb.id = bs.question_bank_id
+    WHERE qb.grade = p_grade AND qb.subject = p_subject
+    ORDER BY bs.min_question_rank; -- Ordering the results logically by the question order.
+
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER STABLE;
+
+
 -- =========================
 -- TRIGGER FUNCTIONS
 -- =========================
