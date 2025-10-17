@@ -420,3 +420,75 @@ VALUES
   "answer": "Python",
   "explanation": "Python is an interpreted language, meaning it runs line by line."
 }');
+
+-- Create the Question Bank entry for More on Excel
+INSERT INTO question_banks (bank_key, display_name, grade, subject, book, chapter, topic)
+VALUES (
+    'grade6_computer_more_on_excel',
+    'Class 6: More on Excel',
+    6,
+    'Computer',
+    'Introduction to Computers',
+    'More on Excel',
+    'Excel'
+)
+RETURNING id;
+
+-- Assume returned id = 6
+-- Insert 5 MCQ questions for "More on Excel"
+INSERT INTO questions (question_bank_id, question_text, question_type, difficulty_level, details)
+VALUES
+-- Q1
+(6,
+'Which of the following is used to calculate the sum of a range of cells in Excel?',
+'MCQ',
+1,
+'{
+  "options": ["=SUM(A1:A5)", "=TOTAL(A1:A5)", "=ADD(A1:A5)", "=COUNT(A1:A5)"],
+  "answer": "=SUM(A1:A5)",
+  "explanation": "The SUM function calculates the total of the specified range."
+}'),
+
+-- Q2
+(6,
+'Which feature allows you to automatically fill cells in Excel based on a pattern?',
+'MCQ',
+2,
+'{
+  "options": ["AutoFill", "Flash Fill", "Format Painter", "Conditional Formatting"],
+  "answer": "AutoFill",
+  "explanation": "AutoFill copies a pattern or series to adjacent cells automatically."
+}'),
+
+-- Q3
+(6,
+'Which symbol is used to start a formula in Excel?',
+'MCQ',
+1,
+'{
+  "options": ["#", "&", "=", "%"],
+  "answer": "=",
+  "explanation": "All Excel formulas start with the equal sign (=)."
+}'),
+
+-- Q4
+(6,
+'What does the function =AVERAGE(B1:B10) do?',
+'MCQ',
+2,
+'{
+  "options": ["Adds all values in B1:B10", "Finds the largest value in B1:B10", "Calculates the average of values in B1:B10", "Counts the number of cells in B1:B10"],
+  "answer": "Calculates the average of values in B1:B10",
+  "explanation": "The AVERAGE function computes the mean of the specified cell range."
+}'),
+
+-- Q5
+(6,
+'Which Excel feature highlights cells automatically based on certain rules?',
+'MCQ',
+3,
+'{
+  "options": ["Conditional Formatting", "Data Validation", "Pivot Table", "Freeze Panes"],
+  "answer": "Conditional Formatting",
+  "explanation": "Conditional Formatting applies styles to cells based on set conditions."
+}');
