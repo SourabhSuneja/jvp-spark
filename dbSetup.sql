@@ -1086,7 +1086,7 @@ VALUES
         'pages/quiz/index.html', 
         NULL, 
         1, 
-        NULL
+        '{"qbRequired": true}'
 );
 
 INSERT INTO subject_resources (
@@ -1110,7 +1110,7 @@ VALUES
         'pages/quiz/index.html', 
         NULL, 
         1, 
-        NULL
+        '{"qbRequired": true}'
 );
 
 
