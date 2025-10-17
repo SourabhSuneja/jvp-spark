@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en" class="noselect">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Quiz</title>
+      <script src="https://cdn.tailwindcss.com"></script>
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+      <style>
+         /* --- PWA Design System Integration --- */
+         :root {
+         /* Colors - Dark Theme (Default) */
+         --bg-primary: #121212;
+         --bg-secondary: #1f1f1f;
+         --bg-tertiary: #333333;
+         --bg-gradient: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+         /* Text Colors */
+         --text-primary: #e0e0e0;
+         --text-secondary: #b0bec5;
+         /* Accent Colors */
+         --accent-primary: #ffc107;
+         --accent-hover: #e0a800;
+         --accent-button-text: #121212;
+         /* Shadow Colors */
+         --shadow-medium: rgba(0, 0, 0, 0.5);
+         /* Status Colors */
+         --color-correct: #4ade80;
+         --color-incorrect: #f87171;
+         /* Transitions */
+         --transition-base: 0.3s ease;
+         }
+         /* Light theme overrides */
+         body.light-theme {
+         --bg-primary: #f5f5f5;
+         --bg-secondary: #ffffff;
+         --bg-tertiary: #e0e0e0;
+         --bg-gradient: linear-gradient(145deg, #ffffff, #e9e9e9);
+         --text-primary: #333333;
+         --text-secondary: #555555;
+         --accent-button-text: #333333;
+         --shadow-medium: rgba(0, 0, 0, 0.1);
+         }
+         /* --- Base & Theming Styles --- */
+         body {
+         font-family: 'Roboto', sans-serif;
+         background-color: var(--bg-primary);
+         color: var(--text-primary);
+         transition: var(--transition-base);
+         text-rendering: optimizeLegibility;
+         -webkit-font-smoothing: antialiased;
+         }
+         .noselect {
+         -webkit-user-select: none;
+         -moz-user-select: none;
+         -ms-user-select: none;
+         user-select: none;
+         -webkit-touch-callout: none;
+         -webkit-user-drag: none;
+         -webkit-tap-highlight-color: transparent;
+         }
+         /* --- Main Quiz Container --- */
+         .quiz-box {
+         background: var(--bg-gradient);
+         border: 1px solid var(--bg-tertiary);
+         box-shadow: 0 8px 30px var(--shadow-medium);
+         border-radius: 0 4rem 0 4rem; /* Preserved unique shape */
+         }
+         /* --- Theme Toggle Button --- */
+         #theme-toggle {
+         position: fixed;
+         top: 1.5rem;
+         right: 1.5rem;
+         background-color: var(--bg-secondary);
+         color: var(--text-primary);
+         border: 1px solid var(--bg-tertiary);
+         border-radius: 50%;
+         width: 48px;
+         height: 48px;
+         display: grid;
+         place-content: center;
+         cursor: pointer;
+         z-index: 1000;
+         transition: var(--transition-base);
+         display: none; 
+         }
+         #theme-toggle:hover {
+         transform: scale(1.1) rotate(15deg);
+         box-shadow: 0 4px 15px var(--shadow-medium);
+         }
+         /* --- Form Elements & Buttons --- */
+         .themed-input {
+         background: transparent;
+         border: none;
+         border-bottom: 2px solid var(--text-secondary);
+         color: var(--text-primary);
+         transition: border-color var(--transition-base);
+         }
+         .themed-input:focus {
+         outline: none;
+         border-bottom-color: var(--accent-primary);
+         }
+         .btn {
+         padding: 0.75rem 2rem;
+         font-size: 1rem;
+         font-weight: bold;
+         color: var(--accent-button-text);
+         background: var(--accent-primary);
+         border: none;
+         border-radius: 0 1.25rem 0 1.25rem; /* Preserved unique shape */
+         text-decoration: none;
+         transition: var(--transition-base);
+         cursor: pointer;
+         }
+         .btn:hover {
+         background: var(--accent-hover);
+         transform: translateY(-3px);
+         box-shadow: 0 4px 15px var(--shadow-medium);
+         }
+         /* --- Custom Radio Buttons --- */
+         .option-label {
+         display: flex;
+         align-items: center;
+         padding: 0.75rem;
+         border: 2px solid var(--bg-tertiary);
+         border-radius: 0.5rem;
+         cursor: pointer;
+         transition: all 0.2s ease-in-out;
+         }
+         .option-label:hover {
+         background-color: var(--bg-secondary);
+         border-color: var(--accent-primary);
+         }
+         .option-input:checked + .option-label {
+         background-color: color-mix(in srgb, var(--accent-primary) 15%, transparent);
+         border-color: var(--accent-primary);
+         }
+         .custom-radio {
+         width: 1.5em;
+         height: 1.5em;
+         border: 2px solid var(--text-secondary);
+         border-radius: 50%;
+         display: grid;
+         place-content: center;
+         margin-right: 0.75rem;
+         flex-shrink: 0;
+         }
+         .custom-radio::before {
+         content: "";
+         width: 0.75em;
+         height: 0.75em;
+         border-radius: 50%;
+         transform: scale(0);
+         transition: 120ms transform ease-in-out;
+         background-color: var(--accent-primary);
+         }
+         .option-input:checked + .option-label .custom-radio {
+         border-color: var(--accent-primary);
+         }
+         .option-input:checked + .option-label .custom-radio::before {
+         transform: scale(1);
+         }
+         /* --- Result Section --- */
+         .chart {
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         }
+         .percentage {
+         position: relative; /* Essential for easy-pie-chart */
+         width: 180px;      /* Must match JS 'size' option */
+         height: 180px;     /* Must match JS 'size' option */
+         }
+         /* This new rule perfectly centers the number inside the ring */
+         .percentage-label {
+         position: absolute;
+         top: 50%;
+         left: 50%;
+         transform: translate(-50%, -50%);
+         }
+         /* --- Result Stats Table --- */
+         .result-table th, .result-table td {
+         vertical-align: middle;
+         }
+         .result-table thead {
+         border-bottom: 2px solid var(--bg-tertiary);
+         }
+         .result-table tbody tr:last-child {
+         border-bottom: none;
+         }
+         .text-correct { color: var(--color-correct); }
+         .text-incorrect { color: var(--color-incorrect); }
+         #result i {
+         margin-left: 12px;
+         }
+
+         /* --- Media Overlay Styles --- */
+         .media-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+         }
+         .media-overlay.active {
+            opacity: 1;
+            visibility: visible;
+         }
+         .media-content-wrapper {
+            position: relative;
+            background: var(--bg-primary);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px var(--shadow-medium);
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow: auto;
+         }
+         .media-content-wrapper .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: color 0.2s ease;
+         }
+         .media-content-wrapper .close-button:hover {
+            color: var(--accent-primary);
+         }
+         .media-content-wrapper img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+         }
+         .media-content-wrapper iframe {
+            width: 80vw; /* Adjust iframe width as needed */
+            height: 45vw; /* Maintain 16:9 aspect ratio */
+            max-width: 800px;
+            max-height: 450px;
+            display: block;
+            margin: 0 auto;
+         }
+         .audio-message {
+            text-align: center;
+            padding: 20px;
+            font-size: 1.2rem;
+            color: var(--text-primary);
+         }
+      </style>
+   </head>
+   <body>
+      <button id="theme-toggle" title="Toggle Theme">
+      <i class="fas fa-sun"></i>
+      </button>
+      <div class="min-h-screen flex items-center justify-center p-4">
+         <div class="w-full max-w-3xl">
+            <div id="quiz-container" class="quiz-box shadow-2xl p-6 sm:p-10">
+               <div id="name-box" class="text-center">
+                  <h1 class="text-3xl md:text-5xl font-light mb-4">Your Name?</h1>
+                  <form id="name-form">
+                     <input type="text" id="name-input-box" class="w-full max-w-sm themed-input text-3xl md:text-4xl text-center py-2" />
+                     <div class="mt-8">
+                        <button type="submit" id="name-submit-button" class="btn">
+                        Start Quiz
+                        </button>
+                     </div>
+                  </form>
+               </div>
+               <div id="question-box" class="hidden">
+               </div>
+               <div id="result" class="hidden text-center">
+                  <div class="score-label">
+                     <h1 style="font-size: 24px" class="text-3xl sm:text-4xl font-bold"><i class="smiley"></i></h1>
+                  </div>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mt-6">
+                     <div class="score-detail text-left">
+                        <h3 class="text-xl sm:text-2xl" style="color: var(--text-secondary);"></h3>
+                     </div>
+                     <div class="chart">
+                        <div class="percentage text-5xl font-bold" data-percent="0">
+                        </div>
+                     </div>
+                  </div>
+                  <h3 class="message text-lg sm:text-xl mt-8 font-light" style="color: var(--text-secondary);"></h3>
+               </div>
+               <div id="result-stats" class="hidden">
+                  <h2 class="text-2xl font-bold text-center mb-6">Review Your Answers</h2>
+                  <div class="overflow-x-auto">
+                     <table class="w-full text-left result-table">
+                        <thead>
+                           <tr>
+                              <th class="py-2 pr-4">Question</th>
+                              <th class="py-2 pr-4">Your Answer</th>
+                              <th class="py-2">Correct Answer</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                     </table>
+                  </div>
+               </div>
+            </div>
+            <div class="navigation-buttons flex justify-end items-center gap-4 mt-6">
+               <button id="prevButton" class="btn">Previous</button>
+               <button id="nextButton" class="btn">Next</button>
+               <button id="submitButton" class="btn">Submit</button>
+               <button id="resultButton" class="btn">See Review</button>
+               <button id="replayButton" class="btn">Re-play Quiz</button>
+            </div>
+         </div>
+      </div>
+
+      <div id="media-overlay" class="media-overlay">
+         <div class="media-content-wrapper">
+            <button class="close-button" id="close-media-overlay">&times;</button>
+            <div id="media-player-container">
+               </div>
+         </div>
+      </div>
+
+      <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js'></script>
+      <script src='https://cdnjs.cloudflare.com/ajax/libs/easy-pie-chart/2.1.6/jquery.easypiechart.min.js'></script>
+      <script>
+         let youtubeAPIReady = false;
+         const youtubePlayerQueue = [];
+
+         // Global function for YouTube Iframe API ready
+         function onYouTubeIframeAPIReady() {
+            youtubeAPIReady = true;
+            // Process any queued player creations
+            while (youtubePlayerQueue.length > 0) {
+               const playerConfig = youtubePlayerQueue.shift();
+               createYouTubePlayer(playerConfig.containerId, playerConfig.videoId, playerConfig.isAudio);
+            }
+         }
+
+         $(function() {
+             // --- QUIZ DATA (will be fetched from server) ---
+             let quizData = [];
+
+             // --- VARIABLES ---
+             let currentQuestion = 0;
+             let score = 0;
+             let userName = '';
+             let userAnswers = [];
+             let youtubePlayer; // To store the YouTube player instance
+
+             // --- DOM ELEMENTS ---
+             const nameBox = $('#name-box'), questionBox = $('#question-box'), resultBox = $('#result'), resultStatsBox = $('#result-stats');
+             const prevButton = $('#prevButton'), nextButton = $('#nextButton'), submitButton = $('#submitButton'), resultButton = $('#resultButton'), replayButton = $('#replayButton');
+             const themeToggleButton = $('#theme-toggle');
+             const mediaOverlay = $('#media-overlay');
+             const closeMediaOverlayButton = $('#close-media-overlay');
+             const mediaPlayerContainer = $('#media-player-container');
+
+window.initializePage = async function(userData) {
+$('#name-input-box').val(userData['name']);
+nameBox.show();
+}
+
+             // --- INITIALIZATION ---
+             function init() {
+                 nameBox.show();
+                 questionBox.hide();
+                 resultBox.hide();
+                 resultStatsBox.hide();
+                 $('.navigation-buttons button').hide();
+
+                 // Set initial theme icon
+                 if (localStorage.getItem('theme') === 'light') {
+                     $('body').addClass('light-theme');
+                     themeToggleButton.html('<i class="fas fa-moon"></i>');
+                 } else {
+                     themeToggleButton.html('<i class="fas fa-sun"></i>');
+                 }
+
+                 // Load YouTube Iframe API script
+                 const tag = document.createElement('script');
+                 tag.src = "https://www.youtube.com/iframe_api";
+                 const firstScriptTag = document.getElementsByTagName('script')[0];
+                 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+             }
+
+             
+
+             // --- EVENT LISTENERS ---
+             $('#name-form').on('submit', function(e) {
+                 e.preventDefault();
+                 userName = $('#name-input-box').val().trim();
+                 if (userName) {
+                     nameBox.fadeOut(() => {
+                         questionBox.fadeIn();
+                         loadQuestion(currentQuestion);
+                     });
+                 }
+             });
+
+             nextButton.on('click', () => {
+                 if (currentQuestion < quizData.length - 1) {
+                     currentQuestion++;
+                     loadQuestion(currentQuestion);
+                 }
+             });
+
+             prevButton.on('click', () => {
+                 if (currentQuestion > 0) {
+                     currentQuestion--;
+                     loadQuestion(currentQuestion);
+                 }
+             });
+
+             submitButton.on('click', () => {
+                 calculateScore();
+                 showResult();
+             });
+
+             resultButton.on('click', () => {
+                  resultBox.fadeOut(() => {
+                     showResultStats();
+                     resultStatsBox.fadeIn();
+                     resultButton.hide();
+                 });
+             });
+
+             replayButton.on('click', replayQuiz);
+
+             themeToggleButton.on('click', () => {
+                 $('body').toggleClass('light-theme');
+                 const isLight = $('body').hasClass('light-theme');
+                 localStorage.setItem('theme', isLight ? 'light' : 'dark');
+                 themeToggleButton.html(isLight ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>');
+
+                 // Re-initialize pie chart with new theme colors if it's visible
+                 if(resultBox.is(':visible')){
+                     initializePieChart();
+                 }
+             });
+
+            closeMediaOverlayButton.on('click', closeMediaOverlay);
+
+             // --- FUNCTIONS ---
+             function loadQuestion(index) {
+                 questionBox.empty();
+                 const q = quizData[index];
+                 const details = q.details;
+                 // Dynamically set options for True/False questions
+                 const options = q.question_type === 'True/False' ? ["True", "False"] : details.options;
+
+                 // Helper function to generate difficulty stars
+                 function getDifficultyStars(level) {
+                     let stars = '';
+                     for (let i = 0; i < 5; i++) {
+                         stars += i < level ? '<i class="fas fa-star" style="color:var(--accent-primary);"></i>' : '<i class="far fa-star" style="color:var(--text-secondary);"></i>';
+                     }
+                     return `<span class="flex items-center gap-1" title="Difficulty: ${level}/5">${stars}</span>`;
+                 }
+
+                 let questionHTML = `
+                     <div class="flex justify-between items-center mb-4 text-sm">
+                         <span class="py-1 px-3 rounded-full text-xs font-bold" style="background-color: color-mix(in srgb, var(--accent-primary) 20%, transparent); color: var(--accent-primary); border: 1px solid var(--accent-primary);">${q.question_bank}</span>
+                         ${getDifficultyStars(q.difficulty_level)}
+                     </div>
+                     <div class="mb-8">
+                         <h2 class="text-xl md:text-3xl font-light">${index + 1}. ${q.question}</h2>
+                 `;
+
+                // Add media button if media is embedded
+                if (details.mediaEmbedded && details.mediaLink) {
+                    let buttonText = '';
+                    switch (details.mediaEmbedded) {
+                        case 'image':
+                            buttonText = 'Show Image';
+                            break;
+                        case 'audio':
+                            buttonText = 'Play Audio';
+                            break;
+                        case 'video':
+                            buttonText = 'Play Video';
+                            break;
+                    }
+                    questionHTML += `
+                        <div class="mt-4">
+                            <button class="btn media-button" data-media-type="${details.mediaEmbedded}" data-media-link="${details.mediaLink}">
+                                ${buttonText}
+                            </button>
+                        </div>
+                    `;
+                }
+
+                questionHTML += `</div>
+                     <div class="options grid grid-cols-1 md:grid-cols-2 gap-4">
+                 `;
+
+                 options.forEach((option, i) => {
+                     // Check against the stored answer string
+                     const isChecked = userAnswers[index] === option ? 'checked' : '';
+                     questionHTML += `
+                         <div>
+                             <input type="radio" name="option" id="option${i}" value="${option}" class="option-input hidden" ${isChecked}>
+                             <label for="option${i}" class="option-label">
+                                 <span class="custom-radio"></span>
+                                 <span class="text-base md:text-lg">${option}</span>
+                             </label>
+                         </div>
+                     `;
+                 });
+                 questionHTML += '</div>';
+                 questionBox.html(questionHTML);
+
+                 // Store the selected option's text value
+                 $('input[name="option"]').on('change', function() {
+                     userAnswers[currentQuestion] = $(this).val();
+                 });
+
+                 // Add event listener for media button
+                 $('.media-button').on('click', function() {
+                    const mediaType = $(this).data('media-type');
+                    const mediaLink = $(this).data('media-link');
+                    openMediaOverlay(mediaType, mediaLink);
+                 });
+
+                 updateButtonVisibility();
+             }
+
+             function updateButtonVisibility() {
+                 prevButton.show();
+                 nextButton.show();
+                 submitButton.hide();
+                 if (currentQuestion === 0) prevButton.hide();
+                 if (currentQuestion === quizData.length - 1) {
+                     nextButton.hide();
+                     submitButton.show();
+                 }
+             }
+
+             function calculateScore() {
+                 score = 0;
+                 quizData.forEach((q, index) => {
+                     const userAnswer = userAnswers[index];
+                     const correctAnswer = q.details.answer;
+
+                     if (userAnswer === null) return;
+
+                     let isMatch = false;
+                     if (q.question_type === 'True/False') {
+                         // Convert string "True"/"False" to boolean for comparison
+                         const userAnswerAsBoolean = (userAnswer === 'True');
+                         isMatch = (userAnswerAsBoolean === correctAnswer);
+                     } else { // MCQ
+                         isMatch = (userAnswer === correctAnswer);
+                     }
+
+                     if (isMatch) {
+                         score++;
+                     }
+                 });
+             }
+
+             function showResult() {
+                 questionBox.fadeOut(() => resultBox.fadeIn());
+                 $('.navigation-buttons button').hide();
+                 resultButton.show();
+                 replayButton.show();
+
+                 const percentage = (score / quizData.length) * 100;
+                 let smiley = '', message = '';
+
+                 if (percentage < 35) {
+                     smiley = '<i class="far fa-frown-open" style="color:var(--color-incorrect);"></i>';
+                     message = "Don't worry, try again!";
+                 } else if (percentage < 70) {
+                     smiley = '<i class="far fa-meh" style="color:var(--accent-primary);"></i>';
+                     message = "Good job, but you can do better!";
+                 } else {
+                     smiley = '<i class="far fa-smile-beam" style="color:var(--color-correct);"></i>';
+                     message = "Excellent work! You nailed it!";
+                 }
+
+                 resultBox.find('.smiley').html(`${userName}, you scored ${score}/${quizData.length} ${smiley}`);
+                 resultBox.find('.score-detail h3').html(`Total Questions: ${quizData.length}<br>Correct: ${score}<br>Wrong: ${quizData.length - score}`);
+                 resultBox.find('.message').text(message);
+
+                 $('.percentage').attr('data-percent', Math.round(percentage));
+                 initializePieChart();
+             }
+
+             function initializePieChart() {
+                 // Clear any existing chart
+                 const percentValue = $('.percentage').attr('data-percent');
+                 const numberHTML = `<div class="percentage-label"><span>${percentValue}</span><sup class="text-2xl">%</sup></div>`;
+
+                 $('.percentage').empty().removeData('easyPieChart').html(numberHTML);
+
+                 const computedStyle = getComputedStyle(document.body);
+                 $('.percentage').easyPieChart({
+                     animate: 1000,
+                     lineWidth: 15,
+                     barColor: computedStyle.getPropertyValue('--accent-primary').trim(),
+                     trackColor: computedStyle.getPropertyValue('--bg-tertiary').trim(),
+                     scaleColor: false,
+                     lineCap: 'round',
+                     size: 180
+                 });
+             }
+
+             function showResultStats() {
+                 const tableBody = resultStatsBox.find('tbody');
+                 tableBody.empty();
+
+                 quizData.forEach((q, index) => {
+                     const userAnswer = userAnswers[index];
+                     const correctAnswer = q.details.answer;
+                     const explanation = q.details.explanation;
+
+                     const userAnswerText = userAnswer !== null ? userAnswer : 'Not Answered';
+                     // Display boolean answers as "True" or "False" strings for readability
+                     const correctAnswerText = typeof correctAnswer === 'boolean'
+                         ? (correctAnswer ? 'True' : 'False')
+                         : correctAnswer;
+
+                     let isCorrect = false;
+                     if (userAnswer !== null) {
+                         if (q.question_type === 'True/False') {
+                             isCorrect = ((userAnswer === 'True') === correctAnswer);
+                         } else {
+                             isCorrect = (userAnswer === correctAnswer);
+                         }
+                     }
+
+                     const icon = isCorrect ? '<i class="fas fa-check-circle text-correct mr-2"></i>' : '<i class="fas fa-times-circle text-incorrect mr-2"></i>';
+                     const rowClass = isCorrect ? '' : 'text-incorrect';
+                     // Add bottom border to this row only if there's NO explanation row following it
+                     const borderClass = explanation ? '' : 'border-b';
+
+                     let rowHTML = `
+                         <tr class="${borderClass}" style="border-color: var(--bg-tertiary);">
+                             <td class="pt-4 pb-2 pr-4 align-top font-medium">${q.question}</td>
+                             <td class="pt-4 pb-2 pr-4 align-top whitespace-nowrap ${rowClass}">${userAnswer === null ? 'Not Answered' : icon + userAnswerText}</td>
+                             <td class="pt-4 pb-2 align-top text-correct whitespace-nowrap">${correctAnswerText}</td>
+                         </tr>
+                     `;
+
+                     // If an explanation exists, add it in a new row spanning all columns
+                     if (explanation) {
+                         rowHTML += `
+                             <tr class="explanation-row border-b" style="border-color: var(--bg-tertiary);">
+                                 <td colspan="3" class="pt-1 pb-4 text-sm" style="color: var(--text-secondary);">
+                                     <strong style="color: var(--accent-primary);">Explanation:</strong> ${explanation}
+                                 </td>
+                             </tr>
+                         `;
+                     }
+
+                     tableBody.append(rowHTML);
+                 });
+             }
+
+             function replayQuiz() {
+                 currentQuestion = 0;
+                 score = 0;
+                 userAnswers.fill(null);
+
+                 resultBox.hide();
+                 resultStatsBox.hide();
+
+                 resultButton.hide();
+                 replayButton.hide();
+
+                 questionBox.fadeIn();
+                 loadQuestion(currentQuestion);
+             }
+
+            // --- Media Overlay Functions ---
+            function getYouTubeVideoId(url) {
+                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+                const match = url.match(regExp);
+                return (match && match[2].length === 11) ? match[2] : null;
+            }
+
+            function createYouTubePlayer(containerId, videoId, isAudio) {
+                youtubePlayer = new YT.Player(containerId, {
+                    videoId: videoId,
+                    events: {
+                        'onReady': (event) => event.target.playVideo(),
+                        'onStateChange': (event) => {
+                            if (isAudio && (event.data === YT.PlayerState.ENDED || event.data === YT.PlayerState.PAUSED)) {
+                                closeMediaOverlay();
+                            }
+                        }
+                    },
+                    playerVars: {
+                        'autoplay': 1,
+                        'controls': isAudio ? 0 : 1, // No controls for audio, show for video
+                        'modestbranding': 1,
+                        'loop': 0,
+                        'disablekb': 1,
+                        'fs': isAudio ? 0 : 1, // No fullscreen for audio, allow for video
+                        'iv_load_policy': 3,
+                        'rel': 0,
+                        'showinfo': 0,
+                        'mute': 0, // Ensure audio is not muted by default
+                    }
+                });
+            }
+
+            function openMediaOverlay(mediaType, mediaLink) {
+                mediaPlayerContainer.empty(); // Clear previous media
+                let contentHTML = '';
+
+                switch (mediaType) {
+                    case 'image':
+                        contentHTML = `<img src="${mediaLink}" alt="Question Image" class="rounded-lg">`;
+                        mediaPlayerContainer.html(contentHTML);
+                        break;
+                    case 'audio':
+                    case 'video':
+                        const ytVideoId = getYouTubeVideoId(mediaLink);
+                        if (ytVideoId) {
+                            const playerDivId = mediaType === 'audio' ? 'youtube-audio-player' : 'youtube-video-player';
+                            contentHTML = `
+                                ${mediaType === 'audio' ? '<div class="audio-message">Audio playing...</div>' : ''}
+                                <div id="${playerDivId}" style="${mediaType === 'audio' ? 'position: absolute; left: -9999px; width: 1px; height: 1px;' : ''}"></div>
+                            `;
+                            mediaPlayerContainer.html(contentHTML);
+
+                            if (youtubeAPIReady) { // Check if API is ready
+                                createYouTubePlayer(playerDivId, ytVideoId, mediaType === 'audio');
+                            } else { // If not ready, queue the creation
+                                youtubePlayerQueue.push({
+                                    containerId: playerDivId,
+                                    videoId: ytVideoId,
+                                    isAudio: mediaType === 'audio'
+                                });
+                            }
+                        } else {
+                            contentHTML = `<p class="text-red-500">Error: Invalid YouTube link for ${mediaType}.</p>`;
+                            mediaPlayerContainer.html(contentHTML);
+                        }
+                        break;
+                }
+                mediaOverlay.addClass('active');
+            }
+
+            function closeMediaOverlay() {
+                mediaOverlay.removeClass('active');
+
+                // Stop YouTube video/audio if playing
+                if (youtubePlayer && typeof youtubePlayer.stopVideo === 'function') {
+                    youtubePlayer.stopVideo();
+                    youtubePlayer.destroy(); // Destroy the player to clean up
+                    youtubePlayer = null;
+                }
+                mediaPlayerContainer.empty(); // Clear media content
+            }
+         });
+      </script>
+   </body>
+</html>
