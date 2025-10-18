@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="noselect">
 <head>
     <meta charset="UTF-8">
     <title>Worksheet</title>
@@ -50,6 +50,16 @@
             box-sizing: border-box;
             font-size: 0.42cm; 
         }
+        .noselect {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+
+        -webkit-touch-callout: none;
+        -webkit-user-drag: none;
+        -webkit-tap-highlight-color: transparent;
+}
         .container {
             width: 100%;
             max-width: 21cm;
