@@ -40,7 +40,7 @@ if (overallDifficulty === "random") {
          const data = await parent.invokeFunction('get_custom_question_set', {
             p_bank_ids: [id]
          }, false);
-         console.log("Questions:", data);
+         console.log("Questions (new format):", data);
          return data.map(convertQuestionToOldFormat) || [];
       } catch (err) {
          console.error("Error fetching questions:", err);
@@ -58,6 +58,8 @@ async function fetchMultipleQbData(qbIds) {
   for (const id of ids) {
     try {
       const data = await fetchData(parseInt(id));
+
+      console.log("Questions (compat format):", data);
       chapterStartPoints.push(consolidatedData.length);
       consolidatedData.push(...data);
     } catch (error) {
