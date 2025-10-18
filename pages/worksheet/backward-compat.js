@@ -122,7 +122,6 @@ function convertQuestionToOldFormat(newQuestion) {
     jsonParams.colHeadings = colHeadings || [];
   }
 
-  console.log("Converted question:", `${questionText}JSONParams:${JSON.stringify(jsonParams)}`);
   // 4. Combine and return
   return `${questionText}JSONParams:${JSON.stringify(jsonParams)}`;
 }
