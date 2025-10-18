@@ -38,7 +38,8 @@ if (overallDifficulty === "random") {
   async function fetchData(id) {
     try {
          const data = await parent.invokeFunction('get_custom_question_set', {
-            p_bank_ids: [id]
+            p_bank_ids: [id],
+            p_total_count: 10000
          }, false);
          return data.map(convertQuestionToOldFormat) || [];
       } catch (err) {
