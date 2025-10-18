@@ -15,7 +15,8 @@ const QuestionBankSelector = {
     filteredBanks: [],
     selectedBankIds: [],
     isVisible: false,
-    promiseResolve: null
+    promiseResolve: null,
+    allowedQTypes: "all" // default
   },
 
   // Initialize the selector
@@ -59,9 +60,10 @@ const QuestionBankSelector = {
   },
 
   // Show the selector
-  show() {
+  show(allowedQTypes="all") {
     return new Promise(resolve => {
         this.state.promiseResolve = resolve;
+        this.state.allowedQTypes = allowedQTypes;
 
         if (QB_DETAILS[currentSubject] && QB_DETAILS[currentSubject].length > 0) {
             this.state.questionBanks = QB_DETAILS[currentSubject].map((bank, index) => ({ ...bank }));
@@ -142,7 +144,7 @@ const QuestionBankSelector = {
     const html = this.state.filteredBanks.map(bank => {
       const isSelected = this.state.selectedBankIds.includes(bank.id);
       const isInPlan = bank.within_current_plan;
-      const totalCount = (bank?.question_count?.MCQ ?? 0) + (bank?.question_count?.["True/False"] ?? 0);
+      const totalCount = getAllowedQuestionCount(bank.question_count);
 
       // Add a 'disabled' class if the bank is not within the current plan
       const itemClass = `qb-item ${isSelected ? 'selected' : ''} ${!isInPlan ? 'disabled' : ''}`;
@@ -202,5 +204,25 @@ const QuestionBankSelector = {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+  },
+
+  getAllowedQuestionCount(qCounts) {
+
+  const allowedQTypes = this.state.allowedQTypes;
+  // Case 1: If all question types are allowed
+  if (allowedQTypes === "all") {
+    return qCounts["Total"] || 0; // Safely return Total or 0 if missing
   }
+
+  // Case 2: If specific types are allowed
+  if (Array.isArray(allowedQTypes)) {
+    return allowedQTypes.reduce((sum, type) => {
+      return sum + (qCounts[type] || 0); // Add only existing keys
+    }, 0);
+  }
+
+  // Fallback (invalid input)
+  return 0;
+}
+
 };
