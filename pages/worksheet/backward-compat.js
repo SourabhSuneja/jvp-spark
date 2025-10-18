@@ -101,7 +101,7 @@ function convertQuestionToOldFormat(newQuestion) {
     }).join(" "); // Space-separated as per example
     
     // Note: Example 1 output has two spaces before "Correct:"
-    questionText += ` (Options: ${optionsString}  Correct: ${formatString(answer)}.)`;
+    questionText += ` (Options: ${optionsString}  Correct: ${formatString(answer)})`;
   }
 
   // 2. Build the JSONParams object
