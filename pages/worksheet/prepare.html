@@ -829,7 +829,7 @@
                  let finalURL = `${baseURL}?ed=${encodedEd}&qpm=${qpm}&qc=${encodedQc}&qbIds=${encodedQbIds}&diff=${difficulty}`;
          
                  // Redirect to the generated link
-                 window.location.href = finalURL;
+                 window.parent.loadManualPage({link: finalURL, title: 'Worksheet', page_key: subject + '-worksheet'});
              }       
       </script>
    </body>
