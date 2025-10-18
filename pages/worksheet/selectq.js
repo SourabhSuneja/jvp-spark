@@ -957,6 +957,6 @@ function consolidateMustIncludeIndices() {
 
 // call start function to begin the entire question fetching and selection process
 window.onload = function() {
-  start(getParameterByName('files'));
+  start(getParameterByName('qbIds'));
 }
 
