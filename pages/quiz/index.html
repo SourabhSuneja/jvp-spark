@@ -897,7 +897,8 @@
                   // Fetch questions
 try {
          const data = await parent.invokeFunction('get_custom_question_set', {
-            p_bank_ids: qbIds
+            p_bank_ids: qbIds,
+            p_total_count: 10000
          }, false);
          console.log("Questions:", data);
          quizData = data;
