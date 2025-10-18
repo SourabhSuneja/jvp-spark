@@ -4,9 +4,7 @@
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Processing Worksheet</title>
-      <!-- font awesome icons link -->
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-      <!-- ion icons link -->
       <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
       <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
       <style>
@@ -225,6 +223,75 @@
          .input-field[type=number] {
          -moz-appearance: textfield;
          }
+
+         /* === NEW STYLES FOR RADIO BUTTONS === */
+         .input-group#worksheetOptions {
+         margin-top: var(--spacing-xl);
+         padding-top: var(--spacing-lg);
+         border-top: 1px solid var(--bg-tertiary);
+         }
+
+         .radio-options-container {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md); /* Space between radio options */
+            padding: var(--spacing-sm) 0;
+         }
+
+         .radio-option {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+         }
+
+         .radio-option input[type="radio"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background-color: var(--bg-input);
+            margin: 0;
+            font: inherit;
+            color: var(--text-tertiary);
+            width: 1.15em;
+            height: 1.15em;
+            border: 2px solid var(--bg-tertiary);
+            border-radius: var(--radius-full);
+            transform: translateY(-0.075em);
+            display: grid;
+            place-content: center;
+            cursor: pointer;
+         }
+
+         .radio-option input[type="radio"]::before {
+            content: "";
+            width: 0.65em;
+            height: 0.65em;
+            border-radius: var(--radius-full);
+            transform: scale(0);
+            transition: 120ms transform ease-in-out;
+            box-shadow: inset 1em 1em var(--accent-primary);
+         }
+
+         .radio-option input[type="radio"]:checked {
+             border-color: var(--accent-primary);
+         }
+
+         .radio-option input[type="radio"]:checked::before {
+            transform: scale(1);
+         }
+         
+         .radio-option input[type="radio"]:focus-visible {
+             outline: 2px solid var(--accent-focus);
+             outline-offset: 2px;
+         }
+
+         .radio-option label {
+            font-size: var(--font-base);
+            color: var(--text-secondary);
+            cursor: pointer;
+         }
+         /* === END OF NEW STYLES === */
+
+
          .error-message {
          display: none;
          margin-top: var(--spacing-sm);
@@ -503,7 +570,6 @@
    </head>
    <body>
       <div class="container">
-         <!-- Input Form -->
          <div class="input-form-container" id="inputForm">
             <div class="form-header">
                <h1 class="form-title">Configure Your Worksheet</h1>
@@ -512,7 +578,24 @@
             <div class="form-content">
                <form id="questionForm">
                   <div id="inputFields">
-                     <!-- Dynamic input fields will be generated here -->
+                     </div>
+
+                  <div class="input-group" id="worksheetOptions">
+                     <label class="input-label">Worksheet Options</label>
+                     <div class="radio-options-container">
+                        <div class="radio-option">
+                           <input type="radio" id="optionSolved" name="worksheetType" value="ans" checked>
+                           <label for="optionSolved">Solved Worksheet</label>
+                        </div>
+                        <div class="radio-option">
+                           <input type="radio" id="optionUnsolvedSpace" name="worksheetType" value="space">
+                           <label for="optionUnsolvedSpace">Unsolved (with space for answers)</label>
+                        </div>
+                        <div class="radio-option">
+                           <input type="radio" id="optionUnsolvedNoSpace" name="worksheetType" value="none">
+                           <label for="optionUnsolvedNoSpace">Unsolved (no space)</label>
+                        </div>
+                     </div>
                   </div>
                   <div class="button-container">
                      <button type="submit" class="btn btn-primary">
@@ -522,7 +605,6 @@
                </form>
             </div>
          </div>
-         <!-- Processing Animation -->
          <div class="processing-container" id="processingAnimation">
             <div class="worksheet-animation">
                <i class="fas fa-file-alt worksheet-icon"></i>
@@ -758,6 +840,8 @@
                  // Randomize difficulty level
                  let difficulty = "purelyRandom";
          
+                 // === GET SELECTED WORKSHEET TYPE ===
+                 const selectedWorksheetType = document.querySelector('input[name="worksheetType"]:checked').value;
          
                  // Question types
          const questionTypes = {
@@ -785,7 +869,7 @@
                  // Exam details object
                  let ed = {
                      schoolName: "Jamna Vidyapeeth",
-                     examName: "Practice Worksheet" + ((getParameterByName("solved") === "y") ? " (Solved)" : ""),
+                     examName: "Practice Worksheet" + ((selectedWorksheetType === "ans") ? " (Solved)" : ""), // Updated this logic
                      subject,
                      duration: 60,
                      grade: gradeToRoman(grade)
@@ -805,7 +889,7 @@
                      weightPerQ: [{}],
                      mustInclude: [{}],
                      settings: {
-                         provideAnsOrSpace: (getParameterByName("solved") === "y") ? "ans" : "ans",
+                         provideAnsOrSpace: selectedWorksheetType, // <- Here is the dynamic value
                          randomiseSelection: true,
                          strictChapterWiseDistribution: false,
                          editable: false,
