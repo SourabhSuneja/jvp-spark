@@ -805,7 +805,7 @@
                      weightPerQ: [{}],
                      mustInclude: [{}],
                      settings: {
-                         provideAnsOrSpace: (getParameterByName("solved") === "y") ? "ans" : "space",
+                         provideAnsOrSpace: (getParameterByName("solved") === "y") ? "ans" : "ans",
                          randomiseSelection: true,
                          strictChapterWiseDistribution: false,
                          editable: false,
@@ -841,7 +841,7 @@
                  let encodedQbIds = encodeURIComponent(qbIds.join("+"));
          
                  // Final URL construction
-                 let finalURL = `${baseURL}?ed=${encodedEd}&qpm=${qpm}&qc=${encodedQc}&qbIds=${encodedQbIds}&diff=${difficulty}&solved=y`;
+                 let finalURL = `${baseURL}?ed=${encodedEd}&qpm=${qpm}&qc=${encodedQc}&qbIds=${encodedQbIds}&diff=${difficulty}`;
          
                  // Redirect to the generated link
                  window.parent.loadManualPage({link: finalURL, title: 'Worksheet', page_key: subject + '-worksheet', min_width: 750});
