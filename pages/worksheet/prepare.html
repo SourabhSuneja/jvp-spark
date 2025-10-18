@@ -709,7 +709,20 @@
            form.addEventListener('submit', handleFormSubmit);
          }
          
-
+         
+         
+         // Function to convert a grade number into its Roman equivalent
+         function gradeToRoman(num) {
+         const romanMap = [
+         '', 'I', 'II', 'III', 'IV', 'V',
+         'VI', 'VII', 'VIII', 'IX', 'X',
+         'XI', 'XII'
+         ];
+         
+         // Return corresponding Roman numeral or empty string if out of range
+         return romanMap[num] || '___';
+         }
+         
                  
              // Function to get URL parameters
              function getParameterByName(name, url) {
@@ -727,13 +740,13 @@
              }
          
              function generateWorksheet(selectedQuestions) {
-
+         
               // Base URL
               const baseURL = "https://sourabhsuneja.github.io/jvp-spark/pages/worksheet/";
          
               // Question bank IDs
               const qbIds = selectedQbIds;
-
+         
                  // set question counts
                  let fillUp = parseInt(selectedQuestions['Fill up']) || 0;
                  let trueFalse = parseInt(selectedQuestions['True/False']) || 0;
@@ -775,7 +788,7 @@
                      examName: "Practice Worksheet" + ((getParameterByName("solved") === "y") ? " (Solved)" : ""),
                      subject,
                      duration: 60,
-                     grade
+                     grade: gradeToRoman(grade)
                  };
          
                  // Question container object
