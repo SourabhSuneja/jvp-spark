@@ -878,7 +878,9 @@
                      schoolName: "Jamna Vidyapeeth",
                      examName: "Practice Worksheet" + ((selectedWorksheetType === "ans") ? " (Solved)" : ""), // Updated this logic
                      subject,
-                     duration: 60,
+                     duration: getWorksheetDuration(
+  mcq, fillUp, trueFalse, veryShortAns, shortAns, longAns
+),
                      grade: gradeToRoman(grade)
                  };
          
@@ -983,6 +985,73 @@ function generateQuestionStructure(mcq, fillUp, trueFalse, veryShortAns, shortAn
             mustInclude: [{}]
         };
     }
+}
+
+
+// Function to smartly set the worksheet duration based on number and type of questions
+function getWorksheetDuration(
+  mcq = 0,
+  fillUp = 0,
+  trueFalse = 0,
+  veryShortAns = 0,
+  shortAns = 0,
+  longAns = 0
+) {
+
+  // --- 1. Define Time Weights (in minutes) ---
+  const TIME_WEIGHTS = {
+    trueFalse: 0.5,    // 30 seconds
+    fillUp: 0.75,      // 45 seconds
+    mcq: 1,            // 1 minute
+    veryShortAns: 1.5, // 1.5 minutes
+    shortAns: 3,       // 3 minutes
+    longAns: 8,        // 8 minutes
+  };
+
+  // --- 2. Define Time Limits & Rounding (in minutes) ---
+  
+  // Set a practical minimum duration slot
+  const MIN_TIME_MINUTES = 20; // 20 minutes
+  
+  // Worksheets over 2 hours are "too long"
+  const TOO_LONG_THRESHOLD = 120; // 120 minutes
+  
+  // We will round to the nearest 10-minute slot.
+  const SLOT_INTERVAL_MINUTES = 10; // 10 minutes
+
+  // --- 3. Calculate Total Estimated Time ---
+  const totalMinutes =
+    (mcq * TIME_WEIGHTS.mcq) +
+    (fillUp * TIME_WEIGHTS.fillUp) +
+    (trueFalse * TIME_WEIGHTS.trueFalse) +
+    (veryShortAns * TIME_WEIGHTS.veryShortAns) +
+    (shortAns * TIME_WEIGHTS.shortAns) +
+    (longAns * TIME_WEIGHTS.longAns);
+
+  // --- 4. Handle Edge Cases ---
+
+  // Case 1: Empty worksheet
+  if (totalMinutes === 0) {
+    return 0;
+  }
+
+  // Case 2: Worksheet is "too long"
+  if (totalMinutes > TOO_LONG_THRESHOLD) {
+    return "Take your time";
+  }
+  
+  // Case 3: Worksheet is very short, snap to the minimum practical time
+  if (totalMinutes < MIN_TIME_MINUTES) {
+    return MIN_TIME_MINUTES;
+  }
+
+  // --- 5. Snap to Nearest 10-Minute Slot ---
+  // This logic rounds the total time to the nearest 10-minute mark.
+  // e.g., 45 min (4.5) rounds to 50 min.
+  // e.g., 42 min (4.2) rounds to 40 min.
+  const snappedMinutes = Math.round(totalMinutes / SLOT_INTERVAL_MINUTES) * SLOT_INTERVAL_MINUTES;
+
+  return snappedMinutes;
 }
       </script>
    </body>
