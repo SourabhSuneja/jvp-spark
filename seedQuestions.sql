@@ -492,3 +492,136 @@ VALUES
   "answer": "Conditional Formatting",
   "explanation": "Conditional Formatting applies styles to cells based on set conditions."
 }');
+
+
+
+INSERT INTO questions (question_bank_id, question_text, question_type, difficulty_level, details)
+VALUES
+(1, 'They _____ football when it started to rain.', 'Fill up', 2, '{
+  "answer": "were playing",
+  "explanation": "Past continuous tense is used for an ongoing action interrupted by another."
+}');
+
+INSERT INTO questions (question_bank_id, question_text, question_type, difficulty_level, details)
+VALUES
+(1, 'I _____ my homework before dinner.', 'Fill up', 3, '{
+  "answer": "had finished",
+  "explanation": "Past perfect tense is used for an action completed before another in the past."
+}');
+
+INSERT INTO questions (question_bank_id, question_text, question_type, difficulty_level, details)
+VALUES
+(1, 'By this time tomorrow, we _____ our exams.', 'Fill up', 4, '{
+  "answer": "will have completed",
+  "explanation": "Future perfect tense shows an action that will be finished by a certain future time."
+}');
+
+INSERT INTO questions (question_bank_id, question_text, question_type, difficulty_level, details)
+VALUES
+(1, 'He usually _____ his lunch at 1 p.m.', 'Fill up', 1, '{
+  "answer": "eats",
+  "explanation": "Simple present tense expresses habitual actions."
+}');
+
+INSERT INTO questions (question_bank_id, question_text, question_type, difficulty_level, details)
+VALUES
+(1, 'The match _____ when we reached the stadium.', 'Fill up', 3, '{
+  "answer": "had already started",
+  "explanation": "Past perfect is used for an action that happened before another past event."
+}');
+
+INSERT INTO questions (question_bank_id, question_text, question_type, difficulty_level, details)
+VALUES
+(1, 'The present perfect tense is used to describe an action that happened at a specific time in the past.', 'True/False', 2, '{
+  "answer": "False",
+  "explanation": "Present perfect does not refer to specific time; it links past to present."
+}');
+
+INSERT INTO questions (question_bank_id, question_text, question_type, difficulty_level, details)
+VALUES
+(1, '“I am eating” is in the present continuous tense.', 'True/False', 1, '{
+  "answer": "True",
+  "explanation": "It shows an action that is happening at the moment of speaking."
+}');
+
+INSERT INTO questions (question_bank_id, question_text, question_type, difficulty_level, details)
+VALUES
+(1, 'Future tense can be expressed using “will” or “going to”.', 'True/False', 2, '{
+  "answer": "True",
+  "explanation": "Both forms express future time, though with slightly different meanings."
+}');
+
+INSERT INTO questions (question_bank_id, question_text, question_type, difficulty_level, details)
+VALUES
+(1, '“She was sleeping” is in the past perfect tense.', 'True/False', 2, '{
+  "answer": "False",
+  "explanation": "It is in the past continuous tense."
+}');
+
+INSERT INTO questions (question_bank_id, question_text, question_type, difficulty_level, details)
+VALUES
+(1, 'The sentence “I have been working here for five years” is in the present perfect continuous tense.', 'True/False', 3, '{
+  "answer": "True",
+  "explanation": "It shows an action that began in the past and continues to the present."
+}');
+
+INSERT INTO questions (question_bank_id, question_text, question_type, difficulty_level, details)
+VALUES
+(1, 'What is the difference between the simple past and the present perfect tense?', 'Short Answer Type', 3, '{
+  "answer": "Simple past refers to actions completed at a specific time in the past; present perfect connects past actions with the present."
+}');
+
+INSERT INTO questions (question_bank_id, question_text, question_type, difficulty_level, details)
+VALUES
+(1, 'Form a sentence using the future continuous tense.', 'Short Answer Type', 2, '{
+  "answer": "Example: I will be studying at 8 p.m. tonight."
+}');
+
+INSERT INTO questions (question_bank_id, question_text, question_type, difficulty_level, details)
+VALUES
+(1, 'Which tense is used to talk about universal truths?', 'Short Answer Type', 1, '{
+  "answer": "Simple present tense."
+}');
+
+INSERT INTO questions (question_bank_id, question_text, question_type, difficulty_level, details)
+VALUES
+(1, 'When do we use the past perfect tense?', 'Short Answer Type', 3, '{
+  "answer": "When one past action happens before another past action."
+}');
+
+INSERT INTO questions (question_bank_id, question_text, question_type, difficulty_level, details)
+VALUES
+(1, 'Give one example of a verb in the present perfect continuous tense.', 'Short Answer Type', 2, '{
+  "answer": "I have been reading for two hours."
+}');
+
+INSERT INTO questions (question_bank_id, question_text, question_type, difficulty_level, details)
+VALUES
+(1, 'Explain the uses of the present perfect tense with examples.', 'Long Answer Type', 3, '{
+  "answer": "The present perfect tense is used to show actions that occurred at an unspecified time in the past and have relevance to the present. For example: I have seen that movie. It is also used to show life experiences, changes, and accomplishments."
+}');
+
+INSERT INTO questions (question_bank_id, question_text, question_type, difficulty_level, details)
+VALUES
+(1, 'Describe the difference between the future perfect and future continuous tenses with examples.', 'Long Answer Type', 4, '{
+  "answer": "Future perfect tense shows an action completed before a future time (e.g., I will have finished my work by 5 p.m.), while future continuous shows an ongoing action at a future time (e.g., I will be working at 5 p.m.)."
+}');
+
+INSERT INTO questions (question_bank_id, question_text, question_type, difficulty_level, details)
+VALUES
+(1, 'Write a paragraph explaining how verb tenses help in expressing time and continuity in English.', 'Long Answer Type', 5, '{
+  "answer": "Verb tenses indicate the time of action and its continuity. They help readers understand when an event happened, is happening, or will happen. Continuous forms show ongoing actions, perfect forms show completion, and simple forms state facts or regular actions."
+}');
+
+INSERT INTO questions (question_bank_id, question_text, question_type, difficulty_level, details)
+VALUES
+(1, 'Explain with examples how the past continuous and past perfect tenses are different.', 'Long Answer Type', 4, '{
+  "answer": "Past continuous describes an action in progress at a certain time in the past (e.g., I was reading when he came), while past perfect shows a completed action before another past event (e.g., I had read the book before he came)."
+}');
+
+INSERT INTO questions (question_bank_id, question_text, question_type, difficulty_level, details)
+VALUES
+(1, 'Discuss how tense consistency is important in writing.', 'Long Answer Type', 5, '{
+  "answer": "Tense consistency ensures clarity and logical sequence in writing. Mixing tenses incorrectly confuses readers. Writers should maintain the same tense within a sentence or paragraph unless a time change requires a shift."
+}');
+
