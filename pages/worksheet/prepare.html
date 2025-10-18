@@ -742,7 +742,7 @@
              function generateWorksheet(selectedQuestions) {
          
               // Base URL
-              const baseURL = "https://sourabhsuneja.github.io/jvp-spark/pages/worksheet/";
+              const baseURL = "index.html";
          
               // Question bank IDs
               const qbIds = selectedQbIds;
@@ -841,7 +841,7 @@
                  let encodedQbIds = encodeURIComponent(qbIds.join("+"));
          
                  // Final URL construction
-                 let finalURL = `${baseURL}?ed=${encodedEd}&qpm=${qpm}&qc=${encodedQc}&qbIds=${encodedQbIds}&diff=${difficulty}`;
+                 let finalURL = `${baseURL}?ed=${encodedEd}&qpm=${qpm}&qc=${encodedQc}&qbIds=${encodedQbIds}&diff=${difficulty}&solved=y`;
          
                  // Redirect to the generated link
                  window.parent.loadManualPage({link: finalURL, title: 'Worksheet', page_key: subject + '-worksheet', min_width: 750});
