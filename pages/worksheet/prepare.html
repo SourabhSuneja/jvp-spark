@@ -709,13 +709,8 @@
            form.addEventListener('submit', handleFormSubmit);
          }
          
-              // Base URL
-              const baseURL = "https://sourabhsuneja.github.io/jvp-spark/pages/worksheet/";
-         
-              // Question bank IDs
-              const qbIds = selectedQbIds;
-         
-         
+
+                 
              // Function to get URL parameters
              function getParameterByName(name, url) {
                  if (!url) url = window.location.href;
@@ -732,6 +727,13 @@
              }
          
              function generateWorksheet(selectedQuestions) {
+
+              // Base URL
+              const baseURL = "https://sourabhsuneja.github.io/jvp-spark/pages/worksheet/";
+         
+              // Question bank IDs
+              const qbIds = selectedQbIds;
+
                  // set question counts
                  let fillUp = parseInt(selectedQuestions['Fill up']) || 0;
                  let trueFalse = parseInt(selectedQuestions['True/False']) || 0;
