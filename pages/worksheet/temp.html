@@ -882,13 +882,11 @@
                      grade: gradeToRoman(grade)
                  };
          
+                 const qcStructure = generateQuestionStructure(mcq, fillUp, trueFalse, veryShortAns, shortAns, longAns);
+
                  // Question container object
                  let qc = {
-                     headings: ["",""],
-                     qTypes: [{
-                         "MCQ": mcq},{"Fill up": fillUp}],
-                     weightPerQ: [{},{}],
-                     mustInclude: [{},{}],
+                     ...qcStructure,
                      settings: {
                          provideAnsOrSpace: selectedWorksheetType, // <- Here is the dynamic value
                          randomiseSelection: true,
@@ -931,6 +929,56 @@
                  // Redirect to the generated link
                  window.parent.loadManualPage({link: finalURL, title: 'Worksheet', page_key: subject + '-worksheet', min_width: 750});
              }       
+
+// helper function to create the right question container structure (whether questions should be displayed in separate containers or in the same container)
+
+function generateQuestionStructure(mcq, fillUp, trueFalse, veryShortAns, shortAns, longAns) {
+    const counts = [mcq, fillUp, trueFalse, veryShortAns, shortAns, longAns];
+    
+    // 1. Calculate the sum and average
+    const sum = counts.reduce((acc, count) => acc + count, 0);
+    const average = sum / counts.length; // counts.length is always 6
+    
+    // 2. Check if any count is below 3
+    // .some() stops as soon as it finds one true case (one count < 3)
+    const anyCountBelowThree = counts.some(count => count < 3);
+    
+    // 3. Check the final condition
+    // Average must be > 3 AND no count can be < 3
+    const conditionMet = (average > 3) && !anyCountBelowThree;
+
+    if (conditionMet) {
+        // Condition is TRUE: Return the "spread out" structure
+        return {
+            headings: ["", "", "", "", "", ""],
+            qTypes: [
+                {"MCQ": mcq},
+                {"Fill up": fillUp},
+                {"True/False": trueFalse},
+                {"Very Short Answer Type": veryShortAns},
+                {"Short Answer Type": shortAns},
+                {"Long Answer Type": longAns}
+            ],
+            weightPerQ: [{}, {}, {}, {}, {}, {}],
+            mustInclude: [{}, {}, {}, {}, {}, {}]
+        };
+    } else {
+        // Condition is FALSE: Return the "condensed" structure
+        return {
+            headings: [""],
+            qTypes: [{
+                "MCQ": mcq,
+                "Fill up": fillUp,
+                "True/False": trueFalse,
+                "Very Short Answer Type": veryShortAns,
+                "Short Answer Type": shortAns,
+                "Long Answer Type": longAns
+            }],
+            weightPerQ: [{}],
+            mustInclude: [{}]
+        };
+    }
+}
       </script>
    </body>
 </html>
