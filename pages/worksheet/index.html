@@ -882,19 +882,11 @@
                      grade: gradeToRoman(grade)
                  };
          
+                 const qcStructure = generateQuestionStructure(mcq, fillUp, trueFalse, veryShortAns, shortAns, longAns);
+
                  // Question container object
                  let qc = {
-                     headings: [""],
-                     qTypes: [{
-                         "MCQ": mcq,
-                         "Fill up": fillUp,
-                         "True/False": trueFalse,
-                         "Very Short Answer Type": veryShortAns,
-                         "Short Answer Type": shortAns,
-                         "Long Answer Type": longAns
-                     }],
-                     weightPerQ: [{}],
-                     mustInclude: [{}],
+                     ...qcStructure,
                      settings: {
                          provideAnsOrSpace: selectedWorksheetType, // <- Here is the dynamic value
                          randomiseSelection: true,
@@ -937,6 +929,61 @@
                  // Redirect to the generated link
                  window.parent.loadManualPage({link: finalURL, title: 'Worksheet', page_key: subject + '-worksheet', min_width: 750});
              }       
+
+// helper function to create the right question container structure (whether questions should be displayed in separate containers or in the same container)
+
+function generateQuestionStructure(mcq, fillUp, trueFalse, veryShortAns, shortAns, longAns) {
+    const counts = [mcq, fillUp, trueFalse, veryShortAns, shortAns, longAns];
+    
+    // 1. Calculate sum (summing 0s is fine)
+    const sum = counts.reduce((acc, count) => acc + count, 0);
+    
+    // 2. Get the count of *positive* (non-zero) question types
+    const positiveCounts = counts.filter(count => count > 0).length;
+    
+    // 3. Calculate the average, handling the divide-by-zero case
+    // If positiveCounts is 0, the average is 0.
+    const average = (positiveCounts > 0) ? (sum / positiveCounts) : 0;
+
+    // 4. Check if any count is below 3 but not 0 (1, or 2)
+    const anyCountBelowThree = counts.some(count => (count < 3 && count !== 0));
+    
+    // 5. Check the final condition
+    // Average must be > 3 AND no count can be < 3
+    const conditionMet = (average > 3) && !anyCountBelowThree;
+
+    if (conditionMet) {
+        // Condition is TRUE: Return the "spread out" structure
+        return {
+            headings: ["", "", "", "", "", ""],
+            qTypes: [
+                {"MCQ": mcq},
+                {"Fill up": fillUp},
+                {"True/False": trueFalse},
+                {"Very Short Answer Type": veryShortAns},
+                {"Short Answer Type": shortAns},
+                {"Long Answer Type": longAns}
+            ],
+            weightPerQ: [{}, {}, {}, {}, {}, {}],
+            mustInclude: [{}, {}, {}, {}, {}, {}]
+        };
+    } else {
+        // Condition is FALSE: Return the "condensed" structure
+        return {
+            headings: [""],
+            qTypes: [{
+                "MCQ": mcq,
+                "Fill up": fillUp,
+                "True/False": trueFalse,
+                "Very Short Answer Type": veryShortAns,
+                "Short Answer Type": shortAns,
+                "Long Answer Type": longAns
+            }],
+            weightPerQ: [{}],
+            mustInclude: [{}]
+        };
+    }
+}
       </script>
    </body>
 </html>
