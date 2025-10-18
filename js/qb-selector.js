@@ -144,7 +144,7 @@ const QuestionBankSelector = {
     const html = this.state.filteredBanks.map(bank => {
       const isSelected = this.state.selectedBankIds.includes(bank.id);
       const isInPlan = bank.within_current_plan;
-      const totalCount = getAllowedQuestionCount(bank.question_count);
+      const totalCount = this.getAllowedQuestionCount(bank.question_count);
 
       // Add a 'disabled' class if the bank is not within the current plan
       const itemClass = `qb-item ${isSelected ? 'selected' : ''} ${!isInPlan ? 'disabled' : ''}`;
