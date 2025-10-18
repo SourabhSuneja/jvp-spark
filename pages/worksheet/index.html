@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
    <head>
-      <meta charset="UTF-R">
+      <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Processing Worksheet</title>
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -82,8 +82,7 @@
          --z-overlay: 1;
          --z-header: 10;
          --z-sidebar: 20;
-         --z-processing: 1000; /* <-- New z-index for processing */
-         --z-signin: 99999;
+         --z-signin: 9999;
          --z-loading: 500000;
          /* Dimensions */
          --sidebar-width: 260px;
@@ -134,28 +133,31 @@
          -webkit-user-drag: none;
          -webkit-tap-highlight-color: transparent;
          }
-         /* === MODIFIED BODY === */
          body {
-         /* display: flex; */ /* Removed */
-         /* height: 100vh; */ /* Removed */
+         /*
+         display: flex; <--- REMOVED
+         height: 100vh; <--- CHANGED
+         overflow: hidden; <--- REMOVED
+         */
+         min-height: 100vh; /* <--- ADDED */
          background-color: var(--bg-primary);
          color: var(--text-primary);
-         /* overflow: hidden; */ /* Removed */
          margin: 0;
          padding-top: env(safe-area-inset-top);
          padding-left: env(safe-area-inset-left);
          padding-right: env(safe-area-inset-right);
          padding-bottom: env(safe-area-inset-bottom);
          }
-         /* === MODIFIED CONTAINER === */
          .container {
          width: 100%;
-         /* height: 100%; */ /* Removed */
-         display: flex;
-         /* align-items: center; */ /* Removed */
-         justify-content: center; /* Horizontally center content */
-         /* overflow-y: auto; */ /* Removed */
-         padding: var(--spacing-xxxl) var(--spacing-xl); /* Added more vertical padding */
+         /*
+         height: 100%; <--- REMOVED
+         display: flex; <--- REMOVED
+         align-items: center; <--- REMOVED
+         justify-content: center; <--- REMOVED
+         overflow-y: auto; <--- REMOVED
+         */
+         padding: var(--spacing-xl);
          }
          /* Input Form Styles */
          .input-form-container {
@@ -163,6 +165,7 @@
          max-width: 500px;
          display: flex;
          flex-direction: column;
+         margin: 0 auto; /* <--- ADDED */
          }
          .form-header {
          text-align: center;
@@ -226,64 +229,75 @@
          .input-field[type=number] {
          -moz-appearance: textfield;
          }
+
          /* === NEW STYLES FOR RADIO BUTTONS === */
          .input-group#worksheetOptions {
          margin-top: var(--spacing-xl);
          padding-top: var(--spacing-lg);
          border-top: 1px solid var(--bg-tertiary);
          }
+
          .radio-options-container {
-         display: flex;
-         flex-direction: column;
-         gap: var(--spacing-md); /* Space between radio options */
-         padding: var(--spacing-sm) 0;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md); /* Space between radio options */
+            padding: var(--spacing-sm) 0;
          }
+
          .radio-option {
-         display: flex;
-         align-items: center;
-         gap: var(--spacing-sm);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
          }
+
          .radio-option input[type="radio"] {
-         -webkit-appearance: none;
-         appearance: none;
-         background-color: var(--bg-input);
-         margin: 0;
-         font: inherit;
-         color: var(--text-tertiary);
-         width: 1.15em;
-         height: 1.15em;
-         border: 2px solid var(--bg-tertiary);
-         border-radius: var(--radius-full);
-         transform: translateY(-0.075em);
-         display: grid;
-         place-content: center;
-         cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+            background-color: var(--bg-input);
+            margin: 0;
+            font: inherit;
+            color: var(--text-tertiary);
+            width: 1.15em;
+            height: 1.15em;
+            border: 2px solid var(--bg-tertiary);
+            border-radius: var(--radius-full);
+            transform: translateY(-0.075em);
+            display: grid;
+            place-content: center;
+            cursor: pointer;
          }
+
          .radio-option input[type="radio"]::before {
-         content: "";
-         width: 0.65em;
-         height: 0.65em;
-         border-radius: var(--radius-full);
-         transform: scale(0);
-         transition: 120ms transform ease-in-out;
-         box-shadow: inset 1em 1em var(--accent-primary);
+            content: "";
+            width: 0.65em;
+            height: 0.65em;
+            border-radius: var(--radius-full);
+            transform: scale(0);
+            transition: 120ms transform ease-in-out;
+            box-shadow: inset 1em 1em var(--accent-primary);
          }
+
          .radio-option input[type="radio"]:checked {
-         border-color: var(--accent-primary);
+             border-color: var(--accent-primary);
          }
+
          .radio-option input[type="radio"]:checked::before {
-         transform: scale(1);
+            transform: scale(1);
          }
+         
          .radio-option input[type="radio"]:focus-visible {
-         outline: 2px solid var(--accent-focus);
-         outline-offset: 2px;
+             outline: 2px solid var(--accent-focus);
+             outline-offset: 2px;
          }
+
          .radio-option label {
-         font-size: var(--font-base);
-         color: var(--text-secondary);
-         cursor: pointer;
+            font-size: var(--font-base);
+            color: var(--text-secondary);
+            cursor: pointer;
          }
          /* === END OF NEW STYLES === */
+
+
          .error-message {
          display: none;
          margin-top: var(--spacing-sm);
@@ -326,20 +340,15 @@
          cursor: not-allowed;
          transform: none;
          }
-         /* === MODIFIED PROCESSING ANIMATION STYLES === */
+         /* Processing Animation Styles */
          .processing-container {
          display: none;
          flex-direction: column;
          align-items: center;
          justify-content: center;
-         /* New styles for viewport-fixed overlay */
-         position: fixed;
-         top: 0;
-         left: 0;
-         width: 100vw;
-         height: 100vh;
-         background-color: var(--bg-primary); /* Cover content below */
-         z-index: var(--z-processing); /* Ensure it's on top */
+         width: 100%;
+         /* height: 100%; <--- REMOVED */
+         padding: var(--spacing-xxxl) 0; /* <--- ADDED */
          }
          .processing-container.show {
          display: flex;
@@ -554,14 +563,13 @@
          }
          }
          /* Scrollbar Styling */
-         /* This now applies to the body scrollbar */
-         body::-webkit-scrollbar {
+         body::-webkit-scrollbar { /* <--- CHANGED */
          width: var(--scrollbar-width);
          }
-         body::-webkit-scrollbar-track {
+         body::-webkit-scrollbar-track { /* <--- CHANGED */
          background: var(--scrollbar-track);
          }
-         body::-webkit-scrollbar-thumb {
+         body::-webkit-scrollbar-thumb { /* <--- CHANGED */
          background: var(--scrollbar-thumb);
          border-radius: var(--radius-sm);
          }
@@ -578,6 +586,7 @@
                <form id="questionForm">
                   <div id="inputFields">
                      </div>
+
                   <div class="input-group" id="worksheetOptions">
                      <label class="input-label">Worksheet Options</label>
                      <div class="radio-options-container">
@@ -590,7 +599,7 @@
                            <label for="optionUnsolvedSpace">Unsolved (with space for answers)</label>
                         </div>
                         <div class="radio-option">
-                           <input type="radio" id="optionUnsolvedNoSpace" name="workskeytType" value="none">
+                           <input type="radio" id="optionUnsolvedNoSpace" name="worksheetType" value="none">
                            <label for="optionUnsolvedNoSpace">Unsolved (no space)</label>
                         </div>
                      </div>
