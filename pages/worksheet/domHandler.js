@@ -318,7 +318,7 @@ if(!qContainers['settings']['border']) {
   if(qContainers['settings']['hideWeightage']) {
       table.classList.add('hide-weightage');
       document.getElementById('mm').style.display = "none";
-      document.getElementById('duration').style.display = "none";
+      //document.getElementById('duration').style.display = "none";
   }
   
 
