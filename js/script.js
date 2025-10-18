@@ -576,7 +576,8 @@ const PageManager = {
       // Show question bank selector if card requires selection
       if(cardData.extra && cardData.extra.qbRequired) {
          hideProcessingDialog();
-         const selectedQbIds = await QuestionBankSelector.show();
+         const allowedQTypes = cardData?.extra?.allowedQTypes ?? "all";
+         const selectedQbIds = await QuestionBankSelector.show(allowedQTypes);
          if(!selectedQbIds) {
               window.history.back();
              return;
