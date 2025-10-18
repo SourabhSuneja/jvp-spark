@@ -1217,7 +1217,31 @@ VALUES
         'pages/quiz/index.html', 
         NULL, 
         1, 
-        '{"qbRequired": true}'
+        '{"qbRequired": true, "allowedQTypes": ["MCQ", "True/False"]}'
+);
+
+INSERT INTO subject_resources (
+    subject,
+    grade,
+    title,
+    icon,
+    page_key,
+    link,
+    min_width,
+    display_order,
+    extra
+)
+VALUES
+(
+        'English', 
+        6, 
+        'Worksheet', 
+        'newspaper-outline', 
+        '6-english-worksheet', 
+        'pages/worksheet/index.html', 
+        NULL, 
+        1, 
+        '{"qbRequired": true, "allowedQTypes": "all"}'
 );
 
 INSERT INTO subject_resources (
@@ -1241,14 +1265,38 @@ VALUES
         'pages/quiz/index.html', 
         NULL, 
         1, 
-        '{"qbRequired": true}'
+        '{"qbRequired": true, "allowedQTypes": ["MCQ", "True/False"]}'
+);
+
+INSERT INTO subject_resources (
+    subject,
+    grade,
+    title,
+    icon,
+    page_key,
+    link,
+    min_width,
+    display_order,
+    extra
+)
+VALUES
+(
+        'Computer', 
+        6, 
+        'Worksheet', 
+        'newspaper-outline', 
+        '6-computer-worksheet', 
+        'pages/worksheet/index.html', 
+        NULL, 
+        1, 
+        '{"qbRequired": true, "allowedQTypes": "all"}'
 );
 
 
 -- Available subscription plans
 INSERT INTO subscription_plans (plan_name, question_cap, description)
 VALUES
-    ('Free', 10, 'Access to the first 10 questions per subject.'),
+    ('Free', 50, 'Access to the first 50 questions per subject.'),
     ('Basic', 100, 'Access to 100 questions per subject.'),
     ('Premium', 1000000, 'Effectively unlimited access to all questions.'); -- Use a very large number for unlimited
 
