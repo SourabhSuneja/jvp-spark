@@ -54,6 +54,9 @@ let MENU_ITEMS = [];
 // Variable to hold available question bank details keyed by subjects
 let QB_DETAILS = {};
 
+// Also store the same reference in USER_DATA
+USER_DATA['qbDetails'] = QB_DETAILS;
+
 // =============================================================================
 // BACKEND MANAGEMENT
 // =============================================================================
@@ -462,6 +465,9 @@ function setupSubjectSwitcher() {
       currentSubject = subscribedSubjects[0];
    }
 
+   // Also store current subject in USER_DATA for other pages to access
+    USER_DATA['currentSubject'] = currentSubject;
+
    subscribedSubjects.forEach(subject => {
       const button = document.createElement('button');
       button.className = 'subject-btn';
@@ -474,11 +480,14 @@ function setupSubjectSwitcher() {
 
       button.onclick = async () => {
          currentSubject = subject;
+         // Also store current subject in USER_DATA for other pages to access
+          USER_DATA['currentSubject'] = currentSubject;
          document.querySelectorAll('.subject-btn').forEach(btn => btn.classList.remove('active'));
          button.classList.add('active');
          // Pre-fetch available question banks for this subject
          if(!(currentSubject in QB_DETAILS)) {
              showProcessingDialog(); QB_DETAILS[currentSubject] = await BackendManager.getQbDetails(USER_DATA['grade'], currentSubject);
+
              hideProcessingDialog();
          }
          
