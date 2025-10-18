@@ -62,6 +62,7 @@ CREATE TABLE question_banks (
     book TEXT NOT NULL DEFAULT 'Generic',
     chapter TEXT,
     topic TEXT,
+    keywords TEXT,
     created_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
@@ -429,7 +430,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- Function to get details of all question banks for a given grade and subject
 CREATE OR REPLACE FUNCTION get_question_banks_with_details(p_grade INT, p_subject TEXT)
 RETURNS TABLE (
-    id BIGINT, -- MODIFIED: Added the question bank ID
+    id BIGINT,
     bank_key TEXT,
     display_name TEXT,
     grade INT,
@@ -437,51 +438,70 @@ RETURNS TABLE (
     book TEXT,
     chapter TEXT,
     topic TEXT,
-    question_count BIGINT,
+    keywords TEXT, -- Change 1: Added keywords
+    question_count JSONB, -- Change 2: Changed type to JSONB
     within_current_plan BOOLEAN
 ) AS $$
 DECLARE
     v_question_cap INT;
 BEGIN
-    -- Step 1: Get the current user's question cap for the given grade and subject.
-    -- This requires checking their active subscription.
+    -- Step 1: Get the current user's question cap. (Unchanged)
     SELECT sp.question_cap
     INTO v_question_cap
     FROM subscriptions s
     JOIN subscription_plans sp ON s.subscription_plan = sp.plan_name
-    WHERE s.student_id = auth.uid() -- Fetches the ID of the currently authenticated user
+    WHERE s.student_id = auth.uid()
       AND s.grade = p_grade
       AND s.subject = p_subject
-      AND s.subscription_ends_at > now(); -- Ensures the subscription is not expired
+      AND s.subscription_ends_at > now();
 
-    -- If no active subscription is found, the user has no access. Coalesce NULL to 0.
     v_question_cap := COALESCE(v_question_cap, 0);
 
     -- Step 2: Return the query with all the required information.
     -- We use Common Table Expressions (CTEs) for clarity.
     RETURN QUERY
     WITH ranked_questions AS (
-        -- First, rank all questions for the specified grade and subject by their ID.
+        -- First, rank all questions and get their type
         SELECT
             q.id,
             q.question_bank_id,
+            q.question_type, -- Needed for type-based counting
             ROW_NUMBER() OVER (ORDER BY q.id ASC) as rn
         FROM questions q
         JOIN question_banks qb ON q.question_bank_id = qb.id
         WHERE qb.grade = p_grade AND qb.subject = p_subject
     ),
-    bank_stats AS (
-        -- Next, for each question bank, count its questions and find the rank of its first question.
+    bank_type_counts AS (
+        -- CTE to get counts for each question_type per bank
         SELECT
-            rq.question_bank_id,
-            COUNT(rq.id) AS q_count,
-            MIN(rq.rn) AS min_question_rank
-        FROM ranked_questions rq
-        GROUP BY rq.question_bank_id
+            question_bank_id,
+            question_type,
+            COUNT(*) AS type_count
+        FROM ranked_questions
+        GROUP BY question_bank_id, question_type
+    ),
+    bank_json_stats AS (
+        -- Change 2: CTE to aggregate type counts into the required JSON object
+        SELECT
+            question_bank_id,
+            -- Aggregate all types into a JSON object
+            jsonb_object_agg(question_type, type_count) ||
+            -- Add the 'Total' key by summing all type counts
+            jsonb_build_object('Total', SUM(type_count)) AS q_counts_json
+        FROM bank_type_counts
+        GROUP BY question_bank_id
+    ),
+    bank_rank_stats AS (
+        -- CTE to get the minimum question rank for each bank
+        SELECT
+            question_bank_id,
+            MIN(rn) AS min_question_rank
+        FROM ranked_questions
+        GROUP BY question_bank_id
     )
     -- Finally, join the base question_banks table with our calculated stats.
     SELECT
-        qb.id, -- MODIFIED: Added the question bank ID
+        qb.id,
         qb.bank_key,
         qb.display_name,
         qb.grade,
@@ -489,16 +509,21 @@ BEGIN
         qb.book,
         qb.chapter,
         qb.topic,
-        bs.q_count AS question_count,
+        qb.keywords, -- Change 1: Added keywords column
+        bjs.q_counts_json AS question_count, -- Change 2: Use the new JSON stats
         -- A bank is "within the plan" if its first question's rank is within the user's cap.
-        (bs.min_question_rank <= v_question_cap) AS within_current_plan
+        (brs.min_question_rank <= v_question_cap) AS within_current_plan
     FROM question_banks qb
-    JOIN bank_stats bs ON qb.id = bs.question_bank_id
+    -- Join our two separate stats tables
+    JOIN bank_json_stats bjs ON qb.id = bjs.question_bank_id
+    JOIN bank_rank_stats brs ON qb.id = brs.question_bank_id
     WHERE qb.grade = p_grade AND qb.subject = p_subject
-    ORDER BY bs.min_question_rank; -- Ordering the results logically by the question order.
+    -- Change 3: Order by plan status (true first), then by display name (A-Z)
+    ORDER BY within_current_plan DESC, qb.display_name ASC;
 
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER STABLE;
+
 
 
 -- Function to fetch questions based on supplied parameters
