@@ -335,14 +335,20 @@ async function start(qbIds) {
   // fetch all questions from all question banks
   questions = await fetchMultipleQbData(qbIds);
 
+  console.log("Questions passed to start function", questions);
+
   // consolidate all mustInclude question indices into a single array
   consolidateMustIncludeIndices();
 
   // get total count of each type of questions on the basis of question paper map
   let totalQOfEachType = countEachQuestionType(questionPaperMap)
 
+  console.log("qType counts:", totalQOfEachType);
+
   // generate index map on the basis of card values
   let { map: cardIndexMap, uniqueValues: uniqueCardIndices } = generateIndexMap(questions, "card");
+
+  console.log("Card index map:", cardIndexMap); 
 
 
    // generate index map on the basis of question type
@@ -360,8 +366,12 @@ async function start(qbIds) {
   // generate index map on the basis of chapters
   let chapterIndexMap = getQuestionIndicesByChapter(questions, chapterStartPoints, chapterNames);
 
+console.log("Chapter index map:", chapterIndexMap); 
+
  // store the cumulative count of each type of questions to be inserted across all containers
   toBeInserted = countToBeInserted(qContainers['qTypes']);
+
+  console.log("To be inserted:", toBeInserted);
 
   // select questions
   const selectedQMap = selectQuestions(questions, chapterNames, chapterIndexMap, cardIndexMap, qTypeIndexMap, mediaEmbeddedIndexMap, totalQOfEachType, questionPaperMap, overallDifficulty, uniqueCardIndices, uniqueQTypeIndices,  qContainers['settings']['qTypesAllowedInImageQ']);
