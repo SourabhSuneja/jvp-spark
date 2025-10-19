@@ -711,13 +711,11 @@
                 score = 0;
                 quizData.forEach((q, index) => {
                     const userAnswer = userAnswers[index];
-                    console.log("Answer: ", userAnswers[index]);
                     const correctAnswer = q.details.answer;
                     if (userAnswer === null) return;
                     
-                    let isMatch = (q.question_type === 'True/False') 
-                        ? ((userAnswer === 'True') === correctAnswer) 
-                        : (userAnswer === correctAnswer);
+                    let isMatch = (userAnswer !== null) && (userAnswer === correctAnswer);
+
                     
                     if (isMatch) score++;
                 });
@@ -903,7 +901,6 @@ try {
             p_type_counts: {"MCQ": 1000, "True/False": 1000}
          }, false);
          quizData = data;
-         console.log("Questions:", quizData);
          userAnswers = new Array(quizData.length).fill(null);
       } catch (err) {
          console.error("Error fetching questions:", err);
