@@ -963,7 +963,13 @@ function consolidateMustIncludeIndices() {
 
 // call start function to begin the entire question fetching and selection process
 window.onload = function() {
- 
-requestedQCounts = JSON.parse(getParameterByName('qCounts')) || null; start(getParameterByName('qbIds'));
+
+try {
+  requestedQCounts = JSON.parse(getParameterByName('qCounts'));
+} catch (e) {
+  requestedQCounts = null;
+}
+
+ start(getParameterByName('qbIds'));
 }
 
