@@ -539,7 +539,7 @@ CREATE OR REPLACE FUNCTION get_custom_question_set(
     p_bank_ids BIGINT[],
     p_bank_counts JSONB DEFAULT NULL,
     p_type_counts JSONB DEFAULT NULL,
-    p_shuffle BOOLEAN DEFAULT FALSE,
+    p_shuffle BOOLEAN DEFAULT TRUE,
     p_total_count INT DEFAULT 10
 )
 RETURNS TABLE (
