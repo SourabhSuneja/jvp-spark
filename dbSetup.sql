@@ -11,9 +11,10 @@ DROP TABLE IF EXISTS subscriptions CASCADE;
 DROP TABLE IF EXISTS students CASCADE;
 DROP TABLE IF EXISTS notification_read_logs CASCADE;
 DROP TABLE IF EXISTS teachers CASCADE;
-DROP TABLE IF EXISTS subscription_plans CASCADE;
 DROP TABLE IF EXISTS questions CASCADE;
 DROP TABLE IF EXISTS question_banks CASCADE;
+DROP TABLE IF EXISTS subscription_plans CASCADE;
+DROP TABLE IF EXISTS hard_limits CASCADE;
 
 -- =========================
 -- DROP FUNCTIONS
@@ -43,6 +44,13 @@ DROP FUNCTION IF EXISTS get_custom_question_set(
 -- =========================
 -- TABLE CREATION
 -- =========================
+
+-- Hard limits: To store hard limits on retrievals
+CREATE TABLE hard_limits (
+    limit_name TEXT PRIMARY KEY,
+    limit_number INT NOT NULL,
+    description TEXT
+);
 
 -- Subscription plans: To store details and limits of each subscription plan
 CREATE TABLE subscription_plans (
@@ -543,9 +551,27 @@ RETURNS TABLE (
     details JSONB
 )
 LANGUAGE plpgsql
-SECURITY INVOKER
+SECURITY DEFINER -- 1. Changed to SECURITY DEFINER
 AS $$
+DECLARE
+    v_max_limit INT;
 BEGIN
+    -- 2. Check if the user is authenticated
+    IF auth.uid() IS NULL THEN
+        RETURN; -- Return an empty set if the user is not logged in
+    END IF;
+
+    -- 3. Enforce the hard limit for total questions
+    SELECT limit_number
+    INTO v_max_limit
+    FROM hard_limits
+    WHERE limit_name = 'max_questions_per_retrieval';
+
+    -- If the requested count exceeds the hard limit, cap it
+    IF p_total_count > v_max_limit THEN
+        p_total_count := v_max_limit;
+    END IF;
+
     -- This check prevents a division by zero error if an empty array is passed
     IF array_length(p_bank_ids, 1) IS NULL OR array_length(p_bank_ids, 1) = 0 THEN
         RETURN;
@@ -553,9 +579,8 @@ BEGIN
 
     RETURN QUERY
     WITH numbered_questions AS (
-        -- Step 1: Fetch all questions from the specified banks.
-        -- We apply shuffling here using random() if requested, which is the most
-        -- efficient place to do it. We also number each question within its bank.
+        -- Step 1: Fetch all questions from the specified banks
+        -- that the user has access to.
         SELECT
             qb.id AS qb_id,
             qb.display_name,
@@ -570,6 +595,8 @@ BEGIN
         FROM questions q
         JOIN question_banks qb ON q.question_bank_id = qb.id
         WHERE q.question_bank_id = ANY(p_bank_ids)
+          -- 4. Filter questions based on the user's access rights
+          AND check_question_access(q.id)
     ),
     bank_filtered_questions AS (
         -- Step 2: Filter the questions based on the per-bank count logic.
@@ -614,10 +641,11 @@ BEGIN
                 -- If no type filter is applied, include all rows from the previous step.
                 TRUE
         END
-    LIMIT p_total_count;
+    LIMIT p_total_count; -- The p_total_count is now capped by v_max_limit
 
 END;
 $$;
+
 
 
 
@@ -920,6 +948,9 @@ EXECUTE FUNCTION log_welcome_notification();
 -- RLS POLICIES
 -- =========================
 
+-- Hard limits
+ALTER TABLE hard_limits ENABLE ROW LEVEL SECURITY;
+
 -- Subscription plans
 ALTER TABLE subscription_plans ENABLE ROW LEVEL SECURITY;
 
@@ -932,10 +963,7 @@ CREATE POLICY "Allow authenticated users to read question banks"
 
 -- Questions
 ALTER TABLE questions ENABLE ROW LEVEL SECURITY;
--- Create the policy for SELECT (read) access.
-CREATE POLICY "Students can view questions based on their subscription"
-ON questions FOR SELECT
-USING ( check_question_access(id) );
+
 
 -- Menu resources
 ALTER TABLE menu_resources ENABLE ROW LEVEL SECURITY;
@@ -1240,7 +1268,7 @@ VALUES
         '6-english-worksheet', 
         'pages/worksheet/index.html', 
         NULL, 
-        1, 
+        2, 
         '{"qbRequired": true, "allowedQTypes": "all"}'
 );
 
@@ -1288,15 +1316,20 @@ VALUES
         '6-computer-worksheet', 
         'pages/worksheet/index.html', 
         NULL, 
-        1, 
+        2, 
         '{"qbRequired": true, "allowedQTypes": "all"}'
 );
 
+
+-- Impose hard limits
+INSERT INTO hard_limits (limit_name, limit_number, description)
+VALUES
+  ('max_questions_per_retrieval', 100, 'Only 100 questions can be retrieved in a single call.');
 
 -- Available subscription plans
 INSERT INTO subscription_plans (plan_name, question_cap, description)
 VALUES
     ('Free', 50, 'Access to the first 50 questions per subject.'),
-    ('Basic', 100, 'Access to 100 questions per subject.'),
+    ('Basic', 150, 'Access to 150 questions per subject.'),
     ('Premium', 1000000, 'Effectively unlimited access to all questions.'); -- Use a very large number for unlimited
 
