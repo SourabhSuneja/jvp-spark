@@ -29,7 +29,6 @@ const loadingPhrases = [
     "Stretching the possibilities...",
     "Tuning the final notes...",
     "Almost unwrapping the surprise...",
-    "Calibrating the doodads...",
     "Assembling the pixels...",
     "Warming up the tubes...",
     "Reticulating splines...",
