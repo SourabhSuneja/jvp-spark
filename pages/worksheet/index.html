@@ -929,7 +929,7 @@
                  let finalURL = `${baseURL}?ed=${encodedEd}&qpm=${qpm}&qc=${encodedQc}&qbIds=${encodedQbIds}&diff=${difficulty}`;
          
                  // Redirect to the generated link
-                 window.parent.loadManualPage({link: finalURL, title: 'Worksheet', page_key: subject + '-worksheet', min_width: 750});
+                 window.parent.loadManualPage({link: finalURL, title: 'Worksheet', page_key: subject + '-worksheet', min_width: 750, extra:{forcedTheme: 'light'}});
              }       
 
 // helper function to create the right question container structure (whether questions should be displayed in separate containers or in the same container)
