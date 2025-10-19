@@ -898,7 +898,8 @@
 try {
          const data = await parent.invokeFunction('get_custom_question_set', {
             p_bank_ids: qbIds,
-            p_total_count: 10000
+            p_total_count: 1000,
+            p_type_counts: {"MCQ": 1000, "True/False": 1000}
          }, false);
          console.log("Questions:", data);
          quizData = data;
