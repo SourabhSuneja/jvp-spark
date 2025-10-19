@@ -781,7 +781,7 @@
                     const userAnswerText = userAnswer !== null ? userAnswer : 'Not Answered';
                     const correctAnswerText = typeof correctAnswer === 'boolean' ? (correctAnswer ? 'True' : 'False') : correctAnswer;
                     
-                    let isCorrect = (userAnswer !== null) && ((q.question_type === 'True/False') ? ((userAnswer === 'True') === correctAnswer) : (userAnswer === correctAnswer));
+                    let isCorrect = (userAnswer !== null) && (userAnswer === correctAnswer));
                     
                     const icon = isCorrect ? '<i class="fas fa-check-circle text-correct"></i>' : '<i class="fas fa-times-circle text-incorrect"></i>';
                     const rowClass = isCorrect ? '' : 'text-incorrect';
