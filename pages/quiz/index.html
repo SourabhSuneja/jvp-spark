@@ -512,7 +512,7 @@
             let currentQuestion = 0;
             let score = 0;
             let userName = '';
-            let userAnswers = new Array(quizData.length).fill(null);
+            let userAnswers = [];
             let youtubePlayer;
             let youtubeAPIReady = false;
             const youtubePlayerQueue = [];
@@ -711,6 +711,7 @@
                 score = 0;
                 quizData.forEach((q, index) => {
                     const userAnswer = userAnswers[index];
+                    console.log("Answer: ", userAnswers[index]);
                     const correctAnswer = q.details.answer;
                     if (userAnswer === null) return;
                     
@@ -901,8 +902,9 @@ try {
             p_total_count: 1000,
             p_type_counts: {"MCQ": 1000, "True/False": 1000}
          }, false);
-         console.log("Questions:", data);
          quizData = data;
+         console.log("Questions:", quizData);
+         userAnswers = new Array(quizData.length).fill(null);
       } catch (err) {
          console.error("Error fetching questions:", err);
          return null;
