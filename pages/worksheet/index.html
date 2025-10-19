@@ -924,9 +924,10 @@
                  let encodedEd = encodeURIComponent(JSON.stringify(ed));
                  let encodedQc = encodeURIComponent(JSON.stringify(qc));
                  let encodedQbIds = encodeURIComponent(qbIds.join("+"));
+                 let qCounts = encodeURIComponent(JSON.stringify(selectedQuestions));
          
                  // Final URL construction
-                 let finalURL = `${baseURL}?ed=${encodedEd}&qpm=${qpm}&qc=${encodedQc}&qbIds=${encodedQbIds}&diff=${difficulty}`;
+                 let finalURL = `${baseURL}?ed=${encodedEd}&qpm=${qpm}&qc=${encodedQc}&qbIds=${encodedQbIds}&diff=${difficulty}&qCounts=${qCounts}`;
          
                  // Redirect to the generated link
                  window.parent.loadManualPage({link: finalURL, title: 'Worksheet', page_key: subject + '-worksheet', min_width: 750, extra:{forcedTheme: 'light'}});
