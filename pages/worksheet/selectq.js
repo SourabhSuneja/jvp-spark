@@ -43,7 +43,8 @@ if (overallDifficulty === "random") {
          const data = await parent.invokeFunction('get_custom_question_set', {
             p_bank_ids: [id],
             p_type_counts: requestedQCounts,
-            p_total_count: 1000
+            p_total_count: 1000,
+            p_shuffle: false
          }, false);
          console.log(data);
          return data.map(convertQuestionToOldFormat) || [];
