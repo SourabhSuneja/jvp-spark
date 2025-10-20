@@ -36,7 +36,7 @@ function getCardValue(level) {
  * @returns {string} - The formatted string for ansExplanation.
  */
 function getAnsExplanation(question_type, details) {
-  const { answer, explanation } = details;
+  const { answer, explanation } = details || {};
   let ansExp = "";
 
   // Logic based on hints:
@@ -47,9 +47,11 @@ function getAnsExplanation(question_type, details) {
   switch (question_type) {
     case "True/False":
     case "Fill up":
+    case "Very Short Answer Type":
     case "Short Answer Type":
     case "Long Answer Type":
     case "Very Long Answer Type":
+    case "Diagram/Picture/Map Based":
       ansExp = answer;
       break;
     
