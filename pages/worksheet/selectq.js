@@ -44,7 +44,7 @@ if (overallDifficulty === "random") {
             p_bank_ids: [id],
             p_type_counts: requestedQCounts,
             p_total_count: 1000,
-            p_shuffle: false
+            p_shuffle: true
          }, false);
          console.log(data);
          return data.map(convertQuestionToOldFormat) || [];
