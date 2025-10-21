@@ -845,7 +845,7 @@
                  let longAns = parseInt(selectedQuestions['Long Answer Type']) || 0;
          
                  // Randomize difficulty level
-                 let difficulty = "easy";
+                 let difficulty = "purelyRandom";
          
                  // === GET SELECTED WORKSHEET TYPE ===
                  const selectedWorksheetType = document.querySelector('input[name="worksheetType"]:checked').value;
@@ -891,7 +891,7 @@
                      ...qcStructure,
                      settings: {
                          provideAnsOrSpace: selectedWorksheetType, // <- Here is the dynamic value
-                         randomiseSelection: false,
+                         randomiseSelection: true,
                          strictChapterWiseDistribution: false,
                          editable: false,
                          showAIBtns: false,
