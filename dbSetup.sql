@@ -574,6 +574,11 @@ SECURITY INVOKER
 AS $$
 DECLARE
     v_json_type TEXT;
+    -- Variables for Form 1 loop
+    v_bank_id_text TEXT;
+    v_bank_id_bigint BIGINT;
+    v_bank_criteria JSONB;
+    v_bank_questions_json JSONB;
 BEGIN
     -- Determine the criteria form (or if it's null)
     IF p_criteria IS NULL OR p_criteria = 'null'::jsonb OR p_criteria = '{}'::jsonb THEN
@@ -610,54 +615,52 @@ BEGIN
 
     -- STEP 3: Handle Form 1 Criteria (by-bank)
     IF v_json_type = 'object' THEN
-        RETURN QUERY
-        WITH
-        -- Unpack JSON and apply initial shuffle/sort, capturing the
-        -- order with row_number()
-        ordered_questions AS (
-            SELECT q.*,
-                   row_number() OVER (
-                        ORDER BY
-                            CASE WHEN p_shuffle THEN random() ELSE NULL::float END,
-                            CASE WHEN NOT p_shuffle THEN q.q_id ELSE NULL::bigint END
-                   ) as rn
-            FROM jsonb_to_recordset(p_questions_json) AS q(
-                qb_id BIGINT, display_name TEXT, q_id BIGINT,
-                question_text TEXT, q_type TEXT,
-                difficulty_level SMALLINT, details JSONB
-            )
-        ),
-        -- Expand the JSON criteria into a relational table
-        criteria AS (
-            SELECT
-                bank.key::bigint AS req_qb_id,
-                type.key AS req_q_type,
-                type.value::int AS req_count
-            FROM
-                jsonb_each(p_criteria) AS bank,
-                jsonb_each(bank.value) AS type
-        ),
-        -- Number each question *within* its (bank, type) group,
-        -- respecting the original shuffle/sort order (ORDER BY q.rn)
-        numbered_questions AS (
-            SELECT
-                q.*,
-                row_number() OVER (
-                    PARTITION BY q.qb_id, q.q_type
-                    ORDER BY q.rn -- Use the pre-calculated order
-                ) AS type_rn
-            FROM ordered_questions q
-        )
-        -- Final selection:
-        SELECT
-            q.qb_id, q.display_name, q.q_id, q.question_text, q.q_type, q.difficulty_level, q.details
-        FROM numbered_questions q
-        JOIN criteria c
-            ON q.qb_id = c.req_qb_id AND q.q_type = c.req_q_type
-        WHERE
-            q.type_rn <= c.req_count
-        ORDER BY
-            q.rn; -- Return results in the original shuffled/sorted order
+        -- IMPLEMENT THE DESCRIBED LOGIC HERE
+        
+        -- Create a temporary table to hold aggregated results from recursive calls
+        -- This table will be automatically dropped at the end of the transaction
+        CREATE TEMPORARY TABLE temp_results (
+            bank_id BIGINT,
+            display_name TEXT,
+            q_id BIGINT,
+            question_text TEXT,
+            q_type TEXT,
+            difficulty_level SMALLINT,
+            details JSONB
+        ) ON COMMIT DROP;
+
+        -- Loop over each bank ID (key) and its specific criteria (value)
+        FOR v_bank_id_text, v_bank_criteria IN
+            SELECT key, value
+            FROM jsonb_each(p_criteria)
+        LOOP
+            -- Convert the JSON key (which is text) to the qb_id type
+            v_bank_id_bigint := v_bank_id_text::BIGINT;
+
+            -- Efficiently filter the input JSON array using JSONPath (requires PG12+)
+            -- This selects only the questions matching the current bank ID
+            -- It always returns an array, even for 0 or 1 match.
+            v_bank_questions_json := jsonb_path_query_array(
+                p_questions_json,
+                '$[*] ? (@.qb_id == $bank_id)', -- JSONPath filter expression
+                jsonb_build_object('bank_id', v_bank_id_bigint), -- Variables for the path
+                true -- 'silent' flag: returns '[]' instead of error on no match
+            );
+
+            -- Recursively call this function for the subset of questions
+            -- The v_bank_criteria is now in "Form 2", triggering STEP 4 logic
+            INSERT INTO temp_results
+            SELECT *
+            FROM filter_questions(
+                v_bank_questions_json, -- Pass only the filtered questions
+                v_bank_criteria,       -- Pass the bank-specific criteria
+                p_shuffle              -- Pass the original shuffle flag
+            );
+
+        END LOOP;
+
+        -- Return all collected results from the temp table
+        RETURN QUERY SELECT * FROM temp_results;
         RETURN;
     END IF;
 
@@ -731,6 +734,7 @@ BEGIN
 
 END;
 $$;
+
 
 -- Function to fetch questions based on supplied parameters
 CREATE OR REPLACE FUNCTION get_custom_question_set(
@@ -1664,7 +1668,7 @@ VALUES
 -- Available subscription plans
 INSERT INTO subscription_plans (plan_name, question_cap, description, quota_period, quota_limit)
 VALUES
-    ('Free', 50, 'Access to the first 50 questions per subject.', 'day', 25),
+    ('Free', 2000, 'Access to the first 2000 questions per subject.', 'day', 2500),
     ('Basic', 150, 'Access to 150 questions per subject.', 'day', 250),
     ('Premium', 1000000, 'Effectively unlimited access to all questions.', 'day', 500); -- Use a very large number for unlimited
 
