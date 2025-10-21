@@ -8,7 +8,7 @@ let mustIncludeIndices = [];
 let overallDifficulty;
 
 //variable to hold counts of different types of questions as passed in the URL (requested by user from worksheet generator page)
-let requestedQCounts = null;
+let distributionMap = null;
 
 // disallowed qTypes
 const disallowedQTypes = [];
@@ -46,7 +46,7 @@ async function fetchData(ids) {
    try {
       const data = await parent.invokeFunction('get_custom_question_set', {
          p_bank_ids: ids,
-         p_type_counts: requestedQCounts,
+         p_bank_counts: distributionMap,
          p_total_count: 1000,
          p_shuffle: true
       }, false);
@@ -979,9 +979,9 @@ function consolidateMustIncludeIndices() {
 window.onload = function () {
 
    try {
-      requestedQCounts = JSON.parse(getParameterByName('qCounts'));
+      distributionMap = JSON.parse(getParameterByName('encodedDistribution'));
    } catch (e) {
-      requestedQCounts = null;
+      distributionMap = null;
    }
 
    start(getParameterByName('qbIds'));
