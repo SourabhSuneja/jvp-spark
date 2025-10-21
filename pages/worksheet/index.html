@@ -3,7 +3,7 @@
    <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Processing Worksheet</title>
+      <title>Worksheet Generator</title>
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
       <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
       <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
@@ -647,8 +647,82 @@
          let qbDetails = [];
          
          let selectedQbIds = []; 
+
+         let requestedQuestions = {};
          
          let subject, grade;
+
+// Function to generate a mapping where questions are distributed equally among all the selected question banks
+function getQuestionDistribution() {
+  // 1. Create a Map for efficient lookup of bank details by their ID.
+  // We store the ID as a number, as it appears in the qbDetails data.
+  const qbMap = new Map();
+  for (const bank of qbDetails) {
+    qbMap.set(Number(bank.id), bank);
+  }
+
+  // 2. We'll build the result object dynamically.
+  const result = {};
+
+  // 3. Ensure we are working with numeric IDs for lookup.
+  const numericSelectedIds = selectedQbIds.map(id => Number(id));
+
+  // 4. Iterate over each entry in the requestedQuestions object.
+  for (const [type, totalRequested] of Object.entries(requestedQuestions)) {
+    
+    // If 0 questions are requested for this type, skip it.
+    if (totalRequested <= 0) {
+      continue;
+    }
+
+    // 5. Identify which of the *selected* banks *have* this question type.
+    const relevantBankIds = numericSelectedIds.filter(id => {
+      const bank = qbMap.get(id);
+      // The bank must exist in our map AND its question_count object
+      // must have the requested type as a key.
+      return bank && bank.question_count.hasOwnProperty(type);
+    });
+
+    // 6. If no selected banks have this type, we can't distribute it.
+    const numRelevantBanks = relevantBankIds.length;
+    if (numRelevantBanks === 0) {
+      continue;
+    }
+
+    // 7. Calculate the "equal" distribution.
+    const baseCount = Math.floor(totalRequested / numRelevantBanks);
+    let remainder = totalRequested % numRelevantBanks; // How many banks get +1
+
+    // 8. Assign the calculated counts to the relevant banks in the result object.
+    for (const id of relevantBankIds) { // `id` is a number here
+      let countForThisBank = baseCount;
+
+      // Distribute the remainder (1 extra question) to the first 'remainder' banks.
+      if (remainder > 0) {
+        countForThisBank++;
+        remainder--;
+      }
+
+      // Only add to the result if we're assigning at least one question.
+      if (countForThisBank > 0) {
+        // Use a string for the bank ID key, as shown in the example output.
+        const stringId = String(id);
+
+        // Ensure the bank ID key exists in the result object.
+        if (!result.hasOwnProperty(stringId)) {
+          result[stringId] = {};
+        }
+
+        // Assign the count for this specific type.
+        result[stringId][type] = countForThisBank;
+      }
+    }
+  }
+
+  // 9. Return the final constructed object.
+  return result;
+}
+
          
          // Calculate available question types and their maximum counts
          function calculateAvailableQuestions() {
@@ -752,6 +826,8 @@
            }
            
            if (isValid) {
+             // assign the selections to the global requestedQuestions variable as well
+             requestedQuestions = selectedQuestions;
              // Hide form and show processing animation
              document.getElementById('inputForm').style.display = 'none';
              document.getElementById('processingAnimation').classList.add('show');
@@ -924,10 +1000,10 @@
                  let encodedEd = encodeURIComponent(JSON.stringify(ed));
                  let encodedQc = encodeURIComponent(JSON.stringify(qc));
                  let encodedQbIds = encodeURIComponent(qbIds.join("+"));
-                 let qCounts = encodeURIComponent(JSON.stringify(selectedQuestions));
+                 let encodedDistribution = encodeURIComponent(JSON.stringify(getQuestionDistribution()));
          
                  // Final URL construction
-                 let finalURL = `${baseURL}?ed=${encodedEd}&qpm=${qpm}&qc=${encodedQc}&qbIds=${encodedQbIds}&diff=${difficulty}&qCounts=${qCounts}`;
+                 let finalURL = `${baseURL}?ed=${encodedEd}&qpm=${qpm}&qc=${encodedQc}&qbIds=${encodedQbIds}&diff=${difficulty}&encodedDistribution=${encodedDistribution}`;
          
                  // Redirect to the generated link
                  window.parent.loadManualPage({link: finalURL, title: 'Worksheet', page_key: subject + '-worksheet', min_width: 750, extra:{forcedTheme: 'light'}});
