@@ -7,6 +7,7 @@ DROP TABLE IF EXISTS subject_resources CASCADE;
 DROP TABLE IF EXISTS notifications CASCADE;
 DROP TABLE IF EXISTS push_subscriptions CASCADE;
 DROP TABLE IF EXISTS settings CASCADE;
+DROP TABLE IF EXISTS student_quota_usage CASCADE;
 DROP TABLE IF EXISTS subscriptions CASCADE;
 DROP TABLE IF EXISTS students CASCADE;
 DROP TABLE IF EXISTS notification_read_logs CASCADE;
@@ -38,6 +39,11 @@ DROP FUNCTION IF EXISTS get_custom_question_set(
     BOOLEAN,
     INT
 );
+DROP FUNCTION IF EXISTS filter_questions(
+    JSONB,
+    JSONB,
+    BOOLEAN
+);
 
 
 
@@ -57,6 +63,8 @@ CREATE TABLE subscription_plans (
     plan_name TEXT PRIMARY KEY,
     question_cap INT NOT NULL,
     description TEXT,
+    quota_period TEXT CHECK (quota_period IN ('day', 'month', 'week', 'none')) NOT NULL DEFAULT 'none',
+    quota_limit INT NOT NULL DEFAULT 0,
     extra JSONB
 );
 
@@ -177,6 +185,19 @@ CREATE TABLE subscriptions (
 
     -- Prevent duplicates: one subscription per student per grade and subject
     UNIQUE (student_id, grade, subject)
+);
+
+-- Table to log student's question retrieval usage against their quota
+CREATE TABLE student_quota_usage (
+    student_id UUID NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+    grade INT NOT NULL,
+    subject TEXT NOT NULL,
+    period_start_date DATE NOT NULL, -- e.g., '2025-10-19' for day, '2025-10-01' for month
+    questions_retrieved INT NOT NULL DEFAULT 0,
+
+    -- Primary key ensures one row per student/subscription/period
+    -- This index also makes quota lookups extremely fast
+    PRIMARY KEY (student_id, grade, subject, period_start_date)
 );
 
 -- Teachers table
@@ -532,7 +553,184 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER STABLE;
 
+-- Helper function to assist get_custom_question_set
+CREATE OR REPLACE FUNCTION filter_questions(
+    p_questions_json JSONB,
+    p_criteria JSONB DEFAULT NULL,
+    p_shuffle BOOLEAN DEFAULT TRUE
+)
+-- Define the return structure explicitly
+RETURNS TABLE (
+    bank_id BIGINT,
+    display_name TEXT,
+    q_id BIGINT,
+    question_text TEXT,
+    q_type TEXT,
+    difficulty_level SMALLINT,
+    details JSONB
+)
+LANGUAGE plpgsql
+SECURITY INVOKER
+AS $$
+DECLARE
+    v_json_type TEXT;
+BEGIN
+    -- Determine the criteria form (or if it's null)
+    IF p_criteria IS NULL OR p_criteria = 'null'::jsonb OR p_criteria = '{}'::jsonb THEN
+        v_json_type := 'null';
+    ELSE
+        -- Check the type of the first value to see if it's
+        -- Form 1 ({"1": {...}}) or Form 2 ({"MCQ": 5})
+        SELECT jsonb_typeof(value)
+        INTO v_json_type
+        FROM jsonb_each(p_criteria)
+        LIMIT 1;
+    END IF;
 
+    -- STEP 2: Handle NULL criteria
+    IF v_json_type = 'null' THEN
+        RETURN QUERY
+        WITH source_questions AS (
+            -- Unpack the JSON into a recordset
+            SELECT *
+            FROM jsonb_to_recordset(p_questions_json) AS q(
+                qb_id BIGINT, display_name TEXT, q_id BIGINT,
+                question_text TEXT, q_type TEXT,
+                difficulty_level SMALLINT, details JSONB
+            )
+        )
+        -- Apply shuffle/sort and return everything
+        SELECT s.*
+        FROM source_questions s
+        ORDER BY
+            CASE WHEN p_shuffle THEN random() ELSE NULL::float END,
+            CASE WHEN NOT p_shuffle THEN s.q_id ELSE NULL::bigint END;
+        RETURN;
+    END IF;
+
+    -- STEP 3: Handle Form 1 Criteria (by-bank)
+    IF v_json_type = 'object' THEN
+        RETURN QUERY
+        WITH
+        -- Unpack JSON and apply initial shuffle/sort, capturing the
+        -- order with row_number()
+        ordered_questions AS (
+            SELECT q.*,
+                   row_number() OVER (
+                        ORDER BY
+                            CASE WHEN p_shuffle THEN random() ELSE NULL::float END,
+                            CASE WHEN NOT p_shuffle THEN q.q_id ELSE NULL::bigint END
+                   ) as rn
+            FROM jsonb_to_recordset(p_questions_json) AS q(
+                qb_id BIGINT, display_name TEXT, q_id BIGINT,
+                question_text TEXT, q_type TEXT,
+                difficulty_level SMALLINT, details JSONB
+            )
+        ),
+        -- Expand the JSON criteria into a relational table
+        criteria AS (
+            SELECT
+                bank.key::bigint AS req_qb_id,
+                type.key AS req_q_type,
+                type.value::int AS req_count
+            FROM
+                jsonb_each(p_criteria) AS bank,
+                jsonb_each(bank.value) AS type
+        ),
+        -- Number each question *within* its (bank, type) group,
+        -- respecting the original shuffle/sort order (ORDER BY q.rn)
+        numbered_questions AS (
+            SELECT
+                q.*,
+                row_number() OVER (
+                    PARTITION BY q.qb_id, q.q_type
+                    ORDER BY q.rn -- Use the pre-calculated order
+                ) AS type_rn
+            FROM ordered_questions q
+        )
+        -- Final selection:
+        SELECT
+            q.qb_id, q.display_name, q.q_id, q.question_text, q.q_type, q.difficulty_level, q.details
+        FROM numbered_questions q
+        JOIN criteria c
+            ON q.qb_id = c.req_qb_id AND q.q_type = c.req_q_type
+        WHERE
+            q.type_rn <= c.req_count
+        ORDER BY
+            q.rn; -- Return results in the original shuffled/sorted order
+        RETURN;
+    END IF;
+
+    -- STEP 4: Handle Form 2 Criteria (by-type, interlaced)
+    IF v_json_type = 'number' THEN
+        RETURN QUERY
+        WITH
+        -- Unpack JSON and apply initial shuffle/sort
+        ordered_questions AS (
+            SELECT q.*,
+                   row_number() OVER (
+                        ORDER BY
+                            CASE WHEN p_shuffle THEN random() ELSE NULL::float END,
+                            CASE WHEN NOT p_shuffle THEN q.q_id ELSE NULL::bigint END
+                   ) as rn
+            FROM jsonb_to_recordset(p_questions_json) AS q(
+                qb_id BIGINT, display_name TEXT, q_id BIGINT,
+                question_text TEXT, q_type TEXT,
+                difficulty_level SMALLINT, details JSONB
+            )
+        ),
+        -- Expand criteria into a table
+        criteria AS (
+            SELECT
+                crit.key AS req_q_type,
+                crit.value::int AS req_count
+            FROM jsonb_each(p_criteria) AS crit
+        ),
+        -- Find all distinct banks *present in the input*
+        distinct_banks AS (
+            SELECT
+                qb_id,
+                row_number() OVER (ORDER BY qb_id) AS bank_index,
+                count(*) OVER () AS total_banks
+            FROM (
+                SELECT DISTINCT qb_id FROM ordered_questions
+            ) db
+        ),
+        -- Number questions within their (type, bank) group
+        numbered_questions AS (
+            SELECT
+                q.*,
+                row_number() OVER (
+                    PARTITION BY q.q_type, q.qb_id
+                    ORDER BY q.rn -- Preserve original order
+                ) AS q_num_in_bank_type,
+                db.bank_index,
+                db.total_banks
+            FROM ordered_questions q
+            JOIN distinct_banks db ON q.qb_id = db.qb_id
+        ),
+        -- Calculate a global "interlaced" rank
+        interlaced_rank AS (
+            SELECT
+                q.*,
+                ( (q.q_num_in_bank_type - 1) * q.total_banks + q.bank_index ) AS global_interlace_rank
+            FROM numbered_questions q
+        )
+        -- Final selection
+        SELECT
+            q.qb_id, q.display_name, q.q_id, q.question_text, q.q_type, q.difficulty_level, q.details
+        FROM interlaced_rank q
+        JOIN criteria c
+            ON q.q_type = c.req_q_type
+        WHERE
+            q.global_interlace_rank <= c.req_count
+        ORDER BY
+            q.rn; -- Return in the original order
+        RETURN;
+    END IF;
+
+END;
+$$;
 
 -- Function to fetch questions based on supplied parameters
 CREATE OR REPLACE FUNCTION get_custom_question_set(
@@ -551,100 +749,234 @@ RETURNS TABLE (
     details JSONB
 )
 LANGUAGE plpgsql
-SECURITY DEFINER -- 1. Changed to SECURITY DEFINER
+SECURITY DEFINER
 AS $$
 DECLARE
+    -- Original variable
     v_max_limit INT;
+
+    -- NEW: Variables for quota checking
+    v_student_id UUID := auth.uid();
+    v_grade INT;
+    v_subject TEXT;
+    v_quota_limit INT;
+    v_quota_period TEXT;
+    v_current_period_start DATE;
+    v_questions_used INT;
+    v_questions_remaining INT;
+    v_actual_questions_retrieved INT;
+    v_criteria JSONB;
 BEGIN
-    -- 2. Check if the user is authenticated
-    IF auth.uid() IS NULL THEN
-        RETURN; -- Return an empty set if the user is not logged in
+    -- Use a temp table to store results before returning
+    -- This allows us to get an
+    -- accurate count for logging.
+    CREATE TEMPORARY TABLE tmp_results (
+        question_bank_id BIGINT,
+        question_bank TEXT,
+        question TEXT,
+        question_type TEXT,
+        difficulty_level SMALLINT,
+        details JSONB
+    ) ON COMMIT DROP;
+
+    -- 1. Check if the user is authenticated
+    IF v_student_id IS NULL THEN
+        RETURN;
     END IF;
 
-    -- 3. Enforce the hard limit for total questions
+    -- 2. This check prevents a division by zero error if an empty array is passed
+    IF array_length(p_bank_ids, 1) IS NULL OR array_length(p_bank_ids, 1) = 0 THEN
+        RETURN;
+    END IF;
+
+    -- ---
+    -- 3. NEW: Get Quota Context
+    -- We assume all banks in the array are for the same grade/subject.
+    -- We'll check the context from the first bank ID.
+    -- ---
+    SELECT grade, subject
+    INTO v_grade, v_subject
+    FROM question_banks
+    WHERE id = p_bank_ids[1]; -- Get context from the first bank
+
+    IF NOT FOUND THEN
+        RETURN; -- No valid bank ID provided
+    END IF;
+
+    -- ---
+    -- 4. NEW: Get Student's Quota Limit for this Context
+    -- ---
+    SELECT
+        sp.quota_limit,
+        sp.quota_period
+    INTO
+        v_quota_limit,
+        v_quota_period
+    FROM subscriptions s
+    JOIN subscription_plans sp ON s.subscription_plan = sp.plan_name
+    WHERE s.student_id = v_student_id
+      AND s.grade = v_grade
+      AND s.subject = v_subject
+      AND s.subscription_ends_at > now(); -- Ensure subscription is active
+
+    IF NOT FOUND THEN
+        -- No active, specific subscription. Try to find the 'Free' plan as a fallback.
+        SELECT sp.quota_limit, sp.quota_period
+        INTO v_quota_limit, v_quota_period
+        FROM subscription_plans sp
+        WHERE sp.plan_name = 'Free';
+    END IF;
+
+    -- Default to 'no limit' if no plan was found or plan has no quota
+    v_quota_limit := COALESCE(v_quota_limit, 0);
+    v_quota_period := COALESCE(v_quota_period, 'none');
+
+    -- ---
+    -- 5. NEW: Check Quota Usage
+    -- ---
+    v_questions_remaining := 999999; -- Default to a "no limit" large number
+
+    IF v_quota_period IN ('day', 'month', 'week') AND v_quota_limit > 0 THEN
+        -- Calculate the start of the current quota period
+        v_current_period_start := date_trunc(v_quota_period, now())::date;
+
+        -- Find how many questions the student has already used in this period
+        SELECT questions_retrieved
+        INTO v_questions_used
+        FROM student_quota_usage
+        WHERE student_id = v_student_id
+          AND grade = v_grade
+          AND subject = v_subject
+          AND period_start_date = v_current_period_start;
+
+        IF NOT FOUND THEN
+            v_questions_used := 0;
+        END IF;
+
+        -- Calculate remaining quota
+        v_questions_remaining := v_quota_limit - v_questions_used;
+
+        -- If quota is exhausted, return empty set
+        IF v_questions_remaining <= 0 THEN
+            RETURN;
+        END IF;
+    END IF;
+
+    -- 6. Enforce the hard limit (Original logic)
     SELECT limit_number
     INTO v_max_limit
     FROM hard_limits
     WHERE limit_name = 'max_questions_per_retrieval';
 
-    -- If the requested count exceeds the hard limit, cap it
-    IF p_total_count > v_max_limit THEN
-        p_total_count := v_max_limit;
-    END IF;
+    -- ---
+    -- 7. NEW: Cap the final count
+    -- The total count will be the *smallest* of:
+    --   1. What the user asked for (p_total_count)
+    --   2. The system hard limit (v_max_limit)
+    --   3. The user's remaining quota (v_questions_remaining)
+    -- ---
+    p_total_count := LEAST(p_total_count, v_max_limit, v_questions_remaining);
 
-    -- This check prevents a division by zero error if an empty array is passed
-    IF array_length(p_bank_ids, 1) IS NULL OR array_length(p_bank_ids, 1) = 0 THEN
+    -- If the final capped count is 0 or less, return empty
+    IF p_total_count <= 0 THEN
         RETURN;
     END IF;
 
-    RETURN QUERY
-    WITH numbered_questions AS (
-        -- Step 1: Fetch all questions from the specified banks
-        -- that the user has access to.
+    v_criteria := COALESCE(p_bank_counts, p_type_counts);
+
+    -- ---
+    -- 8. Main Query: Fetch questions into the temp table
+    --
+    -- NEW LOGIC: To ensure predictable row counts, we *first* build a
+    -- deterministic "pool" of questions that meet *all* criteria
+    -- (bank count, type count), and *then* apply the shuffle and
+    -- final limit to that stable pool.
+    -- ---
+    INSERT INTO tmp_results
+    WITH all_eligible_questions AS (
+        -- Step 1: Get all questions user has access to.
+        -- NO shuffling here. We need a stable set for filtering.
         SELECT
             qb.id AS qb_id,
             qb.display_name,
+            q.id AS q_id,
             q.question_text,
             q.question_type AS q_type,
             q.difficulty_level,
-            q.details,
-            ROW_NUMBER() OVER (
-                PARTITION BY q.question_bank_id
-                ORDER BY CASE WHEN p_shuffle THEN random() ELSE q.id END
-            ) AS rn_bank
+            q.details
         FROM questions q
         JOIN question_banks qb ON q.question_bank_id = qb.id
         WHERE q.question_bank_id = ANY(p_bank_ids)
-          -- 4. Filter questions based on the user's access rights
-          AND check_question_access(q.id)
+          AND check_question_access(q.id) -- Original access check
     ),
-    bank_filtered_questions AS (
-        -- Step 2: Filter the questions based on the per-bank count logic.
+
+-- *** STEP 2: CALL TO filter_questions FUNCTION ***
+    -- We aggregate all eligible questions into a single JSONB array
+    -- and pass it to the filter function along with the criteria
+    -- and shuffle parameters.
+    filtered_pool AS (
         SELECT *
-        FROM numbered_questions
-        WHERE
-            CASE
-                WHEN p_bank_counts IS NOT NULL THEN
-                    -- Logic for when a specific count per bank is provided.
-                    -- We use COALESCE to gracefully handle banks that are in the input
-                    -- array but not in the JSONB map, by effectively excluding them.
-                    rn_bank <= COALESCE((p_bank_counts->>(qb_id::text))::int, 0)
-                ELSE
-                    -- Logic for equal distribution if no specific count is given.
-                    -- We calculate the average number of questions needed from each bank.
-                    rn_bank <= CEIL(p_total_count::numeric / array_length(p_bank_ids, 1))
-            END
-    ),
-    type_numbered_questions AS (
-      -- Step 3: If filtering by type is needed, re-number the already-filtered
-      -- results, this time partitioned by question type.
-      SELECT *,
-            ROW_NUMBER() OVER (PARTITION BY q_type ORDER BY random()) as rn_type
-      FROM bank_filtered_questions
+        FROM filter_questions(
+            (SELECT jsonb_agg(q) FROM all_eligible_questions q),
+            v_criteria,
+            p_shuffle -- Pass the parent's shuffle flag
+        )
     )
-    -- Step 4: Perform the final selection.
-    -- We filter by type count (if provided) and apply the final total limit.
+    
+    -- Step 3: NOW shuffle the *final pool* if requested,
+    -- and apply the total limit.
     SELECT
-        tnq.qb_id,
-        tnq.display_name,
-        tnq.question_text,
-        tnq.q_type,
-        tnq.difficulty_level,
-        tnq.details
-    FROM type_numbered_questions tnq
-    WHERE
+        fp.bank_id AS qb_id,
+        fp.display_name,
+        fp.question_text,
+        fp.q_type,
+        fp.difficulty_level,
+        fp.details
+    FROM filtered_pool fp
+    -- The shuffle/order is applied *after* all filtering.
+    ORDER BY
         CASE
-            WHEN p_type_counts IS NOT NULL THEN
-                -- Logic for when a specific count per question type is provided.
-                rn_type <= COALESCE((p_type_counts->>(q_type))::int, 0)
-            ELSE
-                -- If no type filter is applied, include all rows from the previous step.
-                TRUE
+            WHEN p_shuffle THEN random()
+            ELSE fp.q_id -- Deterministic order if no shuffle
         END
-    LIMIT p_total_count; -- The p_total_count is now capped by v_max_limit
+    LIMIT p_total_count; -- This is the final, capped limit
+
+    -- ---
+    -- 9. NEW: Log the actual number of questions retrieved
+    -- ---
+    GET DIAGNOSTICS v_actual_questions_retrieved = ROW_COUNT;
+
+    IF v_actual_questions_retrieved > 0 AND v_quota_period IN ('day', 'month', 'week') THEN
+        -- Insert or update the usage count.
+        -- This is atomic and safe from race conditions.
+        INSERT INTO student_quota_usage (
+            student_id,
+            grade,
+            subject,
+            period_start_date,
+            questions_retrieved
+        )
+        VALUES (
+            v_student_id,
+            v_grade,
+            v_subject,
+            v_current_period_start,
+            v_actual_questions_retrieved
+        )
+        ON CONFLICT (student_id, grade, subject, period_start_date)
+        DO UPDATE SET
+            questions_retrieved = student_quota_usage.questions_retrieved + EXCLUDED.questions_retrieved;
+    END IF;
+
+    -- ---
+    -- 10. Return the final set of questions from the temp table
+    -- ---
+    RETURN QUERY SELECT * FROM tmp_results;
 
 END;
 $$;
+
+
 
 
 
@@ -953,6 +1285,9 @@ ALTER TABLE hard_limits ENABLE ROW LEVEL SECURITY;
 
 -- Subscription plans
 ALTER TABLE subscription_plans ENABLE ROW LEVEL SECURITY;
+
+-- Student quota usage
+ALTER TABLE student_quota_usage ENABLE ROW LEVEL SECURITY;
 
 -- Question banks
 ALTER TABLE question_banks ENABLE ROW LEVEL SECURITY;
@@ -1327,9 +1662,9 @@ VALUES
   ('max_questions_per_retrieval', 100, 'Only 100 questions can be retrieved in a single call.');
 
 -- Available subscription plans
-INSERT INTO subscription_plans (plan_name, question_cap, description)
+INSERT INTO subscription_plans (plan_name, question_cap, description, quota_period, quota_limit)
 VALUES
-    ('Free', 50, 'Access to the first 50 questions per subject.'),
-    ('Basic', 150, 'Access to 150 questions per subject.'),
-    ('Premium', 1000000, 'Effectively unlimited access to all questions.'); -- Use a very large number for unlimited
+    ('Free', 50, 'Access to the first 50 questions per subject.', 'day', 25),
+    ('Basic', 150, 'Access to 150 questions per subject.', 'day', 250),
+    ('Premium', 1000000, 'Effectively unlimited access to all questions.', 'day', 500); -- Use a very large number for unlimited
 
