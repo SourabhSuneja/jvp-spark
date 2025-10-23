@@ -1727,7 +1727,7 @@ VALUES
 (
         'Maths', 
         6, 
-        'Number Line Game', 
+        'Number Line', 
         'git-commit-outline', 
         '6-maths-number-line-game', 
         'pages/maths-number-line-game/index.html', 
