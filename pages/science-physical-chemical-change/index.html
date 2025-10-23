@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Physical vs Chemical Change Lab</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      /* Colors - Dark Theme */
+      --bg-primary: #121212;
+      --bg-secondary: #1f1f1f;
+      --bg-tertiary: #333333;
+      --bg-gradient-dark: linear-gradient(145deg, #1e1e1e, #333333);
+      --bg-input: #2c2c2c;
+      --bg-profile: rgb(25, 25, 25);
+
+      /* Text Colors - Dark Theme */
+      --text-primary: #fff;
+      --text-secondary: #ddd;
+      --text-tertiary: #b0bec5;
+      --text-muted: rgb(230, 230, 230);
+      --text-light-gray: rgb(240, 240, 240);
+      --text-dark-gray: rgb(220, 220, 220);
+
+      /* Accent Colors */
+      --accent-primary: #ffc107;
+      --accent-hover: #e0a800;
+      --accent-focus: #ffd54f;
+      --accent-button-text: black;
+
+      /* Logout button specific */
+      --logout-bg: #e53935;
+      --logout-text: #fff;
+      --logout-hover: #d32f2f;
+
+      /* Status Colors */
+      --error-color: #FF3333;
+      --error-bg: #e53935;
+      --error-hover: #d32f2f;
+
+      /* Overlay Colors */
+      --overlay-bg: rgba(0, 0, 0, 0.5);
+      --loading-overlay-bg: black;
+      --loading-credits-color: rgb(245, 245, 245);
+
+      /* Scrollbar Colors */
+      --scrollbar-thumb: rgb(50, 50, 50);
+      --scrollbar-track: transparent;
+
+      /* Shadow Colors */
+      --shadow-dark: rgba(0, 0, 0, 0.5);
+      --shadow-medium: rgba(0, 0, 0, 0.6);
+      --shadow-light: rgba(0, 0, 0, 0.4);
+
+      /* Spacing Values */
+      --spacing-xs: 4px;
+      --spacing-sm: 8px;
+      --spacing-md: 12px;
+      --spacing-lg: 16px;
+      --spacing-xl: 20px;
+      --spacing-xxl: 25px;
+      --spacing-xxxl: 30px;
+
+      /* Border Radius */
+      --radius-sm: 5px;
+      --radius-md: 8px;
+      --radius-lg: 10px;
+      --radius-xl: 12px;
+      --radius-full: 50%;
+
+      /* Font Sizes */
+      --font-sm: 0.9rem;
+      --font-base: 1rem;
+      --font-md: 1.1rem;
+      --font-lg: 1.2rem;
+      --font-xl: 1.6rem;
+      --font-xxl: 1.7rem;
+      --font-xxxl: 1.8rem;
+      --font-icon-sm: 1.2rem;
+      --font-icon-md: 1.8rem;
+      --font-icon-lg: 2.1rem;
+      --font-icon-xl: 64px;
+
+      /* Transitions */
+      --transition-fast: 0.2s ease;
+      --transition-base: 0.3s ease;
+      --transition-slow: 0.4s all;
+      --transition-slower: 0.5s;
+    }
+
+    /* Light theme overrides */
+    body.light-theme {
+      --bg-primary: #ffffff;
+      --bg-secondary: rgb(253, 253, 253);
+      --bg-tertiary: rgb(240, 240, 240);
+      --bg-gradient-dark: linear-gradient(145deg, #ffffff, #f0f0f0);
+      --bg-input: #ffffff;
+      --bg-profile: rgb(253, 253, 253);
+
+      --text-primary: #333;
+      --text-secondary: rgb(50, 50, 50);
+      --text-tertiary: rgb(80, 80, 80);
+      --text-muted: #333;
+      --text-light-gray: rgb(50, 50, 50);
+      --text-dark-gray: rgb(90, 90, 90);
+
+      --accent-button-text: rgb(30, 30, 30);
+
+      --error-color: #d32f2f;
+      --error-bg: #ff6666;
+      --error-hover: #ff4d4d;
+
+      --loading-overlay-bg: rgb(253, 253, 253);
+      --loading-credits-color: rgb(50, 50, 50);
+
+      --scrollbar-thumb: rgb(170, 170, 170);
+
+      --shadow-dark: rgba(0, 0, 0, 0.1);
+      --shadow-medium: rgba(0, 0, 0, 0.1);
+      --shadow-light: rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Roboto', sans-serif;
+      max-height: 999999px;
+      transition: var(--transition-base) all;
+    }
+
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: var(--spacing-xl);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: var(--spacing-xxxl);
+      padding: var(--spacing-xl);
+      background: var(--bg-gradient-dark);
+      border-radius: var(--radius-xl);
+      box-shadow: 0 4px 12px var(--shadow-dark);
+    }
+
+    .header h1 {
+      font-size: var(--font-xxxl);
+      color: var(--text-primary);
+      margin-bottom: var(--spacing-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--spacing-md);
+    }
+
+    .header p {
+      color: var(--text-secondary);
+      font-size: var(--font-md);
+    }
+
+    .theme-toggle {
+      position: fixed;
+      top: var(--spacing-xl);
+      right: var(--spacing-xl);
+      background: var(--bg-secondary);
+      border: none;
+      width: 50px;
+      height: 50px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      font-size: var(--font-icon-md);
+      color: var(--accent-primary);
+      box-shadow: 0 2px 8px var(--shadow-dark);
+      z-index: 1000;
+    }
+
+    .theme-toggle:hover {
+      background: var(--bg-tertiary);
+      transform: scale(1.1);
+    }
+
+    .score-board {
+      display: flex;
+      justify-content: center;
+      gap: var(--spacing-xl);
+      margin-bottom: var(--spacing-xxxl);
+      flex-wrap: wrap;
+    }
+
+    .score-card {
+      background: var(--bg-secondary);
+      padding: var(--spacing-xl);
+      border-radius: var(--radius-lg);
+      min-width: 150px;
+      text-align: center;
+      box-shadow: 0 2px 8px var(--shadow-dark);
+    }
+
+    .score-card i {
+      font-size: var(--font-icon-lg);
+      color: var(--accent-primary);
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .score-card .label {
+      color: var(--text-tertiary);
+      font-size: var(--font-sm);
+      margin-bottom: var(--spacing-xs);
+    }
+
+    .score-card .value {
+      font-size: var(--font-xxl);
+      font-weight: bold;
+      color: var(--text-primary);
+    }
+
+    .experiment-area {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-xl);
+      padding: var(--spacing-xxxl);
+      margin-bottom: var(--spacing-xxxl);
+      box-shadow: 0 4px 16px var(--shadow-dark);
+      min-height: 400px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .materials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: var(--spacing-lg);
+      margin-bottom: var(--spacing-xxxl);
+    }
+
+    .material-card {
+      background: var(--bg-tertiary);
+      padding: var(--spacing-xl);
+      border-radius: var(--radius-lg);
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--transition-base);
+      border: 2px solid transparent;
+    }
+
+    .material-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px var(--shadow-medium);
+      border-color: var(--accent-primary);
+    }
+
+    .material-card.selected {
+      border-color: var(--accent-primary);
+      background: var(--bg-input);
+    }
+
+    .material-icon {
+      font-size: var(--font-icon-xl);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .material-name {
+      color: var(--text-primary);
+      font-weight: bold;
+      font-size: var(--font-md);
+    }
+
+    .actions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .action-btn {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      border: none;
+      padding: var(--spacing-lg);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-size: var(--font-base);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-sm);
+      transition: all var(--transition-base);
+    }
+
+    .action-btn:hover:not(:disabled) {
+      background: var(--accent-primary);
+      color: var(--accent-button-text);
+      transform: scale(1.05);
+    }
+
+    .action-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .action-btn i {
+      font-size: var(--font-icon-md);
+    }
+
+    .interactive-display {
+      min-height: 300px;
+      background: var(--bg-primary);
+      border-radius: var(--radius-lg);
+      margin-bottom: var(--spacing-xl);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      border: 2px dashed var(--bg-tertiary);
+    }
+
+    .display-item {
+      text-align: center;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .display-item .icon {
+      font-size: 120px;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .display-item .label {
+      font-size: var(--font-xl);
+      color: var(--text-primary);
+      font-weight: bold;
+    }
+
+    .display-item .description {
+      font-size: var(--font-base);
+      color: var(--text-tertiary);
+      margin-top: var(--spacing-sm);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    .question-section {
+      background: var(--bg-gradient-dark);
+      padding: var(--spacing-xl);
+      border-radius: var(--radius-lg);
+      margin-bottom: var(--spacing-xl);
+      text-align: center;
+    }
+
+    .question-section h3 {
+      font-size: var(--font-xl);
+      margin-bottom: var(--spacing-lg);
+      color: var(--text-primary);
+    }
+
+    .answer-buttons {
+      display: flex;
+      gap: var(--spacing-lg);
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .answer-btn {
+      padding: var(--spacing-lg) var(--spacing-xxxl);
+      font-size: var(--font-md);
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-weight: bold;
+      transition: all var(--transition-base);
+      min-width: 180px;
+    }
+
+    .answer-btn.physical {
+      background: #2196F3;
+      color: white;
+    }
+
+    .answer-btn.physical:hover {
+      background: #1976D2;
+      transform: scale(1.05);
+    }
+
+    .answer-btn.chemical {
+      background: #F44336;
+      color: white;
+    }
+
+    .answer-btn.chemical:hover {
+      background: #D32F2F;
+      transform: scale(1.05);
+    }
+
+    .answer-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .feedback {
+      margin-top: var(--spacing-lg);
+      padding: var(--spacing-lg);
+      border-radius: var(--radius-md);
+      font-size: var(--font-md);
+      animation: fadeIn 0.5s ease;
+    }
+
+    .feedback.correct {
+      background: rgba(76, 175, 80, 0.2);
+      border: 2px solid #4CAF50;
+      color: #4CAF50;
+    }
+
+    .feedback.incorrect {
+      background: rgba(244, 67, 54, 0.2);
+      border: 2px solid #F44336;
+      color: var(--error-color);
+    }
+
+    .feedback i {
+      font-size: var(--font-icon-md);
+      margin-right: var(--spacing-sm);
+    }
+
+    .info-box {
+      background: var(--bg-secondary);
+      padding: var(--spacing-xl);
+      border-radius: var(--radius-lg);
+      border-left: 4px solid var(--accent-primary);
+    }
+
+    .info-box h4 {
+      color: var(--accent-primary);
+      margin-bottom: var(--spacing-md);
+      font-size: var(--font-lg);
+    }
+
+    .info-box p {
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .particle {
+      position: absolute;
+      pointer-events: none;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(180deg); }
+    }
+
+    .reset-btn {
+      background: var(--accent-primary);
+      color: var(--accent-button-text);
+      border: none;
+      padding: var(--spacing-md) var(--spacing-xl);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-size: var(--font-base);
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      margin: 0 auto;
+    }
+
+    .reset-btn:hover {
+      background: var(--accent-hover);
+      transform: scale(1.05);
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: var(--spacing-md);
+      }
+
+      .header h1 {
+        font-size: var(--font-xl);
+        flex-direction: column;
+      }
+
+      .materials-grid {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: var(--spacing-md);
+      }
+
+      .material-icon {
+        font-size: 48px;
+      }
+
+      .display-item .icon {
+        font-size: 80px;
+      }
+
+      .answer-buttons {
+        flex-direction: column;
+      }
+
+      .answer-btn {
+        width: 100%;
+      }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: var(--spacing-xxxl);
+      color: var(--text-tertiary);
+    }
+
+    .empty-state i {
+      font-size: var(--font-icon-xl);
+      margin-bottom: var(--spacing-lg);
+      opacity: 0.5;
+    }
+
+    .empty-state p {
+      font-size: var(--font-md);
+    }
+
+    /* Confetti Styles */
+    .confetti {
+      width: 10px;
+      height: 10px;
+      background-color: #f00;
+      position: absolute;
+      animation: confetti-fall 2s ease-out forwards;
+    }
+    
+    @keyframes confetti-fall {
+      0% {
+        transform: translateY(-100px) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(200px) rotate(720deg);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+    <i class="fas fa-sun"></i>
+  </button>
+
+  <div class="container">
+    <div class="header">
+      <h1>
+        <i class="fas fa-flask"></i>
+        Physical vs Chemical Change Lab
+      </h1>
+      <p>Experiment with materials and discover the science behind changes!</p>
+    </div>
+
+    <div class="score-board">
+      <div class="score-card">
+        <i class="fas fa-check-circle"></i>
+        <div class="label">Correct</div>
+        <div class="value" id="correctScore">0</div>
+      </div>
+      <div class="score-card">
+        <i class="fas fa-times-circle"></i>
+        <div class="label">Incorrect</div>
+        <div class="value" id="incorrectScore">0</div>
+      </div>
+      <div class="score-card">
+        <i class="fas fa-trophy"></i>
+        <div class="label">Streak</div>
+        <div class="value"id="streakScore">0</div>
+      </div>
+    </div>
+
+    <div class="experiment-area">
+      <h2 style="margin-bottom: var(--spacing-xl); color: var(--text-primary);">
+        <i class="fas fa-atom"></i> Select a Material
+      </h2>
+      
+      <div class="materials-grid" id="materialsGrid"></div>
+
+      <div id="actionSection" style="display: none;">
+        <h3 style="margin: var(--spacing-xxxl) 0 var(--spacing-lg) 0; color: var(--text-primary);">
+          <i class="fas fa-magic"></i> Choose an Action
+        </h3>
+        <div class="actions-grid" id="actionsGrid"></div>
+      </div>
+
+      <div class="interactive-display" id="display">
+        <div class="empty-state">
+          <i class="fas fa-hand-pointer"></i>
+          <p>Select a material to begin your experiment!</p>
+        </div>
+      </div>
+
+      <div id="questionSection" style="display: none;"></div>
+
+      <button class="reset-btn" onclick="resetExperiment()" style="display: none;" id="resetBtn">
+        <i class="fas fa-redo"></i> Start New Experiment
+      </button>
+    </div>
+
+    <div class="info-box">
+      <h4><i class="fas fa-info-circle"></i> Learn the Difference</h4>
+      <p><strong>Physical Change:</strong> The material stays the same, only its form or state changes. Examples: melting ice, cutting paper, dissolving sugar.</p>
+      <p style="margin-top: var(--spacing-md);"><strong>Chemical Change:</strong> A new substance is formed with different properties. Examples: burning wood, rusting iron, cooking an egg.</p>
+    </div>
+  </div>
+
+  <script>
+    const materials = [
+      {
+        id: 'ice',
+        name: 'Ice Cube',
+        icon: '🧊',
+        actions: [
+          { id: 'melt', name: 'Heat It', icon: '🔥', result: 'water', type: 'physical', description: 'Ice melted into water' },
+          { id: 'break', name: 'Break It', icon: '🔨', result: 'crushed-ice', type: 'physical', description: 'Ice crushed into smaller pieces' }
+        ]
+      },
+      {
+        id: 'paper',
+        name: 'Paper',
+        icon: '📄',
+        actions: [
+          { id: 'tear', name: 'Tear It', icon: '✂️', result: 'torn-paper', type: 'physical', description: 'Paper torn into pieces' },
+          { id: 'burn', name: 'Burn It', icon: '🔥', result: 'ash', type: 'chemical', description: 'Paper burned into ash and smoke' }
+        ]
+      },
+      {
+        id: 'wood',
+        name: 'Wood',
+        icon: '🪵',
+        actions: [
+          { id: 'cut', name: 'Cut It', icon: '🪚', result: 'cut-wood', type: 'physical', description: 'Wood cut into smaller pieces' },
+          { id: 'burn', name: 'Burn It', icon: '🔥', result: 'charcoal', type: 'chemical', description: 'Wood burned into charcoal and ash' }
+        ]
+      },
+      {
+        id: 'water',
+        name: 'Water',
+        icon: '💧',
+        actions: [
+          { id: 'freeze', name: 'Freeze It', icon: '❄️', result: 'ice', type: 'physical', description: 'Water froze into ice' },
+          { id: 'boil', name: 'Boil It', icon: '♨️', result: 'steam', type: 'physical', description: 'Water evaporated into steam' },
+          { id: 'electrolyze', name: 'Electrolyze', icon: '⚡', result: 'hydrogen-oxygen', type: 'chemical', description: 'Water split into hydrogen and oxygen' }
+        ]
+      },
+      {
+        id: 'iron',
+        name: 'Iron Nail',
+        icon: '🔩',
+        actions: [
+          { id: 'bend', name: 'Bend It', icon: '💪', result: 'bent-iron', type: 'physical', description: 'Iron bent into a new shape' },
+          { id: 'rust', name: 'Add Water', icon: '💦', result: 'rust', type: 'chemical', description: 'Iron rusted (oxidized)' }
+        ]
+      },
+      {
+        id: 'sugar',
+        name: 'Sugar',
+        icon: '🧂',
+        actions: [
+          { id: 'dissolve', name: 'Add Water', icon: '💧', result: 'sugar-water', type: 'physical', description: 'Sugar dissolved in water' },
+          { id: 'caramelize', name: 'Heat It', icon: '🔥', result: 'caramel', type: 'chemical', description: 'Sugar caramelized into a new substance' }
+        ]
+      },
+      {
+        id: 'egg',
+        name: 'Egg',
+        icon: '🥚',
+        actions: [
+          { id: 'crack', name: 'Crack It', icon: '🔨', result: 'cracked-egg', type: 'physical', description: 'Egg cracked open' },
+          { id: 'cook', name: 'Cook It', icon: '🍳', result: 'cooked-egg', type: 'chemical', description: 'Egg cooked and proteins changed' }
+        ]
+      },
+      {
+        id: 'candle',
+        name: 'Candle',
+        icon: '🕯️',
+        actions: [
+          { id: 'melt', name: 'Heat It', icon: '🔥', result: 'melted-wax', type: 'physical', description: 'Candle wax melted' },
+          { id: 'burn', name: 'Light It', icon: '🔥', result: 'burning-candle', type: 'chemical', description: 'Candle burned producing light and CO₂' }
+        ]
+      }
+    ];
+
+    const resultIcons = {
+      'water': '💧',
+      'crushed-ice': '🧊',
+      'torn-paper': '📄',
+      'ash': '🌫️',
+      'cut-wood': '🪵',
+      'charcoal': '⚫',
+      'ice': '🧊',
+      'steam': '💨',
+      'hydrogen-oxygen': '⚛️',
+      'bent-iron': '🔩',
+      'rust': '🟤',
+      'sugar-water': '🥤',
+      'caramel': '🍮',
+      'cracked-egg': '🥚',
+      'cooked-egg': '🍳',
+      'melted-wax': '💧',
+      'burning-candle': '🔥'
+    };
+
+    let selectedMaterial = null;
+    let currentAction = null;
+    let correctCount = 0;
+    let incorrectCount = 0;
+    let streak = 0;
+
+    function toggleTheme() {
+      document.body.classList.toggle('light-theme');
+      const icon = document.querySelector('.theme-toggle i');
+      icon.className = document.body.classList.contains('light-theme') ? 'fas fa-moon' : 'fas fa-sun';
+    }
+
+    function initMaterials() {
+      const grid = document.getElementById('materialsGrid');
+      grid.innerHTML = materials.map(material => `
+        <div class="material-card" onclick="selectMaterial('${material.id}', this)">
+          <div class="material-icon">${material.icon}</div>
+          <div class="material-name">${material.name}</div>
+        </div>
+      `).join('');
+    }
+
+    function selectMaterial(id, element) {
+      selectedMaterial = materials.find(m => m.id === id);
+      currentAction = null;
+      
+      document.querySelectorAll('.material-card').forEach(card => {
+        card.classList.remove('selected');
+      });
+      element.classList.add('selected');
+      
+      showActions();
+      updateDisplay(selectedMaterial.icon, selectedMaterial.name, 'Ready for experiment');
+      hideQuestion();
+      document.getElementById('resetBtn').style.display = 'none';
+    }
+
+    function showActions() {
+      const section = document.getElementById('actionSection');
+      const grid = document.getElementById('actionsGrid');
+      
+      grid.innerHTML = selectedMaterial.actions.map(action => `
+        <button class="action-btn" onclick="performAction('${action.id}')">
+          <span style="font-size: var(--font-icon-md);">${action.icon}</span>
+          <span>${action.name}</span>
+        </button>
+      `).join('');
+      
+      section.style.display = 'block';
+    }
+
+    function performAction(actionId) {
+      currentAction = selectedMaterial.actions.find(a => a.id === actionId);
+      
+      const resultIcon = resultIcons[currentAction.result] || '✨';
+      updateDisplay(resultIcon, currentAction.description, '', true);
+      
+      setTimeout(() => {
+        showQuestion();
+      }, 800);
+    }
+
+    function updateDisplay(icon, label, description, animate = false) {
+      const display = document.getElementById('display');
+      display.innerHTML = `
+        <div class="display-item" style="${animate ? 'animation: pulse 0.6s ease;' : ''}">
+          <div class="icon">${icon}</div>
+          <div class="label">${label}</div>
+          <div class="description">${description}</div>
+        </div>
+      `;
+    }
+    
+    function resetDisplay() {
+      const display = document.getElementById('display');
+      display.innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-hand-pointer"></i>
+          <p>Select a material to begin your experiment!</p>
+        </div>
+      `;
+    }
+
+    function showQuestion() {
+      const section = document.getElementById('questionSection');
+      section.style.display = 'block';
+      section.innerHTML = `
+        <div class="question-section">
+          <h3>What type of change occurred?</h3>
+          <div class="answer-buttons">
+            <button class="answer-btn physical" onclick="checkAnswer('physical')">
+              <i class="fas fa-recycle"></i> Physical Change
+            </button>
+            <button class="answer-btn chemical" onclick="checkAnswer('chemical')">
+              <i class="fas fa-atom"></i> Chemical Change
+            </button>
+          </div>
+          <div id="feedback"></div>
+        </div>
+      `;
+      
+      document.getElementById('actionSection').style.display = 'none';
+    }
+
+    function hideQuestion() {
+      document.getElementById('questionSection').style.display = 'none';
+    }
+
+    function checkAnswer(answer) {
+      const correct = answer === currentAction.type;
+      const feedbackDiv = document.getElementById('feedback');
+      
+      document.querySelectorAll('.answer-btn').forEach(btn => btn.disabled = true);
+      
+      if (correct) {
+        correctCount++;
+        streak++;
+        feedbackDiv.innerHTML = `
+          <div class="feedback correct">
+            <i class="fas fa-check-circle"></i>
+            <strong>Correct!</strong> This is a ${currentAction.type} change. ${getExplanation(currentAction.type)}
+          </div>
+        `;
+        createConfetti();
+      } else {
+        incorrectCount++;
+        streak = 0;
+        feedbackDiv.innerHTML = `
+          <div class="feedback incorrect">
+            <i class="fas fa-times-circle"></i>
+            <strong>Not quite.</strong> The correct answer is ${currentAction.type} change. ${getExplanation(currentAction.type)}
+          </div>
+        `;
+      }
+      
+      updateScore();
+      showResetButton();
+    }
+    
+    function getExplanation(type) {
+      if (type === 'physical') {
+        return "The substance is still the same, just in a different form or state (like water and ice are both H₂O).";
+      } else {
+        return "A new substance with new properties was created (like ash, which is different from paper).";
+      }
+    }
+    
+    function updateScore() {
+      document.getElementById('correctScore').textContent = correctCount;
+      document.getElementById('incorrectScore').textContent = incorrectCount;
+      document.getElementById('streakScore').textContent = streak;
+    }
+    
+    function showResetButton() {
+      document.getElementById('resetBtn').style.display = 'flex';
+    }
+    
+    function resetExperiment() {
+      selectedMaterial = null;
+      currentAction = null;
+      
+      resetDisplay();
+      hideQuestion();
+      document.getElementById('actionSection').style.display = 'none';
+      document.getElementById('resetBtn').style.display = 'none';
+      
+      document.querySelectorAll('.material-card').forEach(card => {
+        card.classList.remove('selected');
+      });
+    }
+
+    function createConfetti() {
+      const display = document.getElementById('display');
+      for (let i = 0; i < 30; i++) {
+        const confetti = document.createElement('div');
+        confetti.classList.add('confetti');
+        confetti.style.left = `${Math.random() * 100}%`;
+        confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+        confetti.style.animationDelay = `${Math.random() * 0.5}s`;
+        display.appendChild(confetti);
+        
+        setTimeout(() => {
+          confetti.remove();
+        }, 2000);
+      }
+    }
+
+    // Initialize the game
+    initMaterials();
+  </script>
+</body>
+</html>
