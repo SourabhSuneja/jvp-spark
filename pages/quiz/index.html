@@ -428,9 +428,19 @@
             font-size: 1.2rem;
             color: var(--text-primary);
         }
+       #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+       }
     </style>
 </head>
 <body>
+    <canvas id="confetti-canvas"></canvas>
     <button id="theme-toggle" title="Toggle Theme">
         <i class="fas fa-sun"></i>
     </button>
@@ -507,6 +517,7 @@
             <div id="media-player-container"></div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
     <script>
             // --- QUIZ DATA ---
@@ -539,6 +550,49 @@
             const closeMediaOverlayButton = document.getElementById('close-media-overlay');
             const mediaPlayerContainer = document.getElementById('media-player-container');
             const allNavButtons = navButtons.querySelectorAll('button');
+
+/**
+ * Triggers the confetti celebration.
+ */
+function launchConfetti() {
+    const count = 200;
+    const defaults = {
+        origin: { y: 0.7 }
+    };
+
+    function fire(particleRatio, opts) {
+        confetti(Object.assign({}, defaults, opts, {
+            particleCount: Math.floor(count * particleRatio)
+        }));
+    }
+
+    fire(0.25, {
+        spread: 26,
+        startVelocity: 55,
+    });
+
+    fire(0.2, {
+        spread: 60,
+    });
+
+    fire(0.35, {
+        spread: 100,
+        decay: 0.91,
+        scalar: 0.8
+    });
+
+    fire(0.1, {
+        spread: 120,
+        startVelocity: 25,
+        decay: 0.92,
+        scalar: 1.2
+    });
+
+    fire(0.1, {
+        spread: 120,
+        startVelocity: 45,
+    });
+}
 
             // --- FADE TRANSITION HELPERS ---
             const FADE_DURATION = 400; // Corresponds to --transition-fade
@@ -735,6 +789,11 @@
 
                 const percentage = Math.round((score / quizData.length) * 100);
                 let smiley = '', message = '';
+
+               // Launch confetti if percentage = 100
+               if(percentage === 100) {
+                    launchConfetti();
+               }
 
                 if (percentage < 35) {
                     smiley = '<i class="far fa-frown-open" style="color:var(--color-incorrect);"></i>';
