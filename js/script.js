@@ -31,7 +31,36 @@ const PRELOADABLE_RESOURCES = [
    'pages/syllabus/index.html',
    'pages/blueprint/index.html',
    'pages/sarthak/index.html'
-]
+];
+
+// Array for holding subject order for sorting subjects on dashboard later on
+const ALL_SUBJECTS = [
+  "General",
+  "English",
+  "Hindi",
+  "Science",
+  "Maths",
+  "EVS",
+  "Social Science",
+  "Sanskrit",
+  "Computer",
+  "Data Science",
+  "GK",
+  "Physics",
+  "Chemistry",
+  "Biology",
+  "P.E.",
+  "I.P.",
+  "Psychology",
+  "Applied Maths",
+  "Fine Arts",
+  "Geography",
+  "Accountancy",
+  "B.St.",
+  "Economics",
+  "History",
+  "Pol. Sci."
+];
 
 // Variable to store notification ID in case the app was opened by notification click
 let notifId = null;
@@ -452,7 +481,9 @@ function setupSubjectSwitcher() {
    switcher.innerHTML = ''; // Clear old buttons
 
    // The keys of DASHBOARD_DATA are the subscribed subjects
-   const subscribedSubjects = Object.keys(DASHBOARD_DATA);
+   const dashboardArray = Object.keys(DASHBOARD_DATA);
+
+   const subscribedSubjects = dashboardArray.sort((a, b) => ALL_SUBJECTS.indexOf(a) - ALL_SUBJECTS.indexOf(b));
 
    if (subscribedSubjects.length === 0) {
       // Optional: Show a message if there are no subscriptions
