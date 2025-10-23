@@ -1563,6 +1563,8 @@ VALUES
     );
 
 -- Subject specific resources
+
+-- English
 INSERT INTO subject_resources (
     subject,
     grade,
@@ -1611,6 +1613,8 @@ VALUES
         '{"qbRequired": true, "allowedQTypes": "all"}'
 );
 
+
+-- Computer
 INSERT INTO subject_resources (
     subject,
     grade,
@@ -1658,6 +1662,80 @@ VALUES
         2, 
         '{"qbRequired": true, "allowedQTypes": "all"}'
 );
+
+-- Maths
+INSERT INTO subject_resources (
+    subject,
+    grade,
+    title,
+    icon,
+    page_key,
+    link,
+    min_width,
+    display_order,
+    extra
+)
+VALUES
+(
+        'Maths', 
+        6, 
+        'Quiz', 
+        'help-outline', 
+        '6-maths-quiz', 
+        'pages/quiz/index.html', 
+        NULL, 
+        1, 
+        '{"qbRequired": true, "allowedQTypes": ["MCQ", "True/False"]}'
+);
+
+INSERT INTO subject_resources (
+    subject,
+    grade,
+    title,
+    icon,
+    page_key,
+    link,
+    min_width,
+    display_order,
+    extra
+)
+VALUES
+(
+        'Maths', 
+        6, 
+        'Worksheet', 
+        'newspaper-outline', 
+        '6-maths-worksheet', 
+        'pages/worksheet/index.html', 
+        NULL, 
+        2, 
+        '{"qbRequired": true, "allowedQTypes": "all"}'
+);
+
+INSERT INTO subject_resources (
+    subject,
+    grade,
+    title,
+    icon,
+    page_key,
+    link,
+    min_width,
+    display_order,
+    extra
+)
+VALUES
+(
+        'Maths', 
+        6, 
+        'Number Line Game', 
+        'git-commit-outline', 
+        '6-maths-number-line-game', 
+        'pages/maths-number-line-game/index.html', 
+        NULL, 
+        3, 
+        NULL
+);
+
 
 
 -- Impose hard limits
