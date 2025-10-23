@@ -512,9 +512,20 @@
         ::-webkit-scrollbar-thumb:hover {
             background: var(--text-tertiary);
         }
+#confetti-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+}
     </style>
 </head>
 <body>
+    <canvas id="confetti-canvas"></canvas>
+
     <div class="overlay" id="overlay"></div>
     
     <div class="container">
@@ -594,6 +605,8 @@
         <p id="feedbackMessage"></p>
     </div>
 
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
     <script>
         // Game State
         const gameState = {
@@ -629,6 +642,50 @@
             updateDisplay();
             setupEventListeners();
         }
+
+/**
+ * Triggers the confetti celebration.
+ */
+function launchConfetti() {
+    const count = 200;
+    const defaults = {
+        origin: { y: 0.7 }
+    };
+
+    function fire(particleRatio, opts) {
+        confetti(Object.assign({}, defaults, opts, {
+            particleCount: Math.floor(count * particleRatio)
+        }));
+    }
+
+    fire(0.25, {
+        spread: 26,
+        startVelocity: 55,
+    });
+
+    fire(0.2, {
+        spread: 60,
+    });
+
+    fire(0.35, {
+        spread: 100,
+        decay: 0.91,
+        scalar: 0.8
+    });
+
+    fire(0.1, {
+        spread: 120,
+        startVelocity: 25,
+        decay: 0.92,
+        scalar: 1.2
+    });
+
+    fire(0.1, {
+        spread: 120,
+        startVelocity: 45,
+    });
+}
+
 
         // Render currency items
         function renderCurrency() {
@@ -722,7 +779,7 @@
                     gameState.level++;
                 }
                 
-                createConfetti();
+                launchConfetti();
                 
                 setTimeout(() => {
                     overlay.classList.remove('show');
