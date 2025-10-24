@@ -704,7 +704,7 @@ div#content.externalPage {
     cursor: pointer;
     font-weight: 500;
     transition: all var(--transition-slower);
-    min-width: 33%;
+    min-width: 90px;
 }
 
 .subject-btn:hover {
