@@ -821,7 +821,11 @@ function getQuestionDistribution() {
            
            // Check if at least one question type is selected
            if (isValid && Object.keys(selectedQuestions).length === 0) {
-             alert('Please select at least one question type with a quantity greater than 0');
+             window.parent.showDialog({
+                   title: 'Error',
+                   message: 'Please select at least one question type with a quantity greater than 0',
+                   type: 'alert'
+                   });
              return;
            }
            
