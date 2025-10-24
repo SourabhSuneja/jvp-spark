@@ -844,6 +844,35 @@
              }
            });
          }, 60000); // Update every minute
+
+         // function that the parent app page will call just in case new notifications arrive while the app is open
+         function prependNewNotifications(newNotifs) {
+           if (!newNotifs || newNotifs.length === 0) return;
+           
+           // The list comes in [newest, newer, new]
+           // We reverse it to prepend in the correct order [new, newer, newest]
+           newNotifs.slice().reverse().forEach(notification => {
+             
+             // 1. Add to the global 'notifications' array in this iframe
+             notifications.unshift(notification);
+             
+             // 2. If search is active, add to 'allLoadedNotifications' as well
+             if (isSearchActive) {
+                allLoadedNotifications.unshift(notification);
+             }
+
+             // 3. Create the new card element
+             const card = createNotificationCard(notification, searchQuery);
+             
+             // 4. Add the card to the very top of the list in the DOM
+             notificationsList.prepend(card);
+           });
+
+           // 5. If search is active, re-apply the filter to highlight/hide new cards
+           if (isSearchActive && searchQuery) {
+              filterNotifications(searchQuery);
+           }
+         }
       </script>
    </body>
 </html>
