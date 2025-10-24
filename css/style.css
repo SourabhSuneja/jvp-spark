@@ -704,9 +704,16 @@ div#content.externalPage {
     cursor: pointer;
     font-weight: 500;
     transition: all var(--transition-slower);
-    flex: 1 1 100px;
     text-align: center;
 }
+
+#subject-switcher {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* exactly 4 equal columns */
+  gap: var(--spacing-md);
+}
+
+.subject-btn { width: 100%; box-sizing: border-box; /* same as above */ }
 
 .subject-btn:hover {
     background-color: var(--bg-tertiary);
