@@ -688,7 +688,7 @@ div#content.externalPage {
 /* Subject switcher interface */
 #subject-switcher {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); 
+    grid-template-columns: repeat(3, 1fr); 
     gap: var(--spacing-md);
     padding: var(--spacing-md) var(--spacing-xl);
 }
