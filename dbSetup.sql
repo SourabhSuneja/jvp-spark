@@ -30,6 +30,7 @@ DROP FUNCTION IF EXISTS log_welcome_notification();
 DROP FUNCTION IF EXISTS handle_new_student_subscriptions();
 DROP FUNCTION IF EXISTS get_specific_notification(p_notification_id text);
 DROP FUNCTION IF EXISTS get_all_notifications(uuid, integer);
+DROP FUNCTION IF EXISTS get_new_notifications(uuid);
 DROP FUNCTION IF EXISTS check_question_access(BIGINT);
 DROP FUNCTION IF EXISTS get_question_banks_with_details(INT, TEXT);
 DROP FUNCTION IF EXISTS get_custom_question_set(
@@ -400,6 +401,69 @@ AS $$
             '[]'::jsonb
         ) AS notifications;
 $$;
+
+-- Function to get notifications newer than a specific ID
+-- and the current unread count.
+CREATE OR REPLACE FUNCTION get_new_notifications(
+    latest_known_id uuid DEFAULT NULL
+)
+RETURNS TABLE(
+    count_unread bigint,
+    notifications jsonb
+)
+LANGUAGE sql
+SECURITY INVOKER
+AS $$
+    SELECT
+        (
+            SELECT COUNT(*)::bigint
+            FROM notifications n
+            WHERE NOT EXISTS (
+                SELECT 1 FROM notification_read_logs r
+                WHERE r.notification_id = n.id
+                  AND r.student_id = auth.uid()
+            )
+        ) AS count_unread,
+        COALESCE(
+            (
+                SELECT jsonb_agg(
+                    jsonb_build_object(
+                        'id', n2.id,
+                        'sent_by', n2.sent_by,
+                        'created_at', n2.created_at,
+                        'message_title', n2.message_title,
+                        'message_body', n2.message_body,
+                        'is_read', n2.is_read
+                    )
+                    ORDER BY n2.created_at DESC -- Newest notifications first
+                )
+                FROM (
+                    SELECT 
+                        n2.*,
+                        CASE 
+                            WHEN EXISTS (
+                                SELECT 1 FROM notification_read_logs r2
+                                WHERE r2.notification_id = n2.id
+                                  AND r2.student_id = auth.uid()
+                            ) THEN 1 ELSE 0
+                        END AS is_read
+                    FROM notifications n2
+                    WHERE (
+                        -- Get all notifications newer than the one specified
+                        n2.created_at > (
+                            SELECT created_at 
+                            FROM notifications 
+                            WHERE id = latest_known_id
+                        )
+                    )
+                    ORDER BY n2.created_at DESC
+                ) n2
+                WHERE latest_known_id IS NOT NULL
+            ),
+            '[]'::jsonb
+        ) AS notifications;
+$$;
+
 
 -- This function checks if the current user can access a given question_id (to be used in RLS policies)
 CREATE OR REPLACE FUNCTION check_question_access(question_id_to_check BIGINT)
