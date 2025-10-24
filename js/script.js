@@ -714,7 +714,7 @@ loadManualPage: (itemData) => {
       DOMUtils.show(elements.menuBtn);
       DOMUtils.hide(elements.backBtn);
       DOMUtils.setDisplay(elements.studentProfile, 'flex');
-      DOMUtils.show(elements.subjectSwitcher); // Show subject switcher
+      DOMUtils.setDisplay(elements.subjectSwitcher, 'grid'); // Show subject switcher
 
       elements.screenName.innerText = `${APP_CONFIG.name} `;
       elements.content.classList.remove('externalPage');
