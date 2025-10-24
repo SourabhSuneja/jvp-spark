@@ -687,16 +687,14 @@ div#content.externalPage {
 
 /* Subject switcher interface */
 #subject-switcher {
-    display: flex;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); 
     gap: var(--spacing-md);
     padding: var(--spacing-md) var(--spacing-xl);
-    flex-wrap: wrap; 
 }
 
 .subject-btn {
     padding: var(--spacing-sm) var(--spacing-lg);
-    margin: var(--spacing-xs);
     border: 1px solid var(--bg-tertiary);
     background-color: transparent;
     color: var(--text-secondary);
@@ -705,15 +703,9 @@ div#content.externalPage {
     font-weight: 500;
     transition: all var(--transition-slower);
     text-align: center;
+    width: 100%; 
+    box-sizing: border-box;
 }
-
-#subject-switcher {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr); /* exactly 4 equal columns */
-  gap: var(--spacing-md);
-}
-
-.subject-btn { width: 100%; box-sizing: border-box; /* same as above */ }
 
 .subject-btn:hover {
     background-color: var(--bg-tertiary);
@@ -771,7 +763,7 @@ div#content.externalPage {
   .card {
     flex: 1 1 200px;
   }
-  .subject-btn {
-    min-width: 200px;
+  #subject-switcher {
+    grid-template-columns: repeat(6, 1fr);
   }
 }
