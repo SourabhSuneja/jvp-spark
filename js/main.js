@@ -83,8 +83,12 @@ let MENU_ITEMS = [];
 // Variable to hold available question bank details keyed by subjects
 let QB_DETAILS = {};
 
+// Variable to hold available work assignment details keyed by subjects
+let WA_DETAILS = {};
+
 // Also store the same reference in USER_DATA
 USER_DATA['qbDetails'] = QB_DETAILS;
+USER_DATA['waDetails'] = WA_DETAILS;
 
 // =============================================================================
 // BACKEND MANAGEMENT
@@ -160,6 +164,17 @@ const BackendManager = {
    getQbDetails: async (grade, subject) => {
       try {
          const data = await invokeFunction('get_question_banks_with_details', {'p_grade': parseInt(grade), 'p_subject': subject}, false);
+         return data || []; // Return data or an empty array
+      } catch (err) {
+         console.error("Error fetching dashboard data:", err);
+         return []; // Return empty array on error
+      }
+   },
+
+   // Function to get details for the available work assignments for a given subject
+   getWaDetails: async (subject) => {
+      try {
+         const data = await invokeFunction('get_student_assignments', {'p_subject': subject}, false);
          return data || []; // Return data or an empty array
       } catch (err) {
          console.error("Error fetching dashboard data:", err);
@@ -534,7 +549,9 @@ function setupSubjectSwitcher() {
          button.classList.add('active');
          // Pre-fetch available question banks for this subject
          if(!(currentSubject in QB_DETAILS)) {
-             showProcessingDialog(); QB_DETAILS[currentSubject] = await BackendManager.getQbDetails(USER_DATA['grade'], currentSubject);
+             showProcessingDialog();
+         QB_DETAILS[currentSubject] = await BackendManager.getQbDetails(USER_DATA['grade'], currentSubject);
+             WA_DETAILS[currentSubject] = await BackendManager.getWaDetails(currentSubject);
 
              hideProcessingDialog();
          }
@@ -1020,6 +1037,7 @@ const AppManager = {
 
       MenuManager.initialize();
       QuestionBankSelector.init();
+      WorkAssignmentSelector.init();
       NotificationBadge.updateNotificationCount(USER_DATA['notifications']['count_unread']);
       // Preload certain pages for caching and performance
       AppManager.preloadIframes(PRELOADABLE_RESOURCES);
