@@ -86,7 +86,7 @@ CREATE TABLE question_banks (
 -- Questions: Store the individual questions
 CREATE TABLE questions (
     id BIGSERIAL PRIMARY KEY,
-    question_bank_id BIGINT NOT NULL REFERENCES question_banks(id) ON DELETE CASCADE,
+    question_bank_id BIGINT NOT NULL REFERENCES question_banks(id) ON DELETE CASCADE ON UPDATE CASCADE,
     question_text TEXT NOT NULL,
     question_type TEXT NOT NULL CHECK (question_type IN ('MCQ', 'Fill up', 'True/False', 'Match items', 'Very Short Answer Type', 'Short Answer Type', 'Long Answer Type', 'Very Long Answer Type', 'Diagram/Picture/Map Based')),
     difficulty_level SMALLINT NOT NULL DEFAULT 1,
