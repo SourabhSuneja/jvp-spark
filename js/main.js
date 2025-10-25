@@ -653,6 +653,20 @@ const PageManager = {
          console.log(USER_DATA);
        }
 
+      // Show work assignment selector if card requires selection
+      if(cardData.extra && cardData.extra.waRequired) {
+         hideProcessingDialog();
+         const selectedAssignmentId = await WorkAssignmentSelector.show();
+         if(!selectedAssignmentId) {
+              window.history.back();
+             return;
+         }
+
+         showProcessingDialog();
+         USER_DATA['selectedAssignmentId'] = selectedAssignmentId;
+         console.log(USER_DATA);
+       }
+
       // Theme forcing logic
       if (cardData.extra && cardData.extra.forcedTheme) {
          // If this is the first time we're forcing a theme, save the original.
