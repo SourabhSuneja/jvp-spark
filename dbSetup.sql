@@ -1847,59 +1847,9 @@ VALUES
         '{"forcedTheme": "light"}'
     );
 
--- Subject specific resources
+-- Subject specific resources start
 
--- English
-INSERT INTO subject_resources (
-    subject,
-    grade,
-    title,
-    icon,
-    page_key,
-    link,
-    min_width,
-    display_order,
-    extra
-)
-VALUES
-(
-        'English', 
-        6, 
-        'Quiz', 
-        'help-outline', 
-        '6-english-quiz', 
-        'pages/quiz/index.html', 
-        NULL, 
-        1, 
-        '{"qbRequired": true, "allowedQTypes": ["MCQ", "True/False"]}'
-);
-
-INSERT INTO subject_resources (
-    subject,
-    grade,
-    title,
-    icon,
-    page_key,
-    link,
-    min_width,
-    display_order,
-    extra
-)
-VALUES
-(
-        'English', 
-        6, 
-        'Worksheet', 
-        'newspaper-outline', 
-        '6-english-worksheet', 
-        'pages/worksheet/index.html', 
-        NULL, 
-        2, 
-        '{"qbRequired": true, "allowedQTypes": "all"}'
-);
-
-
--- Computer
+-- Class 6 Computer start
 INSERT INTO subject_resources (
     subject,
     grade,
@@ -1922,8 +1872,34 @@ VALUES
         NULL, 
         1, 
         '{"qbRequired": true, "allowedQTypes": ["MCQ", "True/False"]}'
-);
+),
 
+(
+        'Computer', 
+        6, 
+        'Worksheet', 
+        'newspaper-outline', 
+        '6-computer-worksheet', 
+        'pages/worksheet/index.html', 
+        NULL, 
+        2, 
+        '{"qbRequired": true, "allowedQTypes": "all"}'
+),
+
+(
+        'Computer', 
+        6, 
+        'Classwork', 
+        'book-outline', 
+        '6-computer-classwork', 
+        'pages/worksheet/assignment.html', 
+        NULL, 
+        3, 
+        '{"waRequired": true}'
+);
+-- Class 6 Computer end
+
+-- Class 7 Computer start
 INSERT INTO subject_resources (
     subject,
     grade,
@@ -1938,17 +1914,86 @@ INSERT INTO subject_resources (
 VALUES
 (
         'Computer', 
+        7, 
+        'Quiz', 
+        'help-outline', 
+        '7-computer-quiz', 
+        'pages/quiz/index.html', 
+        NULL, 
+        1, 
+        '{"qbRequired": true, "allowedQTypes": ["MCQ", "True/False"]}'
+),
+
+(
+        'Computer', 
+        7, 
+        'Worksheet', 
+        'newspaper-outline', 
+        '7-computer-worksheet', 
+        'pages/worksheet/index.html', 
+        NULL, 
+        2, 
+        '{"qbRequired": true, "allowedQTypes": "all"}'
+),
+
+(
+        'Computer', 
+        7, 
+        'Classwork', 
+        'book-outline', 
+        '7-computer-classwork', 
+        'pages/worksheet/assignment.html', 
+        NULL, 
+        3, 
+        '{"waRequired": true}'
+);
+-- Class 7 Computer end
+
+
+
+-- Class 6 English start
+INSERT INTO subject_resources (
+    subject,
+    grade,
+    title,
+    icon,
+    page_key,
+    link,
+    min_width,
+    display_order,
+    extra
+)
+VALUES
+(
+        'English', 
+        6, 
+        'Quiz', 
+        'help-outline', 
+        '6-english-quiz', 
+        'pages/quiz/index.html', 
+        NULL, 
+        1, 
+        '{"qbRequired": true, "allowedQTypes": ["MCQ", "True/False"]}'
+),
+
+(
+        'English', 
         6, 
         'Worksheet', 
         'newspaper-outline', 
-        '6-computer-worksheet', 
+        '6-english-worksheet', 
         'pages/worksheet/index.html', 
         NULL, 
         2, 
         '{"qbRequired": true, "allowedQTypes": "all"}'
 );
+-- Class 6 English end
 
--- Maths
+
+
+
+-- Class 6 Maths start
+
 INSERT INTO subject_resources (
     subject,
     grade,
@@ -1971,20 +2016,8 @@ VALUES
         NULL, 
         1, 
         '{"qbRequired": true, "allowedQTypes": ["MCQ", "True/False"]}'
-);
+),
 
-INSERT INTO subject_resources (
-    subject,
-    grade,
-    title,
-    icon,
-    page_key,
-    link,
-    min_width,
-    display_order,
-    extra
-)
-VALUES
 (
         'Maths', 
         6, 
@@ -1997,6 +2030,63 @@ VALUES
         '{"qbRequired": true, "allowedQTypes": "all"}'
 );
 
+-- Class 6 Maths end
+
+-- Class 7 Science start
+
+INSERT INTO subject_resources (
+    subject,
+    grade,
+    title,
+    icon,
+    page_key,
+    link,
+    min_width,
+    display_order,
+    extra
+)
+VALUES
+(
+        'Science', 
+        7, 
+        'Quiz', 
+        'help-outline', 
+        '7-science-quiz', 
+        'pages/quiz/index.html', 
+        NULL, 
+        1, 
+        '{"qbRequired": true, "allowedQTypes": ["MCQ", "True/False"]}'
+),
+
+(
+        'Science', 
+        7, 
+        'Worksheet', 
+        'newspaper-outline', 
+        '7-science-worksheet', 
+        'pages/worksheet/index.html', 
+        NULL, 
+        2, 
+        '{"qbRequired": true, "allowedQTypes": "all"}'
+),
+
+(
+        'Science', 
+        7, 
+        'Change Detect', 
+        'bonfire-outline', 
+        'science-physical-chemical-change', 
+        'pages/science-physical-chemical-change/index.html', 
+        NULL, 
+        3, 
+        NULL
+);
+
+-- Class 7 Science end
+
+
+-- Maths resources for all classes start
+
 INSERT INTO subject_resources (
     subject,
     grade,
@@ -2011,15 +2101,55 @@ INSERT INTO subject_resources (
 VALUES
 (
         'Maths', 
-        6, 
+        NULL, 
         'Number Line', 
         'git-commit-outline', 
-        '6-maths-number-line-game', 
+        'maths-number-line-game', 
         'pages/maths-number-line-game/index.html', 
         NULL, 
         3, 
         NULL
+),
+
+(
+        'Maths', 
+        NULL, 
+        'Abacus', 
+        'apps-outline', 
+        'maths-abacus-game', 
+        'pages/maths-abacus-game/index.html', 
+        NULL, 
+        4, 
+        NULL
+),
+
+(
+        'Maths', 
+        NULL, 
+        'Rupee Game', 
+        'cash-outline', 
+        'maths-rupee-game', 
+        'pages/maths-rupee-game/index.html', 
+        NULL, 
+        5, 
+        NULL
+),
+
+(
+        'Maths', 
+        NULL, 
+        'Geometry Studio', 
+        'create-outline', 
+        'maths-geometry-construction', 
+        'pages/maths-geometry-construction/index.html', 
+        NULL, 
+        6, 
+        NULL
 );
+
+
+-- Subject specific resources end
+
 
 
 
