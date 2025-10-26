@@ -803,7 +803,7 @@ generateAssignment(selectedQuestions, currentAssignment.type);
                  let encodedEd = encodeURIComponent(JSON.stringify(ed));
                  let encodedQc = encodeURIComponent(JSON.stringify(qc));
                  let encodedQbIds = encodeURIComponent(qbIds.join("+"));
-                 let encodedDistribution = encodeURIComponent(JSON.stringify(getQuestionDistribution()));
+                 
          
                  // Final URL construction
                  let finalURL = `${baseURL}?ed=${encodedEd}&qpm=${qpm}&qc=${encodedQc}&qbIds=${encodedQbIds}&diff=${difficulty}&selectedAssignmentId=${selectedAssignmentId}&mode=assignment`;
