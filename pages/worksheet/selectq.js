@@ -1009,16 +1009,17 @@ window.onload = function () {
    }
 
    try {
-      genMode = JSON.parse(getParameterByName('mode'));
+      genMode = getParameterByName('mode');
    } catch (e) {
       genMode = 'worksheet';
    }
 
    try {
-      selectedAssignmentId = JSON.parse(getParameterByName('selectedAssignmentId'));
+      selectedAssignmentId = getParameterByName('selectedAssignmentId');
    } catch (e) {
       selectedAssignmentId = null;
    }
 
    start(getParameterByName('qbIds'));
 }
+
