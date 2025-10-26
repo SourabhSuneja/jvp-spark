@@ -2084,6 +2084,46 @@ VALUES
 
 -- Class 7 Science end
 
+-- Class 7 English start
+
+INSERT INTO subject_resources (
+    subject,
+    grade,
+    title,
+    icon,
+    page_key,
+    link,
+    min_width,
+    display_order,
+    extra
+)
+VALUES
+(
+        'English', 
+        7, 
+        'Quiz', 
+        'help-outline', 
+        '7-english-quiz', 
+        'pages/quiz/index.html', 
+        NULL, 
+        1, 
+        '{"qbRequired": true, "allowedQTypes": ["MCQ", "True/False"]}'
+),
+
+(
+        'English', 
+        7, 
+        'Worksheet', 
+        'newspaper-outline', 
+        '7-english-worksheet', 
+        'pages/worksheet/index.html', 
+        NULL, 
+        2, 
+        '{"qbRequired": true, "allowedQTypes": "all"}'
+);
+
+-- Class 7 English end
+
 
 -- Maths resources for all classes start
 
