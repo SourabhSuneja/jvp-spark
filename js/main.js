@@ -17,7 +17,8 @@ const USER_DATA = {
    section: '',
    accountType: 'Student',
    avatar: '',
-   selectedQbIds: null
+   selectedQbIds: null,
+   selectedAssignmentId: null
 };
 
 const BASE_URL = 'https://sourabhsuneja.github.io/jvp-spark/';
