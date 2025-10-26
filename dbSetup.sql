@@ -9,6 +9,9 @@ DROP TABLE IF EXISTS push_subscriptions CASCADE;
 DROP TABLE IF EXISTS settings CASCADE;
 DROP TABLE IF EXISTS student_quota_usage CASCADE;
 DROP TABLE IF EXISTS subscriptions CASCADE;
+DROP TABLE IF EXISTS work_assignments CASCADE;
+DROP TABLE IF EXISTS work_set_items CASCADE;
+DROP TABLE IF EXISTS work_sets CASCADE;
 DROP TABLE IF EXISTS students CASCADE;
 DROP TABLE IF EXISTS notification_read_logs CASCADE;
 DROP TABLE IF EXISTS teachers CASCADE;
@@ -45,6 +48,8 @@ DROP FUNCTION IF EXISTS filter_questions(
     JSONB,
     BOOLEAN
 );
+DROP FUNCTION IF EXISTS get_student_assignments(p_subject TEXT);
+DROP FUNCTION IF EXISTS get_assignment_questions(p_work_set_id BIGINT);
 
 
 
@@ -225,6 +230,38 @@ CREATE TABLE push_subscriptions (
     subscription_object JSONB NOT NULL,
     endpoint           TEXT UNIQUE,
     created_at         TIMESTAMP DEFAULT now()
+);
+
+-- Defines a 'set' of work (e.g., a worksheet, an assignment, classwork, homework)
+CREATE TABLE work_sets (
+    id BIGSERIAL PRIMARY KEY,
+    type TEXT NOT NULL DEFAULT 'Assignment',
+    subject TEXT NOT NULL,
+    title TEXT NOT NULL,
+    description TEXT,
+    keywords TEXT,
+    created_by TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT now(),
+    extra JSONB
+);
+
+-- Links questions to a work_set (many-to-many)
+CREATE TABLE work_set_items (
+    id BIGSERIAL PRIMARY KEY,
+    work_set_id BIGINT NOT NULL REFERENCES work_sets(id) ON DELETE CASCADE,
+    question_id BIGINT NOT NULL REFERENCES questions(id) ON DELETE CASCADE,
+    display_order INT NOT NULL DEFAULT 0,
+    -- A question can't be in the same set twice
+    UNIQUE(work_set_id, question_id)
+);
+
+-- Assigns a work_set to a group of students
+CREATE TABLE work_assignments (
+    id BIGSERIAL PRIMARY KEY,
+    work_set_id BIGINT NOT NULL REFERENCES work_sets(id) ON DELETE CASCADE,
+    grade INT NOT NULL,
+    section TEXT, -- If section is NULL, it applies to ALL sections in that grade
+    assigned_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
 
@@ -1045,7 +1082,182 @@ END;
 $$;
 
 
+-- Function to return details of the work sets assigned to a student
+CREATE OR REPLACE FUNCTION get_student_assignments(p_subject TEXT)
+RETURNS TABLE (
+    work_set_id BIGINT,
+    grade INT,
+    section TEXT,
+    type TEXT,
+    title TEXT,
+    description TEXT,
+    keywords TEXT,
+    created_by TEXT,
+    assigned_at TIMESTAMP,
+    question_count JSONB
+)
+LANGUAGE plpgsql
+SECURITY DEFINER
+-- Set search_path to 'public' for security definer functions
+SET search_path = public
+AS $$
+DECLARE
+    student_grade INT;
+    student_section TEXT;
+    student_auth_id UUID := auth.uid(); -- Get the auth ID as requested
+BEGIN
+    -- 1. Find the student's grade and section using their auth ID.
+    SELECT
+        s.grade,
+        s.section
+    INTO
+        student_grade,
+        student_section
+    FROM public.students s
+    WHERE s.id = student_auth_id;
 
+    -- 2. If the student is not found in the 'students' table, return an empty set.
+    IF NOT FOUND THEN
+        RETURN; -- Returns an empty table
+    END IF;
+
+    -- 3. Return the assignments and their question counts.
+    RETURN QUERY
+    WITH valid_assignments AS (
+        -- Step A: Find all work_sets assigned to the student's grade/section
+        -- AND matching the specified subject.
+        SELECT
+            wa.work_set_id,
+            wa.grade,
+            wa.section,
+            ws.type,
+            ws.title,
+            ws.description,
+            ws.keywords,
+            ws.created_by,
+            wa.assigned_at
+        FROM public.work_assignments wa
+        JOIN public.work_sets ws ON wa.work_set_id = ws.id
+        WHERE
+            wa.grade = student_grade
+            AND (wa.section IS NULL OR wa.section = student_section) -- Matches grade-wide or specific section
+            AND ws.subject = p_subject
+    ),
+    question_counts_per_type AS (
+        -- ***FIX APPLIED HERE***
+        -- Step B: First, count questions grouped by *both* work_set_id and question_type.
+        SELECT
+            wsi.work_set_id,
+            q.question_type,
+            count(*) AS type_count
+        FROM public.work_set_items wsi
+        JOIN public.questions q ON wsi.question_id = q.id
+        -- Only count questions for the sets we've already validated
+        WHERE wsi.work_set_id IN (SELECT va.work_set_id FROM valid_assignments va)
+        GROUP BY wsi.work_set_id, q.question_type
+    ),
+    question_counts AS (
+        -- ***FIX APPLIED HERE***
+        -- Step C: Now, aggregate those pre-counted types into a JSON object
+        -- and sum them up for a total count, grouped only by work_set_id.
+        SELECT
+            qcpt.work_set_id,
+            jsonb_object_agg(qcpt.question_type, qcpt.type_count) AS counts_by_type,
+            sum(qcpt.type_count) AS total_count
+        FROM question_counts_per_type qcpt
+        GROUP BY qcpt.work_set_id
+    )
+    -- Step D: Combine assignment details with question counts.
+    SELECT
+        va.work_set_id,
+        va.grade,
+        va.section,
+        va.type,
+        va.title,
+        va.description,
+        va.keywords,
+        va.created_by,
+        va.assigned_at,
+        -- Combine the type-specific counts with the 'Total' key.
+        -- Use COALESCE to handle work sets with 0 questions gracefully.
+        COALESCE(qc.counts_by_type, '{}'::jsonb) || jsonb_build_object('Total', COALESCE(qc.total_count, 0))
+    FROM valid_assignments va
+    -- LEFT JOIN to include assignments that might have 0 questions
+    LEFT JOIN question_counts qc ON va.work_set_id = qc.work_set_id
+    ORDER BY va.assigned_at DESC; -- Sort newest to oldest
+
+END;
+$$;
+
+
+-- Function to get questions for a specific assignment
+CREATE OR REPLACE FUNCTION get_assignment_questions(p_work_set_id BIGINT)
+RETURNS TABLE (
+    question_bank_id BIGINT,
+    question TEXT,
+    question_type TEXT,
+    difficulty_level SMALLINT,
+    details JSONB
+)
+LANGUAGE plpgsql
+SECURITY DEFINER
+-- Set search_path to 'public' for security definer functions
+SET search_path = public
+AS $$
+DECLARE
+    student_grade INT;
+    student_section TEXT;
+    student_auth_id UUID := auth.uid(); -- Get the auth ID
+    is_assigned BOOLEAN;
+BEGIN
+    -- 1. Find the student's grade and section.
+    SELECT
+        s.grade,
+        s.section
+    INTO
+        student_grade,
+        student_section
+    FROM public.students s
+    WHERE s.id = student_auth_id;
+
+    -- 2. If student not found, return empty set.
+    IF NOT FOUND THEN
+        RETURN;
+    END IF;
+
+    -- 3. SECURITY CHECK: Verify this work_set_id is assigned to this student.
+    SELECT EXISTS (
+        SELECT 1
+        FROM public.work_assignments wa
+        WHERE
+            wa.work_set_id = p_work_set_id
+            AND wa.grade = student_grade
+            AND (wa.section IS NULL OR wa.section = student_section)
+    )
+    INTO is_assigned;
+
+    -- 4. If the student is not assigned this work set, return an empty set.
+    IF NOT is_assigned THEN
+        RETURN;
+    END IF;
+
+    -- 5. If checks pass, return the questions for the work set.
+    RETURN QUERY
+    SELECT
+        q.question_bank_id,
+        q.question_text AS question, -- Alias 'question_text' to 'question'
+        q.question_type,
+        q.difficulty_level,
+        q.details
+    FROM public.questions q
+    JOIN public.work_set_items wsi ON q.id = wsi.question_id
+    WHERE
+        wsi.work_set_id = p_work_set_id
+    ORDER BY
+        wsi.display_order ASC, wsi.id ASC; -- Sort by display_order, then by id
+
+END;
+$$;
 
 
 
@@ -1356,6 +1568,15 @@ ALTER TABLE subscription_plans ENABLE ROW LEVEL SECURITY;
 
 -- Student quota usage
 ALTER TABLE student_quota_usage ENABLE ROW LEVEL SECURITY;
+
+-- work_sets
+ALTER TABLE work_sets ENABLE ROW LEVEL SECURITY;
+
+-- work_set_items
+ALTER TABLE work_set_items ENABLE ROW LEVEL SECURITY;
+
+-- work_assignments
+ALTER TABLE work_assignments ENABLE ROW LEVEL SECURITY;
 
 -- Question banks
 ALTER TABLE question_banks ENABLE ROW LEVEL SECURITY;
