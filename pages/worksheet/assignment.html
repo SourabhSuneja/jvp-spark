@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Assignment Compiler</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+      <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+      <style>
+         :root {
+         /* Colors - Dark Theme */
+         --bg-primary: #121212;
+         --bg-secondary: #1f1f1f;
+         --bg-tertiary: #333333;
+         --bg-gradient-dark: linear-gradient(145deg, #1e1e1e, #333333);
+         --bg-input: #2c2c2c;
+         --bg-profile: rgb(25, 25, 25);
+         /* Text Colors - Dark Theme */
+         --text-primary: #fff;
+         --text-secondary: #ddd;
+         --text-tertiary: #b0bec5;
+         --text-muted: rgb(230, 230, 230);
+         --text-light-gray: rgb(240, 240, 240);
+         --text-dark-gray: rgb(220, 220, 220);
+         /* Accent Colors */
+         --accent-primary: #ffc107;
+         --accent-hover: #e0a800;
+         --accent-focus: #ffd54f;
+         --accent-button-text: black;
+         /* Logout button specific — remain same for light and dark themes */
+         --logout-bg: #e53935;
+         --logout-text: #fff;
+         --logout-hover: #d32f2f;
+         /* Status Colors */
+         --error-color: #FF3333;
+         --error-bg: #e53935;
+         --error-hover: #d32f2f;
+         /* Overlay Colors */
+         --overlay-bg: rgba(0, 0, 0, 0.5);
+         --loading-overlay-bg: black;
+         --loading-credits-color: rgb(245, 245, 245);
+         /* Scrollbar Colors */
+         --scrollbar-thumb: rgb(50, 50, 50);
+         --scrollbar-track: transparent;
+         /* Shadow Colors */
+         --shadow-dark: rgba(0, 0, 0, 0.5);
+         --shadow-medium: rgba(0, 0, 0, 0.6);
+         --shadow-light: rgba(0, 0, 0, 0.4);
+         /* Spacing Values */
+         --spacing-xs: 4px;
+         --spacing-sm: 8px;
+         --spacing-md: 12px;
+         --spacing-lg: 16px;
+         --spacing-xl: 20px;
+         --spacing-xxl: 25px;
+         --spacing-xxxl: 30px;
+         /* Border Radius */
+         --radius-sm: 5px;
+         --radius-md: 8px;
+         --radius-lg: 10px;
+         --radius-xl: 12px;
+         --radius-full: 50%;
+         /* Font Sizes */
+         --font-sm: 0.9rem;
+         --font-base: 1rem;
+         --font-md: 1.1rem;
+         --font-lg: 1.2rem;
+         --font-xl: 1.6rem;
+         --font-xxl: 1.7rem;
+         --font-xxxl: 1.8rem;
+         --font-icon-sm: 1.2rem;
+         --font-icon-md: 1.8rem;
+         --font-icon-lg: 2.1rem;
+         --font-icon-xl: 64px;
+         /* Transitions */
+         --transition-fast: 0.2s ease;
+         --transition-base: 0.3s ease;
+         --transition-slow: 0.4s all;
+         --transition-slower: 0.5s;
+         /* Z-index */
+         --z-overlay: 1;
+         --z-header: 10;
+         --z-sidebar: 20;
+         --z-signin: 9999;
+         --z-loading: 500000;
+         /* Dimensions */
+         --sidebar-width: 260px;
+         --avatar-sm: 40px;
+         --avatar-md: 70px;
+         --avatar-lg: 80px;
+         --scrollbar-width: 6px;
+         }
+         /* Light theme overrides */
+         body.light-theme {
+         --bg-primary: #ffffff;
+         --bg-secondary: rgb(253, 253, 253);
+         --bg-tertiary: rgb(240, 240, 240);
+         --bg-gradient-dark: linear-gradient(145deg, #ffffff, #f0f0f0);
+         --bg-input: #ffffff;
+         --bg-profile: rgb(253, 253, 253);
+         --text-primary: #333;
+         --text-secondary: rgb(50, 50, 50);
+         --text-tertiary: rgb(80, 80, 80);
+         --text-muted: #333;
+         --text-light-gray: rgb(50, 50, 50);
+         --text-dark-gray: rgb(90, 90, 90);
+         --accent-button-text: rgb(30, 30, 30);
+         --error-color: #d32f2f;
+         --error-bg: #ff6666;
+         --error-hover: #ff4d4d;
+         --loading-overlay-bg: rgb(253, 253, 253);
+         --loading-credits-color: rgb(50, 50, 50);
+         --scrollbar-thumb: rgb(170, 170, 170);
+         --shadow-dark: rgba(0, 0, 0, 0.1);
+         --shadow-medium: rgba(0, 0, 0, 0.1);
+         --shadow-light: rgba(0, 0, 0, 0.1);
+         }
+         * {
+         margin: 0;
+         padding: 0;
+         box-sizing: border-box;
+         font-family: 'Roboto', sans-serif;
+         max-height: 999999px;
+         transition: var(--transition-base) all;
+         }
+         .noselect {
+         -webkit-user-select: none;
+         -moz-user-select: none;
+         -ms-user-select: none;
+         user-select: none;
+         -webkit-touch-callout: none;
+         -webkit-user-drag: none;
+         -webkit-tap-highlight-color: transparent;
+         }
+         body {
+         /*
+         display: flex; <--- REMOVED
+         height: 100vh; <--- CHANGED
+         overflow: hidden; <--- REMOVED
+         */
+         min-height: 100vh; /* <--- ADDED */
+         background-color: var(--bg-primary);
+         color: var(--text-primary);
+         margin: 0;
+         padding-top: env(safe-area-inset-top);
+         padding-left: env(safe-area-inset-left);
+         padding-right: env(safe-area-inset-right);
+         padding-bottom: env(safe-area-inset-bottom);
+         }
+         .container {
+         width: 100%;
+         /*
+         height: 100%; <--- REMOVED
+         display: flex; <--- REMOVED
+         align-items: center; <--- REMOVED
+         justify-content: center; <--- REMOVED
+         overflow-y: auto; <--- REMOVED
+         */
+         padding: var(--spacing-xl);
+         }
+         /* Input Form Styles */
+         .input-form-container {
+         width: 100%;
+         max-width: 500px;
+         display: none;
+         flex-direction: column;
+         margin: 0 auto; /* <--- ADDED */
+         }
+         .form-header {
+         text-align: center;
+         margin-bottom: var(--spacing-xxxl);
+         }
+         .form-title {
+         font-size: var(--font-xxl);
+         font-weight: 700;
+         color: var(--text-primary);
+         margin-bottom: var(--spacing-md);
+         }
+         .form-subtitle {
+         font-size: var(--font-md);
+         color: var(--text-tertiary);
+         }
+         .form-content {
+         background-color: var(--bg-secondary);
+         border-radius: var(--radius-lg);
+         padding: var(--spacing-xxl);
+         box-shadow: 0 4px 12px var(--shadow-medium);
+         }
+         .input-group {
+         margin-bottom: var(--spacing-xl);
+         }
+         .input-group:last-of-type {
+         margin-bottom: 0;
+         }
+         .input-label {
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         margin-bottom: var(--spacing-sm);
+         font-size: var(--font-md);
+         font-weight: 700;
+         color: var(--text-primary);
+         }
+         .input-max {
+         font-size: var(--font-sm);
+         color: var(--text-tertiary);
+         font-weight: 400;
+         }
+         .input-field {
+         width: 100%;
+         padding: var(--spacing-md) var(--spacing-lg);
+         background-color: var(--bg-input);
+         border: 2px solid var(--bg-tertiary);
+         border-radius: var(--radius-md);
+         color: var(--text-primary);
+         font-size: var(--font-base);
+         outline: none;
+         transition: border-color var(--transition-base);
+         }
+         .input-field:focus {
+         border-color: var(--accent-primary);
+         }
+         .input-field::-webkit-outer-spin-button,
+         .input-field::-webkit-inner-spin-button {
+         -webkit-appearance: none;
+         margin: 0;
+         }
+         .input-field[type=number] {
+         -moz-appearance: textfield;
+         }
+
+         /* === NEW STYLES FOR RADIO BUTTONS === */
+         .input-group#worksheetOptions {
+         margin-top: var(--spacing-xl);
+         padding-top: var(--spacing-lg);
+         border-top: 1px solid var(--bg-tertiary);
+         }
+
+         .radio-options-container {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md); /* Space between radio options */
+            padding: var(--spacing-sm) 0;
+         }
+
+         .radio-option {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+         }
+
+         .radio-option input[type="radio"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background-color: var(--bg-input);
+            margin: 0;
+            font: inherit;
+            color: var(--text-tertiary);
+            width: 1.15em;
+            height: 1.15em;
+            border: 2px solid var(--bg-tertiary);
+            border-radius: var(--radius-full);
+            transform: translateY(-0.075em);
+            display: grid;
+            place-content: center;
+            cursor: pointer;
+         }
+
+         .radio-option input[type="radio"]::before {
+            content: "";
+            width: 0.65em;
+            height: 0.65em;
+            border-radius: var(--radius-full);
+            transform: scale(0);
+            transition: 120ms transform ease-in-out;
+            box-shadow: inset 1em 1em var(--accent-primary);
+         }
+
+         .radio-option input[type="radio"]:checked {
+             border-color: var(--accent-primary);
+         }
+
+         .radio-option input[type="radio"]:checked::before {
+            transform: scale(1);
+         }
+         
+         .radio-option input[type="radio"]:focus-visible {
+             outline: 2px solid var(--accent-focus);
+             outline-offset: 2px;
+         }
+
+         .radio-option label {
+            font-size: var(--font-base);
+            color: var(--text-secondary);
+            cursor: pointer;
+         }
+         /* === END OF NEW STYLES === */
+
+
+         .error-message {
+         display: none;
+         margin-top: var(--spacing-sm);
+         font-size: var(--font-sm);
+         color: var(--error-color);
+         }
+         .error-message.show {
+         display: block;
+         }
+         .button-container {
+         margin-top: var(--spacing-xxl);
+         display: flex;
+         gap: var(--spacing-md);
+         }
+         .btn {
+         flex: 1;
+         padding: var(--spacing-md) var(--spacing-xl);
+         border: none;
+         border-radius: var(--radius-md);
+         font-size: var(--font-md);
+         font-weight: 700;
+         cursor: pointer;
+         transition: all var(--transition-base);
+         outline: none;
+         }
+         .btn-primary {
+         background-color: var(--accent-primary);
+         color: var(--accent-button-text);
+         }
+         .btn-primary:hover {
+         background-color: var(--accent-hover);
+         transform: translateY(-1px);
+         box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+         }
+         .btn-primary:active {
+         transform: translateY(0);
+         }
+         .btn-primary:disabled {
+         opacity: 0.5;
+         cursor: not-allowed;
+         transform: none;
+         }
+         /* Processing Animation Styles */
+         .processing-container {
+         display: flex;
+         flex-direction: column;
+         align-items: center;
+         justify-content: center;
+         width: 100%;
+         /* height: 100%; <--- REMOVED */
+         padding: var(--spacing-xxxl) 0; /* <--- ADDED */
+         }
+         .processing-container.show {
+         display: flex;
+         }
+         .worksheet-animation {
+         position: relative;
+         width: 200px;
+         height: 200px;
+         margin-bottom: var(--spacing-xxxl);
+         }
+         .worksheet-icon {
+         position: absolute;
+         top: 50%;
+         left: 50%;
+         transform: translate(-50%, -50%);
+         font-size: var(--font-icon-xl);
+         color: var(--accent-primary);
+         animation: pulse 2s ease-in-out infinite;
+         }
+         .orbit-container {
+         position: absolute;
+         top: 50%;
+         left: 50%;
+         width: 100%;
+         height: 100%;
+         transform: translate(-50%, -50%);
+         animation: rotate 3s linear infinite;
+         }
+         .orbit-dot {
+         position: absolute;
+         width: 12px;
+         height: 12px;
+         background-color: var(--accent-primary);
+         border-radius: var(--radius-full);
+         box-shadow: 0 0 15px var(--accent-primary);
+         }
+         .orbit-dot:nth-child(1) {
+         top: 0;
+         left: 50%;
+         transform: translateX(-50%);
+         animation: dotPulse 1.5s ease-in-out infinite;
+         }
+         .orbit-dot:nth-child(2) {
+         bottom: 0;
+         left: 50%;
+         transform: translateX(-50%);
+         animation: dotPulse 1.5s ease-in-out 0.5s infinite;
+         }
+         .orbit-dot:nth-child(3) {
+         top: 50%;
+         left: 0;
+         transform: translateY(-50%);
+         animation: dotPulse 1.5s ease-in-out 1s infinite;
+         }
+         .orbit-dot:nth-child(4) {
+         top: 50%;
+         right: 0;
+         transform: translateY(-50%);
+         animation: dotPulse 1.5s ease-in-out 1.5s infinite;
+         }
+         .processing-text {
+         font-size: var(--font-xl);
+         font-weight: 700;
+         color: var(--text-primary);
+         margin-bottom: var(--spacing-md);
+         text-align: center;
+         }
+         .processing-subtext {
+         font-size: var(--font-md);
+         color: var(--text-tertiary);
+         text-align: center;
+         margin-bottom: var(--spacing-xxl);
+         }
+         .progress-container {
+         width: 100%;
+         max-width: 400px;
+         height: 6px;
+         background-color: var(--bg-tertiary);
+         border-radius: var(--radius-sm);
+         overflow: hidden;
+         box-shadow: inset 0 2px 4px var(--shadow-light);
+         }
+         .progress-bar {
+         height: 100%;
+         background: linear-gradient(90deg, var(--accent-primary), var(--accent-focus));
+         border-radius: var(--radius-sm);
+         animation: progressAnimation 2s ease-in-out infinite;
+         box-shadow: 0 0 10px var(--accent-primary);
+         }
+         .status-indicators {
+         display: flex;
+         gap: var(--spacing-lg);
+         margin-top: var(--spacing-xxxl);
+         flex-wrap: wrap;
+         justify-content: center;
+         }
+         .status-item {
+         display: flex;
+         align-items: center;
+         gap: var(--spacing-sm);
+         padding: var(--spacing-md) var(--spacing-lg);
+         background-color: var(--bg-secondary);
+         border-radius: var(--radius-md);
+         font-size: var(--font-sm);
+         color: var(--text-secondary);
+         box-shadow: 0 2px 6px var(--shadow-light);
+         }
+         .status-item i {
+         font-size: var(--font-icon-sm);
+         color: var(--accent-primary);
+         animation: fadeInOut 2s ease-in-out infinite;
+         }
+         .status-item:nth-child(2) i {
+         animation-delay: 0.7s;
+         }
+         .status-item:nth-child(3) i {
+         animation-delay: 1.4s;
+         }
+         @keyframes pulse {
+         0%, 100% {
+         transform: translate(-50%, -50%) scale(1);
+         opacity: 1;
+         }
+         50% {
+         transform: translate(-50%, -50%) scale(1.1);
+         opacity: 0.8;
+         }
+         }
+         @keyframes rotate {
+         0% {
+         transform: translate(-50%, -50%) rotate(0deg);
+         }
+         100% {
+         transform: translate(-50%, -50%) rotate(360deg);
+         }
+         }
+         @keyframes dotPulse {
+         0%, 100% {
+         transform: scale(1);
+         opacity: 1;
+         }
+         50% {
+         transform: scale(1.5);
+         opacity: 0.6;
+         }
+         }
+         @keyframes progressAnimation {
+         0% {
+         width: 0%;
+         }
+         50% {
+         width: 70%;
+         }
+         100% {
+         width: 100%;
+         }
+         }
+         @keyframes fadeInOut {
+         0%, 100% {
+         opacity: 0.3;
+         }
+         50% {
+         opacity: 1;
+         }
+         }
+         /* Responsive adjustments */
+         @media (max-width: 768px) {
+         .form-content {
+         padding: var(--spacing-lg);
+         }
+         .worksheet-animation {
+         width: 150px;
+         height: 150px;
+         }
+         .worksheet-icon {
+         font-size: 48px;
+         }
+         .processing-text {
+         font-size: var(--font-lg);
+         }
+         .processing-subtext {
+         font-size: var(--font-base);
+         }
+         .status-indicators {
+         gap: var(--spacing-sm);
+         }
+         .status-item {
+         padding: var(--spacing-sm) var(--spacing-md);
+         font-size: 0.85rem;
+         }
+         }
+         @media (max-width: 480px) {
+         .input-form-container {
+         max-width: 100%;
+         }
+         .form-title {
+         font-size: var(--font-xl);
+         }
+         .worksheet-animation {
+         width: 120px;
+         height: 120px;
+         }
+         .worksheet-icon {
+         font-size: 40px;
+         }
+         .orbit-dot {
+         width: 8px;
+         height: 8px;
+         }
+         .progress-container {
+         max-width: 300px;
+         }
+         }
+         /* Scrollbar Styling */
+         body::-webkit-scrollbar { /* <--- CHANGED */
+         width: var(--scrollbar-width);
+         }
+         body::-webkit-scrollbar-track { /* <--- CHANGED */
+         background: var(--scrollbar-track);
+         }
+         body::-webkit-scrollbar-thumb { /* <--- CHANGED */
+         background: var(--scrollbar-thumb);
+         border-radius: var(--radius-sm);
+         }
+      </style>
+   </head>
+   <body>
+      <div class="container">
+         <div class="input-form-container" id="inputForm">
+            <div class="form-header">
+               <h1 class="form-title">Configure Your Worksheet</h1>
+               <p class="form-subtitle">Select the number of questions for each type</p>
+            </div>
+            <div class="form-content">
+               <form id="questionForm">
+                  <div id="inputFields">
+                     </div>
+
+                  <div class="input-group" id="worksheetOptions">
+                     <label class="input-label">Worksheet Options</label>
+                     <div class="radio-options-container">
+                        <div class="radio-option">
+                           <input type="radio" id="optionSolved" name="worksheetType" value="ans">
+                           <label for="optionSolved">Solved Worksheet</label>
+                        </div>
+                        <div class="radio-option">
+                           <input type="radio" id="optionUnsolvedSpace" name="worksheetType" value="space" checked>
+                           <label for="optionUnsolvedSpace">Unsolved (with space for answers)</label>
+                        </div>
+                        <div class="radio-option">
+                           <input type="radio" id="optionUnsolvedNoSpace" name="worksheetType" value="none">
+                           <label for="optionUnsolvedNoSpace">Unsolved (no space)</label>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="button-container">
+                     <button type="submit" class="btn btn-primary">
+                     Generate Worksheet
+                     </button>
+                  </div>
+               </form>
+            </div>
+         </div>
+         <div class="processing-container" id="processingAnimation">
+            <div class="worksheet-animation">
+               <i class="fas fa-file-alt worksheet-icon"></i>
+               <div class="orbit-container">
+                  <div class="orbit-dot"></div>
+                  <div class="orbit-dot"></div>
+                  <div class="orbit-dot"></div>
+                  <div class="orbit-dot"></div>
+               </div>
+            </div>
+            <div class="processing-text">Compiling...</div>
+            <div class="processing-subtext">This will only take a moment...</div>
+            <div class="progress-container">
+               <div class="progress-bar"></div>
+            </div>
+            <div class="status-indicators">
+               <div class="status-item">
+                  <i class="fas fa-sync-alt"></i>
+                  <span>Processing</span>
+               </div>
+               <div class="status-item">
+                  <i class="fas fa-check-circle"></i>
+                  <span>Formatting</span>
+               </div>
+               <div class="status-item">
+                  <i class="fas fa-download"></i>
+                  <span>Finalizing</span>
+               </div>
+            </div>
+         </div>
+      </div>
+      <script>
+         let waDetails = [];        
+         let selectedAssignmentId = null;          
+         let subject, grade;
+
+                          
+         // Initialize the page
+         async function initializePage(userData) {
+           subject = userData.currentSubject;
+           grade = userData.grade;
+           const AllWaDetails = userData.waDetails;
+         
+           // Store the wa details of the current subject in the global variable
+            waDetails  = AllWaDetails[subject];
+         
+           // Store selected wa ID in the global variable
+           selectedAssignmentId = userData['selectedAssignmentId'];
+           // Get the details of the selected work assignment
+           const currentAssignment = waDetails.find(item => item.work_set_id === selectedAssignmentId);
+           if(currentAssignment) {
+// Extract question_count excluding "Total"
+const selectedQuestions = Object.fromEntries(
+  Object.entries(currentAssignment.question_count).filter(([key]) => key !== "Total")
+);
+generateAssignment(selectedQuestions, currentAssignment.type);
+           }         
+           
+         }
+         
+         
+         
+         // Function to convert a grade number into its Roman equivalent
+         function gradeToRoman(num) {
+         const romanMap = [
+         '', 'I', 'II', 'III', 'IV', 'V',
+         'VI', 'VII', 'VIII', 'IX', 'X',
+         'XI', 'XII'
+         ];
+         
+         // Return corresponding Roman numeral or empty string if out of range
+         return romanMap[num] || '___';
+         }
+         
+                 
+             // Function to get URL parameters
+             function getParameterByName(name, url) {
+                 if (!url) url = window.location.href;
+                 name = name.replace(/[[\]]/g, '\\$&');
+                 var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                     results = regex.exec(url);
+                 if (!results) return null;
+                 if (!results[2]) return '';
+                 return decodeURIComponent(results[2].replace(/\+/g, ' '));
+             }
+
+         
+             function generateAssignment(selectedQuestions, assignmentType) {
+         
+              // Base URL
+              const baseURL = "pages/worksheet/rendered.html";
+         
+              // Just a placeholder value in the array
+              const qbIds = [1];
+
+              let provide = 'none';
+         
+                 // set question counts
+                 let fillUp = parseInt(selectedQuestions['Fill up']) || 0;
+                 let trueFalse = parseInt(selectedQuestions['True/False']) || 0;
+                 let mcq = parseInt(selectedQuestions['MCQ']) || 0;
+                 let veryShortAns = parseInt(selectedQuestions['Very Short Answer Type']) || 0;
+                 let shortAns = parseInt(selectedQuestions['Short Answer Type']) || 0;
+                 let longAns = parseInt(selectedQuestions['Long Answer Type']) || 0;
+
+                 // Decide whether to provide space, answers or nothing depending on assignmentType
+                if(assignmentType === 'Classwork') {
+                    provide = 'ans'
+                }
+                else if(assignmentType === 'Homework' || assignmentType === 'Assignment') {
+                    provide = 'space'
+                }
+
+         
+                 // Just a placeholder difficulty level (assignments already have questions selected by a teacher, difficulty level plays no role)
+                 let difficulty = "easy";
+         
+                 // Question types
+         const questionTypes = {
+         "Fill up": fillUp,
+         "True/False": trueFalse,
+         "MCQ": mcq,
+         "Very Short Answer Type": veryShortAns,
+         "Short Answer Type": shortAns,
+         "Long Answer Type": longAns,
+         "Match items": 0,
+         "image": false,
+         "audio": false,
+         "video": false
+         };
+         
+         // Generate the qpm object by iterating over the qbIds
+         let qpmObj = {};
+         qbIds.forEach(qbId => {
+         qpmObj[qbId] = { ...questionTypes };
+         });
+         
+         // Encode the generated qpm object
+         let qpm = encodeURIComponent(JSON.stringify(qpmObj));
+         
+                 // Exam details object
+                 let ed = {
+                     schoolName: "Jamna Vidyapeeth",
+                     examName: assignmentType, 
+                     subject,
+                     duration: getWorksheetDuration(
+  mcq, fillUp, trueFalse, veryShortAns, shortAns, longAns
+),
+                     grade: gradeToRoman(grade)
+                 };
+         
+                 const qcStructure = generateQuestionStructure(mcq, fillUp, trueFalse, veryShortAns, shortAns, longAns);
+
+                 // Question container object
+                 let qc = {
+                     ...qcStructure,
+                     settings: {
+                         provideAnsOrSpace: provide, 
+                         randomiseSelection: false,
+                         strictChapterWiseDistribution: false,
+                         editable: false,
+                         showAIBtns: false,
+                         hideWeightage: true,
+                         showStudentDetails: (assignmentType === 'Classwork') ? false : true,
+                         border: false,
+                         shuffleMCQOptions: false,
+                         useDotPatternInBlanks: true,
+                         showHelpBoxInFillUp: false,
+                         mergeMatchItems: false,
+                         convertQForm: {
+                             MCQ: { toFillUp: 0, toTF: 0, toVSA: 0 },
+                             flipTF: false
+                         },
+                         spaceForAns: {
+                             "Very Short Answer Type": 1,
+                             "Short Answer Type": 3,
+                             "Long Answer Type": 6,
+                             "Very Long Answer Type": 8,
+                             "Diagram/Picture/Map Based": 6
+                         },
+                         qTypesAllowedInImageQ: [
+                             "Short Answer Type", "Long Answer Type",
+                             "Very Long Answer Type", "Diagram/Picture/Map Based"
+                         ]
+                     }
+                 };
+         
+                 // URL encoding
+                 let encodedEd = encodeURIComponent(JSON.stringify(ed));
+                 let encodedQc = encodeURIComponent(JSON.stringify(qc));
+                 let encodedQbIds = encodeURIComponent(qbIds.join("+"));
+                 let encodedDistribution = encodeURIComponent(JSON.stringify(getQuestionDistribution()));
+         
+                 // Final URL construction
+                 let finalURL = `${baseURL}?ed=${encodedEd}&qpm=${qpm}&qc=${encodedQc}&qbIds=${encodedQbIds}&diff=${difficulty}&selectedAssignmentId=${selectedAssignmentId}&mode=assignment`;
+         
+                 // Redirect to the generated link
+                 window.parent.loadManualPage({link: finalURL, title: 'Assignment', page_key: subject + '-assignment', min_width: 750});
+             }       
+
+// helper function to create the right question container structure (whether questions should be displayed in separate containers or in the same container)
+
+function generateQuestionStructure(mcq, fillUp, trueFalse, veryShortAns, shortAns, longAns) {
+    const counts = [mcq, fillUp, trueFalse, veryShortAns, shortAns, longAns];
+    
+    // 1. Calculate sum (summing 0s is fine)
+    const sum = counts.reduce((acc, count) => acc + count, 0);
+    
+    // 2. Get the count of *positive* (non-zero) question types
+    const positiveCounts = counts.filter(count => count > 0).length;
+    
+    // 3. Calculate the average, handling the divide-by-zero case
+    // If positiveCounts is 0, the average is 0.
+    const average = (positiveCounts > 0) ? (sum / positiveCounts) : 0;
+
+    // 4. Check if any count is below 3 but not 0 (1, or 2)
+    const anyCountBelowThree = counts.some(count => (count < 3 && count !== 0));
+    
+    // 5. Check the final condition
+    // Average must be > 3 AND no count can be < 3
+    const conditionMet = ((average > 3) && !anyCountBelowThree) || (counts.filter(x => x > 0).length === 1);
+
+    if (conditionMet) {
+        // Condition is TRUE: Return the "spread out" structure
+        return {
+            headings: ["", "", "", "", "", ""],
+            qTypes: [
+                {"MCQ": mcq},
+                {"Fill up": fillUp},
+                {"True/False": trueFalse},
+                {"Very Short Answer Type": veryShortAns},
+                {"Short Answer Type": shortAns},
+                {"Long Answer Type": longAns}
+            ],
+            weightPerQ: [{}, {}, {}, {}, {}, {}],
+            mustInclude: [{}, {}, {}, {}, {}, {}]
+        };
+    } else {
+        // Condition is FALSE: Return the "condensed" structure
+        return {
+            headings: [""],
+            qTypes: [{
+                "MCQ": mcq,
+                "Fill up": fillUp,
+                "True/False": trueFalse,
+                "Very Short Answer Type": veryShortAns,
+                "Short Answer Type": shortAns,
+                "Long Answer Type": longAns
+            }],
+            weightPerQ: [{}],
+            mustInclude: [{}]
+        };
+    }
+}
+
+
+// Function to smartly set the worksheet duration based on number and type of questions
+function getWorksheetDuration(
+  mcq = 0,
+  fillUp = 0,
+  trueFalse = 0,
+  veryShortAns = 0,
+  shortAns = 0,
+  longAns = 0
+) {
+
+  // --- 1. Define Time Weights (in minutes) ---
+  const TIME_WEIGHTS = {
+    trueFalse: 0.5,    // 30 seconds
+    fillUp: 0.75,      // 45 seconds
+    mcq: 1,            // 1 minute
+    veryShortAns: 1.5, // 1.5 minutes
+    shortAns: 3,       // 3 minutes
+    longAns: 8,        // 8 minutes
+  };
+
+  // --- 2. Define Time Limits & Rounding (in minutes) ---
+  
+  // Set a practical minimum duration slot
+  const MIN_TIME_MINUTES = 20; // 20 minutes
+  
+  // Worksheets over 2 hours are "too long"
+  const TOO_LONG_THRESHOLD = 120; // 120 minutes
+  
+  // We will round to the nearest 10-minute slot.
+  const SLOT_INTERVAL_MINUTES = 10; // 10 minutes
+
+  // --- 3. Calculate Total Estimated Time ---
+  const totalMinutes =
+    (mcq * TIME_WEIGHTS.mcq) +
+    (fillUp * TIME_WEIGHTS.fillUp) +
+    (trueFalse * TIME_WEIGHTS.trueFalse) +
+    (veryShortAns * TIME_WEIGHTS.veryShortAns) +
+    (shortAns * TIME_WEIGHTS.shortAns) +
+    (longAns * TIME_WEIGHTS.longAns);
+
+  // --- 4. Handle Edge Cases ---
+
+  // Case 1: Empty worksheet
+  if (totalMinutes === 0) {
+    return 0;
+  }
+
+  // Case 2: Worksheet is "too long"
+  if (totalMinutes > TOO_LONG_THRESHOLD) {
+    return "Take your time";
+  }
+  
+  // Case 3: Worksheet is very short, snap to the minimum practical time
+  if (totalMinutes < MIN_TIME_MINUTES) {
+    return MIN_TIME_MINUTES;
+  }
+
+  // --- 5. Snap to Nearest 10-Minute Slot ---
+  // This logic rounds the total time to the nearest 10-minute mark.
+  // e.g., 45 min (4.5) rounds to 50 min.
+  // e.g., 42 min (4.2) rounds to 40 min.
+  const snappedMinutes = Math.round(totalMinutes / SLOT_INTERVAL_MINUTES) * SLOT_INTERVAL_MINUTES;
+
+  return snappedMinutes;
+}
+      </script>
+   </body>
+</html>
