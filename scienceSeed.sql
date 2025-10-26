@@ -243,7 +243,7 @@ VALUES
   "explanation": "Galvanization is a method used to protect iron from rusting by coating it with a protective layer of zinc."
 }'),
 
-(5, D'What is the chemical name of rust?', 
+(5, 'What is the chemical name of rust?', 
 'MCQ',
 3,
 '{
