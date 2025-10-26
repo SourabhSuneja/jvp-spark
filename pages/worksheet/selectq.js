@@ -10,6 +10,10 @@ let overallDifficulty;
 //variable to hold counts of different types of questions as passed in the URL (requested by user from worksheet generator page)
 let distributionMap = null;
 
+// Variables to hold assignment type and assignment id (in case we are generating an assignment)
+let genMode = 'worksheet'; // default
+let selectedAssignmentId = null;
+
 // disallowed qTypes
 const disallowedQTypes = [];
 
@@ -58,6 +62,21 @@ async function fetchData(ids) {
    }
 }
 
+// Function to fetch question data from server when genMode is assignment
+
+async function fetchAssignment() {
+   try {
+      const data = await parent.invokeFunction('get_assignment_questions', {
+         p_work_set_id: parseInt(selectedAssignmentId)
+      }, false);
+      console.log(data);
+      return data.map(convertQuestionToOldFormat) || [];
+   } catch (err) {
+      console.error("Error fetching questions:", err);
+      return [];
+   }
+}
+
 // function to take one or more qbIds and return a consolidated array of data fetched from each qb using fetchData function
 
 async function fetchMultipleQbData(qbIds) {
@@ -67,7 +86,12 @@ async function fetchMultipleQbData(qbIds) {
    chapterStartPoints = [];
    chapterStartPoints.push(consolidatedData.length);
    try {
-      const data = await fetchData(ids);
+      let data = [];
+      if(genMode === 'assignment' && selectedAssignmentId) {
+          data = await fetchAssignment();
+      } else {
+          data = await fetchData(ids);
+      }
       consolidatedData.push(...data);
    } catch (error) {
       console.error(`Error fetching question data from server:`, error);
@@ -982,6 +1006,18 @@ window.onload = function () {
       distributionMap = JSON.parse(getParameterByName('encodedDistribution'));
    } catch (e) {
       distributionMap = null;
+   }
+
+   try {
+      genMode = JSON.parse(getParameterByName('mode'));
+   } catch (e) {
+      genMode = 'worksheet';
+   }
+
+   try {
+      selectedAssignmentId = JSON.parse(getParameterByName('selectedAssignmentId'));
+   } catch (e) {
+      selectedAssignmentId = null;
    }
 
    start(getParameterByName('qbIds'));
