@@ -620,7 +620,7 @@ div#content.externalPage {
 }
 
 .card:hover {
-  transform: scale(1.05);
+  background-color: var(--bg-tertiary);
 }
 
 .card ion-icon {
