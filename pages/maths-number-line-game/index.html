@@ -546,8 +546,8 @@
             streak: 0,
             currentQuestion: null,
             playerPosition: 0,
-            minNum: 0,
-            maxNum: 10,
+            minNum: -5,  // CHANGED: Start with negative numbers
+            maxNum: 5,   // CHANGED: Start with a smaller range
             answered: false
         };
 
@@ -566,8 +566,9 @@
             {
                 type: 'add',
                 generate: (min, max) => {
-                    const start = Math.floor(Math.random() * (max - min)) + min;
-                    const add = Math.floor(Math.random() * (max - start)) + 1;
+                    // CHANGED: Robust logic for negative numbers
+                    const add = Math.floor(Math.random() * 5) + 1; // Add 1 to 5
+                    const start = Math.floor(Math.random() * (max - min - add + 1)) + min;
                     return {
                         question: `Start at ${start} and add ${add}. Where do you land?`,
                         answer: start + add,
@@ -579,8 +580,9 @@
             {
                 type: 'subtract',
                 generate: (min, max) => {
-                    const start = Math.floor(Math.random() * (max - min)) + min + 2;
-                    const subtract = Math.floor(Math.random() * Math.min(start - min, 5)) + 1;
+                    // CHANGED: Robust logic for negative numbers
+                    const subtract = Math.floor(Math.random() * 5) + 1; // Subtract 1 to 5
+                    const start = Math.floor(Math.random() * (max - min - subtract + 1)) + min + subtract;
                     return {
                         question: `Start at ${start} and subtract ${subtract}. Where do you land?`,
                         answer: start - subtract,
@@ -605,15 +607,30 @@
             {
                 type: 'distance',
                 generate: (min, max) => {
-                    const num1 = Math.floor(Math.random() * (max - min - 3)) + min;
-                    const distance = Math.floor(Math.random() * 4) + 2;
-                    const answer = num1 + distance;
-                    return {
-                        question: `Find a number that is ${distance} steps away from ${num1}`,
-                        answer: answer,
-                        startPosition: num1,
-                        instructions: 'Drag the green marker to count the steps!'
-                    };
+                    // CHANGED: Improved question type and logic
+                    const distance = Math.floor(Math.random() * 4) + 2; // 2 to 5
+                    // 50/50 chance of adding or subtracting
+                    if (Math.random() > 0.5) {
+                        // Add distance
+                        const num1 = Math.floor(Math.random() * (max - min - distance + 1)) + min;
+                        const answer = num1 + distance;
+                        return {
+                            question: `What is ${distance} steps to the RIGHT of ${num1}?`,
+                            answer: answer,
+                            startPosition: num1,
+                            instructions: 'Drag the green marker to count the steps!'
+                        };
+                    } else {
+                        // Subtract distance
+                        const num1 = Math.floor(Math.random() * (max - min - distance + 1)) + min + distance;
+                        const answer = num1 - distance;
+                            return {
+                            question: `What is ${distance} steps to the LEFT of ${num1}?`,
+                            answer: answer,
+                            startPosition: num1,
+                            instructions: 'Drag the green marker to count the steps!'
+                        };
+                    }
                 }
             }
         ];
@@ -680,61 +697,72 @@
             playerMarker.className = 'marker player';
             playerMarker.id = 'playerMarker';
             playerMarker.textContent = '?';
-            playerMarker.draggable = true;
             
             const startPos = gameState.currentQuestion?.startPosition ?? minNum;
             gameState.playerPosition = startPos;
             const position = ((startPos - minNum) / range) * 100;
             playerMarker.style.left = `${position}%`;
             
-            playerMarker.addEventListener('dragstart', handleDragStart);
-            playerMarker.addEventListener('drag', handleDrag);
-            playerMarker.addEventListener('dragend', handleDragEnd);
-            
-            // Touch support
-            playerMarker.addEventListener('touchstart', handleTouchStart);
-            playerMarker.addEventListener('touchmove', handleTouchMove);
-            playerMarker.addEventListener('touchend', handleTouchEnd);
+            // CHANGED: Replaced all drag/touch listeners with unified handlers
+            playerMarker.addEventListener('mousedown', handlePointerDown);
+            playerMarker.addEventListener('touchstart', handlePointerDown, { passive: false });
             
             numberLine.appendChild(playerMarker);
         }
 
         let isDragging = false;
-        let touchStartX = 0;
 
-        function handleDragStart(e) {
+        // NEW: Unified pointer down handler
+        function handlePointerDown(e) {
             isDragging = true;
-            e.target.classList.add('dragging');
+            document.getElementById('playerMarker').classList.add('dragging');
+
+            // Add move/end listeners to the document for robust tracking
+            document.addEventListener('mousemove', handlePointerMove);
+            document.addEventListener('mouseup', handlePointerUp);
+            document.addEventListener('touchmove', handlePointerMove, { passive: false });
+            document.addEventListener('touchend', handlePointerUp);
+            
+            e.preventDefault(); // Prevent default text selection or page scroll
         }
 
-        function handleDrag(e) {
+        // NEW: Unified pointer move handler
+        function handlePointerMove(e) {
             if (!isDragging) return;
-            updateMarkerPosition(e.clientX);
+            
+            // Get the correct clientX for touch or mouse
+            let clientX;
+            if (e.type === 'touchmove') {
+                clientX = e.touches[0].clientX;
+                e.preventDefault(); // Prevent scrolling while dragging
+            } else {
+                clientX = e.clientX;
+            }
+            
+            updateMarkerPosition(clientX);
         }
 
-        function handleDragEnd(e) {
+        // NEW: Unified pointer up handler
+        function handlePointerUp(e) {
+            if (!isDragging) return; // Prevent extra fires
             isDragging = false;
-            e.target.classList.remove('dragging');
+            
+            const playerMarker = document.getElementById('playerMarker');
+            if (playerMarker) {
+                 playerMarker.classList.remove('dragging');
+            }
+
+            // Remove move/end listeners from the document
+            document.removeEventListener('mousemove', handlePointerMove);
+            document.removeEventListener('mouseup', handlePointerUp);
+            document.removeEventListener('touchmove', handlePointerMove);
+            document.removeEventListener('touchend', handlePointerUp);
+            
             snapToNearestTick();
         }
 
-        function handleTouchStart(e) {
-            isDragging = true;
-            touchStartX = e.touches[0].clientX;
-            e.target.classList.add('dragging');
-        }
-
-        function handleTouchMove(e) {
-            if (!isDragging) return;
-            e.preventDefault();
-            updateMarkerPosition(e.touches[0].clientX);
-        }
-
-        function handleTouchEnd(e) {
-            isDragging = false;
-            e.target.classList.remove('dragging');
-            snapToNearestTick();
-        }
+        // REMOVED: handleDragStart, handleDrag, handleDragEnd
+        // REMOVED: handleTouchStart, handleTouchMove, handleTouchEnd
 
         function updateMarkerPosition(clientX) {
             const numberLine = document.getElementById('numberLine');
@@ -777,16 +805,13 @@
             document.getElementById('feedback').textContent = '';
             document.getElementById('feedback').className = 'feedback';
             
-            // Increase difficulty with level
-            if (gameState.level > 3) {
-                gameState.maxNum = 20;
-            }
-            if (gameState.level > 6) {
-                gameState.maxNum = 30;
-            }
-            if (gameState.level > 9) {
-                gameState.minNum = -10;
-            }
+            // CHANGED: New difficulty scaling
+            // Every 3 levels, expand the range by 5 in both directions
+            const expansion = Math.floor((gameState.level - 1) / 3) * 5;
+            gameState.minNum = -5 - expansion;
+            gameState.maxNum = 5 + expansion;
+            
+            // REMOVED: Old difficulty logic
             
             const questionType = questionTypes[Math.floor(Math.random() * questionTypes.length)];
             gameState.currentQuestion = questionType.generate(gameState.minNum, gameState.maxNum);
