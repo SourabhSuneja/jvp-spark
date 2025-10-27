@@ -30,7 +30,7 @@
   max-width: 600px;
   width: 100%;
   height: 85vh;
-  max-height: 480px; /* Increased max-height slightly for description */
+  max-height: 500px;
   display: flex;
   flex-direction: column;
   transform: scale(0.9) translateY(20px);
