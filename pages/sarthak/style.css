@@ -451,7 +451,7 @@ body {
          h1, h2 {
          font-size: var(--font-md);
          }
-         p {
+         p, ul {
          font-size: var(--font-base);
          }
 
