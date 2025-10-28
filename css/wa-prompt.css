@@ -197,9 +197,9 @@
 }
 
 .wa-item-tag {
-  background: var(--bg-primary);
+  /*background: var(--bg-primary);*/
   color: var(--text-secondary);
-  padding: 2px var(--spacing-sm);
+  padding: 2px;
   border-radius: var(--radius-sm);
   font-size: var(--font-sm);
   display: flex;
