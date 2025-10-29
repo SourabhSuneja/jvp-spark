@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rupee Game</title>
-    <!-- font awesome icons link -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- ion icons link -->
     <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
+    
+    <link href="https://cdn.jsdelivr.net/gh/phntxx/font-rupee@1.0.2/font-rupee.css" rel="stylesheet">
+    
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -623,18 +624,10 @@
         const coins = [1, 2, 5, 10, 20];
         const notes = [10, 20, 50, 100, 200, 500];
 
-        // Icons for different denominations
-        const currencyIcons = {
-            1: '🪙',
-            2: '🪙',
-            5: '🪙',
-            10: '🪙',
-            20: '🪙',
-            50: '💵',
-            100: '💵',
-            200: '💵',
-            500: '💵'
-        };
+        //
+        // NEW CHANGE: Removed the old 'currencyIcons' object.
+        // It's no longer needed as we build the icons in renderCurrency().
+        //
 
         // Initialize game
         function init() {
@@ -688,26 +681,39 @@ function launchConfetti() {
 }
 
 
-        // Render currency items
+        //
+        // NEW CHANGE: Updated renderCurrency() to use the 'font-rupee' library
+        //
         function renderCurrency() {
             const coinsGrid = document.getElementById('coinsGrid');
             const notesGrid = document.getElementById('notesGrid');
 
-            coinsGrid.innerHTML = coins.map(value => `
-                <div class="currency-item" data-value="${value}" data-type="coin">
-                    <div class="currency-icon">${currencyIcons[value]}</div>
-                    <div class="currency-value">₹${value}</div>
-                    <div class="count-badge" style="display: none;">0</div>
-                </div>
-            `).join('');
+            // Use Rupee Font classes
+            // For coins: fr-1, fr-2, fr-5, fr-10c, fr-20c
+            // For notes: fr-10, fr-20, fr-50, fr-100, fr-200, fr-500
 
-            notesGrid.innerHTML = notes.map(value => `
-                <div class="currency-item" data-value="${value}" data-type="note">
-                    <div class="currency-icon">${currencyIcons[value]}</div>
+            coinsGrid.innerHTML = coins.map(value => {
+                // Handle special 'c' suffix for 10 and 20 rupee coins
+                const iconClass = (value === 10 || value === 20) ? `fr-${value}c` : `fr-${value}`;
+                return `
+                <div class="currency-item" data-value="${value}" data-type="coin">
+                    <div class="currency-icon"><i class="fr ${iconClass}"></i></div>
                     <div class="currency-value">₹${value}</div>
                     <div class="count-badge" style="display: none;">0</div>
                 </div>
-            `).join('');
+                `;
+            }).join('');
+
+            notesGrid.innerHTML = notes.map(value => {
+                const iconClass = `fr-${value}`;
+                return `
+                <div class="currency-item" data-value="${value}" data-type="note">
+                    <div class="currency-icon"><i class="fr ${iconClass}"></i></div>
+                    <div class="currency-value">₹${value}</div>
+                    <div class="count-badge" style="display: none;">0</div>
+                </div>
+                `;
+            }).join('');
 
             // Add click listeners
             document.querySelectorAll('.currency-item').forEach(item => {
