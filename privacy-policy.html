@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy | JVP Spark</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Colors - Dark Theme */
+            --bg-primary: #121212;
+            --bg-secondary: #1f1f1f;
+            --bg-tertiary: #333333;
+            --bg-gradient-dark: linear-gradient(145deg, #1e1e1e, #333333);
+            --bg-input: #2c2c2c;
+            --bg-profile: rgb(25, 25, 25);
+
+            /* Text Colors - Dark Theme */
+            --text-primary: #fff;
+            --text-secondary: #ddd;
+            --text-tertiary: #b0bec5;
+            --text-muted: rgb(230, 230, 230);
+            --text-light-gray: rgb(240, 240, 240);
+            --text-dark-gray: rgb(220, 220, 220);
+
+            /* Accent Colors */
+            --accent-primary: #ffc107;
+            --accent-hover: #e0a800;
+            --accent-focus: #ffd54f;
+            --accent-button-text: black;
+
+            /* Logout button specific */
+            --logout-bg: #e53935;
+            --logout-text: #fff;
+            --logout-hover: #d32f2f;
+
+            /* Status Colors */
+            --error-color: #FF3333;
+            --error-bg: #e53935;
+            --error-hover: #d32f2f;
+
+            /* Overlay Colors */
+            --overlay-bg: rgba(0, 0, 0, 0.5);
+            --loading-overlay-bg: black;
+            --loading-credits-color: rgb(245, 245, 245);
+
+            /* Scrollbar Colors */
+            --scrollbar-thumb: rgb(50, 50, 50);
+            --scrollbar-track: transparent;
+
+            /* Shadow Colors */
+            --shadow-dark: rgba(0, 0, 0, 0.5);
+            --shadow-medium: rgba(0, 0, 0, 0.6);
+            --shadow-light: rgba(0, 0, 0, 0.4);
+
+            /* Spacing Values */
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 12px;
+            --spacing-lg: 16px;
+            --spacing-xl: 20px;
+            --spacing-xxl: 25px;
+            --spacing-xxxl: 30px;
+
+            /* Border Radius */
+            --radius-sm: 5px;
+            --radius-md: 8px;
+            --radius-lg: 10px;
+            --radius-xl: 12px;
+            --radius-full: 50%;
+
+            /* Font Sizes */
+            --font-sm: 0.9rem;
+            --font-base: 1rem;
+            --font-md: 1.1rem;
+            --font-lg: 1.2rem;
+            --font-xl: 1.6rem;
+            --font-xxl: 1.7rem;
+            --font-xxxl: 1.8rem;
+            --font-icon-sm: 1.2rem;
+            --font-icon-md: 1.8rem;
+            --font-icon-lg: 2.1rem;
+            --font-icon-xl: 64px;
+
+            /* Transitions */
+            --transition-fast: 0.2s ease;
+            --transition-base: 0.3s ease;
+            --transition-slow: 0.4s all;
+            --transition-slower: 0.5s;
+
+            /* Z-index */
+            --z-overlay: 1;
+            --z-header: 10;
+            --z-sidebar: 20;
+            --z-signin: 99999;
+            --z-loading: 500000;
+
+            /* Dimensions */
+            --sidebar-width: 260px;
+            --avatar-sm: 40px;
+            --avatar-md: 70px;
+            --avatar-lg: 80px;
+            --scrollbar-width: 6px;
+        }
+
+        /* Light theme overrides */
+        body.light-theme {
+            --bg-primary: #ffffff;
+            --bg-secondary: rgb(253, 253, 253);
+            --bg-tertiary: rgb(240, 240, 240);
+            --bg-gradient-dark: linear-gradient(145deg, #ffffff, #f0f0f0);
+            --bg-input: #ffffff;
+            --bg-profile: rgb(253, 253, 253);
+
+            --text-primary: #333;
+            --text-secondary: rgb(50, 50, 50);
+            --text-tertiary: rgb(80, 80, 80);
+            --text-muted: #333;
+            --text-light-gray: rgb(50, 50, 50);
+            --text-dark-gray: rgb(90, 90, 90);
+
+            --accent-button-text: rgb(30, 30, 30);
+
+            --error-color: #d32f2f;
+            --error-bg: #ff6666;
+            --error-hover: #ff4d4d;
+
+            --loading-overlay-bg: rgb(253, 253, 253);
+            --loading-credits-color: rgb(50, 50, 50);
+
+            --scrollbar-thumb: rgb(170, 170, 170);
+
+            --shadow-dark: rgba(0, 0, 0, 0.1);
+            --shadow-medium: rgba(0, 0, 0, 0.1);
+            --shadow-light: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+            max-height: 999999px;
+            transition: var(--transition-base) all;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: var(--scrollbar-width);
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--scrollbar-track);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--scrollbar-thumb);
+            border-radius: var(--radius-lg);
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            padding: var(--spacing-lg) var(--spacing-xxl);
+            box-shadow: 0 2px 10px var(--shadow-medium);
+            z-index: var(--z-header);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+            color: var(--accent-primary);
+        }
+
+        .logo-text h1 {
+            font-size: var(--font-xxl);
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .logo-text p {
+            font-size: var(--font-sm);
+            color: var(--text-tertiary);
+        }
+
+        .theme-toggle {
+            background: var(--bg-tertiary);
+            border: none;
+            color: var(--text-primary);
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            font-size: var(--font-icon-sm);
+            transition: var(--transition-base);
+        }
+
+        .theme-toggle:hover {
+            background: var(--accent-primary);
+            color: var(--accent-button-text);
+            transform: scale(1.05);
+        }
+
+        /* Main Content */
+        main {
+            margin-top: 90px;
+            padding: var(--spacing-xxxl) var(--spacing-xl);
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: var(--spacing-xxxl) 0;
+            background: var(--bg-gradient-dark);
+            border-radius: var(--radius-xl);
+            margin-bottom: var(--spacing-xxxl);
+            padding-left: var(--spacing-lg);
+            padding-right: var(--spacing-lg);
+        }
+
+        .hero-icon {
+            font-size: var(--font-icon-xl);
+            color: var(--accent-primary);
+            margin-bottom: var(--spacing-xl);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .hero h2 {
+            font-size: 2.5rem;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .hero p {
+            font-size: var(--font-lg);
+            color: var(--text-secondary);
+            max-width: 800px;
+            margin: 0 auto var(--spacing-xxl);
+            line-height: 1.6;
+        }
+
+        /* Story Section (Used for Policy Text) */
+        .story-section {
+            background: var(--bg-secondary);
+            padding: var(--spacing-xxxl);
+            border-radius: var(--radius-xl);
+            margin-bottom: var(--spacing-xxxl);
+        }
+
+        .story-section h3 {
+            font-size: var(--font-xxl);
+            color: var(--accent-primary);
+            margin-bottom: var(--spacing-xl);
+            text-align: center;
+        }
+        
+        .story-section h4 {
+            font-size: var(--font-xl);
+            color: var(--text-primary);
+            margin-top: var(--spacing-xxl);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .story-content {
+            font-size: var(--font-md);
+            color: var(--text-secondary);
+            line-height: 1.8;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .story-content p, .story-content ul {
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .story-content ul {
+            list-style-position: inside;
+            padding-left: var(--spacing-md);
+        }
+        
+        .story-content li {
+             margin-bottom: var(--spacing-sm);
+        }
+        
+        .story-content strong {
+            color: var(--text-primary);
+        }
+        
+        .story-content a {
+            color: var(--accent-primary);
+            text-decoration: none;
+        }
+        
+        .story-content a:hover {
+            text-decoration: underline;
+        }
+
+        /* Highlight box for policy */
+        .highlight-box {
+            background: var(--bg-tertiary);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-lg);
+            border-left: 4px solid var(--accent-primary);
+            margin: var(--spacing-xl) 0;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-secondary);
+            padding: var(--spacing-xxl);
+            text-align: center;
+            color: var(--text-tertiary);
+        }
+
+        footer p {
+            font-size: var(--font-sm);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header {
+                padding: var(--spacing-md) var(--spacing-lg);
+            }
+
+            .logo-text h1 {
+                font-size: var(--font-xl);
+            }
+
+            .hero h2 {
+                font-size: 1.8rem;
+            }
+
+            .hero p {
+                font-size: var(--font-base);
+            }
+
+            .story-section {
+                padding: var(--spacing-xl);
+            }
+
+            main {
+                padding: var(--spacing-lg) var(--spacing-md);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-section">
+            <ion-icon name="flash" class="logo-icon"></ion-icon>
+            <div class="logo-text">
+                <h1>JVP Spark</h1>
+                <p>Jamna Vidyapeeth, Jaipur</p>
+            </div>
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle">
+            <i class="fas fa-sun"></i>
+        </button>
+    </header>
+
+    <main>
+        <section class="hero">
+            <ion-icon name="shield-checkmark-outline" class="hero-icon"></ion-icon>
+            <h2>Privacy Policy</h2>
+            <p>Your privacy is of utmost importance to us. This policy outlines how JVP Spark collects, uses, and protects your information.</p>
+        </section>
+
+        <section class="story-section">
+            <h3>Effective Date: October 31, 2025</h3>
+            <div class="story-content">
+                
+                <h4>1. Introduction</h4>
+                <p>This Privacy Policy describes how <strong>Jamna Vidyapeeth School</strong> ("we," "us," or "our"), located at 4C, New Loha Mandi Road, Jaipur, Rajasthan, India, collects, uses, and protects information in connection with your use of our <strong>JVP Spark</strong> mobile application and web platform (collectively, the "App").</p>
+                <p>The App is provided as a unified platform for our students and their parents ("you," "your," "user") to:</p>
+                <ul>
+                    <li>Access academic resources such as results, test scores, exam syllabi, and blueprints.</li>
+                    <li>Engage with learning materials, gamified assessment tools, and quizzes to strengthen conceptual understanding.</li>
+                </ul>
+                <p>This policy is intended to be transparent and comply with all relevant data protection regulations, including those required by the Google Play Store.</p>
+
+                <h4>2. Information We Collect</h4>
+                <p>We collect information necessary to provide and improve our services. This data is collected in two ways:</p>
+                
+                <p><strong>A. Personally Identifiable Information (PII)</strong></p>
+                <p>When students log in and use the App, we collect data tied directly to their name and user profile. This is essential for the App's core functionality. This information includes:</p>
+                <ul>
+                    <li><strong>Interaction Data:</strong> We track which features and tools you use, how much time you spend on different pages, and how you interact with the app content.</li>
+                    <li><strong>Performance Data:</strong> We collect and store your scores on quizzes, assessments, and other gamified activities you participate in.</li>
+                </ul>
+
+                <p><strong>B. Non-Personally Identifiable (Anonymous) Data</strong></p>
+                <p>We use third-party services, specifically <strong>Google Analytics</strong>, to collect anonymous data about app usage. This data is not linked to any individual student and is used for statistical purposes. This includes:</p>
+                <ul>
+                    <li>App performance metrics and crash reports.</li>
+                    <li>Aggregated user engagement data, such as how the app is being used across different device types and regions.</li>
+                </ul>
+
+                <h4>3. How We Use Your Information</h4>
+                <p>The data we collect is used exclusively for educational and operational purposes. We do not use your data for commercial advertising.</p>
+                <ul>
+                    <li><strong>To Personalize Experience:</strong> To understand a student's interests and academic needs, allowing us to provide a more tailored learning experience.</li>
+                    <li><strong>To Provide Academic Insights:</strong> To allow school authorities (teachers and administration) to assess student performance and engagement for future academic policy framing and to provide individual support.</li>
+                    <li><strong>To Improve the App:</strong> To analyze how the App is used, identify areas for improvement, introduce new features, and enhance overall user experience and stability.</li>
+                    <li><strong>To Deliver Services:</strong> To provide core services like displaying results, syllabi, and test scores.</li>
+                </ul>
+
+                <h4>4. Data Security and Protection</h4>
+                <p>We understand that the privacy of our students and parents is paramount. We take the following robust security measures to protect your data:</p>
+                <ul>
+                    <li>All collected data is stored in a secure, access-controlled database.</li>
+                    <li>Access to Personally Identifiable Information (PII) is strictly limited to the developer and authorized school authorities at Jamna Vidyapeeth School.</li>
+                    <li>We do not sell, lease, or share your personal information with any external third-party organizations for marketing or commercial purposes.</li>
+                    <li>We are committed to using this data responsibly and will not misuse, leak, or use data in any manner that could be harmful to our users.</li>
+                </ul>
+                
+                <h4>5. Data Sharing and Disclosure</h4>
+                <p>Personal data (such as quiz scores and app usage analytics) is shared <strong>only with school authorities</strong> (teachers, administration) at Jamna Vidyapeeth School for the express purpose of monitoring academic progress and providing educational support.</p>
+                <p>We will not disclose your personal information to any other third parties unless required to do so by law.</p>
+
+                <h4>6. Third-Party Services</h4>
+                <p>As mentioned, the App uses Google Analytics. This service collects anonymous data and operates under its own privacy policy. We encourage you to review <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google's privacy practices</a> for more information.</p>
+
+                <h4>7. User Consent</h4>
+                <p>By downloading, installing, logging into, or using the JVP Spark App or its web version, you (and your parent/guardian, if applicable) acknowledge that you have read and understood this Privacy Policy. You provide your explicit consent to the collection, use, and processing of your personal information as described herein by both the developer and Jamna Vidyapeeth School.</p>
+
+                <h4>8. Changes to This Privacy Policy</h4>
+                <p>We may update this Privacy Policy from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. We will notify you of any significant changes by posting the new policy on this page. You are advised to review this page periodically for any changes.</p>
+
+                <h4>9. Contact Us</h4>
+                <p>If you have any questions or concerns about this Privacy Policy or our data practices, please contact us at:</p>
+                <div class="highlight-box">
+                    <p style="margin-bottom: 0;">
+                        <strong>Jamna Vidyapeeth School</strong><br>
+                        4C, New Loha Mandi Road, Jaipur, Rajasthan, India<br>
+                        Email: info@jamnavidyapeeth.com (or another official school email)
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2025 JVP Spark - Jamna Vidyapeeth, Jaipur. All rights reserved.</p>
+        <p>Developed with ❤️ by Sourabh Suneja</p>
+    </footer>
+
+     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+    <script>
+        // Theme toggle functionality
+        function toggleTheme() {
+            const body = document.body;
+            const themeToggle = document.getElementById('themeToggle');
+            
+            body.classList.toggle('light-theme');
+            
+            if (body.classList.contains('light-theme')) {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('theme', 'light');
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Load saved theme preference
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme');
+            const themeToggle = document.getElementById('themeToggle');
+            
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-theme');
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+            }
+        });
+    </script>
+</body>
+</html>
