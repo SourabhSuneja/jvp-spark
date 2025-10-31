@@ -194,6 +194,10 @@ async function loginWithQR(qrContent, student) {
       document.getElementById('username').value = email;
       document.getElementById('password').value = password;
 
+      // Also log the username and password
+      console.log('Email:', email);
+      console.log('Password:', password);
+
       // Programmatically click the sign in button
       document.getElementById('sign-in-btn').click();
 
