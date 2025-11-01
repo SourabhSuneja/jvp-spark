@@ -1,8 +1,11 @@
-[{
-  "relation": ["delegate_permission/common.handle_all_urls"],
-  "target": {
-    "namespace": "android_app",
-    "package_name": "io.github.sourabhsuneja.twa",
-    "sha256_cert_fingerprints": ["73:C8:43:AB:F5:51:7E:EA:32:FD:DC:26:18:C5:50:B3:AD:D9:02:35:05:B5:0C:49:21:E5:A6:B2:E6:56:56:E8"]
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "io.github.sourabhsuneja.twa",
+      "sha256_cert_fingerprints":
+        ["73:C8:43:AB:F5:51:7E:EA:32:FD:DC:26:18:C5:50:B3:AD:D9:02:35:05:B5:0C:49:21:E5:A6:B2:E6:56:56:E8"]
+    }
   }
-}]
+]
