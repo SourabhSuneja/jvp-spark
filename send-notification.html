@@ -1,386 +1,355 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Push Notification Sender</title>
-    <!-- Supabase CRUD -->
-    <script type="module" src="./js/supabase-crud.js"></script>
-    <style>
-        /* --- Basic Reset & Typography --- */
-        :root {
-            --primary-color: #3b82f6; /* Blue-500 */
-            --primary-hover: #2563eb; /* Blue-600 */
-            --success-color: #16a34a; /* Green-600 */
-            --error-color: #dc2626;   /* Red-600 */
-            --background-color: #f3f4f6; /* Gray-100 */
-            --card-background: #ffffff;
-            --text-color: #1f2937;    /* Gray-800 */
-            --label-color: #4b5563;   /* Gray-600 */
-            --border-color: #d1d5db;  /* Gray-300 */
-            --border-focus: #60a5fa; /* Blue-400 */
-        }
-        
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 1rem;
-        }
-
-        /* --- Main Container --- */
-        .container {
-            max-width: 600px;
-            width: 100%;
-            background-color: var(--card-background);
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-        
-        h1 {
-            text-align: center;
-            margin-bottom: 2rem;
-            font-size: 1.8rem;
-            font-weight: 600;
-        }
-        
-        /* --- Form Styling --- */
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        label {
-            display: block;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            color: var(--label-color);
-        }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-        
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--border-focus);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-        
-        /* --- Button --- */
-        .submit-btn {
-            width: 100%;
-            padding: 1rem;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s;
-        }
-
-        .submit-btn:hover {
-            background-color: var(--primary-hover);
-        }
-        
-        .submit-btn:active {
-            transform: scale(0.99);
-        }
-
-        .submit-btn:disabled {
-            background-color: #9ca3af; /* Gray-400 */
-            cursor: not-allowed;
-        }
-        
-        /* --- Response Message --- */
-        #response {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            border-radius: 8px;
-            text-align: center;
-            font-weight: 500;
-            display: none; /* Initially hidden */
-        }
-        
-        #response.success {
-            background-color: #dcfce7; /* Green-100 */
-            color: var(--success-color);
-            display: block;
-        }
-        
-        #response.error {
-            background-color: #fee2e2; /* Red-100 */
-            color: var(--error-color);
-            display: block;
-        }
-    </style>
-</head>
-<body>
-
-    <main class="container">
-        <h1>🔔 Push Notification Sender</h1>
-        <form id="notificationForm">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Push Notification Sender</title>
+      <!-- Supabase CRUD -->
+      <script type="module" src="./js/supabase-crud.js"></script>
+      <style>
+         /* --- Basic Reset & Typography --- */
+         :root {
+         --primary-color: #3b82f6; /* Blue-500 */
+         --primary-hover: #2563eb; /* Blue-600 */
+         --success-color: #16a34a; /* Green-600 */
+         --error-color: #dc2626;   /* Red-600 */
+         --background-color: #f3f4f6; /* Gray-100 */
+         --card-background: #ffffff;
+         --text-color: #1f2937;    /* Gray-800 */
+         --label-color: #4b5563;   /* Gray-600 */
+         --border-color: #d1d5db;  /* Gray-300 */
+         --border-focus: #60a5fa; /* Blue-400 */
+         }
+         * {
+         box-sizing: border-box;
+         margin: 0;
+         padding: 0;
+         }
+         body {
+         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+         background-color: var(--background-color);
+         color: var(--text-color);
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         min-height: 100vh;
+         padding: 1rem;
+         }
+         /* --- Main Container --- */
+         .container {
+         max-width: 600px;
+         width: 100%;
+         background-color: var(--card-background);
+         padding: 2rem;
+         border-radius: 12px;
+         box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+         }
+         h1 {
+         text-align: center;
+         margin-bottom: 2rem;
+         font-size: 1.8rem;
+         font-weight: 600;
+         }
+         /* --- Form Styling --- */
+         .form-group {
+         margin-bottom: 1.5rem;
+         }
+         label {
+         display: block;
+         font-weight: 500;
+         margin-bottom: 0.5rem;
+         color: var(--label-color);
+         }
+         input, select, textarea {
+         width: 100%;
+         padding: 0.8rem;
+         border: 1px solid var(--border-color);
+         border-radius: 8px;
+         font-size: 1rem;
+         transition: border-color 0.2s, box-shadow 0.2s;
+         }
+         input:focus, select:focus, textarea:focus {
+         outline: none;
+         border-color: var(--border-focus);
+         box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+         }
+         textarea {
+         resize: vertical;
+         min-height: 100px;
+         }
+         /* --- Button --- */
+         .submit-btn {
+         width: 100%;
+         padding: 1rem;
+         background-color: var(--primary-color);
+         color: white;
+         border: none;
+         border-radius: 8px;
+         font-size: 1.1rem;
+         font-weight: 600;
+         cursor: pointer;
+         transition: background-color 0.2s, transform 0.1s;
+         }
+         .submit-btn:hover {
+         background-color: var(--primary-hover);
+         }
+         .submit-btn:active {
+         transform: scale(0.99);
+         }
+         .submit-btn:disabled {
+         background-color: #9ca3af; /* Gray-400 */
+         cursor: not-allowed;
+         }
+         /* --- Response Message --- */
+         #response {
+         margin-top: 1.5rem;
+         padding: 1rem;
+         border-radius: 8px;
+         text-align: center;
+         font-weight: 500;
+         display: none; /* Initially hidden */
+         }
+         #response.success {
+         background-color: #dcfce7; /* Green-100 */
+         color: var(--success-color);
+         display: block;
+         }
+         #response.error {
+         background-color: #fee2e2; /* Red-100 */
+         color: var(--error-color);
+         display: block;
+         }
+      </style>
+   </head>
+   <body>
+      <main class="container">
+         <h1>🔔 Push Notification Sender</h1>
+         <form id="notificationForm">
             <div class="form-group">
-                <label for="passcode">Passcode</label>
-                <input type="password" id="passcode" required placeholder="Enter the secret passcode">
+               <label for="passcode">Passcode</label>
+               <input type="password" id="passcode" required placeholder="Enter the secret passcode">
             </div>
-
             <div class="form-group">
-                <label for="targetType">Target Type</label>
-                <select id="targetType" required>
-                    <option value="all">All Students</option>
-                    <option value="grade">Specific Grades</option>
-                    <option value="grade-section">Specific Grade-Sections</option>
-                    <option value="token">Specific Student Access Tokens (UUID)</option>
-                </select>
+               <label for="targetType">Target Type</label>
+               <select id="targetType" required>
+                  <option value="all">All Students</option>
+                  <option value="grade">Specific Grades</option>
+                  <option value="grade-section">Specific Grade-Sections</option>
+                  <option value="token">Specific Student Access Tokens (UUID)</option>
+               </select>
             </div>
-
             <div class="form-group" id="targetTokensGroup" style="display: none;">
-                <label for="targetTokens">Target Values</label>
-                <textarea id="targetTokens" placeholder="Enter values, one per line."></textarea>
+               <label for="targetTokens">Target Values</label>
+               <textarea id="targetTokens" placeholder="Enter values, one per line."></textarea>
             </div>
-            
             <div class="form-group">
-                <label for="title">Notification Title</label>
-                <input type="text" id="title" required placeholder="e.g., Important Announcement">
+               <label for="title">Notification Title</label>
+               <input type="text" id="title" required placeholder="e.g., Important Announcement">
             </div>
-
             <div class="form-group">
-                <label for="body">Notification Body</label>
-                <textarea id="body" required placeholder="e.g., The annual sports day has been scheduled..."></textarea>
+               <label for="body">Notification Body</label>
+               <textarea id="body" required placeholder="e.g., The annual sports day has been scheduled..."></textarea>
             </div>
-
             <div class="form-group">
-                <label for="detailedMessage">Detailed Message</label>
-                <textarea id="detailedMessage" placeholder="e.g., Dear Students, This is to inform..."></textarea>
+               <label for="detailedMessage">Detailed Message</label>
+               <textarea id="detailedMessage" placeholder="e.g., Dear Students, This is to inform..."></textarea>
             </div>
-
             <div class="form-group">
-                <label for="urlLink">Optional: URL Link</label>
-                <input type="url" id="urlLink" placeholder="https://school.com/event-details">
+               <label for="urlLink">Optional: URL Link</label>
+               <input type="url" id="urlLink" placeholder="https://school.com/event-details">
             </div>
-
             <div class="form-group">
-                <label for="urlButtonText">Optional: Button Text (requires URL)</label>
-                <input type="text" id="urlButtonText" placeholder="e.g., View Details">
+               <label for="urlButtonText">Optional: Button Text (requires URL)</label>
+               <input type="text" id="urlButtonText" placeholder="e.g., View Details">
             </div>
-
             <button type="submit" id="submitBtn" class="submit-btn">Send Notification</button>
-        </form>
-
-        <div id="response"></div>
-    </main>
-
-    <script>
-        // --- CONFIGURATION ---
-        const SUPABASE_FUNCTION_URL = "https://jmmjsxbwxwxrttodyilo.supabase.co/functions/v1/fetch-and-push";
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptbWpzeGJ3eHd4cnR0b2R5aWxvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYwNTM4ODYsImV4cCI6MjA3MTYyOTg4Nn0.GhOKYIpds-fE6ypMa-nMozAPFIlCTYMhkMRU0x6WxsU";
-
-        // --- DOM ELEMENT REFERENCES ---
-        const form = document.getElementById('notificationForm');
-        const targetTypeSelect = document.getElementById('targetType');
-        const targetTokensGroup = document.getElementById('targetTokensGroup');
-        const targetTokensTextarea = document.getElementById('targetTokens');
-        const submitBtn = document.getElementById('submitBtn');
-        const responseDiv = document.getElementById('response');
-
-        // Random notification ID generator
-        async function generateUUID() {
-  // Use Web Crypto API (browser/Deno)
-  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
-    const bytes = new Uint8Array(16);
-    crypto.getRandomValues(bytes);
-    bytes[6] = (bytes[6] & 0x0f) | 0x40; // Version 4
-    bytes[8] = (bytes[8] & 0x3f) | 0x80; // Variant 10
-    const hex = [...bytes].map(b => b.toString(16).padStart(2, '0')).join('');
-    return (
-      hex.slice(0, 8) + '-' +
-      hex.slice(8, 12) + '-' +
-      hex.slice(12, 16) + '-' +
-      hex.slice(16, 20) + '-' +
-      hex.slice(20)
-    );
-  }
-
-  // Use Node.js crypto if available
-  try {
-    const { randomBytes } = require('crypto');
-    const bytes = randomBytes(16);
-    bytes[6] = (bytes[6] & 0x0f) | 0x40; // Version 4
-    bytes[8] = (bytes[8] & 0x3f) | 0x80; // Variant 10
-    const hex = [...bytes].map(b => b.toString(16).padStart(2, '0')).join('');
-    return (
-      hex.slice(0, 8) + '-' +
-      hex.slice(8, 12) + '-' +
-      hex.slice(12, 16) + '-' +
-      hex.slice(16, 20) + '-' +
-      hex.slice(20)
-    );
-  } catch (err) {
-    // Fallback (less secure, uses Math.random)
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-      const r = Math.random() * 16 | 0;
-      const v = c === 'x' ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    });
-  }
-}
-
-        // --- DYNAMIC UI LOGIC ---
-        
-        /**
-         * Updates the placeholder and visibility of the target tokens input
-         * based on the selected target type.
-         */
-        function updateTargetTokensUI() {
-            const selectedType = targetTypeSelect.value;
-            const placeholders = {
-                'grade': 'Enter grades, one per line.\ne.g.,\n6\n7\n10',
-                'grade-section': 'Enter grade-sections, one per line.\ne.g.,\n6-A1\n8-B2',
-                'token': 'Enter student access tokens (UUIDs), one per line.'
-            };
-
-            if (selectedType === 'all') {
-                targetTokensGroup.style.display = 'none';
-                targetTokensTextarea.required = false;
-            } else {
-                targetTokensGroup.style.display = 'block';
-                targetTokensTextarea.placeholder = placeholders[selectedType];
-                targetTokensTextarea.required = true;
-            }
-        }
-
-        // --- EVENT LISTENERS ---
-        targetTypeSelect.addEventListener('change', updateTargetTokensUI);
-        form.addEventListener('submit', handleFormSubmit);
-
-        /**
-         * Handles the form submission event.
-         * @param {Event} e - The form submission event.
-         */
-        async function handleFormSubmit(e) {
-            e.preventDefault(); // Prevent default browser submission
-            
-            // UI feedback
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Sending...';
-            responseDiv.className = '';
-            responseDiv.textContent = '';
-            
-            try {
-                // 1. Collect form data
-                const passcode = document.getElementById('passcode').value;
-                const title = document.getElementById('title').value.trim();
-                const body = document.getElementById('body').value.trim();
-                const detailedMessage = document.getElementById('detailedMessage').value.trim() || null;
-                const notificationID = await generateUUID();
-                const targetType = targetTypeSelect.value;
-
-                // Collect optional URL data ---
-                const urlLink = document.getElementById('urlLink').value.trim();
-                const urlButtonText = document.getElementById('urlButtonText').value.trim();
-
-                // 2. Process target tokens
-                let targetTokens = [];
-                if (targetType !== 'all') {
-                    const rawTokens = targetTokensTextarea.value
-                        .split('\n')
-                        .map(line => line.trim())
-                        .filter(line => line !== '');
-                    
-                    // Convert to numbers if the target type is 'grade'
-                    targetTokens = (targetType === 'grade') ? rawTokens.map(Number) : rawTokens;
-                }
-
-                // 3. Construct the message and payload
-                const message = {
-                    title,
-                    body,
-                    data: { notificationID }
-                };
-
-                // Construct the 'extra' object ---
-                let extraData = null;
-                // Only include 'extra' if BOTH fields are filled
-                if (urlLink && urlButtonText) {
-                    extraData = {
-                        url: urlLink,
-                        button_text: urlButtonText
-                    };
-                }
-
-                const payload = {
-                    passcode,
-                    message,
-                    detailed_message: detailedMessage,
-                    target_type: targetType,
-                    target_tokens: targetTokens,
-                    sent_by: "Sourabh Suneja",
-                    extra: extraData
-                };
-                
-                // 4. Invoke the Supabase function
-                const response = await fetch(SUPABASE_FUNCTION_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-                    },
-                    body: JSON.stringify(payload)
-                });
-                
-                // 5. Handle response
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`Request failed (${response.status}): ${errorText}`);
-                }
-                
-                const result = await response.json();
-                
-                // Display success message
-                responseDiv.className = 'success';
-                responseDiv.textContent = `✅ Success! Targeted ${result.targeted_recipients} students. Successfully notified ${result.success_count} devices.`; 
-
-                // Clear optional fields on success ---
-                document.getElementById('urlLink').value = '';
-                document.getElementById('urlButtonText').value = '';
-
-            } catch (err) {
-                console.error("Error sending notification:", err);
-                // Display error message
-                responseDiv.className = 'error';
-                responseDiv.textContent = `❌ Error: ${err.message}`;
-            } finally {
-                // Restore button state
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Send Notification';
-            }
-        }
-        
-        // Initial UI setup
-        updateTargetTokensUI();
-    </script>
-</body>
+         </form>
+         <div id="response"></div>
+      </main>
+      <script>
+         // --- CONFIGURATION ---
+         const SUPABASE_FUNCTION_URL = "https://jmmjsxbwxwxrttodyilo.supabase.co/functions/v1/fetch-and-push";
+         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptbWpzeGJ3eHd4cnR0b2R5aWxvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYwNTM4ODYsImV4cCI6MjA3MTYyOTg4Nn0.GhOKYIpds-fE6ypMa-nMozAPFIlCTYMhkMRU0x6WxsU";
+         
+         // --- DOM ELEMENT REFERENCES ---
+         const form = document.getElementById('notificationForm');
+         const targetTypeSelect = document.getElementById('targetType');
+         const targetTokensGroup = document.getElementById('targetTokensGroup');
+         const targetTokensTextarea = document.getElementById('targetTokens');
+         const submitBtn = document.getElementById('submitBtn');
+         const responseDiv = document.getElementById('response');
+         
+         // Random notification ID generator
+         async function generateUUID() {
+         // Use Web Crypto API (browser/Deno)
+         if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+         const bytes = new Uint8Array(16);
+         crypto.getRandomValues(bytes);
+         bytes[6] = (bytes[6] & 0x0f) | 0x40; // Version 4
+         bytes[8] = (bytes[8] & 0x3f) | 0x80; // Variant 10
+         const hex = [...bytes].map(b => b.toString(16).padStart(2, '0')).join('');
+         return (
+         hex.slice(0, 8) + '-' +
+         hex.slice(8, 12) + '-' +
+         hex.slice(12, 16) + '-' +
+         hex.slice(16, 20) + '-' +
+         hex.slice(20)
+         );
+         }
+         
+         // Use Node.js crypto if available
+         try {
+         const { randomBytes } = require('crypto');
+         const bytes = randomBytes(16);
+         bytes[6] = (bytes[6] & 0x0f) | 0x40; // Version 4
+         bytes[8] = (bytes[8] & 0x3f) | 0x80; // Variant 10
+         const hex = [...bytes].map(b => b.toString(16).padStart(2, '0')).join('');
+         return (
+         hex.slice(0, 8) + '-' +
+         hex.slice(8, 12) + '-' +
+         hex.slice(12, 16) + '-' +
+         hex.slice(16, 20) + '-' +
+         hex.slice(20)
+         );
+         } catch (err) {
+         // Fallback (less secure, uses Math.random)
+         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+         const r = Math.random() * 16 | 0;
+         const v = c === 'x' ? r : (r & 0x3 | 0x8);
+         return v.toString(16);
+         });
+         }
+         }
+         
+         // --- DYNAMIC UI LOGIC ---
+         
+         /**
+          * Updates the placeholder and visibility of the target tokens input
+          * based on the selected target type.
+          */
+         function updateTargetTokensUI() {
+             const selectedType = targetTypeSelect.value;
+             const placeholders = {
+                 'grade': 'Enter grades, one per line.\ne.g.,\n6\n7\n10',
+                 'grade-section': 'Enter grade-sections, one per line.\ne.g.,\n6-A1\n8-B2',
+                 'token': 'Enter student access tokens (UUIDs), one per line.'
+             };
+         
+             if (selectedType === 'all') {
+                 targetTokensGroup.style.display = 'none';
+                 targetTokensTextarea.required = false;
+             } else {
+                 targetTokensGroup.style.display = 'block';
+                 targetTokensTextarea.placeholder = placeholders[selectedType];
+                 targetTokensTextarea.required = true;
+             }
+         }
+         
+         // --- EVENT LISTENERS ---
+         targetTypeSelect.addEventListener('change', updateTargetTokensUI);
+         form.addEventListener('submit', handleFormSubmit);
+         
+         /**
+          * Handles the form submission event.
+          * @param {Event} e - The form submission event.
+          */
+         async function handleFormSubmit(e) {
+             e.preventDefault(); // Prevent default browser submission
+             
+             // UI feedback
+             submitBtn.disabled = true;
+             submitBtn.textContent = 'Sending...';
+             responseDiv.className = '';
+             responseDiv.textContent = '';
+             
+             try {
+                 // 1. Collect form data
+                 const passcode = document.getElementById('passcode').value;
+                 const title = document.getElementById('title').value.trim();
+                 const body = document.getElementById('body').value.trim();
+                 const detailedMessage = document.getElementById('detailedMessage').value.trim() || null;
+                 const notificationID = await generateUUID();
+                 const targetType = targetTypeSelect.value;
+         
+                 // Collect optional URL data ---
+                 const urlLink = document.getElementById('urlLink').value.trim();
+                 const urlButtonText = document.getElementById('urlButtonText').value.trim();
+         
+                 // 2. Process target tokens
+                 let targetTokens = [];
+                 if (targetType !== 'all') {
+                     const rawTokens = targetTokensTextarea.value
+                         .split('\n')
+                         .map(line => line.trim())
+                         .filter(line => line !== '');
+                     
+                     // Convert to numbers if the target type is 'grade'
+                     targetTokens = (targetType === 'grade') ? rawTokens.map(Number) : rawTokens;
+                 }
+         
+                 // 3. Construct the message and payload
+                 const message = {
+                     title,
+                     body,
+                     data: { notificationID }
+                 };
+         
+                 // Construct the 'extra' object ---
+                 let extraData = null;
+                 // Only include 'extra' if BOTH fields are filled
+                 if (urlLink && urlButtonText) {
+                     extraData = {
+                         url: urlLink,
+                         button_text: urlButtonText
+                     };
+                 }
+         
+                 const payload = {
+                     passcode,
+                     message,
+                     detailed_message: detailedMessage,
+                     target_type: targetType,
+                     target_tokens: targetTokens,
+                     sent_by: "Sourabh Suneja",
+                     extra: extraData
+                 };
+                 
+                 // 4. Invoke the Supabase function
+                 const response = await fetch(SUPABASE_FUNCTION_URL, {
+                     method: 'POST',
+                     headers: {
+                         'Content-Type': 'application/json',
+                         'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                     },
+                     body: JSON.stringify(payload)
+                 });
+                 
+                 // 5. Handle response
+                 if (!response.ok) {
+                     const errorText = await response.text();
+                     throw new Error(`Request failed (${response.status}): ${errorText}`);
+                 }
+                 
+                 const result = await response.json();
+                 
+                 // Display success message
+                 responseDiv.className = 'success';
+                 responseDiv.textContent = `✅ Success! Targeted ${result.targeted_recipients} students. Successfully notified ${result.success_count} devices.`; 
+         
+             } catch (err) {
+                 console.error("Error sending notification:", err);
+                 // Display error message
+                 responseDiv.className = 'error';
+                 responseDiv.textContent = `❌ Error: ${err.message}`;
+             } finally {
+                 // Restore button state
+                 submitBtn.disabled = false;
+                 submitBtn.textContent = 'Send Notification';
+             }
+         }
+         
+         // Initial UI setup
+         updateTargetTokensUI();
+      </script>
+   </body>
 </html>
