@@ -1,9 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
    <head>
+      <!-- Google tag (gtag.js) -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-T7R00N5VLE"></script>
+      <script>
+         window.dataLayer = window.dataLayer || [];
+         function gtag(){dataLayer.push(arguments);}
+         gtag('js', new Date());
+         
+         gtag('config', 'G-T7R00N5VLE');
+      </script>
+      <!-- Google tag (gtag.js) -->
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Assignment Compiler</title>
+      <title>Assignment</title>
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
       <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
       <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
@@ -229,75 +239,64 @@
          .input-field[type=number] {
          -moz-appearance: textfield;
          }
-
          /* === NEW STYLES FOR RADIO BUTTONS === */
          .input-group#worksheetOptions {
          margin-top: var(--spacing-xl);
          padding-top: var(--spacing-lg);
          border-top: 1px solid var(--bg-tertiary);
          }
-
          .radio-options-container {
-            display: flex;
-            flex-direction: column;
-            gap: var(--spacing-md); /* Space between radio options */
-            padding: var(--spacing-sm) 0;
+         display: flex;
+         flex-direction: column;
+         gap: var(--spacing-md); /* Space between radio options */
+         padding: var(--spacing-sm) 0;
          }
-
          .radio-option {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-sm);
+         display: flex;
+         align-items: center;
+         gap: var(--spacing-sm);
          }
-
          .radio-option input[type="radio"] {
-            -webkit-appearance: none;
-            appearance: none;
-            background-color: var(--bg-input);
-            margin: 0;
-            font: inherit;
-            color: var(--text-tertiary);
-            width: 1.15em;
-            height: 1.15em;
-            border: 2px solid var(--bg-tertiary);
-            border-radius: var(--radius-full);
-            transform: translateY(-0.075em);
-            display: grid;
-            place-content: center;
-            cursor: pointer;
+         -webkit-appearance: none;
+         appearance: none;
+         background-color: var(--bg-input);
+         margin: 0;
+         font: inherit;
+         color: var(--text-tertiary);
+         width: 1.15em;
+         height: 1.15em;
+         border: 2px solid var(--bg-tertiary);
+         border-radius: var(--radius-full);
+         transform: translateY(-0.075em);
+         display: grid;
+         place-content: center;
+         cursor: pointer;
          }
-
          .radio-option input[type="radio"]::before {
-            content: "";
-            width: 0.65em;
-            height: 0.65em;
-            border-radius: var(--radius-full);
-            transform: scale(0);
-            transition: 120ms transform ease-in-out;
-            box-shadow: inset 1em 1em var(--accent-primary);
+         content: "";
+         width: 0.65em;
+         height: 0.65em;
+         border-radius: var(--radius-full);
+         transform: scale(0);
+         transition: 120ms transform ease-in-out;
+         box-shadow: inset 1em 1em var(--accent-primary);
          }
-
          .radio-option input[type="radio"]:checked {
-             border-color: var(--accent-primary);
+         border-color: var(--accent-primary);
          }
-
          .radio-option input[type="radio"]:checked::before {
-            transform: scale(1);
+         transform: scale(1);
          }
-         
          .radio-option input[type="radio"]:focus-visible {
-             outline: 2px solid var(--accent-focus);
-             outline-offset: 2px;
+         outline: 2px solid var(--accent-focus);
+         outline-offset: 2px;
          }
-
          .radio-option label {
-            font-size: var(--font-base);
-            color: var(--text-secondary);
-            cursor: pointer;
+         font-size: var(--font-base);
+         color: var(--text-secondary);
+         cursor: pointer;
          }
          /* === END OF NEW STYLES === */
-
-
          .error-message {
          display: none;
          margin-top: var(--spacing-sm);
@@ -585,8 +584,7 @@
             <div class="form-content">
                <form id="questionForm">
                   <div id="inputFields">
-                     </div>
-
+                  </div>
                   <div class="input-group" id="worksheetOptions">
                      <label class="input-label">Worksheet Options</label>
                      <div class="radio-options-container">
@@ -647,7 +645,7 @@
          let waDetails = [];        
          let selectedAssignmentId = null;          
          let subject, grade;
-
+         
                           
          // Initialize the page
          async function initializePage(userData) {
@@ -663,11 +661,11 @@
            // Get the details of the selected work assignment
            const currentAssignment = waDetails.find(item => item.work_set_id === selectedAssignmentId);
            if(currentAssignment) {
-// Extract question_count excluding "Total"
-const selectedQuestions = Object.fromEntries(
-  Object.entries(currentAssignment.question_count).filter(([key]) => key !== "Total")
-);
-generateAssignment(selectedQuestions, currentAssignment.type);
+         // Extract question_count excluding "Total"
+         const selectedQuestions = Object.fromEntries(
+         Object.entries(currentAssignment.question_count).filter(([key]) => key !== "Total")
+         );
+         generateAssignment(selectedQuestions, currentAssignment.type);
            }         
            
          }
@@ -697,7 +695,7 @@ generateAssignment(selectedQuestions, currentAssignment.type);
                  if (!results[2]) return '';
                  return decodeURIComponent(results[2].replace(/\+/g, ' '));
              }
-
+         
          
              function generateAssignment(selectedQuestions, assignmentType) {
          
@@ -706,7 +704,7 @@ generateAssignment(selectedQuestions, currentAssignment.type);
          
               // Just a placeholder value in the array
               const qbIds = [1];
-
+         
               let provide = 'none';
          
                  // set question counts
@@ -716,7 +714,7 @@ generateAssignment(selectedQuestions, currentAssignment.type);
                  let veryShortAns = parseInt(selectedQuestions['Very Short Answer Type']) || 0;
                  let shortAns = parseInt(selectedQuestions['Short Answer Type']) || 0;
                  let longAns = parseInt(selectedQuestions['Long Answer Type']) || 0;
-
+         
                  // Decide whether to provide space, answers or nothing depending on assignmentType
                 if(assignmentType === 'Classwork') {
                     provide = 'ans'
@@ -724,7 +722,7 @@ generateAssignment(selectedQuestions, currentAssignment.type);
                 else if(assignmentType === 'Homework' || assignmentType === 'Assignment') {
                     provide = 'space'
                 }
-
+         
          
                  // Just a placeholder difficulty level (assignments already have questions selected by a teacher, difficulty level plays no role)
                  let difficulty = "easy";
@@ -758,13 +756,13 @@ generateAssignment(selectedQuestions, currentAssignment.type);
                      examName: assignmentType, 
                      subject,
                      duration: getWorksheetDuration(
-  mcq, fillUp, trueFalse, veryShortAns, shortAns, longAns
-),
+         mcq, fillUp, trueFalse, veryShortAns, shortAns, longAns
+         ),
                      grade: gradeToRoman(grade)
                  };
          
                  const qcStructure = generateQuestionStructure(mcq, fillUp, trueFalse, veryShortAns, shortAns, longAns);
-
+         
                  // Question container object
                  let qc = {
                      ...qcStructure,
@@ -811,32 +809,32 @@ generateAssignment(selectedQuestions, currentAssignment.type);
                  // Redirect to the generated link
                  window.parent.loadManualPage({link: finalURL, title: 'Assignment', page_key: subject + '-assignment', min_width: 750});
              }       
-
-// helper function to create the right question container structure (whether questions should be displayed in separate containers or in the same container)
-
-function generateQuestionStructure(mcq, fillUp, trueFalse, veryShortAns, shortAns, longAns) {
-    const counts = [mcq, fillUp, trueFalse, veryShortAns, shortAns, longAns];
-    
-    // 1. Calculate sum (summing 0s is fine)
-    const sum = counts.reduce((acc, count) => acc + count, 0);
-    
-    // 2. Get the count of *positive* (non-zero) question types
-    const positiveCounts = counts.filter(count => count > 0).length;
-    
-    // 3. Calculate the average, handling the divide-by-zero case
-    // If positiveCounts is 0, the average is 0.
-    const average = (positiveCounts > 0) ? (sum / positiveCounts) : 0;
-
-    // 4. Check if any count is below 3 but not 0 (1, or 2)
-    const anyCountBelowThree = counts.some(count => (count < 3 && count !== 0));
-    
-    // 5. Check the final condition
-    // Average must be > 3 AND no count can be < 3
-    const conditionMet = ((average > 3) && !anyCountBelowThree) || (counts.filter(x => x > 0).length === 1);
-
-    if (conditionMet) {
-        // Condition is TRUE: Return the "spread out" structure
-        return {
+         
+         // helper function to create the right question container structure (whether questions should be displayed in separate containers or in the same container)
+         
+         function generateQuestionStructure(mcq, fillUp, trueFalse, veryShortAns, shortAns, longAns) {
+         const counts = [mcq, fillUp, trueFalse, veryShortAns, shortAns, longAns];
+         
+         // 1. Calculate sum (summing 0s is fine)
+         const sum = counts.reduce((acc, count) => acc + count, 0);
+         
+         // 2. Get the count of *positive* (non-zero) question types
+         const positiveCounts = counts.filter(count => count > 0).length;
+         
+         // 3. Calculate the average, handling the divide-by-zero case
+         // If positiveCounts is 0, the average is 0.
+         const average = (positiveCounts > 0) ? (sum / positiveCounts) : 0;
+         
+         // 4. Check if any count is below 3 but not 0 (1, or 2)
+         const anyCountBelowThree = counts.some(count => (count < 3 && count !== 0));
+         
+         // 5. Check the final condition
+         // Average must be > 3 AND no count can be < 3
+         const conditionMet = ((average > 3) && !anyCountBelowThree) || (counts.filter(x => x > 0).length === 1);
+         
+         if (conditionMet) {
+         // Condition is TRUE: Return the "spread out" structure
+         return {
             headings: ["", "", "", "", "", ""],
             qTypes: [
                 {"MCQ": mcq},
@@ -848,10 +846,10 @@ function generateQuestionStructure(mcq, fillUp, trueFalse, veryShortAns, shortAn
             ],
             weightPerQ: [{}, {}, {}, {}, {}, {}],
             mustInclude: [{}, {}, {}, {}, {}, {}]
-        };
-    } else {
-        // Condition is FALSE: Return the "condensed" structure
-        return {
+         };
+         } else {
+         // Condition is FALSE: Return the "condensed" structure
+         return {
             headings: [""],
             qTypes: [{
                 "MCQ": mcq,
@@ -863,76 +861,76 @@ function generateQuestionStructure(mcq, fillUp, trueFalse, veryShortAns, shortAn
             }],
             weightPerQ: [{}],
             mustInclude: [{}]
-        };
-    }
-}
-
-
-// Function to smartly set the worksheet duration based on number and type of questions
-function getWorksheetDuration(
-  mcq = 0,
-  fillUp = 0,
-  trueFalse = 0,
-  veryShortAns = 0,
-  shortAns = 0,
-  longAns = 0
-) {
-
-  // --- 1. Define Time Weights (in minutes) ---
-  const TIME_WEIGHTS = {
-    trueFalse: 0.5,    // 30 seconds
-    fillUp: 0.75,      // 45 seconds
-    mcq: 1,            // 1 minute
-    veryShortAns: 1.5, // 1.5 minutes
-    shortAns: 3,       // 3 minutes
-    longAns: 8,        // 8 minutes
-  };
-
-  // --- 2. Define Time Limits & Rounding (in minutes) ---
-  
-  // Set a practical minimum duration slot
-  const MIN_TIME_MINUTES = 20; // 20 minutes
-  
-  // Worksheets over 2 hours are "too long"
-  const TOO_LONG_THRESHOLD = 120; // 120 minutes
-  
-  // We will round to the nearest 10-minute slot.
-  const SLOT_INTERVAL_MINUTES = 10; // 10 minutes
-
-  // --- 3. Calculate Total Estimated Time ---
-  const totalMinutes =
-    (mcq * TIME_WEIGHTS.mcq) +
-    (fillUp * TIME_WEIGHTS.fillUp) +
-    (trueFalse * TIME_WEIGHTS.trueFalse) +
-    (veryShortAns * TIME_WEIGHTS.veryShortAns) +
-    (shortAns * TIME_WEIGHTS.shortAns) +
-    (longAns * TIME_WEIGHTS.longAns);
-
-  // --- 4. Handle Edge Cases ---
-
-  // Case 1: Empty worksheet
-  if (totalMinutes === 0) {
-    return 0;
-  }
-
-  // Case 2: Worksheet is "too long"
-  if (totalMinutes > TOO_LONG_THRESHOLD) {
-    return "Take your time";
-  }
-  
-  // Case 3: Worksheet is very short, snap to the minimum practical time
-  if (totalMinutes < MIN_TIME_MINUTES) {
-    return MIN_TIME_MINUTES;
-  }
-
-  // --- 5. Snap to Nearest 10-Minute Slot ---
-  // This logic rounds the total time to the nearest 10-minute mark.
-  // e.g., 45 min (4.5) rounds to 50 min.
-  // e.g., 42 min (4.2) rounds to 40 min.
-  const snappedMinutes = Math.round(totalMinutes / SLOT_INTERVAL_MINUTES) * SLOT_INTERVAL_MINUTES;
-
-  return snappedMinutes;
-}
+         };
+         }
+         }
+         
+         
+         // Function to smartly set the worksheet duration based on number and type of questions
+         function getWorksheetDuration(
+         mcq = 0,
+         fillUp = 0,
+         trueFalse = 0,
+         veryShortAns = 0,
+         shortAns = 0,
+         longAns = 0
+         ) {
+         
+         // --- 1. Define Time Weights (in minutes) ---
+         const TIME_WEIGHTS = {
+         trueFalse: 0.5,    // 30 seconds
+         fillUp: 0.75,      // 45 seconds
+         mcq: 1,            // 1 minute
+         veryShortAns: 1.5, // 1.5 minutes
+         shortAns: 3,       // 3 minutes
+         longAns: 8,        // 8 minutes
+         };
+         
+         // --- 2. Define Time Limits & Rounding (in minutes) ---
+         
+         // Set a practical minimum duration slot
+         const MIN_TIME_MINUTES = 20; // 20 minutes
+         
+         // Worksheets over 2 hours are "too long"
+         const TOO_LONG_THRESHOLD = 120; // 120 minutes
+         
+         // We will round to the nearest 10-minute slot.
+         const SLOT_INTERVAL_MINUTES = 10; // 10 minutes
+         
+         // --- 3. Calculate Total Estimated Time ---
+         const totalMinutes =
+         (mcq * TIME_WEIGHTS.mcq) +
+         (fillUp * TIME_WEIGHTS.fillUp) +
+         (trueFalse * TIME_WEIGHTS.trueFalse) +
+         (veryShortAns * TIME_WEIGHTS.veryShortAns) +
+         (shortAns * TIME_WEIGHTS.shortAns) +
+         (longAns * TIME_WEIGHTS.longAns);
+         
+         // --- 4. Handle Edge Cases ---
+         
+         // Case 1: Empty worksheet
+         if (totalMinutes === 0) {
+         return 0;
+         }
+         
+         // Case 2: Worksheet is "too long"
+         if (totalMinutes > TOO_LONG_THRESHOLD) {
+         return "Take your time";
+         }
+         
+         // Case 3: Worksheet is very short, snap to the minimum practical time
+         if (totalMinutes < MIN_TIME_MINUTES) {
+         return MIN_TIME_MINUTES;
+         }
+         
+         // --- 5. Snap to Nearest 10-Minute Slot ---
+         // This logic rounds the total time to the nearest 10-minute mark.
+         // e.g., 45 min (4.5) rounds to 50 min.
+         // e.g., 42 min (4.2) rounds to 40 min.
+         const snappedMinutes = Math.round(totalMinutes / SLOT_INTERVAL_MINUTES) * SLOT_INTERVAL_MINUTES;
+         
+         return snappedMinutes;
+         }
       </script>
    </body>
 </html>
