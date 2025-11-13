@@ -177,6 +177,16 @@
                 <textarea id="detailedMessage" placeholder="e.g., Dear Students, This is to inform..."></textarea>
             </div>
 
+            <div class="form-group">
+                <label for="urlLink">Optional: URL Link</label>
+                <input type="url" id="urlLink" placeholder="https://school.com/event-details">
+            </div>
+
+            <div class="form-group">
+                <label for="urlButtonText">Optional: Button Text (requires URL)</label>
+                <input type="text" id="urlButtonText" placeholder="e.g., View Details">
+            </div>
+
             <button type="submit" id="submitBtn" class="submit-btn">Send Notification</button>
         </form>
 
@@ -288,6 +298,10 @@
                 const notificationID = await generateUUID();
                 const targetType = targetTypeSelect.value;
 
+                // Collect optional URL data ---
+                const urlLink = document.getElementById('urlLink').value.trim();
+                const urlButtonText = document.getElementById('urlButtonText').value.trim();
+
                 // 2. Process target tokens
                 let targetTokens = [];
                 if (targetType !== 'all') {
@@ -307,13 +321,24 @@
                     data: { notificationID }
                 };
 
+                // Construct the 'extra' object ---
+                let extraData = null;
+                // Only include 'extra' if BOTH fields are filled
+                if (urlLink && urlButtonText) {
+                    extraData = {
+                        url: urlLink,
+                        button_text: urlButtonText
+                    };
+                }
+
                 const payload = {
                     passcode,
                     message,
                     detailed_message: detailedMessage,
                     target_type: targetType,
                     target_tokens: targetTokens,
-                    sent_by: "Sourabh Suneja"
+                    sent_by: "Sourabh Suneja",
+                    extra: extraData
                 };
                 
                 // 4. Invoke the Supabase function
@@ -337,6 +362,10 @@
                 // Display success message
                 responseDiv.className = 'success';
                 responseDiv.textContent = `✅ Success! Targeted ${result.targeted_recipients} students. Successfully notified ${result.success_count} devices.`; 
+
+                // Clear optional fields on success ---
+                document.getElementById('urlLink').value = '';
+                document.getElementById('urlButtonText').value = '';
 
             } catch (err) {
                 console.error("Error sending notification:", err);
