@@ -840,7 +840,12 @@
              const notification = notifications.find(n => n.id === notificationId);
              if (notification) notification.is_read = 1;
              
-             window.parent.loadManualPage({link: './pages/notifications/show.html?notification_id=' + notificationId, title: 'Notifications', page_key: 'show-notification'});
+             window.parent.loadManualPage({
+               link: './pages/notifications/show.html?notification_id=' + notificationId + '&_cb=' + Date.now(),
+               title: 'Notifications',
+               page_key: 'show-notification'
+             });
+         
          }
          
          // Update timestamps periodically
