@@ -4,11 +4,11 @@
       <!-- Google tag (gtag.js) -->
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-T7R00N5VLE"></script>
       <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-
-        gtag('config', 'G-T7R00N5VLE');
+         window.dataLayer = window.dataLayer || [];
+         function gtag(){dataLayer.push(arguments);}
+         gtag('js', new Date());
+         
+         gtag('config', 'G-T7R00N5VLE');
       </script>
       <!-- Google tag (gtag.js) -->
       <meta charset="UTF-8">
@@ -215,38 +215,38 @@
          </div>
       </div>
       <!-- Question Bank Prompt Ends -->
-<!-- Work Assignment selection prompt starts -->
-<div id="workAssignmentOverlay" class="wa-overlay">
-   <div class="wa-card">
-      <div class="wa-header">
-         <h2 class="wa-title">
-            <i class="fas fa-clipboard-list"></i>
-            Select Work Assignment
-         </h2>
-         <button class="wa-close-btn" onclick="WorkAssignmentSelector.cancelSelection()">
-         <i class="fas fa-times"></i>
-         </button>
-      </div>
-      <div class="wa-search-container">
-         <i class="fas fa-search wa-search-icon"></i>
-         <input 
-            type="text" 
-            id="waSearchInput" 
-            class="wa-search-input" 
-            placeholder="Search by title, description, or type..."
-            >
-      </div>
-      <div class="wa-content" id="waContent">
+      <!-- Work Assignment selection prompt starts -->
+      <div id="workAssignmentOverlay" class="wa-overlay">
+         <div class="wa-card">
+            <div class="wa-header">
+               <h2 class="wa-title">
+                  <i class="fas fa-clipboard-list"></i>
+                  Select Work Assignment
+               </h2>
+               <button class="wa-close-btn" onclick="WorkAssignmentSelector.cancelSelection()">
+               <i class="fas fa-times"></i>
+               </button>
+            </div>
+            <div class="wa-search-container">
+               <i class="fas fa-search wa-search-icon"></i>
+               <input 
+                  type="text" 
+                  id="waSearchInput" 
+                  class="wa-search-input" 
+                  placeholder="Search by title, description, or type..."
+                  >
+            </div>
+            <div class="wa-content" id="waContent">
+            </div>
+            <div class="wa-footer">
+               <span id="waSelectionInfo" class="wa-selection-info">Please select an assignment</span>
+               <button id="waConfirmBtn" class="wa-confirm-btn" disabled>
+               <i class="fas fa-check"></i> Open Assignment
+               </button>
+            </div>
          </div>
-      <div class="wa-footer">
-         <span id="waSelectionInfo" class="wa-selection-info">Please select an assignment</span>
-         <button id="waConfirmBtn" class="wa-confirm-btn" disabled>
-         <i class="fas fa-check"></i> Open Assignment
-         </button>
       </div>
-   </div>
-</div>
-<!-- Work Assignment selection prompt ends -->
+      <!-- Work Assignment selection prompt ends -->
       <!-- Notification Permission Dialog Overlay Starts -->
       <div class="notification-overlay" id="notificationOverlay">
          <div class="notification-content">
