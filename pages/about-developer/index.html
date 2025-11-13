@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="en" class="noselect">
    <head>
+      <!-- Google tag (gtag.js) -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-T7R00N5VLE"></script>
+      <script>
+         window.dataLayer = window.dataLayer || [];
+         function gtag(){dataLayer.push(arguments);}
+         gtag('js', new Date());
+         
+         gtag('config', 'G-T7R00N5VLE');
+      </script>
+      <!-- Google tag (gtag.js) -->
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>About Developer</title>
@@ -155,7 +165,7 @@
          justify-content: center;
          font-size: 4rem;
          color: var(--accent-primary);
-         animation: float 3s ease-in-out infinite;
+         /*animation: float 3s ease-in-out infinite;*/
          }
          @keyframes float {
          0%, 100% { transform: translateY(0px); }
@@ -367,12 +377,10 @@
    </head>
    <body>
       <button style="display: none" class="theme-toggle noselect" onclick="toggleTheme()">
-         <i class="fas fa-moon"></i>
+      <i class="fas fa-moon"></i>
       </button>
-      
       <div class="container">
          <h1>About the Developer</h1>
-         
          <div class="hero-section">
             <img src="../../images/sourabh_suneja.jpg" alt="Sourabh Sir" class="developer-avatar" style="object-fit: cover;">
             <div class="developer-name">Sourabh Sir</div>
@@ -382,7 +390,6 @@
                <span>Jaipur, Rajasthan</span>
             </div>
          </div>
-
          <div class="section">
             <div class="section-title">
                <i class="fas fa-lightbulb"></i>
@@ -398,12 +405,10 @@
                Today, as a <span class="highlight">brilliant and passionate computer teacher</span> in Jaipur, Sourabh Sir has channeled his frustrations into innovation. He recognized that modern students deserve better—they deserve learning experiences that ignite curiosity, reward progress, and make education feel less like a chore and more like an adventure.
             </div>
          </div>
-
          <div class="quote-box">
             <i class="fas fa-quote-left quote-icon"></i>
             Education should spark joy, not just fill notebooks. Every child has the potential to be brilliant—they just need the right environment to shine.
          </div>
-
          <div class="section">
             <div class="section-title">
                <i class="fas fa-rocket"></i>
@@ -412,7 +417,6 @@
             <div class="story-text">
                JVP Spark was created with a clear mission: to <span class="highlight">gamify the learning experience</span> for school students. By blending education with game mechanics, the app transforms studying from a tedious obligation into an exciting journey of discovery.
             </div>
-            
             <div class="vision-grid">
                <div class="vision-card">
                   <div class="vision-icon">
@@ -423,7 +427,6 @@
                      Interactive quiz applications that challenge students while making learning competitive and fun
                   </div>
                </div>
-               
                <div class="vision-card">
                   <div class="vision-icon">
                      <i class="fas fa-gamepad"></i>
@@ -433,7 +436,6 @@
                      Engaging games designed to improve memory, concentration, and cognitive skills through play
                   </div>
                </div>
-               
                <div class="vision-card">
                   <div class="vision-icon">
                      <i class="fas fa-puzzle-piece"></i>
@@ -443,7 +445,6 @@
                      Innovative learning tools that encourage creativity and hands-on problem-solving
                   </div>
                </div>
-               
                <div class="vision-card">
                   <div class="vision-icon">
                      <i class="fas fa-star"></i>
@@ -455,7 +456,6 @@
                </div>
             </div>
          </div>
-
          <div class="section">
             <div class="section-title">
                <i class="fas fa-heart"></i>
@@ -470,7 +470,6 @@
             <div class="story-text">
                The app continues to evolve based on feedback from real students and educators, constantly adding new features and refining existing ones to create the best possible learning experience.
             </div>
-            
             <div class="stats-container">
                <div class="stat-box">
                   <div class="stat-icon">
@@ -478,21 +477,18 @@
                   </div>
                   <div class="stat-label">Created for Students</div>
                </div>
-               
                <div class="stat-box">
                   <div class="stat-icon">
                      <i class="fas fa-code"></i>
                   </div>
                   <div class="stat-label">Crafted with Care</div>
                </div>
-               
                <div class="stat-box">
                   <div class="stat-icon">
                      <i class="fas fa-graduation-cap"></i>
                   </div>
                   <div class="stat-label">Teacher-Designed</div>
                </div>
-               
                <div class="stat-box">
                   <div class="stat-icon">
                      <i class="fas fa-sync-alt"></i>
@@ -501,7 +497,6 @@
                </div>
             </div>
          </div>
-
          <div class="section">
             <div class="section-title">
                <i class="fas fa-bullseye"></i>
@@ -514,14 +509,12 @@
                Sourabh Sir believes that when students enjoy what they're learning, they naturally perform better, retain more information, and develop critical thinking skills that will serve them throughout their lives. JVP Spark is his contribution to making this vision a reality for students everywhere.
             </div>
          </div>
-
          <div class="feedback-section">
             <button class="feedback-button" onclick="showFeedbackForm()">
-               Share Your Feedback
+            Share Your Feedback
             </button>
          </div>
       </div>
-
       <script>
          function toggleTheme() {
             const body = document.body;
@@ -537,12 +530,12 @@
                themeToggle.classList.add('fa-moon');
             }
          }
-
+         
          function showFeedbackForm() {
-            alert('Feedback form will be opened here.\n\nThank you for your interest in sharing your thoughts about JVP Spark!');
+            //alert('Feedback form will be opened here.\n\nThank you for your interest in sharing your thoughts about JVP Spark!');
             // In the actual PWA, this would navigate to a feedback form or open a modal
          }
-
+         
          // Check for saved theme preference
          const savedTheme = localStorage.getItem('theme');
          if (savedTheme === 'light') {
