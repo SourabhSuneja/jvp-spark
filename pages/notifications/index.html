@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
    <head>
+      <!-- Google tag (gtag.js) -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-T7R00N5VLE"></script>
+      <script>
+         window.dataLayer = window.dataLayer || [];
+         function gtag(){dataLayer.push(arguments);}
+         gtag('js', new Date());
+         
+         gtag('config', 'G-T7R00N5VLE');
+      </script>
+      <!-- Google tag (gtag.js) -->
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Notifications</title>
@@ -845,7 +855,7 @@
              }
            });
          }, 60000); // Update every minute
-
+         
          // function that the parent app page will call just in case new notifications arrive while the app is open
          function prependNewNotifications(newNotifs) {
            if (!newNotifs || newNotifs.length === 0) return;
@@ -861,14 +871,14 @@
              if (isSearchActive) {
                 allLoadedNotifications.unshift(notification);
              }
-
+         
              // 3. Create the new card element
              const card = createNotificationCard(notification, searchQuery);
              
              // 4. Add the card to the very top of the list in the DOM
              notificationsList.prepend(card);
            });
-
+         
            // 5. If search is active, re-apply the filter to highlight/hide new cards
            if (isSearchActive && searchQuery) {
               filterNotifications(searchQuery);
