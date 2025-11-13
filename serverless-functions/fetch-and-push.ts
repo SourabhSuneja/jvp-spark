@@ -38,7 +38,7 @@ serve(async (req) => {
       return createResponse({ error: "Method not allowed" }, 405);
     }
 
-    const { passcode, message, detailed_message, target_type, target_tokens, sent_by } = await req.json();
+    const { passcode, message, detailed_message, target_type, target_tokens, sent_by, extra } = await req.json();
 
     // Step 1: Validate passcode
     const SUPABASE_PASSCODE = Deno.env.get("PUSH_SECRET_PASSCODE");
@@ -66,7 +66,8 @@ serve(async (req) => {
       detailed_message,
       target_type,
       target_tokens,
-      sent_by
+      sent_by,
+      extra
     }]);
 
     if (insertError) {
