@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="en" class="noselect">
    <head>
+      <!-- Google tag (gtag.js) -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-T7R00N5VLE"></script>
+      <script>
+         window.dataLayer = window.dataLayer || [];
+         function gtag(){dataLayer.push(arguments);}
+         gtag('js', new Date());
+         
+         gtag('config', 'G-T7R00N5VLE');
+      </script>
+      <!-- Google tag (gtag.js) -->
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="description" content="Create your personalized avatar and express yourself in fun and unique ways. Join us for an exciting avatar-making experience tailored just for you!" />
@@ -347,14 +357,13 @@
             <button id="generate-avatar">Save My Avatar</button>
          </div>
       </div>
-
       <script>
          // Get URL parameters
          function getUrlParameter(name) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(name);
          }
-
+         
          const baseUrl = "https://avataaars.io/";
          
          // Avatar generation functionality
@@ -390,7 +399,7 @@
                    type: 'alert'
                    });
                    // Reload the app
-                   window.parent.location.href = window.parent.location.href;
+                   window.parent.location.href = window.parent.location.href.split('?')[0] + '?cb=' + new Date().getTime();
                } else {
                    await window.parent.showDialog({
                    title: 'Error',
@@ -409,38 +418,37 @@
          Object.values(selects).forEach(select => {
          select.addEventListener('change', updateAvatar);
          });
-
-async function initializePage(userData) {
-    // Show loading
-    window.parent.showProcessingDialog();
-    // Fetch the avatar string from the user data
-    const currentAvatarString = userData['avatar'] || '';
-
-    if (currentAvatarString) {
-        // Build full URL and set avatar image preview
-
-        const currentAvatarSrc = `${baseUrl}?${currentAvatarString}`;
-        avatar.src = currentAvatarSrc;
-
-        // Parse query string into key-value pairs
-        const params = new URLSearchParams(currentAvatarString);
-
-        // Loop through each select and set its value
-        Object.entries(selects).forEach(([key, select]) => {
+         
+         async function initializePage(userData) {
+         // Show loading
+         window.parent.showProcessingDialog();
+         // Fetch the avatar string from the user data
+         const currentAvatarString = userData['avatar'] || '';
+         
+         if (currentAvatarString) {
+         // Build full URL and set avatar image preview
+         
+         const currentAvatarSrc = `${baseUrl}?${currentAvatarString}`;
+         avatar.src = currentAvatarSrc;
+         
+         // Parse query string into key-value pairs
+         const params = new URLSearchParams(currentAvatarString);
+         
+         // Loop through each select and set its value
+         Object.entries(selects).forEach(([key, select]) => {
             const value = params.get(key);
             if (value) {
                 select.value = value;
             }
-        });
-    }
-
-    // Finally, reveal the container after avatar + selects are ready
-    document.getElementById('container').style.display = 'block';
-    updateAvatar();
-    // Hide loading
-    window.parent.hideProcessingDialog();
-}
+         });
+         }
+         
+         // Finally, reveal the container after avatar + selects are ready
+         document.getElementById('container').style.display = 'block';
+         updateAvatar();
+         // Hide loading
+         window.parent.hideProcessingDialog();
+         }
       </script>
    </body>
 </html>
-
