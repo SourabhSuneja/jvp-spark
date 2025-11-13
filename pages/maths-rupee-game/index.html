@@ -1,886 +1,810 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rupee Game</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
-    
-    <link href="https://cdn.jsdelivr.net/gh/phntxx/font-rupee@1.0.2/font-rupee.css" rel="stylesheet">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            /* Colors - Dark Theme */
-            --bg-primary: #121212;
-            --bg-secondary: #1f1f1f;
-            --bg-tertiary: #333333;
-            --bg-gradient-dark: linear-gradient(145deg, #1e1e1e, #333333);
-            --bg-input: #2c2c2c;
-            --bg-profile: rgb(25, 25, 25);
-
-            /* Text Colors - Dark Theme */
-            --text-primary: #fff;
-            --text-secondary: #ddd;
-            --text-tertiary: #b0bec5;
-            --text-muted: rgb(230, 230, 230);
-            --text-light-gray: rgb(240, 240, 240);
-            --text-dark-gray: rgb(220, 220, 220);
-
-            /* Accent Colors */
-            --accent-primary: #ffc107;
-            --accent-hover: #e0a800;
-            --accent-focus: #ffd54f;
-            --accent-button-text: black;
-
-            /* Logout button specific */
-            --logout-bg: #e53935;
-            --logout-text: #fff;
-            --logout-hover: #d32f2f;
-
-            /* Status Colors */
-            --error-color: #FF3333;
-            --error-bg: #e53935;
-            --error-hover: #d32f2f;
-
-            /* Overlay Colors */
-            --overlay-bg: rgba(0, 0, 0, 0.5);
-            --loading-overlay-bg: black;
-            --loading-credits-color: rgb(245, 245, 245);
-
-            /* Scrollbar Colors */
-            --scrollbar-thumb: rgb(50, 50, 50);
-            --scrollbar-track: transparent;
-
-            /* Shadow Colors */
-            --shadow-dark: rgba(0, 0, 0, 0.5);
-            --shadow-medium: rgba(0, 0, 0, 0.6);
-            --shadow-light: rgba(0, 0, 0, 0.4);
-
-            /* Spacing Values */
-            --spacing-xs: 4px;
-            --spacing-sm: 8px;
-            --spacing-md: 12px;
-            --spacing-lg: 16px;
-            --spacing-xl: 20px;
-            --spacing-xxl: 25px;
-            --spacing-xxxl: 30px;
-
-            /* Border Radius */
-            --radius-sm: 5px;
-            --radius-md: 8px;
-            --radius-lg: 10px;
-            --radius-xl: 12px;
-            --radius-full: 50%;
-
-            /* Font Sizes */
-            --font-sm: 0.9rem;
-            --font-base: 1rem;
-            --font-md: 1.1rem;
-            --font-lg: 1.2rem;
-            --font-xl: 1.6rem;
-            --font-xxl: 1.7rem;
-            --font-xxxl: 1.8rem;
-            --font-icon-sm: 1.2rem;
-            --font-icon-md: 1.8rem;
-            --font-icon-lg: 2.1rem;
-            --font-icon-xl: 64px;
-
-            /* Transitions */
-            --transition-fast: 0.2s ease;
-            --transition-base: 0.3s ease;
-            --transition-slow: 0.4s all;
-            --transition-slower: 0.5s;
-
-            /* Z-index */
-            --z-overlay: 1;
-            --z-header: 10;
-            --z-sidebar: 20;
-            --z-signin: 99999;
-            --z-loading: 500000;
-
-            /* Dimensions */
-            --sidebar-width: 260px;
-            --avatar-sm: 40px;
-            --avatar-md: 70px;
-            --avatar-lg: 80px;
-            --scrollbar-width: 6px;
-        }
-
-        /* Light theme overrides */
-        body.light-theme {
-            --bg-primary: #ffffff;
-            --bg-secondary: rgb(253, 253, 253);
-            --bg-tertiary: rgb(240, 240, 240);
-            --bg-gradient-dark: linear-gradient(145deg, #ffffff, #f0f0f0);
-            --bg-input: #ffffff;
-            --bg-profile: rgb(253, 253, 253);
-
-            --text-primary: #333;
-            --text-secondary: rgb(50, 50, 50);
-            --text-tertiary: rgb(80, 80, 80);
-            --text-muted: #333;
-            --text-light-gray: rgb(50, 50, 50);
-            --text-dark-gray: rgb(90, 90, 90);
-
-            --accent-button-text: rgb(30, 30, 30);
-
-            --error-color: #d32f2f;
-            --error-bg: #ff6666;
-            --error-hover: #ff4d4d;
-
-            --loading-overlay-bg: rgb(253, 253, 253);
-            --loading-credits-color: rgb(50, 50, 50);
-
-            --scrollbar-thumb: rgb(170, 170, 170);
-
-            --shadow-dark: rgba(0, 0, 0, 0.1);
-            --shadow-medium: rgba(0, 0, 0, 0.1);
-            --shadow-light: rgba(0, 0, 0, 0.1);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Roboto', sans-serif;
-            max-height: 999999px;
-        }
-
-        body {
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-            padding: var(--spacing-xl);
-            transition: var(--transition-base);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .header {
-            display: flex;
-            display: none;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--spacing-xxxl);
-            flex-wrap: wrap;
-            gap: var(--spacing-lg);
-        }
-
-        .header h1 {
-            font-size: var(--font-xxl);
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-md);
-        }
-
-        .theme-toggle {
-            background: var(--bg-secondary);
-            border: none;
-            color: var(--text-primary);
-            padding: var(--spacing-md) var(--spacing-xl);
-            border-radius: var(--radius-lg);
-            cursor: pointer;
-            font-size: var(--font-base);
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-sm);
-            transition: var(--transition-base);
-        }
-
-        .theme-toggle:hover {
-            background: var(--bg-tertiary);
-            transform: translateY(-2px);
-        }
-
-        .game-info {
-            background: var(--bg-gradient-dark);
-            padding: var(--spacing-xl);
-            border-radius: var(--radius-lg);
-            margin-bottom: var(--spacing-xl);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: var(--spacing-lg);
-            box-shadow: 0 4px 6px var(--shadow-light);
-        }
-
-        .score-section {
-            display: flex;
-            gap: var(--spacing-xxxl);
-            flex-wrap: wrap;
-        }
-
-        .score-item {
-            text-align: center;
-        }
-
-        .score-label {
-            color: var(--text-tertiary);
-            font-size: var(--font-sm);
-            margin-bottom: var(--spacing-xs);
-        }
-
-        .score-value {
-            font-size: var(--font-xl);
-            font-weight: bold;
-            color: var(--accent-primary);
-        }
-
-        .target-amount {
-            background: var(--bg-secondary);
-            padding: var(--spacing-lg) var(--spacing-xxl);
-            border-radius: var(--radius-xl);
-            text-align: center;
-            width: 100%;
-        }
-
-        .target-label {
-            color: var(--text-tertiary);
-            font-size: var(--font-base);
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .target-value {
-            font-size: var(--font-xxxl);
-            font-weight: bold;
-            color: var(--accent-primary);
-        }
-
-        .game-area {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: var(--spacing-xl);
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .currency-panel {
-            background: var(--bg-secondary);
-            padding: var(--spacing-xl);
-            border-radius: var(--radius-lg);
-            box-shadow: 0 4px 6px var(--shadow-light);
-        }
-
-        .panel-title {
-            font-size: var(--font-lg);
-            margin-bottom: var(--spacing-lg);
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-sm);
-        }
-
-        .currency-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: var(--spacing-md);
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .currency-item {
-            background: var(--bg-tertiary);
-            padding: var(--spacing-lg);
-            border-radius: var(--radius-md);
-            text-align: center;
-            cursor: pointer;
-            transition: var(--transition-base);
-            border: 2px solid transparent;
-            position: relative;
-        }
-
-        .currency-item:hover {
-            /*transform: translateY(-3px) scale(1.05);*/
-            border-color: var(--accent-primary);
-            box-shadow: 0 6px 12px var(--shadow-medium);
-        }
-
-        .currency-item.selected {
-            border-color: var(--accent-primary);
-            background: var(--bg-input);
-        }
-
-        .currency-icon {
-            font-size: var(--font-icon-lg);
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .currency-value {
-            font-weight: bold;
-            color: var(--text-primary);
-            font-size: var(--font-md);
-        }
-
-        .count-badge {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: var(--accent-primary);
-            color: var(--accent-button-text);
-            width: 24px;
-            height: 24px;
-            border-radius: var(--radius-full);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: var(--font-sm);
-            font-weight: bold;
-            box-shadow: 0 2px 4px var(--shadow-dark);
-        }
-
-        .current-total {
-            background: var(--bg-input);
-            padding: var(--spacing-lg);
-            border-radius: var(--radius-md);
-            text-align: center;
-            margin-top: var(--spacing-lg);
-        }
-
-        .current-label {
-            color: var(--text-tertiary);
-            font-size: var(--font-sm);
-            margin-bottom: var(--spacing-xs);
-        }
-
-        .current-value {
-            font-size: var(--font-xl);
-            font-weight: bold;
-            color: var(--text-primary);
-        }
-
-        .actions {
-            display: flex;
-            gap: var(--spacing-lg);
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: var(--spacing-lg) var(--spacing-xxxl);
-            border: none;
-            border-radius: var(--radius-lg);
-            font-size: var(--font-md);
-            font-weight: bold;
-            cursor: pointer;
-            transition: var(--transition-base);
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-sm);
-        }
-
-        .btn-primary {
-            background: var(--accent-primary);
-            color: var(--accent-button-text);
-        }
-
-        .btn-primary:hover {
-            background: var(--accent-hover);
-            /*transform: translateY(-2px);*/
-            box-shadow: 0 4px 8px var(--shadow-medium);
-        }
-
-        .btn-secondary {
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-        }
-
-        .btn-secondary:hover {
-            background: var(--bg-input);
-            /*transform: translateY(-2px);*/
-        }
-
-        .btn-danger {
-            background: var(--error-bg);
-            color: var(--logout-text);
-        }
-
-        .btn-danger:hover {
-            background: var(--error-hover);
-            /*transform: translateY(-2px);*/
-        }
-
-        .feedback {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            background: var(--bg-secondary);
-            padding: var(--spacing-xxxl);
-            border-radius: var(--radius-xl);
-            text-align: center;
-            z-index: var(--z-signin);
-            box-shadow: 0 8px 32px var(--shadow-dark);
-            opacity: 0;
-            transition: all 0.3s ease;
-        }
-
-        .feedback.show {
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 1;
-        }
-
-        .feedback-icon {
-            font-size: var(--font-icon-xl);
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .feedback.success .feedback-icon {
-            color: #4caf50;
-        }
-
-        .feedback.error .feedback-icon {
-            color: var(--error-color);
-        }
-
-        .feedback h2 {
-            font-size: var(--font-xxl);
-            margin-bottom: var(--spacing-md);
-            color: var(--text-primary);
-        }
-
-        .feedback p {
-            font-size: var(--font-lg);
-            color: var(--text-secondary);
-        }
-
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--overlay-bg);
-            z-index: var(--z-overlay);
-            display: none;
-        }
-
-        .overlay.show {
-            display: block;
-        }
-
-        .confetti {
-            position: fixed;
-            width: 10px;
-            height: 10px;
-            background: var(--accent-primary);
-            position: absolute;
-            animation: confetti-fall 3s ease-out forwards;
-        }
-
-        @keyframes confetti-fall {
-            to {
-                transform: translateY(100vh) rotate(360deg);
-                opacity: 0;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .game-area {
-                grid-template-columns: 1fr;
-            }
-
-            .currency-grid {
-                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-            }
-
-            .header h1 {
-                font-size: var(--font-xl);
-            }
-
-            .score-section {
-                gap: var(--spacing-lg);
-            }
-        }
-
-        /* Scrollbar Styles */
-        ::-webkit-scrollbar {
-            width: var(--scrollbar-width);
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--scrollbar-track);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--scrollbar-thumb);
-            border-radius: var(--radius-sm);
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--text-tertiary);
-        }
-#confetti-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 9999999;
-}
-    </style>
-</head>
-<body>
-    <canvas id="confetti-canvas"></canvas>
-
-    <div class="overlay" id="overlay"></div>
-    
-    <div class="container">
-        <div class="header">
+   <head>
+      <!-- Google tag (gtag.js) -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-T7R00N5VLE"></script>
+      <script>
+         window.dataLayer = window.dataLayer || [];
+         function gtag(){dataLayer.push(arguments);}
+         gtag('js', new Date());
+         
+         gtag('config', 'G-T7R00N5VLE');
+      </script>
+      <!-- Google tag (gtag.js) -->
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Maths Rupee Game</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+      <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
+      <link href="https://cdn.jsdelivr.net/gh/phntxx/font-rupee@1.0.2/font-rupee.css" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+      <style>
+         :root {
+         /* Colors - Dark Theme */
+         --bg-primary: #121212;
+         --bg-secondary: #1f1f1f;
+         --bg-tertiary: #333333;
+         --bg-gradient-dark: linear-gradient(145deg, #1e1e1e, #333333);
+         --bg-input: #2c2c2c;
+         --bg-profile: rgb(25, 25, 25);
+         /* Text Colors - Dark Theme */
+         --text-primary: #fff;
+         --text-secondary: #ddd;
+         --text-tertiary: #b0bec5;
+         --text-muted: rgb(230, 230, 230);
+         --text-light-gray: rgb(240, 240, 240);
+         --text-dark-gray: rgb(220, 220, 220);
+         /* Accent Colors */
+         --accent-primary: #ffc107;
+         --accent-hover: #e0a800;
+         --accent-focus: #ffd54f;
+         --accent-button-text: black;
+         /* Logout button specific */
+         --logout-bg: #e53935;
+         --logout-text: #fff;
+         --logout-hover: #d32f2f;
+         /* Status Colors */
+         --error-color: #FF3333;
+         --error-bg: #e53935;
+         --error-hover: #d32f2f;
+         /* Overlay Colors */
+         --overlay-bg: rgba(0, 0, 0, 0.5);
+         --loading-overlay-bg: black;
+         --loading-credits-color: rgb(245, 245, 245);
+         /* Scrollbar Colors */
+         --scrollbar-thumb: rgb(50, 50, 50);
+         --scrollbar-track: transparent;
+         /* Shadow Colors */
+         --shadow-dark: rgba(0, 0, 0, 0.5);
+         --shadow-medium: rgba(0, 0, 0, 0.6);
+         --shadow-light: rgba(0, 0, 0, 0.4);
+         /* Spacing Values */
+         --spacing-xs: 4px;
+         --spacing-sm: 8px;
+         --spacing-md: 12px;
+         --spacing-lg: 16px;
+         --spacing-xl: 20px;
+         --spacing-xxl: 25px;
+         --spacing-xxxl: 30px;
+         /* Border Radius */
+         --radius-sm: 5px;
+         --radius-md: 8px;
+         --radius-lg: 10px;
+         --radius-xl: 12px;
+         --radius-full: 50%;
+         /* Font Sizes */
+         --font-sm: 0.9rem;
+         --font-base: 1rem;
+         --font-md: 1.1rem;
+         --font-lg: 1.2rem;
+         --font-xl: 1.6rem;
+         --font-xxl: 1.7rem;
+         --font-xxxl: 1.8rem;
+         --font-icon-sm: 1.2rem;
+         --font-icon-md: 1.8rem;
+         --font-icon-lg: 2.1rem;
+         --font-icon-xl: 64px;
+         /* Transitions */
+         --transition-fast: 0.2s ease;
+         --transition-base: 0.3s ease;
+         --transition-slow: 0.4s all;
+         --transition-slower: 0.5s;
+         /* Z-index */
+         --z-overlay: 1;
+         --z-header: 10;
+         --z-sidebar: 20;
+         --z-signin: 99999;
+         --z-loading: 500000;
+         /* Dimensions */
+         --sidebar-width: 260px;
+         --avatar-sm: 40px;
+         --avatar-md: 70px;
+         --avatar-lg: 80px;
+         --scrollbar-width: 6px;
+         }
+         /* Light theme overrides */
+         body.light-theme {
+         --bg-primary: #ffffff;
+         --bg-secondary: rgb(253, 253, 253);
+         --bg-tertiary: rgb(240, 240, 240);
+         --bg-gradient-dark: linear-gradient(145deg, #ffffff, #f0f0f0);
+         --bg-input: #ffffff;
+         --bg-profile: rgb(253, 253, 253);
+         --text-primary: #333;
+         --text-secondary: rgb(50, 50, 50);
+         --text-tertiary: rgb(80, 80, 80);
+         --text-muted: #333;
+         --text-light-gray: rgb(50, 50, 50);
+         --text-dark-gray: rgb(90, 90, 90);
+         --accent-button-text: rgb(30, 30, 30);
+         --error-color: #d32f2f;
+         --error-bg: #ff6666;
+         --error-hover: #ff4d4d;
+         --loading-overlay-bg: rgb(253, 253, 253);
+         --loading-credits-color: rgb(50, 50, 50);
+         --scrollbar-thumb: rgb(170, 170, 170);
+         --shadow-dark: rgba(0, 0, 0, 0.1);
+         --shadow-medium: rgba(0, 0, 0, 0.1);
+         --shadow-light: rgba(0, 0, 0, 0.1);
+         }
+         * {
+         margin: 0;
+         padding: 0;
+         box-sizing: border-box;
+         font-family: 'Roboto', sans-serif;
+         max-height: 999999px;
+         }
+         body {
+         background: var(--bg-primary);
+         color: var(--text-primary);
+         min-height: 100vh;
+         padding: var(--spacing-xl);
+         transition: var(--transition-base);
+         }
+         .container {
+         max-width: 1200px;
+         margin: 0 auto;
+         }
+         .header {
+         display: flex;
+         display: none;
+         justify-content: space-between;
+         align-items: center;
+         margin-bottom: var(--spacing-xxxl);
+         flex-wrap: wrap;
+         gap: var(--spacing-lg);
+         }
+         .header h1 {
+         font-size: var(--font-xxl);
+         color: var(--text-primary);
+         display: flex;
+         align-items: center;
+         gap: var(--spacing-md);
+         }
+         .theme-toggle {
+         background: var(--bg-secondary);
+         border: none;
+         color: var(--text-primary);
+         padding: var(--spacing-md) var(--spacing-xl);
+         border-radius: var(--radius-lg);
+         cursor: pointer;
+         font-size: var(--font-base);
+         display: flex;
+         align-items: center;
+         gap: var(--spacing-sm);
+         transition: var(--transition-base);
+         }
+         .theme-toggle:hover {
+         background: var(--bg-tertiary);
+         transform: translateY(-2px);
+         }
+         .game-info {
+         background: var(--bg-gradient-dark);
+         padding: var(--spacing-xl);
+         border-radius: var(--radius-lg);
+         margin-bottom: var(--spacing-xl);
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         flex-wrap: wrap;
+         gap: var(--spacing-lg);
+         box-shadow: 0 4px 6px var(--shadow-light);
+         }
+         .score-section {
+         display: flex;
+         gap: var(--spacing-xxxl);
+         flex-wrap: wrap;
+         }
+         .score-item {
+         text-align: center;
+         }
+         .score-label {
+         color: var(--text-tertiary);
+         font-size: var(--font-sm);
+         margin-bottom: var(--spacing-xs);
+         }
+         .score-value {
+         font-size: var(--font-xl);
+         font-weight: bold;
+         color: var(--accent-primary);
+         }
+         .target-amount {
+         background: var(--bg-secondary);
+         padding: var(--spacing-lg) var(--spacing-xxl);
+         border-radius: var(--radius-xl);
+         text-align: center;
+         width: 100%;
+         }
+         .target-label {
+         color: var(--text-tertiary);
+         font-size: var(--font-base);
+         margin-bottom: var(--spacing-sm);
+         }
+         .target-value {
+         font-size: var(--font-xxxl);
+         font-weight: bold;
+         color: var(--accent-primary);
+         }
+         .game-area {
+         display: grid;
+         grid-template-columns: 1fr 1fr;
+         gap: var(--spacing-xl);
+         margin-bottom: var(--spacing-xl);
+         }
+         .currency-panel {
+         background: var(--bg-secondary);
+         padding: var(--spacing-xl);
+         border-radius: var(--radius-lg);
+         box-shadow: 0 4px 6px var(--shadow-light);
+         }
+         .panel-title {
+         font-size: var(--font-lg);
+         margin-bottom: var(--spacing-lg);
+         color: var(--text-secondary);
+         display: flex;
+         align-items: center;
+         gap: var(--spacing-sm);
+         }
+         .currency-grid {
+         display: grid;
+         grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+         gap: var(--spacing-md);
+         margin-bottom: var(--spacing-lg);
+         }
+         .currency-item {
+         background: var(--bg-tertiary);
+         padding: var(--spacing-lg);
+         border-radius: var(--radius-md);
+         text-align: center;
+         cursor: pointer;
+         transition: var(--transition-base);
+         border: 2px solid transparent;
+         position: relative;
+         }
+         .currency-item:hover {
+         /*transform: translateY(-3px) scale(1.05);*/
+         border-color: var(--accent-primary);
+         box-shadow: 0 6px 12px var(--shadow-medium);
+         }
+         .currency-item.selected {
+         border-color: var(--accent-primary);
+         background: var(--bg-input);
+         }
+         .currency-icon {
+         font-size: var(--font-icon-lg);
+         margin-bottom: var(--spacing-sm);
+         }
+         .currency-value {
+         font-weight: bold;
+         color: var(--text-primary);
+         font-size: var(--font-md);
+         }
+         .count-badge {
+         position: absolute;
+         top: -8px;
+         right: -8px;
+         background: var(--accent-primary);
+         color: var(--accent-button-text);
+         width: 24px;
+         height: 24px;
+         border-radius: var(--radius-full);
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         font-size: var(--font-sm);
+         font-weight: bold;
+         box-shadow: 0 2px 4px var(--shadow-dark);
+         }
+         .current-total {
+         background: var(--bg-input);
+         padding: var(--spacing-lg);
+         border-radius: var(--radius-md);
+         text-align: center;
+         margin-top: var(--spacing-lg);
+         }
+         .current-label {
+         color: var(--text-tertiary);
+         font-size: var(--font-sm);
+         margin-bottom: var(--spacing-xs);
+         }
+         .current-value {
+         font-size: var(--font-xl);
+         font-weight: bold;
+         color: var(--text-primary);
+         }
+         .actions {
+         display: flex;
+         gap: var(--spacing-lg);
+         justify-content: center;
+         flex-wrap: wrap;
+         }
+         .btn {
+         padding: var(--spacing-lg) var(--spacing-xxxl);
+         border: none;
+         border-radius: var(--radius-lg);
+         font-size: var(--font-md);
+         font-weight: bold;
+         cursor: pointer;
+         transition: var(--transition-base);
+         display: flex;
+         align-items: center;
+         gap: var(--spacing-sm);
+         }
+         .btn-primary {
+         background: var(--accent-primary);
+         color: var(--accent-button-text);
+         }
+         .btn-primary:hover {
+         background: var(--accent-hover);
+         /*transform: translateY(-2px);*/
+         box-shadow: 0 4px 8px var(--shadow-medium);
+         }
+         .btn-secondary {
+         background: var(--bg-tertiary);
+         color: var(--text-primary);
+         }
+         .btn-secondary:hover {
+         background: var(--bg-input);
+         /*transform: translateY(-2px);*/
+         }
+         .btn-danger {
+         background: var(--error-bg);
+         color: var(--logout-text);
+         }
+         .btn-danger:hover {
+         background: var(--error-hover);
+         /*transform: translateY(-2px);*/
+         }
+         .feedback {
+         position: fixed;
+         top: 50%;
+         left: 50%;
+         transform: translate(-50%, -50%) scale(0);
+         background: var(--bg-secondary);
+         padding: var(--spacing-xxxl);
+         border-radius: var(--radius-xl);
+         text-align: center;
+         z-index: var(--z-signin);
+         box-shadow: 0 8px 32px var(--shadow-dark);
+         opacity: 0;
+         transition: all 0.3s ease;
+         }
+         .feedback.show {
+         transform: translate(-50%, -50%) scale(1);
+         opacity: 1;
+         }
+         .feedback-icon {
+         font-size: var(--font-icon-xl);
+         margin-bottom: var(--spacing-lg);
+         }
+         .feedback.success .feedback-icon {
+         color: #4caf50;
+         }
+         .feedback.error .feedback-icon {
+         color: var(--error-color);
+         }
+         .feedback h2 {
+         font-size: var(--font-xxl);
+         margin-bottom: var(--spacing-md);
+         color: var(--text-primary);
+         }
+         .feedback p {
+         font-size: var(--font-lg);
+         color: var(--text-secondary);
+         }
+         .overlay {
+         position: fixed;
+         top: 0;
+         left: 0;
+         width: 100%;
+         height: 100%;
+         background: var(--overlay-bg);
+         z-index: var(--z-overlay);
+         display: none;
+         }
+         .overlay.show {
+         display: block;
+         }
+         .confetti {
+         position: fixed;
+         width: 10px;
+         height: 10px;
+         background: var(--accent-primary);
+         position: absolute;
+         animation: confetti-fall 3s ease-out forwards;
+         }
+         @keyframes confetti-fall {
+         to {
+         transform: translateY(100vh) rotate(360deg);
+         opacity: 0;
+         }
+         }
+         @media (max-width: 768px) {
+         .game-area {
+         grid-template-columns: 1fr;
+         }
+         .currency-grid {
+         grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+         }
+         .header h1 {
+         font-size: var(--font-xl);
+         }
+         .score-section {
+         gap: var(--spacing-lg);
+         }
+         }
+         /* Scrollbar Styles */
+         ::-webkit-scrollbar {
+         width: var(--scrollbar-width);
+         }
+         ::-webkit-scrollbar-track {
+         background: var(--scrollbar-track);
+         }
+         ::-webkit-scrollbar-thumb {
+         background: var(--scrollbar-thumb);
+         border-radius: var(--radius-sm);
+         }
+         ::-webkit-scrollbar-thumb:hover {
+         background: var(--text-tertiary);
+         }
+         #confetti-canvas {
+         position: fixed;
+         top: 0;
+         left: 0;
+         width: 100%;
+         height: 100%;
+         pointer-events: none;
+         z-index: 9999999;
+         }
+      </style>
+   </head>
+   <body>
+      <canvas id="confetti-canvas"></canvas>
+      <div class="overlay" id="overlay"></div>
+      <div class="container">
+         <div class="header">
             <h1>
-                <i class="fas fa-coins"></i>
-                Rupee Master Game
+               <i class="fas fa-coins"></i>
+               Rupee Master Game
             </h1>
             <button class="theme-toggle" id="themeToggle">
-                <i class="fas fa-sun"></i>
-                <span>Light Mode</span>
+            <i class="fas fa-sun"></i>
+            <span>Light Mode</span>
             </button>
-        </div>
-
-        <div class="game-info">
+         </div>
+         <div class="game-info">
             <div class="score-section">
-                <div class="score-item">
-                    <div class="score-label">Score</div>
-                    <div class="score-value" id="score">0</div>
-                </div>
-                <div class="score-item">
-                    <div class="score-label">Level</div>
-                    <div class="score-value" id="level">1</div>
-                </div>
-                <div class="score-item">
-                    <div class="score-label">Streak</div>
-                    <div class="score-value" id="streak">0</div>
-                </div>
+               <div class="score-item">
+                  <div class="score-label">Score</div>
+                  <div class="score-value" id="score">0</div>
+               </div>
+               <div class="score-item">
+                  <div class="score-label">Level</div>
+                  <div class="score-value" id="level">1</div>
+               </div>
+               <div class="score-item">
+                  <div class="score-label">Streak</div>
+                  <div class="score-value" id="streak">0</div>
+               </div>
             </div>
             <div class="target-amount">
-                <div class="target-label">Make This Amount</div>
-                <div class="target-value">₹<span id="targetAmount">0</span></div>
+               <div class="target-label">Make This Amount</div>
+               <div class="target-value">₹<span id="targetAmount">0</span></div>
             </div>
-        </div>
-
-        <div class="game-area">
+         </div>
+         <div class="game-area">
             <div class="currency-panel">
-                <div class="panel-title">
-                    <i class="fas fa-coins"></i>
-                    Coins
-                </div>
-                <div class="currency-grid" id="coinsGrid"></div>
-                <div class="current-total">
-                    <div class="current-label">Your Total</div>
-                    <div class="current-value">₹<span id="currentTotal">0</span></div>
-                </div>
+               <div class="panel-title">
+                  <i class="fas fa-coins"></i>
+                  Coins
+               </div>
+               <div class="currency-grid" id="coinsGrid"></div>
+               <div class="current-total">
+                  <div class="current-label">Your Total</div>
+                  <div class="current-value">₹<span id="currentTotal">0</span></div>
+               </div>
             </div>
-
             <div class="currency-panel">
-                <div class="panel-title">
-                    <i class="fas fa-money-bill-wave"></i>
-                    Notes
-                </div>
-                <div class="currency-grid" id="notesGrid"></div>
+               <div class="panel-title">
+                  <i class="fas fa-money-bill-wave"></i>
+                  Notes
+               </div>
+               <div class="currency-grid" id="notesGrid"></div>
             </div>
-        </div>
-
-        <div class="actions">
+         </div>
+         <div class="actions">
             <button class="btn btn-primary" id="checkBtn">
-                <i class="fas fa-check-circle"></i>
-                Check Answer
+            <i class="fas fa-check-circle"></i>
+            Check Answer
             </button>
             <button class="btn btn-secondary" id="resetBtn">
-                <i class="fas fa-redo"></i>
-                Reset
+            <i class="fas fa-redo"></i>
+            Reset
             </button>
             <button class="btn btn-danger" id="newGameBtn">
-                <i class="fas fa-play"></i>
-                New Game
+            <i class="fas fa-play"></i>
+            New Game
             </button>
-        </div>
-    </div>
-
-    <div class="feedback" id="feedback">
-        <div class="feedback-icon"></div>
-        <h2 id="feedbackTitle"></h2>
-        <p id="feedbackMessage"></p>
-    </div>
-
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-
-    <script>
-        // Game State
-        const gameState = {
-            score: 0,
-            level: 1,
-            streak: 0,
-            targetAmount: 0,
-            currentTotal: 0,
-            selected: {}
-        };
-
-        // Currency denominations
-        const coins = [1, 2, 5, 10, 20];
-        const notes = [10, 20, 50, 100, 200, 500];
-
-        //
-        // NEW CHANGE: Removed the old 'currencyIcons' object.
-        // It's no longer needed as we build the icons in renderCurrency().
-        //
-
-        // Initialize game
-        function init() {
-            renderCurrency();
-            generateNewTarget();
-            updateDisplay();
-            setupEventListeners();
-        }
-
-/**
- * Triggers the confetti celebration.
- */
-function launchConfetti() {
-    const count = 200;
-    const defaults = {
-        origin: { y: 0.7 }
-    };
-
-    function fire(particleRatio, opts) {
-        confetti(Object.assign({}, defaults, opts, {
-            particleCount: Math.floor(count * particleRatio)
-        }));
-    }
-
-    fire(0.25, {
-        spread: 26,
-        startVelocity: 55,
-    });
-
-    fire(0.2, {
-        spread: 60,
-    });
-
-    fire(0.35, {
-        spread: 100,
-        decay: 0.91,
-        scalar: 0.8
-    });
-
-    fire(0.1, {
-        spread: 120,
-        startVelocity: 25,
-        decay: 0.92,
-        scalar: 1.2
-    });
-
-    fire(0.1, {
-        spread: 120,
-        startVelocity: 45,
-    });
-}
-
-
-        //
-        // NEW CHANGE: Updated renderCurrency() to use the 'font-rupee' library
-        //
-        function renderCurrency() {
-            const coinsGrid = document.getElementById('coinsGrid');
-            const notesGrid = document.getElementById('notesGrid');
-
-            // Use Rupee Font classes
-            // For coins: fr-1, fr-2, fr-5, fr-10c, fr-20c
-            // For notes: fr-10, fr-20, fr-50, fr-100, fr-200, fr-500
-
-            coinsGrid.innerHTML = coins.map(value => {
-                // Handle special 'c' suffix for 10 and 20 rupee coins
-                const iconClass = (value === 10 || value === 20) ? `fr-${value}c` : `fr-${value}`;
-                return `
-                <div class="currency-item" data-value="${value}" data-type="coin">
-                    <div class="currency-icon"><i class="fr ${iconClass}"></i></div>
-                    <div class="currency-value">₹${value}</div>
-                    <div class="count-badge" style="display: none;">0</div>
-                </div>
-                `;
-            }).join('');
-
-            notesGrid.innerHTML = notes.map(value => {
-                const iconClass = `fr-${value}`;
-                return `
-                <div class="currency-item" data-value="${value}" data-type="note">
-                    <div class="currency-icon"><i class="fr ${iconClass}"></i></div>
-                    <div class="currency-value">₹${value}</div>
-                    <div class="count-badge" style="display: none;">0</div>
-                </div>
-                `;
-            }).join('');
-
-            // Add click listeners
-            document.querySelectorAll('.currency-item').forEach(item => {
-                item.addEventListener('click', () => selectCurrency(item));
-            });
-        }
-
-        // Generate new target amount based on level
-        function generateNewTarget() {
-            const maxAmount = Math.min(50 + (gameState.level * 50), 1000);
-            const minAmount = Math.max(5, gameState.level * 5);
-            gameState.targetAmount = Math.floor(Math.random() * (maxAmount - minAmount + 1)) + minAmount;
-            document.getElementById('targetAmount').textContent = gameState.targetAmount;
-        }
-
-        // Select currency
-        function selectCurrency(item) {
-            const value = parseInt(item.dataset.value);
-            
-            if (!gameState.selected[value]) {
-                gameState.selected[value] = 0;
-            }
-            
-            gameState.selected[value]++;
-            gameState.currentTotal += value;
-            
-            const badge = item.querySelector('.count-badge');
-            badge.textContent = gameState.selected[value];
-            badge.style.display = 'flex';
-            item.classList.add('selected');
-            
-            updateDisplay();
-            
-            // Visual feedback
-            item.style.transform = 'scale(1.1)';
-            setTimeout(() => {
-                item.style.transform = '';
-            }, 200);
-        }
-
-        // Update display
-        function updateDisplay() {
-            document.getElementById('score').textContent = gameState.score;
-            document.getElementById('level').textContent = gameState.level;
-            document.getElementById('streak').textContent = gameState.streak;
-            document.getElementById('currentTotal').textContent = gameState.currentTotal;
-        }
-
-        // Check answer
-        function checkAnswer() {
-            const overlay = document.getElementById('overlay');
-            const feedback = document.getElementById('feedback');
-            const feedbackIcon = feedback.querySelector('.feedback-icon');
-            const feedbackTitle = document.getElementById('feedbackTitle');
-            const feedbackMessage = document.getElementById('feedbackMessage');
-
-            overlay.classList.add('show');
-            
-            if (gameState.currentTotal === gameState.targetAmount) {
-                // Correct answer
-                feedback.className = 'feedback success show';
-                feedbackIcon.innerHTML = '<i class="fas fa-trophy"></i>';
-                feedbackTitle.textContent = 'Amazing! 🎉';
-                feedbackMessage.textContent = `You got it right! +${gameState.level * 10} points`;
-                
-                gameState.score += gameState.level * 10;
-                gameState.streak++;
-                
-                if (gameState.streak % 3 === 0) {
-                    gameState.level++;
-                }
-                
-                launchConfetti();
-                
-                setTimeout(() => {
-                    overlay.classList.remove('show');
-                    feedback.classList.remove('show');
-                    resetSelection();
-                    generateNewTarget();
-                    updateDisplay();
-                }, 2000);
-            } else {
-                // Wrong answer
-                feedback.className = 'feedback error show';
-                feedbackIcon.innerHTML = '<i class="fas fa-times-circle"></i>';
-                feedbackTitle.textContent = 'Oops! Try Again';
-                
-                const difference = Math.abs(gameState.currentTotal - gameState.targetAmount);
-                if (gameState.currentTotal > gameState.targetAmount) {
-                    feedbackMessage.textContent = `Too much by ₹${difference}. Try removing some!`;
-                } else {
-                    feedbackMessage.textContent = `Too little by ₹${difference}. Add more!`;
-                }
-                
-                gameState.streak = 0;
-                
-                setTimeout(() => {
-                    overlay.classList.remove('show');
-                    feedback.classList.remove('show');
-                }, 2000);
-            }
-            
-            updateDisplay();
-        }
-
-        // Reset selection
-        function resetSelection() {
-            gameState.selected = {};
-            gameState.currentTotal = 0;
-            
-            document.querySelectorAll('.currency-item').forEach(item => {
-                item.classList.remove('selected');
-                const badge = item.querySelector('.count-badge');
-                badge.style.display = 'none';
-                badge.textContent = '0';
-            });
-            
-            updateDisplay();
-        }
-
-        // New game
-        function newGame() {
-            gameState.score = 0;
-            gameState.level = 1;
-            gameState.streak = 0;
-            resetSelection();
-            generateNewTarget();
-            updateDisplay();
-        }
-
-        // Create confetti effect
-        function createConfetti() {
-            const colors = ['#ffc107', '#4caf50', '#2196f3', '#f44336', '#9c27b0'];
-            for (let i = 0; i < 50; i++) {
-                setTimeout(() => {
-                    const confetti = document.createElement('div');
-                    confetti.className = 'confetti';
-                    confetti.style.left = Math.random() * window.innerWidth + 'px';
-                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-                    confetti.style.animationDelay = Math.random() * 0.5 + 's';
-                    document.body.appendChild(confetti);
-                    
-                    setTimeout(() => confetti.remove(), 3000);
-                }, i * 30);
-            }
-        }
-
-        // Theme toggle
-        function toggleTheme() {
-            document.body.classList.toggle('light-theme');
-            const isDark = !document.body.classList.contains('light-theme');
-            const themeBtn = document.getElementById('themeToggle');
-            themeBtn.innerHTML = isDark 
-                ? '<i class="fas fa-sun"></i><span>Light Mode</span>' 
-                : '<i class="fas fa-moon"></i><span>Dark Mode</span>';
-        }
-
-        // Setup event listeners
-        function setupEventListeners() {
-            document.getElementById('checkBtn').addEventListener('click', checkAnswer);
-            document.getElementById('resetBtn').addEventListener('click', resetSelection);
-            document.getElementById('newGameBtn').addEventListener('click', newGame);
-            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-        }
-
-        // Start game
-        init();
-    </script>
-</body>
+         </div>
+      </div>
+      <div class="feedback" id="feedback">
+         <div class="feedback-icon"></div>
+         <h2 id="feedbackTitle"></h2>
+         <p id="feedbackMessage"></p>
+      </div>
+      <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+      <script>
+         // Game State
+         const gameState = {
+             score: 0,
+             level: 1,
+             streak: 0,
+             targetAmount: 0,
+             currentTotal: 0,
+             selected: {}
+         };
+         
+         // Currency denominations
+         const coins = [1, 2, 5, 10, 20];
+         const notes = [10, 20, 50, 100, 200, 500];
+         
+         //
+         // NEW CHANGE: Removed the old 'currencyIcons' object.
+         // It's no longer needed as we build the icons in renderCurrency().
+         //
+         
+         // Initialize game
+         function init() {
+             renderCurrency();
+             generateNewTarget();
+             updateDisplay();
+             setupEventListeners();
+         }
+         
+         /**
+         * Triggers the confetti celebration.
+         */
+         function launchConfetti() {
+         const count = 200;
+         const defaults = {
+         origin: { y: 0.7 }
+         };
+         
+         function fire(particleRatio, opts) {
+         confetti(Object.assign({}, defaults, opts, {
+             particleCount: Math.floor(count * particleRatio)
+         }));
+         }
+         
+         fire(0.25, {
+         spread: 26,
+         startVelocity: 55,
+         });
+         
+         fire(0.2, {
+         spread: 60,
+         });
+         
+         fire(0.35, {
+         spread: 100,
+         decay: 0.91,
+         scalar: 0.8
+         });
+         
+         fire(0.1, {
+         spread: 120,
+         startVelocity: 25,
+         decay: 0.92,
+         scalar: 1.2
+         });
+         
+         fire(0.1, {
+         spread: 120,
+         startVelocity: 45,
+         });
+         }
+         
+         
+         //
+         // NEW CHANGE: Updated renderCurrency() to use the 'font-rupee' library
+         //
+         function renderCurrency() {
+             const coinsGrid = document.getElementById('coinsGrid');
+             const notesGrid = document.getElementById('notesGrid');
+         
+             // Use Rupee Font classes
+             // For coins: fr-1, fr-2, fr-5, fr-10c, fr-20c
+             // For notes: fr-10, fr-20, fr-50, fr-100, fr-200, fr-500
+         
+             coinsGrid.innerHTML = coins.map(value => {
+                 // Handle special 'c' suffix for 10 and 20 rupee coins
+                 const iconClass = (value === 10 || value === 20) ? `fr-${value}c` : `fr-${value}`;
+                 return `
+                 <div class="currency-item" data-value="${value}" data-type="coin">
+                     <div class="currency-icon"><i class="fr ${iconClass}"></i></div>
+                     <div class="currency-value">₹${value}</div>
+                     <div class="count-badge" style="display: none;">0</div>
+                 </div>
+                 `;
+             }).join('');
+         
+             notesGrid.innerHTML = notes.map(value => {
+                 const iconClass = `fr-${value}`;
+                 return `
+                 <div class="currency-item" data-value="${value}" data-type="note">
+                     <div class="currency-icon"><i class="fr ${iconClass}"></i></div>
+                     <div class="currency-value">₹${value}</div>
+                     <div class="count-badge" style="display: none;">0</div>
+                 </div>
+                 `;
+             }).join('');
+         
+             // Add click listeners
+             document.querySelectorAll('.currency-item').forEach(item => {
+                 item.addEventListener('click', () => selectCurrency(item));
+             });
+         }
+         
+         // Generate new target amount based on level
+         function generateNewTarget() {
+             const maxAmount = Math.min(50 + (gameState.level * 50), 1000);
+             const minAmount = Math.max(5, gameState.level * 5);
+             gameState.targetAmount = Math.floor(Math.random() * (maxAmount - minAmount + 1)) + minAmount;
+             document.getElementById('targetAmount').textContent = gameState.targetAmount;
+         }
+         
+         // Select currency
+         function selectCurrency(item) {
+             const value = parseInt(item.dataset.value);
+             
+             if (!gameState.selected[value]) {
+                 gameState.selected[value] = 0;
+             }
+             
+             gameState.selected[value]++;
+             gameState.currentTotal += value;
+             
+             const badge = item.querySelector('.count-badge');
+             badge.textContent = gameState.selected[value];
+             badge.style.display = 'flex';
+             item.classList.add('selected');
+             
+             updateDisplay();
+             
+             // Visual feedback
+             item.style.transform = 'scale(1.1)';
+             setTimeout(() => {
+                 item.style.transform = '';
+             }, 200);
+         }
+         
+         // Update display
+         function updateDisplay() {
+             document.getElementById('score').textContent = gameState.score;
+             document.getElementById('level').textContent = gameState.level;
+             document.getElementById('streak').textContent = gameState.streak;
+             document.getElementById('currentTotal').textContent = gameState.currentTotal;
+         }
+         
+         // Check answer
+         function checkAnswer() {
+             const overlay = document.getElementById('overlay');
+             const feedback = document.getElementById('feedback');
+             const feedbackIcon = feedback.querySelector('.feedback-icon');
+             const feedbackTitle = document.getElementById('feedbackTitle');
+             const feedbackMessage = document.getElementById('feedbackMessage');
+         
+             overlay.classList.add('show');
+             
+             if (gameState.currentTotal === gameState.targetAmount) {
+                 // Correct answer
+                 feedback.className = 'feedback success show';
+                 feedbackIcon.innerHTML = '<i class="fas fa-trophy"></i>';
+                 feedbackTitle.textContent = 'Amazing! 🎉';
+                 feedbackMessage.textContent = `You got it right! +${gameState.level * 10} points`;
+                 
+                 gameState.score += gameState.level * 10;
+                 gameState.streak++;
+                 
+                 if (gameState.streak % 3 === 0) {
+                     gameState.level++;
+                 }
+                 
+                 launchConfetti();
+                 
+                 setTimeout(() => {
+                     overlay.classList.remove('show');
+                     feedback.classList.remove('show');
+                     resetSelection();
+                     generateNewTarget();
+                     updateDisplay();
+                 }, 2000);
+             } else {
+                 // Wrong answer
+                 feedback.className = 'feedback error show';
+                 feedbackIcon.innerHTML = '<i class="fas fa-times-circle"></i>';
+                 feedbackTitle.textContent = 'Oops! Try Again';
+                 
+                 const difference = Math.abs(gameState.currentTotal - gameState.targetAmount);
+                 if (gameState.currentTotal > gameState.targetAmount) {
+                     feedbackMessage.textContent = `Too much by ₹${difference}. Try removing some!`;
+                 } else {
+                     feedbackMessage.textContent = `Too little by ₹${difference}. Add more!`;
+                 }
+                 
+                 gameState.streak = 0;
+                 
+                 setTimeout(() => {
+                     overlay.classList.remove('show');
+                     feedback.classList.remove('show');
+                 }, 2000);
+             }
+             
+             updateDisplay();
+         }
+         
+         // Reset selection
+         function resetSelection() {
+             gameState.selected = {};
+             gameState.currentTotal = 0;
+             
+             document.querySelectorAll('.currency-item').forEach(item => {
+                 item.classList.remove('selected');
+                 const badge = item.querySelector('.count-badge');
+                 badge.style.display = 'none';
+                 badge.textContent = '0';
+             });
+             
+             updateDisplay();
+         }
+         
+         // New game
+         function newGame() {
+             gameState.score = 0;
+             gameState.level = 1;
+             gameState.streak = 0;
+             resetSelection();
+             generateNewTarget();
+             updateDisplay();
+         }
+         
+         // Create confetti effect
+         function createConfetti() {
+             const colors = ['#ffc107', '#4caf50', '#2196f3', '#f44336', '#9c27b0'];
+             for (let i = 0; i < 50; i++) {
+                 setTimeout(() => {
+                     const confetti = document.createElement('div');
+                     confetti.className = 'confetti';
+                     confetti.style.left = Math.random() * window.innerWidth + 'px';
+                     confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                     confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                     document.body.appendChild(confetti);
+                     
+                     setTimeout(() => confetti.remove(), 3000);
+                 }, i * 30);
+             }
+         }
+         
+         // Theme toggle
+         function toggleTheme() {
+             document.body.classList.toggle('light-theme');
+             const isDark = !document.body.classList.contains('light-theme');
+             const themeBtn = document.getElementById('themeToggle');
+             themeBtn.innerHTML = isDark 
+                 ? '<i class="fas fa-sun"></i><span>Light Mode</span>' 
+                 : '<i class="fas fa-moon"></i><span>Dark Mode</span>';
+         }
+         
+         // Setup event listeners
+         function setupEventListeners() {
+             document.getElementById('checkBtn').addEventListener('click', checkAnswer);
+             document.getElementById('resetBtn').addEventListener('click', resetSelection);
+             document.getElementById('newGameBtn').addEventListener('click', newGame);
+             document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+         }
+         
+         // Start game
+         init();
+      </script>
+   </body>
 </html>
