@@ -346,53 +346,80 @@
             const contentDiv = document.getElementById('notification-content');
             
             if (!notification || !notification.message_title) {
-               contentDiv.innerHTML = `
-                  <div class="notification-card">
-                     <div class="empty-state">
-                        <div class="empty-icon">
-                           <i class="fas fa-bell-slash"></i>
+                contentDiv.innerHTML = `
+                    <div class="notification-card">
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-bell-slash"></i>
+                            </div>
+                            <div class="empty-text">Nothing to show</div>
                         </div>
-                        <div class="empty-text">Nothing to show</div>
-                     </div>
-                  </div>
-                  <button style="display: none" class="action-button" onclick="navigateBack()">
-                     <i class="fas fa-arrow-left"></i> Back to Notifications
-                  </button>
-               `;
-               return;
+                    </div>
+                    <button style="display: none" class="action-button" onclick="navigateBack()">
+                        <i class="fas fa-arrow-left"></i> Back to Notifications
+                    </button>
+                `;
+                return;
             }
-         
+        
             const messageContent = notification.detailed_message || notification.message_body || '';
             const formattedMessage = formatText(messageContent);
             const formattedTime = formatTimestamp(notification.created_at);
-         
+
+            // ==========================================================
+            // === 1. START: New logic to create the action button ======
+            // ==========================================================
+            let actionButtonHtml = '';
+            const extraData = notification.extra;
+
+            if (extraData && extraData.url && extraData.button_text) {
+                // Escape single quotes in the URL to prevent breaking the onclick attribute
+                const escapedUrl = extraData.url.replace(/'/g, "\\'");
+                
+                // Use .replace to safely render text (prevents HTML injection)
+                const safeButtonText = document.createElement('div');
+                safeButtonText.innerText = extraData.button_text;
+
+                actionButtonHtml = `
+                    <button class="action-button" onclick="window.open('${escapedUrl}', '_blank', 'noopener,noreferrer')">
+                        ${safeButtonText.innerHTML} <i class="fas fa-external-link-alt" style="margin-left: 8px; font-size: 0.9em;"></i>
+                    </button>
+                `;
+            }
+            // ==========================================================
+            // === END: New logic for the action button =================
+            // ==========================================================
+
             contentDiv.innerHTML = `
-               <div class="notification-card">
-                  <div class="notification-header">
-                     <div class="notification-icon">
-                        <i class="fas fa-bell"></i>
-                     </div>
-                     <div class="notification-title-section">
-                        <div class="notification-title">${notification.message_title}</div>
-                        <div class="notification-timestamp">
-                           <i class="far fa-clock"></i>
-                           ${formattedTime}
+                <div class="notification-card">
+                    <div class="notification-header">
+                        <div class="notification-icon">
+                            <i class="fas fa-bell"></i>
                         </div>
-                     </div>
-                  </div>
-                  <div class="notification-body">${formattedMessage}</div>
-               </div>
-               <button style="display: none" class="action-button" onclick="navigateBack()">
-                  <i class="fas fa-arrow-left"></i> Back to Notifications
-               </button>
+                        <div class="notification-title-section">
+                            <div class="notification-title">${notification.message_title}</div>
+                            <div class="notification-timestamp">
+                                <i class="far fa-clock"></i>
+                                ${formattedTime}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="notification-body">${formattedMessage}</div>
+                </div>
+
+                ${actionButtonHtml}
+
+                <button style="display: none" class="action-button" onclick="navigateBack()">
+                    <i class="fas fa-arrow-left"></i> Back to Notifications
+                </button>
             `;
-         
-             // Log in notification read logs
-             await parent.upsertData('notification_read_logs', {'student_id': parent.userId, 'notification_id': notification.id}, ['student_id', 'notification_id']);
-         
-             // Also refresh the unread notification count in the notification badge
-           window.parent.refreshNotificationBadge(false);
-         }
+        
+            // Log in notification read logs
+            await parent.upsertData('notification_read_logs', {'student_id': parent.userId, 'notification_id': notification.id}, ['student_id', 'notification_id']);
+        
+            // Also refresh the unread notification count in the notification badge
+            window.parent.refreshNotificationBadge(false);
+        }
          
          function navigateBack() {
             // Replace with your actual navigation logic
@@ -410,7 +437,7 @@
             const notification = await window.parent.selectData(
             'notifications',
             true,
-            'id, sent_by, created_at, message_title, message_body, detailed_message',
+            'id, sent_by, created_at, message_title, message_body, detailed_message, extra',
             ['id'],
             [notificationId]
             );
