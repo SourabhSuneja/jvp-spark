@@ -67,7 +67,7 @@ async function subscribeToPush(studentId) {
             endpoint: subscription.endpoint // The unique identifier for the device/browser
         };
 
-        const result = await upsert(subscriptionData, { onConflict: 'student_id,endpoint' });
+        const result = await upsertData('push_subscriptions', subscriptionData, ['student_id,endpoint']);
 
         if (result) {
             console.log('Subscription successfully associated with current student.');
