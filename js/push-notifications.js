@@ -112,37 +112,52 @@ async function unsubscribeFromPush() {
 
 // Listen for messages from the service worker
 navigator.serviceWorker.addEventListener('message', event => {
-    if (event.data && event.data.type === 'NOTIFICATION_CLICK') {
-        console.log(`Notification clicked with ID: ${event.data.id}`);
+  // **CHANGE**: Check for and use event.data.studentId
+  if (event.data && event.data.type === 'NOTIFICATION_CLICK') {
+    const notificationId = event.data.id;
+    const studentId = event.data.studentId;
 
-        // Load notification page into an iframe right away (app is already open)
-             PageManager.loadManualPage({
-    link: './pages/notifications/show.html?notification_id=' + event.data.id,
-    title: 'Notification',
-    page_key: 'show-notification'
-             });
+    console.log(`Notification clicked! ID: ${notificationId}, Student: ${studentId}`);
 
-        // Now you can call your custom function
-        if (typeof showNotification === 'function') {
-            showNotification(event.data.id);
-        }
+    // **CHANGE**: Pass both IDs to your page loader and handler function
+    
+    // Load notification page into an iframe
+    PageManager.loadManualPage({
+      link: `./pages/notifications/show.html?notification_id=${notificationId}&student_id=${studentId}`,
+      title: 'Notification',
+      page_key: 'show-notification'
+    });
+
+    // Now you can call your custom function
+    if (typeof showNotification === 'function') {
+      showNotification(notificationId, studentId);
     }
+  }
 });
 
 // Also, check for the query parameter when the app loads
 window.addEventListener('load', () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const notificationId = urlParams.get('notification_id');
-    if (notificationId) {
-        console.log(`App opened from notification with ID: ${notificationId}`);
-        if (typeof showNotification === 'function') {
-            showNotification(notificationId);
-        }
+  const urlParams = new URLSearchParams(window.location.search);
+  
+  // **CHANGE**: Get both query parameters
+  const notificationId = urlParams.get('notification_id');
+  const studentId = urlParams.get('student_id');
+
+  // **CHANGE**: Pass both IDs to your handler function
+  if (notificationId) {
+    console.log(`App opened from notification! ID: ${notificationId}, Student: ${studentId}`);
+    if (typeof showNotification === 'function') {
+      showNotification(notificationId, studentId);
     }
+  }
 });
 
-
-function showNotification(notificationId) {
-  // Just store the notification ID in a global variable, the app's main script will see how to handle this
+// **CHANGE**: Update function signature to accept both IDs
+function showNotification(notificationId, studentId) {
+  // Just store the IDs in global variables, the app's main script will see how to handle this
   notifId = notificationId;
+  globalStudentId = studentId;
+
+  console.log(`showNotification called. Stored notifId: ${notifId}, globalStudentId: ${globalStudentId}`);
+  // Now your app can use both `notifId` and `globalStudentId`
 }
