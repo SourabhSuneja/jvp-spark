@@ -54,7 +54,7 @@
              * @param {string} avatar - The URL for the student's avatar.
              * @returns {boolean} True if successful, false if token already exists.
              */
-            function addAccount(token, name, sClass, avatar) {
+            function addAccount(studentID, token, name, sClass, avatar) {
                 const accounts = getAccounts();
                 const existing = accounts.find(acc => acc.token === token);
                 
@@ -63,7 +63,7 @@
                     return false;
                 }
 
-                const newAccount = { token, name, sClass, avatar };
+                const newAccount = { studentID, token, name, sClass, avatar };
                 accounts.push(newAccount);
                 saveAccounts(accounts);
                 
@@ -84,7 +84,7 @@
              * @param {string} sClass - The new class.
              * @param {string} avatar - The new avatar URL.
              */
-            function updateAccount(token, name, sClass, avatar) {
+            function updateAccount(studentID, token, name, sClass, avatar) {
                 const accounts = getAccounts();
                 const accountIndex = accounts.findIndex(acc => acc.token === token);
                 
@@ -93,7 +93,7 @@
                     return;
                 }
                 
-                accounts[accountIndex] = { token, name, sClass, avatar };
+                accounts[accountIndex] = { studentID, token, name, sClass, avatar };
                 saveAccounts(accounts);
                 //renderAccounts();
                 console.log('Account updated successfully!');
