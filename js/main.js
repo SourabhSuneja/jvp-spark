@@ -36,31 +36,31 @@ const PRELOADABLE_RESOURCES = [
 
 // Array for holding subject order for sorting subjects on dashboard later on
 const ALL_SUBJECTS = [
-  "General",
-  "English",
-  "Hindi",
-  "Science",
-  "Maths",
-  "EVS",
-  "Social Science",
-  "Sanskrit",
-  "Computer",
-  "Data Science",
-  "GK",
-  "Physics",
-  "Chemistry",
-  "Biology",
-  "P.E.",
-  "I.P.",
-  "Psychology",
-  "Applied Maths",
-  "Fine Arts",
-  "Geography",
-  "Accountancy",
-  "B.St.",
-  "Economics",
-  "History",
-  "Pol. Sci."
+   "General",
+   "English",
+   "Hindi",
+   "Science",
+   "Maths",
+   "EVS",
+   "Social Science",
+   "Sanskrit",
+   "Computer",
+   "Data Science",
+   "GK",
+   "Physics",
+   "Chemistry",
+   "Biology",
+   "P.E.",
+   "I.P.",
+   "Psychology",
+   "Applied Maths",
+   "Fine Arts",
+   "Geography",
+   "Accountancy",
+   "B.St.",
+   "Economics",
+   "History",
+   "Pol. Sci."
 ];
 
 // Variables to store notification ID and target student ID in case the app was opened by notification click
@@ -148,24 +148,36 @@ const BackendManager = {
 
    // Function to poll new notifications when the app is open
    getNewNotifications: async (latestNotifID) => {
-      if (!latestNotifID) return { count_unread: 0, notifications: [] }; // Don't poll if we have no reference
+      if (!latestNotifID) return {
+         count_unread: 0,
+         notifications: []
+      }; // Don't poll if we have no reference
       try {
          const params = {
             'latest_known_id': latestNotifID
          };
          // Note: Using 'get_new_notifications' (the new SQL function name)
          const data = await invokeFunction('get_new_notifications', params, true);
-         return data || { count_unread: 0, notifications: [] }; 
+         return data || {
+            count_unread: 0,
+            notifications: []
+         };
       } catch (err) {
          console.error("Error fetching new notifications:", err);
-         return { count_unread: 0, notifications: [] };
+         return {
+            count_unread: 0,
+            notifications: []
+         };
       }
    },
 
    // Function to get details for the available question banks for a given grade & subject
    getQbDetails: async (grade, subject) => {
       try {
-         const data = await invokeFunction('get_question_banks_with_details', {'p_grade': parseInt(grade), 'p_subject': subject}, false);
+         const data = await invokeFunction('get_question_banks_with_details', {
+            'p_grade': parseInt(grade),
+            'p_subject': subject
+         }, false);
          return data || []; // Return data or an empty array
       } catch (err) {
          console.error("Error fetching dashboard data:", err);
@@ -176,7 +188,9 @@ const BackendManager = {
    // Function to get details for the available work assignments for a given subject
    getWaDetails: async (subject) => {
       try {
-         const data = await invokeFunction('get_student_assignments', {'p_subject': subject}, false);
+         const data = await invokeFunction('get_student_assignments', {
+            'p_subject': subject
+         }, false);
          return data || []; // Return data or an empty array
       } catch (err) {
          console.error("Error fetching dashboard data:", err);
@@ -264,7 +278,7 @@ const NotificationBadge = {
       this.bellIcon.appendChild(this.rippleElement);
    },
 
-   updateNotificationCount(count, showRipples=true) {
+   updateNotificationCount(count, showRipples = true) {
       if (!this.badgeElement || !this.rippleElement) {
          this.init();
       }
@@ -275,7 +289,7 @@ const NotificationBadge = {
          DOMUtils.setDisplay(this.badgeElement, 'flex');
 
          // Activate ripple animation if showRipples is set to true
-         if(showRipples) {
+         if (showRipples) {
             this.rippleElement.classList.add('active');
 
             // Stop ripple after 10 seconds
@@ -347,8 +361,20 @@ const UIComponents = {
             USER_DATA[key] = profile[key];
          });
 
-         // Also add account to local storage
-         addAccount(USER_DATA['access_token'], USER_DATA['name'], USER_DATA['grade'] + USER_DATA['section'], `https://avataaars.io/?${USER_DATA.avatar}`);
+         // Also add/update account to local storage
+         const {
+            access_token,
+            name,
+            grade,
+            section,
+            avatar
+         } = USER_DATA;
+         const className = `${grade}-${section}`;
+         const avatarUrl = `https://avataaars.io/?${avatar}`;
+
+         if (!addAccount(window.userId, access_token, name, className, avatarUrl)) {
+            updateAccount(window.userId, access_token, name, className, avatarUrl);
+         }
       }
 
       // Toggle to light theme if theme in user settings is 1 (= light theme)
@@ -534,7 +560,7 @@ function setupSubjectSwitcher() {
    }
 
    // Also store current subject in USER_DATA for other pages to access
-    USER_DATA['currentSubject'] = currentSubject;
+   USER_DATA['currentSubject'] = currentSubject;
 
    subscribedSubjects.forEach(subject => {
       const button = document.createElement('button');
@@ -549,18 +575,18 @@ function setupSubjectSwitcher() {
       button.onclick = async () => {
          currentSubject = subject;
          // Also store current subject in USER_DATA for other pages to access
-          USER_DATA['currentSubject'] = currentSubject;
+         USER_DATA['currentSubject'] = currentSubject;
          document.querySelectorAll('.subject-btn').forEach(btn => btn.classList.remove('active'));
          button.classList.add('active');
          // Pre-fetch available question banks for this subject
-         if(!(currentSubject in QB_DETAILS)) {
-             showProcessingDialog();
-         QB_DETAILS[currentSubject] = await BackendManager.getQbDetails(USER_DATA['grade'], currentSubject);
-             WA_DETAILS[currentSubject] = await BackendManager.getWaDetails(currentSubject);
+         if (!(currentSubject in QB_DETAILS)) {
+            showProcessingDialog();
+            QB_DETAILS[currentSubject] = await BackendManager.getQbDetails(USER_DATA['grade'], currentSubject);
+            WA_DETAILS[currentSubject] = await BackendManager.getWaDetails(currentSubject);
 
-             hideProcessingDialog();
+            hideProcessingDialog();
          }
-         
+
          renderDashboard(subject);
       };
       switcher.appendChild(button);
@@ -629,7 +655,7 @@ const PageManager = {
       // Hide subject switcher on external pages
       DOMUtils.hide(elements.subjectSwitcher);
       elements.content.classList.add('externalPage');
-      
+
 
       // Find card data from the new SUBJECT_DASHBOARDS object
       const allCards = Object.values(DASHBOARD_DATA).flat();
@@ -644,33 +670,33 @@ const PageManager = {
       }
 
       // Show question bank selector if card requires selection
-      if(cardData.extra && cardData.extra.qbRequired) {
+      if (cardData.extra && cardData.extra.qbRequired) {
          hideProcessingDialog();
          const allowedQTypes = cardData?.extra?.allowedQTypes ?? "all";
          const selectedQbIds = await QuestionBankSelector.show(allowedQTypes);
-         if(!selectedQbIds) {
-              window.history.back();
-             return;
+         if (!selectedQbIds) {
+            window.history.back();
+            return;
          }
 
          showProcessingDialog();
          USER_DATA['selectedQbIds'] = selectedQbIds;
          console.log(USER_DATA);
-       }
+      }
 
       // Show work assignment selector if card requires selection
-      if(cardData.extra && cardData.extra.waRequired) {
+      if (cardData.extra && cardData.extra.waRequired) {
          hideProcessingDialog();
          const selectedAssignmentId = await WorkAssignmentSelector.show();
-         if(!selectedAssignmentId) {
-              window.history.back();
-             return;
+         if (!selectedAssignmentId) {
+            window.history.back();
+            return;
          }
 
          showProcessingDialog();
          USER_DATA['selectedAssignmentId'] = selectedAssignmentId;
          console.log(USER_DATA);
-       }
+      }
 
       // Theme forcing logic
       if (cardData.extra && cardData.extra.forcedTheme) {
@@ -694,68 +720,68 @@ const PageManager = {
       elements.content.appendChild(iframe);
    },
 
-_renderManualPage: (itemData) => {
-    const {
-       link: url,
-       title,
-       page_key: pageKey,
-       min_width: minWidth,
-       extra
-    } = itemData;
+   _renderManualPage: (itemData) => {
+      const {
+         link: url,
+         title,
+         page_key: pageKey,
+         min_width: minWidth,
+         extra
+      } = itemData;
 
-    if (!url) return;
+      if (!url) return;
 
-    showProcessingDialog();
-    APP_CONFIG.currentPage = pageKey;
+      showProcessingDialog();
+      APP_CONFIG.currentPage = pageKey;
 
-    const elements = {
-       content: DOMUtils.getElementById('content'),
-       screenName: DOMUtils.getElementById('screen-name'),
-       studentProfile: DOMUtils.getElementById('student-profile'),
-       menuBtn: DOMUtils.getElementById('menu-btn'),
-       backBtn: DOMUtils.getElementById('back-btn'),
-       subjectSwitcher: DOMUtils.getElementById('subject-switcher')
-    };
+      const elements = {
+         content: DOMUtils.getElementById('content'),
+         screenName: DOMUtils.getElementById('screen-name'),
+         studentProfile: DOMUtils.getElementById('student-profile'),
+         menuBtn: DOMUtils.getElementById('menu-btn'),
+         backBtn: DOMUtils.getElementById('back-btn'),
+         subjectSwitcher: DOMUtils.getElementById('subject-switcher')
+      };
 
-    // Set up the page layout like other external pages
-    elements.content.innerHTML = '';
-    DOMUtils.hide(elements.subjectSwitcher);
-    elements.content.classList.add('externalPage');
-    elements.screenName.innerText = `${title} `;
-    DOMUtils.hide(elements.studentProfile);
-    DOMUtils.hide(elements.menuBtn);
-    DOMUtils.show(elements.backBtn);
+      // Set up the page layout like other external pages
+      elements.content.innerHTML = '';
+      DOMUtils.hide(elements.subjectSwitcher);
+      elements.content.classList.add('externalPage');
+      elements.screenName.innerText = `${title} `;
+      DOMUtils.hide(elements.studentProfile);
+      DOMUtils.hide(elements.menuBtn);
+      DOMUtils.show(elements.backBtn);
 
-    // Theme forcing logic for manual pages
-    if (extra && extra.forcedTheme) {
-       if (ThemeManager.userPreferredTheme === null) {
-          ThemeManager.userPreferredTheme = APP_CONFIG.theme;
-       }
-       ThemeManager.setTheme(extra.forcedTheme, false);
-    }
+      // Theme forcing logic for manual pages
+      if (extra && extra.forcedTheme) {
+         if (ThemeManager.userPreferredTheme === null) {
+            ThemeManager.userPreferredTheme = APP_CONFIG.theme;
+         }
+         ThemeManager.setTheme(extra.forcedTheme, false);
+      }
 
-    // Create and append the iframe
-    const iframe = UIComponents.createIframe(url, pageKey, minWidth);
-    elements.content.appendChild(iframe);
-},
+      // Create and append the iframe
+      const iframe = UIComponents.createIframe(url, pageKey, minWidth);
+      elements.content.appendChild(iframe);
+   },
 
    // Function to load custom URLs into an iframe
 
-loadManualPage: (itemData) => {
+   loadManualPage: (itemData) => {
 
-    // 1. Render the page without touching history
-    PageManager._renderManualPage(itemData);
+      // 1. Render the page without touching history
+      PageManager._renderManualPage(itemData);
 
-    // 2. Push state to browser history for back button functionality
-    const state = {
-        page: itemData.page_key,
-        manual: true,
-        // We store the full itemData to easily restore it
-        itemData: itemData
-    };
-    PageManager.manualHistory.push(state); // Keep track internally
-    window.history.pushState(state, itemData.title, `#${itemData.page_key}`);
-},
+      // 2. Push state to browser history for back button functionality
+      const state = {
+         page: itemData.page_key,
+         manual: true,
+         // We store the full itemData to easily restore it
+         itemData: itemData
+      };
+      PageManager.manualHistory.push(state); // Keep track internally
+      window.history.pushState(state, itemData.title, `#${itemData.page_key}`);
+   },
 
 
    loadHomePage: (elements) => {
@@ -1045,8 +1071,8 @@ const AppManager = {
 
       // --- Notifications fetching ---
       const initialNotifData = await BackendManager.getNotifications(null, 5);
-      USER_DATA['notifications'] = initialNotifData; 
-      
+      USER_DATA['notifications'] = initialNotifData;
+
       // Store the ID of the newest notification
       if (initialNotifData.notifications && initialNotifData.notifications.length > 0) {
          // Assuming notifications[0] is the newest (as per ORDER BY DESC)
@@ -1098,7 +1124,7 @@ const AppManager = {
 
    checkFoNewNotifications: async () => {
       const data = await BackendManager.getNewNotifications(AppManager.latestKnownNotificationId);
-      
+
       if (!data) return; // Error or no data
 
       const newNotifications = data.notifications || [];
@@ -1107,34 +1133,34 @@ const AppManager = {
       // Case 1: New notifications have arrived!
       if (newNotifications.length > 0) {
          console.log(`Found ${newNotifications.length} new notifications.`);
-         
+
          // 1. Update the latest known ID to the newest one (which is the first in the list)
          AppManager.latestKnownNotificationId = newNotifications[0].id;
-         
+
          // 2. Prepend new notifications to the global USER_DATA (newest first)
          USER_DATA['notifications']['notifications'].unshift(...newNotifications);
-         
+
          // 3. Update the global unread count
          USER_DATA['notifications']['count_unread'] = newCount;
-         
+
          // 4. Update the badge (with ripple)
          NotificationBadge.updateNotificationCount(newCount, true);
-         
+
          // 5. If the notification iframe is open, send the new notifications to it
 
          const notifFrame = document.getElementById('notifications'); // <<<--- the iframe id is always the page key
          if (notifFrame && notifFrame.contentWindow && typeof notifFrame.contentWindow.prependNewNotifications === 'function') {
             notifFrame.contentWindow.prependNewNotifications(newNotifications);
          }
-         
-      } 
+
+      }
       // Case 2: No new notifications, but the unread count has changed
       // (e.g., user read a notification on another device)
       else if (newCount !== USER_DATA['notifications']['count_unread']) {
-         
+
          // 1. Update the global unread count
          USER_DATA['notifications']['count_unread'] = newCount;
-         
+
          // 2. Update the badge (no ripple)
          NotificationBadge.updateNotificationCount(newCount, false);
       }
@@ -1145,10 +1171,10 @@ const AppManager = {
       if (AppManager.notificationPollInterval) {
          clearInterval(AppManager.notificationPollInterval);
       }
-      
+
       // Start the new poller
       AppManager.notificationPollInterval = setInterval(
-         AppManager.checkFoNewNotifications, 
+         AppManager.checkFoNewNotifications,
          intervalMs
       );
       console.log(`Notification polling started (every ${intervalMs / 1000}s).`);
@@ -1188,9 +1214,9 @@ async function getNotifications(lastNotifID = null, pageSize = 5) {
    return data;
 }
 
-async function refreshNotificationBadge(showRipples=true) {
+async function refreshNotificationBadge(showRipples = true) {
    const data = await BackendManager.getNotifications(null, 0);
-   if(data) {
+   if (data) {
       NotificationBadge.updateNotificationCount(data.count_unread, showRipples);
    }
 }
@@ -1277,19 +1303,18 @@ window.addEventListener("popstate", (event) => {
       PageManager.loadPage("home");
       return;
    }
-   
+
    // If the state indicates a manually loaded page
    if (state.manual) {
       // We are going back to a previous manual page.
       // Pop the last entry from our internal history tracker.
-      PageManager.manualHistory.pop(); 
-      
+      PageManager.manualHistory.pop();
+
       // Render the page using the data from the state object,
       // without pushing a new history state.
-      PageManager._renderManualPage(state.itemData); 
+      PageManager._renderManualPage(state.itemData);
    } else {
       // It's a regular dashboard page, so load it normally.
       PageManager.loadPage(state.page);
    }
 });
-
