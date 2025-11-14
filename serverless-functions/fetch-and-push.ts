@@ -90,7 +90,6 @@ serve(async (req) => {
       { length: Math.ceil(subscriptions.length / BATCH_SIZE) },
       (_, i) => subscriptions
         .slice(i * BATCH_SIZE, (i + 1) * BATCH_SIZE)
-        .map(s => s.subscription_object)
     );
 
     // Step 7: Concurrently send notifications
