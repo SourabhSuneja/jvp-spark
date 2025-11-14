@@ -113,16 +113,12 @@ async function removeAccountPush(studentId) {
 
     if (subscription && studentId) {
         // Delete ONLY this student's row for this endpoint
-        const { error } = await supabase
-            .from('push_subscriptions')
-            .delete()
-            .eq('student_id', studentId)
-            .eq('endpoint', subscription.endpoint);
+        const result = await deleteRow('push_subscriptions', ['student_id', 'endpoint'], [studentId, subscription.endpoint]);
 
-        if (error) {
-            console.error('Error deleting subscription on account removal:', error);
-        } else {
+        if (result) {
             console.log('Device subscription disassociated for student.');
+        } else {
+            console.error('Error deleting subscription on account removal:', error);
         }
     }
 }
