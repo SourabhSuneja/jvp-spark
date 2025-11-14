@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Management</title>
+    
+    <!-- External Fonts and Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+    <style>
+        /* --- Provided CSS Variables --- */
+        :root {
+            /* Colors - Dark Theme */
+            --bg-primary: #121212;
+            --bg-secondary: #1f1f1f;
+            --bg-tertiary: #333333;
+            --bg-gradient-dark: linear-gradient(145deg, #1e1e1e, #333333);
+            --bg-input: #2c2c2c;
+            --bg-profile: rgb(25, 25, 25);
+            
+            /* Text Colors - Dark Theme */
+            --text-primary: #fff;
+            --text-secondary: #ddd;
+            --text-tertiary: #b0bec5;
+            --text-muted: rgb(230, 230, 230);
+            --text-light-gray: rgb(240, 240, 240);
+            --text-dark-gray: rgb(220, 220, 220);
+            
+            /* Accent Colors */
+            --accent-primary: #ffc107;
+            --accent-hover: #e0a800;
+            --accent-focus: #ffd54f;
+            --accent-button-text: black;
+
+            /* Logout button specific */
+            --logout-bg: #e53935;
+            --logout-text: #fff;
+            --logout-hover: #d32f2f;
+            
+            /* Status Colors */
+            --error-color: #FF3333;
+            --error-bg: #e53935;
+            --error-hover: #d32f2f;
+            
+            /* Overlay Colors */
+            --overlay-bg: rgba(0, 0, 0, 0.7);
+            --loading-overlay-bg: black;
+            --loading-credits-color: rgb(245, 245, 245);
+            
+            /* Scrollbar Colors */
+            --scrollbar-thumb: rgb(50, 50, 50);
+            --scrollbar-track: transparent;
+            
+            /* Shadow Colors */
+            --shadow-dark: rgba(0, 0, 0, 0.5);
+            --shadow-medium: rgba(0, 0, 0, 0.25);
+            --shadow-light: rgba(0, 0, 0, 0.1);
+            
+            /* Spacing Values */
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 12px;
+            --spacing-lg: 16px;
+            --spacing-xl: 20px;
+            --spacing-xxl: 25px;
+            --spacing-xxxl: 30px;
+            
+            /* Border Radius */
+            --radius-sm: 5px;
+            --radius-md: 8px;
+            --radius-lg: 10px;
+            --radius-xl: 12px;
+            --radius-full: 50%;
+            
+            /* Font Sizes */
+            --font-sm: 0.9rem;
+            --font-base: 1rem;
+            --font-md: 1.1rem;
+            --font-lg: 1.2rem;
+            --font-xl: 1.6rem;
+            
+            /* Transitions */
+            --transition-fast: 0.2s ease;
+            --transition-base: 0.3s ease;
+            
+            /* Z-index */
+            --z-overlay: 1000;
+            --z-modal: 1010;
+            --z-toast: 2000;
+        }
+
+        /* Light theme overrides */
+        body.light-theme {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-tertiary: #e9ecef;
+            --bg-gradient-dark: linear-gradient(145deg, #ffffff, #f0f0f0);
+            --bg-input: #f1f3f5;
+            --bg-profile: #ffffff;
+            
+            --text-primary: #212529;
+            --text-secondary: #495057;
+            --text-tertiary: #868e96;
+            --text-muted: #333;
+            --text-light-gray: #555;
+            --text-dark-gray: #333;
+            
+            --accent-button-text: #212529;
+            
+            --error-color: #d32f2f;
+            --error-bg: #f8d7da;
+            --error-hover: #e0a800;
+            
+            --overlay-bg: rgba(0, 0, 0, 0.5);
+            --loading-overlay-bg: #ffffff;
+            --loading-credits-color: #333;
+            
+            --scrollbar-thumb: #ced4da;
+            
+            --shadow-dark: rgba(0, 0, 0, 0.15);
+            --shadow-medium: rgba(0, 0, 0, 0.1);
+            --shadow-light: rgba(0, 0, 0, 0.05);
+        }
+
+        /* --- Base and Reset Styles --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+            max-height: 999999px;
+            transition: background-color var(--transition-base), color var(--transition-base), border-color var(--transition-base);
+        }
+
+        .noselect {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-user-drag: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            padding: var(--spacing-lg);
+            overflow-x: hidden;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--scrollbar-track);
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-thumb);
+            border-radius: var(--radius-lg);
+        }
+
+        /* --- Account Manager Container --- */
+        .account-manager {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: var(--font-xl);
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* --- Theme Toggle --- */
+        .theme-toggle {
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: var(--text-tertiary);
+            position: fixed;
+            top: var(--spacing-lg);
+            right: var(--spacing-lg);
+            z-index: var(--z-overlay);
+        }
+        .theme-toggle .fa-sun { display: none; }
+        .theme-toggle .fa-moon { display: block; }
+        
+        body.light-theme .theme-toggle .fa-sun { display: block; }
+        body.light-theme .theme-toggle .fa-moon { display: none; }
+
+        /* --- Account List --- */
+        .account-list {
+            display: grid;
+            gap: var(--spacing-md);
+        }
+
+        .account-card {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            background: var(--bg-secondary);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 4px 12px var(--shadow-medium);
+            border: 2px solid transparent;
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-base);
+        }
+        
+        .account-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px var(--shadow-dark);
+        }
+        
+        .account-card.active {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 15px -3px var(--accent-primary);
+        }
+
+        .account-avatar {
+            width: var(--avatar-md);
+            height: var(--avatar-md);
+            max-height: 50px;
+            max-width: 50px;
+            border-radius: var(--radius-full);
+            background-color: var(--bg-tertiary);
+            color: var(--text-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+        
+        .account-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .account-info {
+            flex-grow: 1;
+        }
+        
+        .account-name {
+            font-size: var(--font-md);
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .account-class {
+            font-size: var(--font-sm);
+            color: var(--text-tertiary);
+        }
+
+        .account-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+            flex-shrink: 0;
+        }
+
+        .btn-icon {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            font-size: var(--font-base);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+        }
+        
+        .btn-icon:hover {
+            transform: scale(1.1);
+        }
+        
+        .btn-icon.switch {
+            background-color: var(--accent-primary);
+            color: var(--accent-button-text);
+        }
+        .btn-icon.switch:hover {
+            background-color: var(--accent-hover);
+        }
+        
+        .btn-icon.edit {
+            color: var(--text-tertiary);
+        }
+        .btn-icon.edit:hover {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .btn-icon.remove {
+            color: var(--error-color);
+        }
+        .btn-icon.remove:hover {
+            background-color: var(--error-bg);
+            color: var(--logout-text);
+        }
+
+        .active-badge {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            color: var(--accent-primary);
+            font-size: var(--font-sm);
+            font-weight: 700;
+            background: var(--bg-tertiary);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-md);
+        }
+
+        /* --- General Button Styles --- */
+        .btn {
+            font-family: 'Roboto', sans-serif;
+            font-size: var(--font-base);
+            font-weight: 700;
+            padding: var(--spacing-md) var(--spacing-xl);
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            text-align: center;
+            transition: background-color var(--transition-fast), transform var(--transition-fast);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn.btn-primary {
+            background-color: var(--accent-primary);
+            color: var(--accent-button-text);
+        }
+        .btn.btn-primary:hover {
+            background-color: var(--accent-hover);
+        }
+        
+        .btn.btn-danger {
+            background-color: var(--error-bg);
+            color: var(--logout-text);
+        }
+        .btn.btn-danger:hover {
+            background-color: var(--error-hover);
+        }
+        
+        .btn.btn-secondary {
+            background-color: var(--bg-tertiary);
+            color: var(--text-secondary);
+        }
+        .btn.btn-secondary:hover {
+            background-color: var(--bg-input);
+        }
+
+        .btn-add-account {
+            width: 100%;
+            margin-top: var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+        }
+
+        /* --- Modal Styles --- */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--overlay-bg);
+            display: none; /* Hidden by default */
+            align-items: center;
+            justify-content: center;
+            z-index: var(--z-overlay);
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+        }
+        
+        .modal-backdrop.visible {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background-color: var(--bg-primary);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 10px 30px var(--shadow-dark);
+            width: 90%;
+            max-width: 450px;
+            z-index: var(--z-modal);
+            transform: scale(0.95);
+            transition: transform var(--transition-fast);
+        }
+        
+        .modal-backdrop.visible .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            font-size: var(--font-lg);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            font-size: var(--font-sm);
+            color: var(--text-tertiary);
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .form-group input {
+            background-color: var(--bg-input);
+            color: var(--text-primary);
+            border: 1px solid var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            font-size: var(--font-base);
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px var(--accent-focus);
+        }
+        
+        .form-group input:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-lg);
+        }
+        
+        /* Confirm Modal */
+        #confirm-modal .modal-body {
+            color: var(--text-secondary);
+            font-size: var(--font-base);
+        }
+        #confirm-modal .modal-body strong {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        /* --- Toast Notification --- */
+        #toast-notification {
+            position: fixed;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            padding: var(--spacing-md) var(--spacing-xl);
+            border-radius: var(--radius-md);
+            box-shadow: 0 4px 12px var(--shadow-dark);
+            font-weight: 700;
+            z-index: var(--z-toast);
+            transition: bottom 0.4s ease-in-out;
+        }
+        
+        #toast-notification.show {
+            bottom: var(--spacing-xl);
+        }
+        
+        #toast-notification.success {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        #toast-notification.error {
+            background-color: var(--error-bg);
+            color: var(--logout-text);
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.4rem;
+            }
+            .account-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--spacing-md);
+                position: relative;
+            }
+            .account-info {
+                width: 100%;
+            }
+            .account-actions {
+                position: absolute;
+                top: var(--spacing-md);
+                right: var(--spacing-md);
+                flex-direction: column;
+                gap: var(--spacing-sm);
+            }
+            .active-badge {
+                position: absolute;
+                top: var(--spacing-md);
+                right: var(--spacing-md);
+            }
+        }
+        
+        @media (max-width: 400px) {
+            .account-avatar {
+                width: 60px;
+                height: 60px;
+            }
+            .modal-footer {
+                flex-direction: column;
+            }
+            .modal-footer .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="account-manager">
+        
+        <!-- Theme Toggle Button -->
+        <div class="theme-toggle" id="theme-toggle">
+            <i class="fas fa-moon"></i>
+            <i class="fas fa-sun"></i>
+        </div>
+
+        <h1>Manage Accounts</h1>
+
+        <!-- Account List Container -->
+        <div class="account-list" id="account-list">
+            <!-- Account cards will be dynamically inserted here -->
+        </div>
+
+        <!-- Add New Account Button -->
+        <button class="btn btn-primary btn-add-account" id="add-account-btn">
+            <i class="fas fa-plus"></i> Add New Account
+        </button>
+
+    </div>
+
+    <!-- Edit/Add Account Modal -->
+    <div class="modal-backdrop" id="edit-modal">
+        <div class="modal-content">
+            <div class="modal-header" id="modal-title">Edit Account</div>
+            <div class="modal-body">
+                <form id="account-form">
+                    <input type="hidden" id="edit-token" />
+                    <div class="form-group">
+                        <label for="student-name">Student Name</label>
+                        <input type="text" id="student-name" placeholder="e.g., John Doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="student-class">Class / Section</label>
+                        <input type="text" id="student-class" placeholder="e.g., Class 10 - B" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="student-avatar">Avatar URL (Optional)</label>
+                        <input type="url" id="student-avatar" placeholder="https://example.com/image.png">
+                    </div>
+                    <div class="form-group">
+                        <label for="access-token">Access Token</label>
+                        <input type="text" id="access-token" placeholder="Paste access token here" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancel-edit-btn">Cancel</button>
+                <button class="btn btn-primary" id="save-account-btn">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Remove Modal -->
+    <div class="modal-backdrop" id="confirm-modal">
+        <div class="modal-content">
+            <div class="modal-header">Remove Account</div>
+            <div class="modal-body">
+                Are you sure you want to remove the account for <strong id="confirm-remove-name"></strong>? This action cannot be undone.
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancel-remove-btn">Cancel</button>
+                <button class="btn btn-danger" id="confirm-remove-btn">Remove</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast-notification"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- Constants and State ---
+            const ACCOUNTS_KEY = 'studentAccounts';
+            const ACTIVE_ACCOUNT_KEY = 'activeStudentToken';
+            const THEME_KEY = 'appTheme';
+            let tokenToRemove = null; // Store token for confirmation modal
+
+            // --- DOM Elements ---
+            const accountList = document.getElementById('account-list');
+            const addAccountBtn = document.getElementById('add-account-btn');
+            const themeToggle = document.getElementById('theme-toggle');
+            
+            // Edit Modal Elements
+            const editModal = document.getElementById('edit-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const cancelEditBtn = document.getElementById('cancel-edit-btn');
+            const saveAccountBtn = document.getElementById('save-account-btn');
+            const accountForm = document.getElementById('account-form');
+            const editTokenInput = document.getElementById('edit-token');
+            const studentNameInput = document.getElementById('student-name');
+            const studentClassInput = document.getElementById('student-class');
+            const studentAvatarInput = document.getElementById('student-avatar');
+            const accessTokenInput = document.getElementById('access-token');
+
+            // Confirm Modal Elements
+            const confirmModal = document.getElementById('confirm-modal');
+            const cancelRemoveBtn = document.getElementById('cancel-remove-btn');
+            const confirmRemoveBtn = document.getElementById('confirm-remove-btn');
+            const confirmRemoveName = document.getElementById('confirm-remove-name');
+            
+            // Toast Element
+            const toast = document.getElementById('toast-notification');
+
+
+            // --- LocalStorage Helper Functions ---
+
+            /**
+             * Retrieves all student accounts from localStorage.
+             * @returns {Array} An array of account objects.
+             */
+            function getAccounts() {
+                try {
+                    const accounts = localStorage.getItem(ACCOUNTS_KEY);
+                    return accounts ? JSON.parse(accounts) : [];
+                } catch (e) {
+                    console.error("Error parsing accounts from localStorage:", e);
+                    return [];
+                }
+            }
+
+            /**
+             * Saves an array of accounts to localStorage.
+             * @param {Array} accounts - The array of account objects to save.
+             */
+            function saveAccounts(accounts) {
+                localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts));
+            }
+
+            /**
+             * Gets the currently active student token.
+             * @returns {string|null} The active access token or null.
+             */
+            function getActiveToken() {
+                return localStorage.getItem(ACTIVE_ACCOUNT_KEY);
+            }
+
+            /**
+             * Sets the active student token.
+             * @param {string} token - The access token to set as active.
+             */
+            function setActiveToken(token) {
+                localStorage.setItem(ACTIVE_ACCOUNT_KEY, token);
+            }
+
+            // --- Core Account Management Functions ---
+
+            /**
+             * Adds a new student account to localStorage.
+             * @param {string} token - The student's unique access token.
+             * @param {string} name - The student's name.
+             * @param {string} sClass - The student's class.
+             * @param {string} avatar - The URL for the student's avatar.
+             * @returns {boolean} True if successful, false if token already exists.
+             */
+            function addAccount(token, name, sClass, avatar) {
+                const accounts = getAccounts();
+                const existing = accounts.find(acc => acc.token === token);
+                
+                if (existing) {
+                    showToast('An account with this token already exists.', 'error');
+                    return false;
+                }
+
+                const newAccount = { token, name, sClass, avatar };
+                accounts.push(newAccount);
+                saveAccounts(accounts);
+                
+                // If it's the first account, make it active
+                if (accounts.length === 1) {
+                    switchAccount(token);
+                }
+                
+                renderAccounts();
+                showToast('Account added successfully!', 'success');
+                return true;
+            }
+
+            /**
+             * Updates an existing student account.
+             * @param {string} token - The token of the account to update.
+             * @param {string} name - The new name.
+             * @param {string} sClass - The new class.
+             * @param {string} avatar - The new avatar URL.
+             */
+            function updateAccount(token, name, sClass, avatar) {
+                const accounts = getAccounts();
+                const accountIndex = accounts.findIndex(acc => acc.token === token);
+                
+                if (accountIndex === -1) {
+                    showToast('Account not found for updating.', 'error');
+                    return;
+                }
+                
+                accounts[accountIndex] = { token, name, sClass, avatar };
+                saveAccounts(accounts);
+                renderAccounts();
+                showToast('Account updated successfully!', 'success');
+            }
+
+            /**
+             * Removes an account from localStorage by its token.
+             * @param {string} token - The token of the account to remove.
+             */
+            function removeAccount(token) {
+                let accounts = getAccounts();
+                accounts = accounts.filter(acc => acc.token !== token);
+                saveAccounts(accounts);
+                
+                if (getActiveToken() === token) {
+                    // If the active account was removed, set the first available account as active
+                    // or clear it if no accounts are left.
+                    const newActiveToken = accounts.length > 0 ? accounts[0].token : null;
+                    if (newActiveToken) {
+                        setActiveToken(newActiveToken);
+                    } else {
+                        localStorage.removeItem(ACTIVE_ACCOUNT_KEY);
+                    }
+                }
+                
+                renderAccounts();
+                showToast('Account removed.', 'success');
+            }
+
+            /**
+             * Sets an account as active and notifies the parent app.
+             * @param {string} token - The token of the account to switch to.
+             */
+            function switchAccount(token) {
+                setActiveToken(token);
+                showToast('Switching account...', 'success');
+                
+                // Notify the parent PWA (which is in a parent frame)
+                // The parent app should listen for this message and handle the re-login.
+                if (window.parent) {
+                    window.parent.postMessage({ type: 'SWITCH_ACCOUNT', token: token }, '*');
+                }
+
+                // Re-render to show the new active account
+                renderAccounts();
+                
+                // Optionally, you could simulate a reload if the parent doesn't handle it
+                // location.reload(); 
+            }
+
+            // --- UI Rendering Functions ---
+
+            /**
+             * Renders the list of accounts in the DOM.
+             */
+            function renderAccounts() {
+                const accounts = getAccounts();
+                const activeToken = getActiveToken();
+                accountList.innerHTML = ''; // Clear existing list
+
+                if (accounts.length === 0) {
+                    accountList.innerHTML = '<p style="color: var(--text-tertiary); text-align: center;">No student accounts found on this device.</p>';
+                    return;
+                }
+
+                accounts.forEach(account => {
+                    const isActive = account.token === activeToken;
+                    const card = document.createElement('div');
+                    card.className = `account-card ${isActive ? 'active' : ''}`;
+                    card.dataset.token = account.token;
+
+                    // Avatar: Use image if available, otherwise show initials or icon
+                    let avatarHtml = '';
+                    if (account.avatar) {
+                        avatarHtml = `<img src="${account.avatar}" alt="${account.name}" onerror="this.parentElement.innerHTML = '<i class=\'fas fa-user\'></i>'; this.remove();">`;
+                    } else {
+                        avatarHtml = `<i class="fas fa-user"></i>`;
+                    }
+
+                    card.innerHTML = `
+                        <div class="account-avatar">
+                            ${avatarHtml}
+                        </div>
+                        <div class="account-info">
+                            <div class="account-name">${escapeHTML(account.name)}</div>
+                            <div class="account-class">${escapeHTML(account.sClass)}</div>
+                        </div>
+                        <div class="account-actions">
+                            ${isActive ? 
+                                `<div class="active-badge"><i class="fas fa-check-circle"></i> Active</div>` :
+                                `<button class="btn-icon switch" title="Switch to this account"><i class="fas fa-exchange-alt"></i></button>`
+                            }
+                            <button class="btn-icon edit" title="Edit account details"><i class="fas fa-pen"></i></button>
+                            <button class="btn-icon remove" title="Remove account"><i class="fas fa-trash"></i></button>
+                        </div>
+                    `;
+
+                    // Add event listeners
+                    if (!isActive) {
+                        card.querySelector('.switch').addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            switchAccount(account.token);
+                        });
+                    }
+                    
+                    card.querySelector('.edit').addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        openEditModal(account.token);
+                    });
+                    
+                    card.querySelector('.remove').addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        openConfirmModal(account.token, account.name);
+                    });
+
+                    accountList.appendChild(card);
+                });
+            }
+
+            /**
+             * Escapes HTML to prevent XSS.
+             * @param {string} str - The string to escape.
+             * @returns {string} The escaped string.
+             */
+            function escapeHTML(str) {
+                if (typeof str !== 'string') return '';
+                return str.replace(/[&<>"']/g, function(m) {
+                    return {
+                        '&': '&amp;',
+                        '<': '&lt;',
+                        '>': '&gt;',
+                        '"': '&quot;',
+                        "'": '&#039;'
+                    }[m];
+                });
+            }
+
+            // --- Modal Logic ---
+            
+            function openModal(modal) {
+                modal.classList.add('visible');
+            }
+            
+            function closeModal(modal) {
+                modal.classList.remove('visible');
+            }
+
+            function openEditModal(token) {
+                const accounts = getAccounts();
+                const account = accounts.find(acc => acc.token === token);
+                
+                if (!account) {
+                    showToast('Could not find account to edit.', 'error');
+                    return;
+                }
+                
+                modalTitle.textContent = 'Edit Account';
+                editTokenInput.value = token;
+                studentNameInput.value = account.name;
+                studentClassInput.value = account.sClass;
+                studentAvatarInput.value = account.avatar || '';
+                accessTokenInput.value = account.token;
+                accessTokenInput.disabled = true; // Token is the ID, should not be editable
+                
+                openModal(editModal);
+            }
+            
+            function openAddModal() {
+                modalTitle.textContent = 'Add New Account';
+                accountForm.reset();
+                editTokenInput.value = '';
+                accessTokenInput.disabled = false;
+                
+                openModal(editModal);
+            }
+            
+            function openConfirmModal(token, name) {
+                tokenToRemove = token;
+                confirmRemoveName.textContent = escapeHTML(name);
+                openModal(confirmModal);
+            }
+
+            // --- Theme Logic ---
+
+            function setTheme(theme) {
+                if (theme === 'light') {
+                    document.body.classList.add('light-theme');
+                } else {
+                    document.body.classList.remove('light-theme');
+                }
+                localStorage.setItem(THEME_KEY, theme);
+            }
+
+            function toggleTheme() {
+                const currentTheme = localStorage.getItem(THEME_KEY) || 'dark';
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                setTheme(newTheme);
+            }
+
+            function initTheme() {
+                const savedTheme = localStorage.getItem(THEME_KEY);
+                if (savedTheme) {
+                    setTheme(savedTheme);
+                } else {
+                    // Optional: Check system preference
+                    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    setTheme(prefersDark ? 'dark' : 'light');
+                }
+            }
+
+            // --- Toast Logic ---
+            let toastTimer;
+            function showToast(message, type = 'success') {
+                clearTimeout(toastTimer);
+                toast.textContent = message;
+                toast.className = `show ${type}`;
+                
+                toastTimer = setTimeout(() => {
+                    toast.className = toast.className.replace('show', '');
+                }, 3000);
+            }
+
+            // --- Event Listeners ---
+
+            themeToggle.addEventListener('click', toggleTheme);
+
+            addAccountBtn.addEventListener('click', openAddModal);
+
+            cancelEditBtn.addEventListener('click', () => closeModal(editModal));
+            
+            saveAccountBtn.addEventListener('click', () => {
+                const token = accessTokenInput.value.trim();
+                const name = studentNameInput.value.trim();
+                const sClass = studentClassInput.value.trim();
+                const avatar = studentAvatarInput.value.trim();
+                const existingToken = editTokenInput.value;
+
+                if (!token || !name || !sClass) {
+                    showToast('Token, Name, and Class are required.', 'error');
+                    return;
+                }
+
+                if (existingToken) {
+                    // This is an update
+                    updateAccount(existingToken, name, sClass, avatar);
+                } else {
+                    // This is an add
+                    if (!addAccount(token, name, sClass, avatar)) {
+                        // addAccount shows its own error, so just stop
+                        return;
+                    }
+                }
+                
+                closeModal(editModal);
+                accountForm.reset();
+            });
+
+            cancelRemoveBtn.addEventListener('click', () => {
+                closeModal(confirmModal);
+                tokenToRemove = null;
+            });
+            
+            confirmRemoveBtn.addEventListener('click', () => {
+                if (tokenToRemove) {
+                    removeAccount(tokenToRemove);
+                }
+                closeModal(confirmModal);
+                tokenToRemove = null;
+            });
+            
+            // Close modals if backdrop is clicked
+            editModal.addEventListener('click', (e) => {
+                if (e.target === editModal) closeModal(editModal);
+            });
+            confirmModal.addEventListener('click', (e) => {
+                if (e.target === confirmModal) closeModal(confirmModal);
+            });
+
+
+            // --- Initialization ---
+            
+            function initMockData() {
+                // Add some dummy data if no accounts exist, for testing.
+                if (getAccounts().length === 0) {
+                    const mockAccounts = [
+                        { token: 'token123', name: 'Alice Smith', sClass: 'Class 9 - A', avatar: 'https://avataaars.io/?avatarStyle=Circle&topType=ShortHairShortCurly&accessoriesType=Blank&hairColor=BrownDark&facialHairType=Blank&clotheType=BlazerSweater&eyeType=Happy&eyebrowType=Default&mouthType=Smile&skinColor=Light' },
+                        { token: 'token456', name: 'Bob Johnson', sClass: 'Class 10 - B', avatar: 'https://avataaars.io/?avatarStyle=Circle&topType=ShortHairDreads01&hairColor=BrownDark&clotheType=Hoodie&eyeType=Happy&mouthType=Smile&skinColor=Light&facialHairType=Blank&accessoriesType=Blank' },
+                        { token: 'token789', name: 'Charlie Lee', sClass: 'Class 9 - C', avatar: '' }
+                    ];
+                    saveAccounts(mockAccounts);
+                    setActiveToken('token123'); // Set first as active
+                }
+            }
+            
+            initMockData(); // Uncomment to populate with dummy data on first load
+            initTheme();
+            renderAccounts();
+            
+        });
+    </script>
+</body>
+</html>
