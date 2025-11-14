@@ -4,7 +4,7 @@ import {
 
 const supabaseUrl = 'https://jmmjsxbwxwxrttodyilo.supabase.co';
 const supabaseKey = 'sb_publishable_VVvujycfQZWADUK_cRjCKg_ip6uAofr';
-window.supabase = createClient(supabaseUrl, supabaseKey);
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Another Supabase client credentials just for connecting with My JVP backend
 const supabaseUrlJVP = 'https://ckltcwampaagyzneaznt.supabase.co';
