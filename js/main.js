@@ -63,8 +63,9 @@ const ALL_SUBJECTS = [
   "Pol. Sci."
 ];
 
-// Variable to store notification ID in case the app was opened by notification click
+// Variables to store notification ID and target student ID in case the app was opened by notification click
 let notifId = null;
+let globalStudentId = null;
 
 // Variable to hold all dashboard data fetched from the backend.
 let DASHBOARD_DATA = {};
