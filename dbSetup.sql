@@ -225,11 +225,11 @@ CREATE TABLE settings (
 
 -- Push subscriptions table
 CREATE TABLE push_subscriptions (
-    id                 UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    student_id         UUID NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+    student_id          UUID NOT NULL REFERENCES students(id) ON DELETE CASCADE,
     subscription_object JSONB NOT NULL,
-    endpoint           TEXT UNIQUE,
-    created_at         TIMESTAMP DEFAULT now()
+    endpoint            TEXT NOT NULL,
+    created_at          TIMESTAMP DEFAULT now(),
+    PRIMARY KEY (student_id, endpoint)
 );
 
 -- Defines a 'set' of work (e.g., a worksheet, an assignment, classwork, homework)
