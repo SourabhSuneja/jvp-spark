@@ -59,7 +59,7 @@
                 const existing = accounts.find(acc => acc.token === token);
                 
                 if (existing) {
-                    console.error('An account with this token already exists.');
+                    console.log('An account with this token already exists.');
                     return false;
                 }
 
