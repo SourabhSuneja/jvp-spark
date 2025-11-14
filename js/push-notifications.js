@@ -106,7 +106,26 @@ async function unsubscribeFromPush() {
     }
 }
 
+// Call this ONLY when a user wants to "Remove Account" from the device
+async function removeAccountPush(studentId) {
+    const registration = await navigator.serviceWorker.ready;
+    const subscription = await registration.pushManager.getSubscription();
 
+    if (subscription && studentId) {
+        // Delete ONLY this student's row for this endpoint
+        const { error } = await supabase
+            .from('push_subscriptions')
+            .delete()
+            .eq('student_id', studentId)
+            .eq('endpoint', subscription.endpoint);
+
+        if (error) {
+            console.error('Error deleting subscription on account removal:', error);
+        } else {
+            console.log('Device subscription disassociated for student.');
+        }
+    }
+}
 
 // Add this to your script.js file
 
