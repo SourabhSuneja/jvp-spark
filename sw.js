@@ -1,5 +1,5 @@
 // Bump the version number when you deploy a new service worker
-const CACHE_NAME = 'jvp-spark-v1.0.0.dev.283';
+const CACHE_NAME = 'jvp-spark-v1.0.0.dev.284';
 const urlsToCache = [
   '/jvp-spark/',
   '/jvp-spark/index.html',
@@ -182,9 +182,10 @@ self.addEventListener('push', event => {
 
 self.addEventListener('notificationclick', event => {
   event.notification.close();
-  const notificationID = event.notification.data ?
-    event.notification.data.notificationID :
-    null;
+  
+  const notificationData = event.notification.data || {};
+  const notificationID = notificationData.notificationID || null;
+  const studentID = notificationData.student_id || null;
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
@@ -192,16 +193,21 @@ self.addEventListener('notificationclick', event => {
         if (client.url.includes('/jvp-spark/') && 'focus' in client) {
           client.focus();
           if (notificationID) {
-            client.postMessage({ type: 'NOTIFICATION_CLICK', id: notificationID });
+            client.postMessage({ type: 'NOTIFICATION_CLICK', id: notificationID, studentId: studentID });
           }
           return;
         }
       }
       if (clients.openWindow) {
-        const urlToOpen = notificationID ?
-          `/jvp-spark/index.html?notification_id=${notificationID}` :
-          '/jvp-spark/index.html';
-        return clients.openWindow(urlToOpen);
+        // Build a URL with both query parameters
+        const urlToOpen = new URL('/jvp-spark/index.html', self.location.origin);
+        if (notificationID) {
+          urlToOpen.searchParams.set('notification_id', notificationID);
+        }
+        if (studentID) {
+          urlToOpen.searchParams.set('student_id', studentID);
+        }
+        return clients.openWindow(urlToOpen.href);
       }
     })
   );
