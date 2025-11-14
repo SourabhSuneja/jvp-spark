@@ -346,6 +346,9 @@ const UIComponents = {
          Object.keys(profile).forEach(key => {
             USER_DATA[key] = profile[key];
          });
+
+         // Also add account to local storage
+         addAccount(USER_DATA['access_token'], USER_DATA['name'], USER_DATA['grade'] + USER_DATA['section'], `https://avataaars.io/?${USER_DATA.avatar}`);
       }
 
       // Toggle to light theme if theme in user settings is 1 (= light theme)
