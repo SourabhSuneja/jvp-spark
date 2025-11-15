@@ -434,13 +434,7 @@
          async function initializePage(userData) {
             const urlParams = new URLSearchParams(window.location.search);
             const notificationId = urlParams.get('notification_id');
-            const notification = await window.parent.selectData(
-            'notifications',
-            true,
-            'id, sent_by, created_at, message_title, message_body, detailed_message, extra',
-            ['id'],
-            [notificationId]
-            );
+            const notification = await window.parent.invokeFunction('get_specific_notification', {'p_notification_id': notificationId, 'p_student_ids': parent.getAccountIds()}, true);
             renderNotification(notification);
          }
       </script>
