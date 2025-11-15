@@ -31,9 +31,9 @@ DROP FUNCTION IF EXISTS create_settings_for_student();
 DROP FUNCTION IF EXISTS set_default_avatar();
 DROP FUNCTION IF EXISTS log_welcome_notification();
 DROP FUNCTION IF EXISTS handle_new_student_subscriptions();
-DROP FUNCTION IF EXISTS get_specific_notification(p_notification_id text);
-DROP FUNCTION IF EXISTS get_all_notifications(uuid, integer);
-DROP FUNCTION IF EXISTS get_new_notifications(uuid);
+DROP FUNCTION IF EXISTS get_specific_notification(text, jsonb);
+DROP FUNCTION IF EXISTS get_all_notifications(uuid, integer, jsonb);
+DROP FUNCTION IF EXISTS get_new_notifications(uuid, jsonb);
 DROP FUNCTION IF EXISTS check_question_access(BIGINT);
 DROP FUNCTION IF EXISTS get_question_banks_with_details(INT, TEXT);
 DROP FUNCTION IF EXISTS get_custom_question_set(
@@ -382,23 +382,42 @@ $$;
 -- with conditional sorting.
 CREATE OR REPLACE FUNCTION get_all_notifications(
     last_notification_id uuid DEFAULT NULL,
-    page_size integer DEFAULT 5
+    page_size integer DEFAULT 5,
+    p_student_ids jsonb DEFAULT '[]'::jsonb  -- New parameter
 )
 RETURNS TABLE(
     count_unread bigint,
     notifications jsonb
 )
 LANGUAGE sql
-SECURITY INVOKER
+SECURITY DEFINER
 AS $$
     SELECT
         (
+            -- Unread count is still for the *active* user (auth.uid())
             SELECT COUNT(*)::bigint
             FROM notifications n
+            -- This inner WHERE clause needs to be updated to match the new filter logic
             WHERE NOT EXISTS (
                 SELECT 1 FROM notification_read_logs r
                 WHERE r.notification_id = n.id
                   AND r.student_id = auth.uid()
+            )
+            -- And the notification must be visible to at least one of the students
+            AND EXISTS (
+                SELECT 1
+                FROM students s
+                WHERE s.id = ANY(SELECT jsonb_array_elements_text(p_student_ids)::uuid)
+                  AND (
+                    (n.target_type = 'all')
+                    OR (n.target_type = 'token' AND n.target_tokens ? s.access_token::text)
+                    OR (n.target_type = 'grade' AND EXISTS (
+                        SELECT 1 FROM jsonb_array_elements_text(n.target_tokens) AS elem WHERE elem = s.grade::text
+                    ))
+                    OR (n.target_type = 'grade-section' AND EXISTS (
+                        SELECT 1 FROM jsonb_array_elements_text(n.target_tokens) AS elem WHERE elem = (s.grade::text || '-' || s.section)
+                    ))
+                )
             )
         ) AS count_unread,
         COALESCE(
@@ -417,6 +436,7 @@ AS $$
                 FROM (
                     SELECT 
                         n2.*,
+                        -- is_read is still for the *active* user (auth.uid())
                         CASE 
                             WHEN EXISTS (
                                 SELECT 1 FROM notification_read_logs r2
@@ -431,6 +451,23 @@ AS $$
                             SELECT created_at FROM notifications WHERE id = last_notification_id
                         )
                     )
+                    -- *** START: New Filtering Logic ***
+                    AND EXISTS (
+                        SELECT 1
+                        FROM students s
+                        WHERE s.id = ANY(SELECT jsonb_array_elements_text(p_student_ids)::uuid)
+                          AND (
+                            (n2.target_type = 'all')
+                            OR (n2.target_type = 'token' AND n2.target_tokens ? s.access_token::text)
+                            OR (n2.target_type = 'grade' AND EXISTS (
+                                SELECT 1 FROM jsonb_array_elements_text(n2.target_tokens) AS elem WHERE elem = s.grade::text
+                            ))
+                            OR (n2.target_type = 'grade-section' AND EXISTS (
+                                SELECT 1 FROM jsonb_array_elements_text(n2.target_tokens) AS elem WHERE elem = (s.grade::text || '-' || s.section)
+                            ))
+                        )
+                    )
+                    -- *** END: New Filtering Logic ***
                     ORDER BY n2.created_at DESC
                     LIMIT page_size
                 ) n2
@@ -439,26 +476,45 @@ AS $$
         ) AS notifications;
 $$;
 
+
 -- Function to get notifications newer than a specific ID
 -- and the current unread count.
 CREATE OR REPLACE FUNCTION get_new_notifications(
-    latest_known_id uuid DEFAULT NULL
+    latest_known_id uuid DEFAULT NULL,
+    p_student_ids jsonb DEFAULT '[]'::jsonb  -- New parameter
 )
 RETURNS TABLE(
     count_unread bigint,
     notifications jsonb
 )
 LANGUAGE sql
-SECURITY INVOKER
+SECURITY DEFINER
 AS $$
     SELECT
         (
+            -- Unread count is still for the *active* user (auth.uid())
             SELECT COUNT(*)::bigint
             FROM notifications n
             WHERE NOT EXISTS (
                 SELECT 1 FROM notification_read_logs r
                 WHERE r.notification_id = n.id
                   AND r.student_id = auth.uid()
+            )
+            -- And the notification must be visible to at least one of the students
+            AND EXISTS (
+                SELECT 1
+                FROM students s
+                WHERE s.id = ANY(SELECT jsonb_array_elements_text(p_student_ids)::uuid)
+                  AND (
+                    (n.target_type = 'all')
+                    OR (n.target_type = 'token' AND n.target_tokens ? s.access_token::text)
+                    OR (n.target_type = 'grade' AND EXISTS (
+                        SELECT 1 FROM jsonb_array_elements_text(n.target_tokens) AS elem WHERE elem = s.grade::text
+                    ))
+                    OR (n.target_type = 'grade-section' AND EXISTS (
+                        SELECT 1 FROM jsonb_array_elements_text(n.target_tokens) AS elem WHERE elem = (s.grade::text || '-' || s.section)
+                    ))
+                )
             )
         ) AS count_unread,
         COALESCE(
@@ -472,11 +528,12 @@ AS $$
                         'message_body', n2.message_body,
                         'is_read', n2.is_read
                     )
-                    ORDER BY n2.created_at DESC -- Newest notifications first
+                    ORDER BY n2.created_at DESC
                 )
                 FROM (
                     SELECT 
                         n2.*,
+                        -- is_read is still for the *active* user (auth.uid())
                         CASE 
                             WHEN EXISTS (
                                 SELECT 1 FROM notification_read_logs r2
@@ -486,13 +543,29 @@ AS $$
                         END AS is_read
                     FROM notifications n2
                     WHERE (
-                        -- Get all notifications newer than the one specified
                         n2.created_at > (
                             SELECT created_at 
                             FROM notifications 
                             WHERE id = latest_known_id
                         )
                     )
+                    -- *** START: New Filtering Logic ***
+                    AND EXISTS (
+                        SELECT 1
+                        FROM students s
+                        WHERE s.id = ANY(SELECT jsonb_array_elements_text(p_student_ids)::uuid)
+                          AND (
+                            (n2.target_type = 'all')
+                            OR (n2.target_type = 'token' AND n2.target_tokens ? s.access_token::text)
+                            OR (n2.target_type = 'grade' AND EXISTS (
+                                SELECT 1 FROM jsonb_array_elements_text(n2.target_tokens) AS elem WHERE elem = s.grade::text
+                            ))
+                            OR (n2.target_type = 'grade-section' AND EXISTS (
+                                SELECT 1 FROM jsonb_array_elements_text(n2.target_tokens) AS elem WHERE elem = (s.grade::text || '-' || s.section)
+                            ))
+                        )
+                    )
+                    -- *** END: New Filtering Logic ***
                     ORDER BY n2.created_at DESC
                 ) n2
                 WHERE latest_known_id IS NOT NULL
@@ -500,6 +573,7 @@ AS $$
             '[]'::jsonb
         ) AS notifications;
 $$;
+
 
 
 -- This function checks if the current user can access a given question_id (to be used in RLS policies)
@@ -1423,7 +1497,10 @@ END;
 $$;
 
 -- Function to return a specific notification (only if a student is eligible for this notification)
-CREATE OR REPLACE FUNCTION get_specific_notification(p_notification_id text)
+CREATE OR REPLACE FUNCTION get_specific_notification(
+    p_notification_id text,
+    p_student_ids jsonb  -- New parameter
+)
 RETURNS TABLE (
     id uuid,
     created_at timestamp,
@@ -1434,9 +1511,10 @@ RETURNS TABLE (
     target_tokens jsonb,
     targeted_recipients integer,
     success_count integer,
-    sent_by text
+    sent_by text,
+    extra jsonb
 )
-SECURITY INVOKER
+SECURITY DEFINER
 LANGUAGE plpgsql
 AS $$
 DECLARE
@@ -1449,26 +1527,7 @@ DECLARE
     v_is_eligible boolean := false;
     v_grade_section text;
 BEGIN
-    -- Get the authenticated user's ID
-    v_student_id := auth.uid();
-
-    -- If no authenticated user, return nothing
-    IF v_student_id IS NULL THEN
-        RETURN;
-    END IF;
-
-    -- Get student details
-    SELECT s.grade, s.section, s.access_token
-    INTO v_student_grade, v_student_section, v_student_access_token
-    FROM students s
-    WHERE s.id = v_student_id;
-
-    -- If student not found, return nothing
-    IF NOT FOUND THEN
-        RETURN;
-    END IF;
-
-    -- Get notification details
+    -- Get notification details first
     SELECT nl.target_type, nl.target_tokens
     INTO v_target_type, v_target_tokens
     FROM notifications nl
@@ -1479,36 +1538,58 @@ BEGIN
         RETURN;
     END IF;
 
-    -- Check eligibility based on target_type
-    CASE v_target_type
-        WHEN 'all' THEN
-            v_is_eligible := true;
+    -- *** START: Modified Logic ***
+    -- Loop through all student IDs provided
+    FOR v_student_id IN
+        SELECT jsonb_array_elements_text(p_student_ids)::uuid
+    LOOP
+        -- Get student details for the current student in the loop
+        SELECT s.grade, s.section, s.access_token
+        INTO v_student_grade, v_student_section, v_student_access_token
+        FROM students s
+        WHERE s.id = v_student_id;
 
-        WHEN 'token' THEN
-            v_is_eligible := v_target_tokens ? v_student_access_token::text;
+        -- If student not found, skip to the next one
+        IF NOT FOUND THEN
+            CONTINUE;
+        END IF;
 
-        WHEN 'grade' THEN
-            -- This check now works for both numbers (e.g., [6]) and strings (e.g., ["6"])
-            SELECT EXISTS (
-                SELECT 1
-                FROM jsonb_array_elements_text(v_target_tokens) AS elem
-                WHERE elem = v_student_grade::text
-            ) INTO v_is_eligible;
+        -- Check eligibility based on target_type
+        CASE v_target_type
+            WHEN 'all' THEN
+                v_is_eligible := true;
 
-        WHEN 'grade-section' THEN
-            v_grade_section := v_student_grade::text || '-' || v_student_section;
-            -- This check is robust for grade-section strings
-            SELECT EXISTS (
-                SELECT 1
-                FROM jsonb_array_elements_text(v_target_tokens) AS elem
-                WHERE elem = v_grade_section
-            ) INTO v_is_eligible;
+            WHEN 'token' THEN
+                v_is_eligible := v_target_tokens ? v_student_access_token::text;
 
-        ELSE
-            v_is_eligible := false;
-    END CASE;
+            WHEN 'grade' THEN
+                SELECT EXISTS (
+                    SELECT 1
+                    FROM jsonb_array_elements_text(v_target_tokens) AS elem
+                    WHERE elem = v_student_grade::text
+                ) INTO v_is_eligible;
 
-    -- If eligible, return the notification
+            WHEN 'grade-section' THEN
+                v_grade_section := v_student_grade::text || '-' || v_student_section;
+                SELECT EXISTS (
+                    SELECT 1
+                    FROM jsonb_array_elements_text(v_target_tokens) AS elem
+                    WHERE elem = v_grade_section
+                ) INTO v_is_eligible;
+
+            ELSE
+                v_is_eligible := false;
+        END CASE;
+
+        -- If we find a match for any student, we can stop looping
+        IF v_is_eligible THEN
+            EXIT;
+        END IF;
+
+    END LOOP;
+    -- *** END: Modified Logic ***
+
+    -- If eligible (i.e., at least one student was eligible), return the notification
     IF v_is_eligible THEN
         RETURN QUERY
         SELECT
@@ -1521,7 +1602,8 @@ BEGIN
             nl.target_tokens,
             nl.targeted_recipients,
             nl.success_count,
-            nl.sent_by
+            nl.sent_by,
+            nl.extra
         FROM notifications nl
         WHERE nl.id = p_notification_id::uuid;
     END IF;
@@ -1529,6 +1611,7 @@ BEGIN
     RETURN;
 END;
 $$;
+
 
 
 
@@ -1605,37 +1688,7 @@ CREATE POLICY "Allow authenticated users to read resources"
 
 -- Notifications
 ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Students can read only their own notifications"
-ON notifications
-FOR SELECT
-USING (
-    -- Rule 1: Allow if target is 'all'
-    (target_type = 'all')
 
-    OR
-
-    -- Rule 2: Allow if target is 'grade' and student's grade is in the list
-    (
-        target_type = 'grade' AND
-        target_tokens @> to_jsonb(ARRAY[(SELECT grade FROM students WHERE id = auth.uid())])
-    )
-
-    OR
-
-    -- Rule 3: Allow if target is 'grade-section' and student's G-S is in the list
-    (
-        target_type = 'grade-section' AND
-        target_tokens @> to_jsonb(ARRAY[(SELECT grade::text || '-' || section FROM students WHERE id = auth.uid())])
-    )
-
-    OR
-
-    -- Rule 4: Allow if target is 'token' and student's access_token is in the list
-    (
-        target_type = 'token' AND
-        target_tokens @> to_jsonb(ARRAY[(SELECT access_token::text FROM students WHERE id = auth.uid())])
-    )
-);
 
 -- Notification read logs
 ALTER TABLE notification_read_logs ENABLE ROW LEVEL SECURITY;
