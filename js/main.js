@@ -843,6 +843,9 @@ const AuthManager = {
          // Clear previous session
          AuthManager.clearUserSession();
 
+         // Clear back button history
+         resetAppHistory();
+
          // Handle push notification subscription
          await subscribeToPush();
 
@@ -1259,6 +1262,34 @@ function addIframeToContent(src, contentDiv, page) {
    const iframe = UIComponents.createIframe(src, page);
    contentDiv.appendChild(iframe);
 }
+
+// =====================================================================
+// RESET HISTORY WHEN NEW USER SIGNS IN
+// =====================================================================
+function resetAppHistory() {
+
+    // 1. Clear internal manual navigation history
+    if (PageManager.manualHistory) {
+        PageManager.manualHistory.length = 0;
+    }
+
+    // 2. Replace browser history state with a fresh one
+    window.history.replaceState({
+        page: "home",
+        manual: false
+    }, "");
+
+    // 3. Force-load the home page WITHOUT adding new history entries
+    if (typeof PageManager.loadPage === "function") {
+        PageManager.loadPage("home");
+    }
+
+    // 4. Optional: Clear any cached current page info your app tracks
+    if (APP_CONFIG && APP_CONFIG.currentPage !== undefined) {
+        APP_CONFIG.currentPage = "home";
+    }
+}
+
 
 // =============================================================================
 // EVENT LISTENERS
