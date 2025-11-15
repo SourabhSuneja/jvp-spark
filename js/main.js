@@ -136,7 +136,8 @@ const BackendManager = {
       try {
          const params = {
             'last_notification_id': lastNotifID,
-            'page_size': pageSize
+            'page_size': pageSize,
+            'p_student_ids': getAccountIds()
          };
          const data = await invokeFunction('get_all_notifications', params, true);
          return data || {}; // Return data or an empty object
@@ -154,7 +155,8 @@ const BackendManager = {
       }; // Don't poll if we have no reference
       try {
          const params = {
-            'latest_known_id': latestNotifID
+            'latest_known_id': latestNotifID,
+            'p_student_ids': getAccountIds()
          };
          // Note: Using 'get_new_notifications' (the new SQL function name)
          const data = await invokeFunction('get_new_notifications', params, true);
