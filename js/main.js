@@ -880,8 +880,11 @@ const AuthManager = {
 
       MenuManager.close();
 
-      // Handle push notification desubscription
-      await unsubscribeFromPush();
+      // Handle push notification de-subscription
+      await removeAccountPush(window.userId);
+
+      // Also remove account from local storage
+      removeAccount(USER_DATA.access_token);
 
       await signOutUser();
 
