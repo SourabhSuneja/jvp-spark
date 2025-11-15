@@ -375,6 +375,8 @@ const UIComponents = {
          if (!addAccount(window.userId, access_token, name, className, avatarUrl)) {
             updateAccount(window.userId, access_token, name, className, avatarUrl);
          }
+         // Also set this account as "active"
+         setActiveToken(access_token);
       }
 
       // Toggle to light theme if theme in user settings is 1 (= light theme)
