@@ -838,6 +838,9 @@ const AuthManager = {
          const data = await window.signInUser(email, password);
          window.userId = data.user.id;
 
+         // Clear previous session
+         AuthManager.clearUserSession();
+
          // Handle push notification subscription
          await subscribeToPush();
 
