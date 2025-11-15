@@ -20,6 +20,17 @@
                 }
             }
 
+            // Get the student IDs of all student accounts on this device
+            function getAccountIds() {
+                try {
+                    const accounts = JSON.parse(localStorage.getItem(ACCOUNTS_KEY)) || [];
+                    return accounts.map(a => a.studentID) || [];
+                } catch (e) {
+                    console.error("Error parsing accounts from localStorage:", e);
+                    return [];
+                }
+            }
+
             /**
              * Saves an array of accounts to localStorage.
              * @param {Array} accounts - The array of account objects to save.
