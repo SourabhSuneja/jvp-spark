@@ -153,7 +153,7 @@ function showSignInForNewAccount() {
          password: DOMUtils.getElementById('password')
       };
  // Show sign in screen
- DOMUtils.setDisplay(signInScreen, 'flex');
+ DOMUtils.setDisplay(elements.signInScreen, 'flex');
  // Clear loading state
  AuthManager.setLoadingState(elements.btn, elements.errorField, false);
  // Clear previous username/password values
