@@ -196,6 +196,7 @@ async function loginWithQR(qrContent, student) {
 
 
       // Programmatically click the sign in button
+      document.getElementById('sign-in-btn').disabled = false;
       document.getElementById('sign-in-btn').click();
 
       // Hide loading
