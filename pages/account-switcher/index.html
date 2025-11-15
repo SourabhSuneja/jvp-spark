@@ -762,8 +762,11 @@
              * Removes an account from localStorage by its token.
              * @param {string} token - The token of the account to remove.
              */
-            function removeAccount(token) {
+            async function removeAccount(token) {
+                parent.showProcessingDialog();
                 let accounts = getAccounts();
+                let accountToRemove = accounts.find(acc => acc.token === token);
+                await parent.removeAccountPush(accountToRemove.studentID);
                 accounts = accounts.filter(acc => acc.token !== token);
                 saveAccounts(accounts);
                 
@@ -779,6 +782,7 @@
                 }
                 
                 renderAccounts();
+                parent.hideProcessingDialog();
                 showToast('Account removed.', 'success');
             }
 
