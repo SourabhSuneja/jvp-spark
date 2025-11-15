@@ -143,3 +143,20 @@
                 // Optionally, you could simulate a reload if the parent doesn't handle it
                 // location.reload(); 
             }
+
+function showSignInForNewAccount() {
+ const elements = {
+         signInScreen: DOMUtils.getElementById('sign-in-screen'),
+         errorField: DOMUtils.getElementById('error-message'),
+         btn: DOMUtils.getElementById('sign-in-btn'),
+         username: DOMUtils.getElementById('username'),
+         password: DOMUtils.getElementById('password')
+      };
+ // Show sign in screen
+ DOMUtils.setDisplay(signInScreen, 'flex');
+ // Clear loading state
+ AuthManager.setLoadingState(elements.btn, elements.errorField, false);
+ // Clear previous username/password values
+ elements.username.value = '';
+ elements.password.value = '';
+}
