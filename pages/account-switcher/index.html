@@ -782,18 +782,15 @@
              * Sets an account as active and notifies the parent app.
              * @param {string} token - The token of the account to switch to.
              */
-            function switchAccount(token) {
+            async function switchAccount(token) {
+                parent.showProcessingDialog();
+                // Log in to the new account using the access token
+                await parent.processQRCode(token);
                 setActiveToken(token);
-                showToast('Switching account...', 'success');
-                
-                // Notify the parent PWA (which is in a parent frame)
-                // The parent app should listen for this message and handle the re-login.
-                if (window.parent) {
-                    window.parent.postMessage({ type: 'SWITCH_ACCOUNT', token: token }, '*');
-                }
+                //showToast('Switching account...', 'success');
 
                 // Re-render to show the new active account
-                renderAccounts();
+                //renderAccounts();
                 
                 // Optionally, you could simulate a reload if the parent doesn't handle it
                 // location.reload(); 
