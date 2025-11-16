@@ -2,6 +2,7 @@
 // CONFIGURATION & CONSTANTS
 // =============================================================================
 
+
 const APP_CONFIG = {
    name: 'JVP Spark',
    loadingDelay: 1000,
