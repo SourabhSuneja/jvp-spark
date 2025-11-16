@@ -399,6 +399,7 @@ const UIComponents = {
       // Create profile avatar section
       const profileAvatarDiv = DOMUtils.createElement('div', 'profile-avatar');
       const avatarImg = DOMUtils.createElement('img');
+      avatarImg.id = 'profile-card-avatar';
       avatarImg.src = `https://avataaars.io/?${USER_DATA.avatar}`;
       avatarImg.alt = 'Avatar';
       profileAvatarDiv.appendChild(avatarImg);
@@ -1244,6 +1245,21 @@ function capitalizeFirstLetter(str) {
 
 function createUserProfile() {
    UIComponents.createUserProfile();
+}
+
+function updateAvatar(url) {
+  USER_DATA.avatar = url;
+  const avatarUrl = `https://avataaars.io/?${USER_DATA.avatar}`;
+
+  const headerAvatar = document.getElementById('header-avatar');
+  if (headerAvatar) {
+    headerAvatar.src = avatarUrl;
+  }
+
+  const profileCardAvatar = document.getElementById('profile-card-avatar');
+  if (profileCardAvatar) {
+    profileCardAvatar.src = avatarUrl;
+  }
 }
 
 // Function to filter out cards based on custom logic (such as, allowing certain cards only for the students of a specific school)
