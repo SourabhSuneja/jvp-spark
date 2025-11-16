@@ -226,6 +226,10 @@
             box-shadow: 0 0 15px -3px var(--accent-primary);
         }
 
+        .account-card:not(.active):hover {
+            cursor: pointer;
+        }
+
         .account-avatar {
             width: 50px;
             height: 50px;
@@ -855,6 +859,14 @@
                     if (!isActive) {
                         card.querySelector('.switch').addEventListener('click', (e) => {
                             e.stopPropagation();
+                            switchAccount(account.token);
+                        });
+
+                        // Click event listener on the card itself (has the same effect of clicking on the account switch button)
+                        // Make the entire card clickable to switch
+                        card.addEventListener('click', () => {
+                            // This won't fire when 'remove' or 'edit' is clicked
+                            // because those buttons use e.stopPropagation().
                             switchAccount(account.token);
                         });
                     }
