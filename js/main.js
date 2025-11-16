@@ -1248,8 +1248,8 @@ function createUserProfile() {
    UIComponents.createUserProfile();
 }
 
-function updateAvatar(url) {
-  USER_DATA.avatar = url;
+function updateAvatar(avatarString) {
+  USER_DATA.avatar = avatarString;
   const avatarUrl = `https://avataaars.io/?${USER_DATA.avatar}`;
 
   const headerAvatar = document.getElementById('header-avatar');
