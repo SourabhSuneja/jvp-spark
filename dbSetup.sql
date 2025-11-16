@@ -1394,7 +1394,8 @@ BEGIN
     detailed_message,
     target_type,
     target_tokens,
-    sent_by
+    sent_by,
+    extra
   )
   VALUES (
     'Welcome to JVP Spark!',
@@ -1425,7 +1426,8 @@ Educator & Developer',
     ),
     'token',
     jsonb_build_array(NEW.access_token),
-    'Sourabh Sir'
+    'Sourabh Sir',
+    '{"url": "./pages/wishes/welcome.html", "button_text": "View Welcome Greetings"}'
   );
 
   RETURN NEW;
@@ -1742,6 +1744,20 @@ CREATE POLICY "Students can manage their own push notification subscriptions"
     ON push_subscriptions FOR ALL
     USING (auth.uid() = student_id)
     WITH CHECK (auth.uid() = student_id);
+
+-- Allow all authenticated users to delete any row (required in cases where multiple user accounts are saved on a same device)
+CREATE POLICY "Allow authenticated delete on push_subscriptions"
+ON push_subscriptions
+FOR DELETE
+TO authenticated
+USING (true);
+
+-- Allow all authenticated users to select any row (required in cases where multiple user accounts are saved on a same device and a user is removing a linked account)
+CREATE POLICY "Allow authenticated select on push_subscriptions"
+ON push_subscriptions
+FOR SELECT
+TO authenticated
+USING (true);
 
 
 -- =========================
