@@ -387,8 +387,8 @@ body.light-theme #sidebar .menu-item:hover {
 
 #sidebar .logout-btn {
   padding: var(--spacing-sm) var(--spacing-lg);
-  background-color: var(--bg-secondary);
-  color: var(--text-primary);
+  background-color: var(--accent-primary);
+  color: var(--accent-button-text);
   border: 2px solid var(--accent-primary);
   width: 85%;
   margin-left: auto;
@@ -401,10 +401,7 @@ body.light-theme #sidebar .menu-item:hover {
 }
 
 #sidebar .logout-btn:hover {
-  background: var(--accent-primary);
-  color: var(--accent-button-text);
-  border-color: var(--accent-primary);
-  box-shadow: 0 4px 15px var(--shadow-medium);
+  background-color: var(--accent-hover);
 }
 
 /* Main Container */
