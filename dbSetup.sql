@@ -1501,7 +1501,7 @@ $$;
 -- Function to return a specific notification (only if a student is eligible for this notification)
 CREATE OR REPLACE FUNCTION get_specific_notification(
     p_notification_id text,
-    p_student_ids jsonb  -- New parameter
+    p_student_ids jsonb
 )
 RETURNS TABLE (
     id uuid,
@@ -1514,19 +1514,23 @@ RETURNS TABLE (
     targeted_recipients integer,
     success_count integer,
     sent_by text,
-    extra jsonb
+    extra jsonb,
+    eligible_student_names text[] -- *** NEW COLUMN ***
 )
 SECURITY DEFINER
 LANGUAGE plpgsql
 AS $$
 DECLARE
     v_student_id uuid;
+    v_student_name text; -- New: To store the student's name
     v_student_grade int;
     v_student_section text;
     v_student_access_token uuid;
     v_target_type text;
     v_target_tokens jsonb;
-    v_is_eligible boolean := false;
+    v_current_student_is_eligible boolean := false; -- Renamed
+    v_any_student_eligible boolean := false; -- New: To track if any student matched
+    v_eligible_student_names text[] := ARRAY[]::text[]; -- New: To store names
     v_grade_section text;
 BEGIN
     -- Get notification details first
@@ -1545,31 +1549,34 @@ BEGIN
     FOR v_student_id IN
         SELECT jsonb_array_elements_text(p_student_ids)::uuid
     LOOP
-        -- Get student details for the current student in the loop
-        SELECT s.grade, s.section, s.access_token
-        INTO v_student_grade, v_student_section, v_student_access_token
+        -- Get student details (including name)
+        SELECT s.name, s.grade, s.section, s.access_token
+        INTO v_student_name, v_student_grade, v_student_section, v_student_access_token
         FROM students s
         WHERE s.id = v_student_id;
 
-        -- If student not found, skip to the next one
+        -- If student not found, skip
         IF NOT FOUND THEN
             CONTINUE;
         END IF;
 
+        -- Reset eligibility for this student
+        v_current_student_is_eligible := false;
+
         -- Check eligibility based on target_type
         CASE v_target_type
             WHEN 'all' THEN
-                v_is_eligible := true;
+                v_current_student_is_eligible := true;
 
             WHEN 'token' THEN
-                v_is_eligible := v_target_tokens ? v_student_access_token::text;
+                v_current_student_is_eligible := v_target_tokens ? v_student_access_token::text;
 
             WHEN 'grade' THEN
                 SELECT EXISTS (
                     SELECT 1
                     FROM jsonb_array_elements_text(v_target_tokens) AS elem
                     WHERE elem = v_student_grade::text
-                ) INTO v_is_eligible;
+                ) INTO v_current_student_is_eligible;
 
             WHEN 'grade-section' THEN
                 v_grade_section := v_student_grade::text || '-' || v_student_section;
@@ -1577,22 +1584,24 @@ BEGIN
                     SELECT 1
                     FROM jsonb_array_elements_text(v_target_tokens) AS elem
                     WHERE elem = v_grade_section
-                ) INTO v_is_eligible;
+                ) INTO v_current_student_is_eligible;
 
             ELSE
-                v_is_eligible := false;
+                v_current_student_is_eligible := false;
         END CASE;
 
-        -- If we find a match for any student, we can stop looping
-        IF v_is_eligible THEN
-            EXIT;
+        -- If this student is eligible, add their name to the list
+        IF v_current_student_is_eligible THEN
+            v_any_student_eligible := true;
+            v_eligible_student_names := v_eligible_student_names || v_student_name;
         END IF;
-
+        
+        -- We no longer EXIT early; we check all students
     END LOOP;
     -- *** END: Modified Logic ***
 
     -- If eligible (i.e., at least one student was eligible), return the notification
-    IF v_is_eligible THEN
+    IF v_any_student_eligible THEN
         RETURN QUERY
         SELECT
             nl.id,
@@ -1605,7 +1614,8 @@ BEGIN
             nl.targeted_recipients,
             nl.success_count,
             nl.sent_by,
-            nl.extra
+            nl.extra,
+            v_eligible_student_names -- *** RETURN NEW COLUMN ***
         FROM notifications nl
         WHERE nl.id = p_notification_id::uuid;
     END IF;
@@ -1613,6 +1623,7 @@ BEGIN
     RETURN;
 END;
 $$;
+
 
 
 
