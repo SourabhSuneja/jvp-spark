@@ -1261,6 +1261,18 @@ function updateAvatar(avatarString) {
   if (profileCardAvatar) {
     profileCardAvatar.src = avatarUrl;
   }
+
+  // Also update the account in local storage
+  const {
+            access_token,
+            name,
+            grade,
+            section,
+            avatar
+  } = USER_DATA;
+  const className = `${grade}-${section}`;
+  updateAccount(window.userId, access_token, name, className, avatarUrl);
+  
 }
 
 // Function to filter out cards based on custom logic (such as, allowing certain cards only for the students of a specific school)
