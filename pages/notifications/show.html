@@ -383,7 +383,38 @@
             const formattedTime = formatTimestamp(notification.created_at);
 
             // ==========================================================
-            // === 1. START: New logic to create the action button ======
+            // === 1. START: New logic for the "For:" meta info =======
+            // ==========================================================
+            let metaInfoHtml = '';
+            const eligibleNames = notification.eligible_student_names; // From our new function
+            const totalLoggedIn = parent.getAccountIds().length;
+
+            // Only show this if more than one account is logged in
+            if (eligibleNames && eligibleNames.length > 0 && totalLoggedIn > 1) {
+                let forText = '';
+                
+                if (eligibleNames.length === totalLoggedIn) {
+                    // Targeted all logged-in students
+                    forText = 'All logged-in students';
+                } else {
+                    // Targeted a subset of logged-in students
+                    // e.g., "Rohit, Neha"
+                    forText = eligibleNames.join(', ');
+                }
+
+                metaInfoHtml = `
+                    <div class="notification-meta-info">
+                        <i class="fas fa-users"></i>
+                        For: <strong>${forText}</strong>
+                    </div>
+                `;
+            }
+            // ==========================================================
+            // === END: New logic for the "For:" meta info ============
+            // ==========================================================
+
+            // ==========================================================
+            // === 2. START: New logic to create the action button ======
             // ==========================================================
             let actionButtonHtml = '';
             const extraData = notification.extra;
