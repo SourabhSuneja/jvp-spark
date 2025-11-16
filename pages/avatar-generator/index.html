@@ -398,8 +398,8 @@
                    message: 'Avatar updated!',
                    type: 'alert'
                    });
-                   // Reload the app
-                   window.parent.location.href = window.parent.location.href.split('?')[0] + '?cb=' + new Date().getTime();
+                   // Update the avatar in the app header and student profile by calling the parent function
+                   window.parent.updateAvatar(url);
                } else {
                    await window.parent.showDialog({
                    title: 'Error',
