@@ -93,6 +93,9 @@ let WA_DETAILS = {};
 USER_DATA['qbDetails'] = QB_DETAILS;
 USER_DATA['waDetails'] = WA_DETAILS;
 
+// Variables for Toast Logic
+let toastTimer;
+
 // =============================================================================
 // BACKEND MANAGEMENT
 // =============================================================================
@@ -1249,30 +1252,30 @@ function createUserProfile() {
 }
 
 function updateAvatar(avatarString) {
-  USER_DATA.avatar = avatarString;
-  const avatarUrl = `https://avataaars.io/?${USER_DATA.avatar}`;
+   USER_DATA.avatar = avatarString;
+   const avatarUrl = `https://avataaars.io/?${USER_DATA.avatar}`;
 
-  const headerAvatar = document.getElementById('header-avatar');
-  if (headerAvatar) {
-    headerAvatar.src = avatarUrl;
-  }
+   const headerAvatar = document.getElementById('header-avatar');
+   if (headerAvatar) {
+      headerAvatar.src = avatarUrl;
+   }
 
-  const profileCardAvatar = document.getElementById('profile-card-avatar');
-  if (profileCardAvatar) {
-    profileCardAvatar.src = avatarUrl;
-  }
+   const profileCardAvatar = document.getElementById('profile-card-avatar');
+   if (profileCardAvatar) {
+      profileCardAvatar.src = avatarUrl;
+   }
 
-  // Also update the account in local storage
-  const {
-            access_token,
-            name,
-            grade,
-            section,
-            avatar
-  } = USER_DATA;
-  const className = `${grade}-${section}`;
-  updateAccount(window.userId, access_token, name, className, avatarUrl);
-  
+   // Also update the account in local storage
+   const {
+      access_token,
+      name,
+      grade,
+      section,
+      avatar
+   } = USER_DATA;
+   const className = `${grade}-${section}`;
+   updateAccount(window.userId, access_token, name, className, avatarUrl);
+
 }
 
 // Function to filter out cards based on custom logic (such as, allowing certain cards only for the students of a specific school)
@@ -1294,31 +1297,43 @@ function addIframeToContent(src, contentDiv, page) {
    contentDiv.appendChild(iframe);
 }
 
+function showToast(message, type = 'success') {
+   // Toast Element
+   const toast = document.getElementById('toast-notification');
+   clearTimeout(toastTimer);
+   toast.textContent = message;
+   toast.className = `show ${type}`;
+
+   toastTimer = setTimeout(() => {
+      toast.className = toast.className.replace('show', '');
+   }, 4000);
+}
+
 // =====================================================================
 // RESET HISTORY WHEN NEW USER SIGNS IN
 // =====================================================================
 function resetAppHistory() {
 
-    // 1. Clear internal manual navigation history
-    if (PageManager.manualHistory) {
-        PageManager.manualHistory.length = 0;
-    }
+   // 1. Clear internal manual navigation history
+   if (PageManager.manualHistory) {
+      PageManager.manualHistory.length = 0;
+   }
 
-    // 2. Replace browser history state with a fresh one
-    window.history.replaceState({
-        page: "home",
-        manual: false
-    }, "");
+   // 2. Replace browser history state with a fresh one
+   window.history.replaceState({
+      page: "home",
+      manual: false
+   }, "");
 
-    // 3. Force-load the home page WITHOUT adding new history entries
-    if (typeof PageManager.loadPage === "function") {
-        PageManager.loadPage("home");
-    }
+   // 3. Force-load the home page WITHOUT adding new history entries
+   if (typeof PageManager.loadPage === "function") {
+      PageManager.loadPage("home");
+   }
 
-    // 4. Optional: Clear any cached current page info your app tracks
-    if (APP_CONFIG && APP_CONFIG.currentPage !== undefined) {
-        APP_CONFIG.currentPage = "home";
-    }
+   // 4. Optional: Clear any cached current page info your app tracks
+   if (APP_CONFIG && APP_CONFIG.currentPage !== undefined) {
+      APP_CONFIG.currentPage = "home";
+   }
 }
 
 
