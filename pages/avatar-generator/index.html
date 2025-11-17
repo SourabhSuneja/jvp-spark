@@ -393,20 +393,13 @@
               window.parent.showProcessingDialog();
               const updated = await window.parent.updateRow('settings', ['student_id'], [window.parent.userId], ['avatar'], [queryString]);
                if(updated) {
-                   await window.parent.showDialog({
-                   title: 'Success',
-                   message: 'Avatar updated!',
-                   type: 'alert'
-                   });
+                   window.parent.showToast('Avatar updated!', 'success');
                    // Update the avatar in the app header and student profile by calling the parent function
                    window.parent.updateAvatar(queryString);
                } else {
-                   await window.parent.showDialog({
-                   title: 'Error',
-                   message: 'Error updating avatar!',
-                   type: 'alert'
-                   });
+                   window.parent.showToast('Error updating avatar!', 'error');
                }
+               window.parent.hideProcessingDialog();
          }
          }
          
