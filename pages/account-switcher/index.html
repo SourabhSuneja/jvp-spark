@@ -496,36 +496,6 @@
             font-weight: 700;
         }
 
-        /* --- Toast Notification --- */
-        #toast-notification {
-            position: fixed;
-            bottom: -50px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: var(--bg-tertiary);
-            color: var(--text-primary);
-            padding: var(--spacing-md) var(--spacing-xl);
-            border-radius: var(--radius-md);
-            box-shadow: 0 4px 12px var(--shadow-dark);
-            font-weight: 700;
-            z-index: var(--z-toast);
-            transition: bottom 0.4s ease-in-out;
-        }
-        
-        #toast-notification.show {
-            bottom: 100px;
-        }
-        
-        #toast-notification.success {
-            background-color: #28a745;
-            color: white;
-        }
-        
-        #toast-notification.error {
-            background-color: var(--error-bg);
-            color: var(--logout-text);
-        }
-
         /* --- Responsive Design --- */
         @media (max-width: 600px) {
             h1 {
@@ -638,9 +608,6 @@
         </div>
     </div>
 
-    <!-- Toast Notification -->
-    <div id="toast-notification"></div>
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
@@ -672,9 +639,6 @@
             const cancelRemoveBtn = document.getElementById('cancel-remove-btn');
             const confirmRemoveBtn = document.getElementById('confirm-remove-btn');
             const confirmRemoveName = document.getElementById('confirm-remove-name');
-            
-            // Toast Element
-            const toast = document.getElementById('toast-notification');
 
 
             // --- LocalStorage Helper Functions ---
@@ -732,7 +696,7 @@
                 const existing = accounts.find(acc => acc.token === token);
                 
                 if (existing) {
-                    showToast('An account with this token already exists.', 'error');
+                    parent.showToast('An account with this token already exists.', 'error');
                     return false;
                 }
 
@@ -746,7 +710,7 @@
                 }
                 
                 renderAccounts();
-                showToast('Account added successfully!', 'success');
+                parent.showToast('Account added successfully!', 'success');
                 return true;
             }
 
@@ -762,14 +726,14 @@
                 const accountIndex = accounts.findIndex(acc => acc.token === token);
                 
                 if (accountIndex === -1) {
-                    showToast('Account not found for updating.', 'error');
+                    parent.showToast('Account not found for updating.', 'error');
                     return;
                 }
                 
                 accounts[accountIndex] = { token, name, sClass, avatar };
                 saveAccounts(accounts);
                 renderAccounts();
-                showToast('Account updated successfully!', 'success');
+                parent.showToast('Account updated successfully!', 'success');
             }
 
             /**
@@ -797,7 +761,7 @@
                 
                 renderAccounts();
                 parent.hideProcessingDialog();
-                showToast('Account removed.', 'success');
+                parent.showToast('Account removed.', 'success');
             }
 
             /**
@@ -809,7 +773,7 @@
                 // Log in to the new account using the access token
                 await parent.processQRCode(token);
                 setActiveToken(token);
-                //showToast('Switching account...', 'success');
+                //parent.showToast('Switching account...', 'success');
 
                 // Re-render to show the new active account
                 //renderAccounts();
@@ -928,7 +892,7 @@
                 const account = accounts.find(acc => acc.token === token);
                 
                 if (!account) {
-                    showToast('Could not find account to edit.', 'error');
+                    parent.showToast('Could not find account to edit.', 'error');
                     return;
                 }
                 
@@ -986,18 +950,6 @@
                 }
             }
 
-            // --- Toast Logic ---
-            let toastTimer;
-            function showToast(message, type = 'success') {
-                clearTimeout(toastTimer);
-                toast.textContent = message;
-                toast.className = `show ${type}`;
-                
-                toastTimer = setTimeout(() => {
-                    toast.className = toast.className.replace('show', '');
-                }, 3000);
-            }
-
             // --- Event Listeners ---
 
             themeToggle.addEventListener('click', toggleTheme);
@@ -1014,7 +966,7 @@
                 const existingToken = editTokenInput.value;
 
                 if (!token || !name || !sClass) {
-                    showToast('Token, Name, and Class are required.', 'error');
+                    parent.showToast('Token, Name, and Class are required.', 'error');
                     return;
                 }
 
