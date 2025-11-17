@@ -1,5 +1,5 @@
 // Bump the version number when you deploy a new service worker
-const CACHE_NAME = 'jvp-spark-v1.0.0.dev.315';
+const CACHE_NAME = 'jvp-spark-v1.0.0.dev.316';
 const urlsToCache = [
   '/jvp-spark/',
   '/jvp-spark/index.html',
@@ -12,12 +12,18 @@ const urlsToCache = [
   '/jvp-spark/css/style.css',
   '/jvp-spark/css/wa-prompt.css',
   '/jvp-spark/css/word-card-styles.css',
-  '/jvp-spark/js/main.js',
+  '/jvp-spark/js/account-manager.js',
   '/jvp-spark/js/dialog.js',
+  '/jvp-spark/js/main.js',
+  '/jvp-spark/js/notification-dialog.js',
   '/jvp-spark/js/offline-manager.js',
+  '/jvp-spark/js/push-notification.js',
   '/jvp-spark/js/pwa-utils.js',
+  '/jvp-spark/js/qb-selector.js',
   '/jvp-spark/js/qr-scan.js',
+  '/jvp-spark/js/set-viewport.js',
   '/jvp-spark/js/supabase-crud.js',
+  '/jvp-spark/js/wa-selector.js',
   '/jvp-spark/js/word-card.js',
   '/jvp-spark/pages/result/index.html',
   '/jvp-spark/pages/syllabus/index.html',
