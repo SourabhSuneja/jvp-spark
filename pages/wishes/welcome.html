@@ -298,9 +298,9 @@
             background-color: var(--accent-primary);
             color: var(--accent-button-text);
             border: none;
-            padding: var(--spacing-lg) var(--spacing-xxxl);
-            font-size: var(--font-lg);
-            font-weight: 700;
+            padding: var(--spacing-sm) var(--spacing-xxxl);
+            font-size: var(--font-md);
+            font-weight: 600;
             border-radius: var(--radius-lg);
             cursor: pointer;
             box-shadow: 0 4px 16px var(--shadow-light);
@@ -522,7 +522,7 @@
         </div>
 
         <button class="cta-button noselect" id="getStartedBtn">
-            <span>Let's Get Started! 🚀</span>
+            <span>Pop the Confetti!</span>
         </button>
     </div>
 
@@ -646,11 +646,6 @@
             for (let i = 0; i < 3; i++) {
                 setTimeout(() => createFirework(), i * 200);
             }
-            
-            // Add your navigation logic here
-            setTimeout(() => {
-                alert('Welcome aboard! Let\'s start your amazing journey! 🚀');
-            }, 1000);
         });
 
         // Random fireworks every few seconds
