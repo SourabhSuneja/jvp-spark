@@ -17,7 +17,7 @@ const urlsToCache = [
   '/jvp-spark/js/main.js',
   '/jvp-spark/js/notification-dialog.js',
   '/jvp-spark/js/offline-manager.js',
-  '/jvp-spark/js/push-notification.js',
+  '/jvp-spark/js/push-notifications.js',
   '/jvp-spark/js/pwa-utils.js',
   '/jvp-spark/js/qb-selector.js',
   '/jvp-spark/js/qr-scan.js',
