@@ -1789,7 +1789,9 @@ VALUES
     ('Notifications', 'notifications',      'notifications',  'pages/notifications/index.html',        3),
     ('Subscriptions',   'ribbon',  'subscriptions',    'pages/coming-soon/index.html',      4),
     ('Settings',      'settings',           'settings',       'pages/account/index.html',              5),
-    ('Developer',     'code',       'about-developer','pages/about-developer/index.html',      6);
+    ('Developer',     'code',       'about-developer','pages/about-developer/index.html',      6),
+    ('Privacy Policy',     'shield-half',       'privacy-policy', 'pages/privacy-policy/index.html',      7),
+    ('Account Deletion',     'person-remove',       'account-deletion-details', 'pages/account-deletion-details/index.html',      8);
 
 -- General tab resources for dashboard
 INSERT INTO subject_resources (
