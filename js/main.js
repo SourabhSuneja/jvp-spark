@@ -25,14 +25,15 @@ const USER_DATA = {
 const BASE_URL = 'https://sourabhsuneja.github.io/jvp-spark/';
 
 // Resources (including page links) mentioned here will be preloaded in the background for faster rendering later
+// Commented out because they were causing Google Analytics to record "fake" visits
 const PRELOADABLE_RESOURCES = [
-   'pages/notifications/index.html',
+   /*'pages/notifications/index.html',
    'pages/result/index.html',
    'pages/account/index.html',
    'pages/avatar-generator/index.html',
    'pages/syllabus/index.html',
    'pages/blueprint/index.html',
-   'pages/sarthak/index.html'
+   'pages/sarthak/index.html'*/
 ];
 
 // Array for holding subject order for sorting subjects on dashboard later on
@@ -1103,7 +1104,7 @@ const AppManager = {
       WorkAssignmentSelector.init();
       NotificationBadge.updateNotificationCount(USER_DATA['notifications']['count_unread']);
       // Preload certain pages for caching and performance
-      AppManager.preloadIframes(PRELOADABLE_RESOURCES);
+      //AppManager.preloadIframes(PRELOADABLE_RESOURCES);
       // Start the polling after initialization is complete
       AppManager.startNotificationPolling();
    },
