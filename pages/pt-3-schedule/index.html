@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PT-3 Activity Schedule</title>
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Ion Icons -->
+    <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
+    <!-- Google Font: Roboto -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- Root CSS Variables (Dark Theme Default) --- */
+        :root {
+            /* Colors - Dark Theme */
+            --bg-primary: #121212;
+            --bg-secondary: #1f1f1f;
+            --bg-tertiary: #333333;
+            --bg-gradient-dark: linear-gradient(145deg, #1e1e1e, #333333);
+            --bg-input: #2c2c2c;
+            --bg-profile: rgb(25, 25, 25);
+
+            /* Text Colors - Dark Theme */
+            --text-primary: #fff;
+            --text-secondary: #ddd;
+            --text-tertiary: #b0bec5;
+            --text-muted: rgb(230, 230, 230);
+            --text-light-gray: rgb(240, 240, 240);
+            --text-dark-gray: rgb(220, 220, 220);
+
+            /* Accent Colors */
+            --accent-primary: #ffc107;
+            --accent-hover: #e0a800;
+            --accent-focus: #ffd54f;
+            --accent-button-text: black;
+
+            /* Logout button specific — remain same for light and dark themes */
+            --logout-bg: #e53935;
+            --logout-text: #fff;
+            --logout-hover: #d32f2f;
+
+            /* Status Colors */
+            --error-color: #FF3333;
+            --error-bg: #e53935;
+            --error-hover: #d32f2f;
+
+            /* Overlay Colors */
+            --overlay-bg: rgba(0, 0, 0, 0.5);
+            --loading-overlay-bg: black;
+            --loading-credits-color: rgb(245, 245, 245);
+
+            /* Scrollbar Colors */
+            --scrollbar-thumb: rgb(50, 50, 50);
+            --scrollbar-track: transparent;
+
+            /* Shadow Colors */
+            --shadow-dark: rgba(0, 0, 0, 0.5);
+            --shadow-medium: rgba(0, 0, 0, 0.6);
+            --shadow-light: rgba(0, 0, 0, 0.4);
+
+            /* Spacing Values */
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 12px;
+            --spacing-lg: 16px;
+            --spacing-xl: 20px;
+            --spacing-xxl: 25px;
+            --spacing-xxxl: 30px;
+
+            /* Border Radius */
+            --radius-sm: 5px;
+            --radius-md: 8px;
+            --radius-lg: 10px;
+            --radius-xl: 12px;
+            --radius-full: 50%;
+
+            /* Font Sizes */
+            --font-sm: 0.9rem;
+            --font-base: 1rem;
+            --font-md: 1.1rem;
+            --font-lg: 1.2rem;
+            --font-xl: 1.6rem;
+            --font-xxl: 1.7rem;
+            --font-xxxl: 1.8rem;
+            --font-icon-sm: 1.2rem;
+            --font-icon-md: 1.8rem;
+            --font-icon-lg: 2.1rem;
+            --font-icon-xl: 64px;
+
+            /* Transitions */
+            --transition-fast: 0.2s ease;
+            --transition-base: 0.3s ease;
+            --transition-slow: 0.4s all;
+            --transition-slower: 0.5s;
+
+            /* Z-index */
+            --z-overlay: 1;
+            --z-header: 10;
+            --z-sidebar: 20;
+            --z-signin: 999999;
+            --z-loading: 500000;
+            --z-toast: 2000;
+
+            /* Dimensions */
+            --sidebar-width: 260px;
+            --avatar-sm: 40px;
+            --avatar-md: 70px;
+            --avatar-lg: 80px;
+            --scrollbar-width: 6px;
+        }
+
+        /* --- Light Theme Overrides --- */
+        body.light-theme {
+            --bg-primary: #ffffff;
+            --bg-secondary: rgb(253, 253, 253);
+            --bg-tertiary: rgb(240, 240, 240);
+            --bg-gradient-dark: linear-gradient(145deg, #ffffff, #f0f0f0);
+            --bg-input: #ffffff;
+            --bg-profile: rgb(253, 253, 253);
+
+            --text-primary: #333;
+            --text-secondary: rgb(50, 50, 50);
+            --text-tertiary: rgb(80, 80, 80);
+            --text-muted: #333;
+            --text-light-gray: rgb(50, 50, 50);
+            --text-dark-gray: rgb(90, 90, 90);
+
+            --accent-button-text: rgb(30, 30, 30);
+
+            --error-color: #d32f2f;
+            --error-bg: #ff6666;
+            --error-hover: #ff4d4d;
+
+            --loading-overlay-bg: rgb(253, 253, 253);
+            --loading-credits-color: rgb(50, 50, 50);
+
+            --scrollbar-thumb: rgb(170, 170, 170);
+
+            --shadow-dark: rgba(0, 0, 0, 0.1);
+            --shadow-medium: rgba(0, 0, 0, 0.1);
+            --shadow-light: rgba(0, 0, 0, 0.1);
+        }
+
+        /* --- Base Styles --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+            max-height: 999999px;
+            transition: var(--transition-base) all;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            padding: var(--spacing-xxl);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: var(--spacing-lg);
+        }
+
+        /* --- Header --- */
+        .header {
+            text-align: center;
+            margin-bottom: var(--spacing-xxl);
+        }
+
+        .header h1 {
+            color: var(--text-primary);
+            font-size: var(--font-xxl);
+            font-weight: 700;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .header p {
+            font-size: var(--font-md);
+            color: var(--text-tertiary);
+        }
+
+        /* --- Roll Number Filter --- */
+        .filter-container {
+            margin-bottom: var(--spacing-xl);
+            background: var(--bg-secondary);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 4px 12px var(--shadow-light);
+        }
+        
+        .filter-container label {
+            display: block;
+            font-size: var(--font-md);
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .filter-input-group {
+            display: flex;
+            gap: var(--spacing-md);
+        }
+
+        .filter-input-group input[type="number"] {
+            flex-grow: 1;
+            background: var(--bg-input);
+            color: var(--text-primary);
+            border: 1px solid var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            font-size: var(--font-base);
+            -moz-appearance: textfield; /* Firefox */
+        }
+        
+        /* Hide arrows from number input */
+        .filter-input-group input[type="number"]::-webkit-inner-spin-button,
+        .filter-input-group input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .filter-input-group button {
+            border: none;
+            background: var(--accent-primary);
+            color: var(--accent-button-text);
+            padding: 0 var(--spacing-xl);
+            border-radius: var(--radius-md);
+            font-size: var(--font-base);
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .filter-input-group button:hover {
+            background: var(--accent-hover);
+        }
+        
+        .filter-input-group button.clear-btn {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+        }
+        
+        .filter-input-group button.clear-btn:hover {
+            background: var(--error-bg);
+            color: var(--logout-text);
+        }
+
+        /* --- Schedule Display --- */
+        #schedule-output {
+            margin-top: var(--spacing-xl);
+        }
+        
+        /* Full Schedule Grid */
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .subject-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 4px 12px var(--shadow-light);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+        }
+        
+        .subject-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px var(--shadow-medium);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--bg-tertiary);
+        }
+
+        .card-header .icon {
+            font-size: var(--font-xl);
+            color: var(--accent-primary);
+            width: 40px;
+            text-align: center;
+        }
+
+        .card-header-text {
+            flex-grow: 1;
+        }
+
+        .card-header-text h3 {
+            font-size: var(--font-lg);
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .card-header-text span {
+            font-size: var(--font-sm);
+            color: var(--text-tertiary);
+        }
+        
+        .card-body ul {
+            list-style: none;
+            padding: var(--spacing-sm) var(--spacing-lg) var(--spacing-lg);
+        }
+        
+        .card-body li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-md) 0;
+            border-bottom: 1px solid var(--bg-tertiary);
+        }
+        
+        .card-body li:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        
+        .card-body .date {
+            font-weight: 700;
+            color: var(--text-secondary);
+            flex-basis: 50%;
+        }
+        
+        .card-body .roll-range {
+            font-size: var(--font-sm);
+            color: var(--text-tertiary);
+            background: var(--bg-tertiary);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+        }
+
+        /* Personalized Schedule View */
+        .my-schedule-list h2 {
+            font-size: var(--font-lg);
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .my-schedule-list ul {
+            list-style: none;
+        }
+        
+        .my-schedule-list li {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md) var(--spacing-lg);
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 6px var(--shadow-light);
+        }
+        
+        .my-schedule-list .my-date {
+            font-size: var(--font-base);
+            color: var(--accent-primary);
+            font-weight: 700;
+            flex-basis: 40%;
+        }
+        
+        .my-schedule-list .my-subject {
+            font-size: var(--font-base);
+            color: var(--text-secondary);
+            font-weight: 700;
+            flex-grow: 1;
+        }
+
+        .my-schedule-list .no-activity {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            text-align: center;
+            color: var(--text-tertiary);
+            font-style: italic;
+        }
+        
+        /* --- Notes Section --- */
+        .notes-section {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            margin-top: var(--spacing-xxl);
+        }
+        
+        .notes-section h4 {
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-sm);
+            font-size: var(--font-md);
+        }
+        
+        .notes-section ul {
+            list-style-position: inside;
+            padding-left: var(--spacing-xs);
+        }
+        
+        .notes-section li {
+            margin-bottom: var(--spacing-xs);
+            font-size: var(--font-sm);
+        }
+
+        /* --- Theme Toggle Button --- */
+        .theme-toggle {
+            position: fixed;
+            bottom: var(--spacing-xl);
+            right: var(--spacing-xl);
+            width: 50px;
+            height: 50px;
+            border-radius: var(--radius-full);
+            background: var(--accent-primary);
+            color: var(--accent-button-text);
+            border: none;
+            display: grid;
+            place-items: center;
+            font-size: var(--font-lg);
+            cursor: pointer;
+            box-shadow: 0 4px 12px var(--shadow-medium);
+            z-index: var(--z-toast);
+        }
+        
+        .theme-toggle .icon-sun { display: none; }
+        .theme-toggle .icon-moon { display: block; }
+        
+        body.light-theme .theme-toggle .icon-sun { display: block; }
+        body.light-theme .theme-toggle .icon-moon { display: none; }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>Jamna Vidyapeeth School</h1>
+            <p>PT-3 Activity Schedule (Grades 1-8) | Session 2025-26</p>
+        </header>
+
+        <main>
+            <!-- Roll Number Filter -->
+            <div class="filter-container">
+                <label for="rollNoInput">Find My Schedule</label>
+                <div class="filter-input-group">
+                    <input type="number" id="rollNoInput" placeholder="Enter your Roll No. (e.g., 25)" min="1">
+                    <button id="findBtn" title="Find Schedule">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button id="clearBtn" class="clear-btn" title="Show Full Schedule">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Schedule Output Area -->
+            <div id="schedule-output">
+                <!-- Content will be injected by JavaScript -->
+            </div>
+
+            <!-- Notes -->
+            <section class="notes-section">
+                <h4><i class="fas fa-exclamation-circle"></i> Important Notes:</h4>
+                <ul>
+                    <li>Exam (activity) will be conducted during regular subject periods.</li>
+                    <li>No re-exam (activity) will be conducted.</li>
+                </ul>
+            </section>
+        </main>
+    </div>
+
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" id="themeToggleBtn" title="Toggle Theme">
+        <i class="fas fa-sun icon-sun"></i>
+        <i class="fas fa-moon icon-moon"></i>
+    </button>
+    
+    <!-- Ion Icons ES Module & No Module scripts -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+    <script>
+        // --- SCHEDULE DATA (Easy to update) ---
+        // This variable holds all schedule information.
+        // To update, just edit the content below.
+        const scheduleData = [
+            {
+                subject: "S.St. / E.V.S.",
+                icon: "fas fa-globe-americas",
+                dates: "24th Nov to 26th Nov",
+                batches: [
+                    { date: "24th November", rollNos: "1-13" },
+                    { date: "25th November", rollNos: "14-27" },
+                    { date: "26th November", rollNos: "28-40" }
+                ]
+            },
+            {
+                subject: "Science",
+                icon: "fas fa-flask",
+                dates: "27th Nov to 29th Nov",
+                batches: [
+                    { date: "27th November", rollNos: "1-13" },
+                    { date: "28th November", rollNos: "14-27" },
+                    { date: "29th November", rollNos: "28-40" }
+                ]
+            },
+            {
+                subject: "Maths",
+                icon: "fas fa-calculator",
+                dates: "1st Dec to 3rd Dec",
+                batches: [
+                    { date: "1st December", rollNos: "1-13" },
+                    { date: "2nd December", rollNos: "14-27" },
+                    { date: "3rd December", rollNos: "28-40" }
+                ]
+            },
+            {
+                subject: "English",
+                icon: "fas fa-book-open",
+                dates: "4th Dec to 6th Dec",
+                batches: [
+                    { date: "4th December", rollNos: "1-13" },
+                    { date: "5th December", rollNos: "14-27" },
+                    { date: "6th December", rollNos: "28-40" }
+                ]
+            },
+            {
+                subject: "Hindi",
+                icon: "fas fa-language", // Using a generic icon
+                dates: "8th Dec to 10th Dec",
+                batches: [
+                    { date: "8th December", rollNos: "1-13" },
+                    { date: "9th December", rollNos: "14-27" },
+                    { date: "10th December", rollNos: "28-40" }
+                ]
+            },
+            {
+                subject: "Computer",
+                icon: "fas fa-laptop-code",
+                dates: "11th December",
+                batches: [
+                    { date: "11th December", rollNos: "1-40" }
+                ]
+            },
+            {
+                subject: "G.K.",
+                icon: "fas fa-brain",
+                dates: "12th Dec to 13th Dec",
+                batches: [
+                    { date: "12th December", rollNos: "1-20" },
+                    { date: "13th December", rollNos: "21-40" }
+                ]
+            },
+            {
+                subject: "Sanskrit",
+                icon: "fas fa-om", // Using a relevant icon
+                dates: "15th Dec to 16th Dec",
+                batches: [
+                    { date: "15th December", rollNos: "1-20" },
+                    { date: "16th December", rollNos: "21-40" }
+                ]
+            }
+        ];
+
+        // --- DOM Elements ---
+        const scheduleOutput = document.getElementById('schedule-output');
+        const rollNoInput = document.getElementById('rollNoInput');
+        const findBtn = document.getElementById('findBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+
+        // --- Functions ---
+
+        /**
+         * Renders the full schedule with all subjects as cards.
+         */
+        function renderFullSchedule() {
+            let html = '<div class="schedule-grid">';
+            
+            for (const subject of scheduleData) {
+                html += `
+                    <div class="subject-card">
+                        <div class="card-header">
+                            <i class="${subject.icon} icon"></i>
+                            <div class="card-header-text">
+                                <h3>${subject.subject}</h3>
+                                <span>${subject.dates}</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <ul>
+                `;
+                
+                for (const batch of subject.batches) {
+                    html += `
+                        <li>
+                            <span class="date">${batch.date}</span>
+                            <span class="roll-range">Roll No: ${batch.rollNos}</span>
+                        </li>
+                    `;
+                }
+                
+                html += `
+                            </ul>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            html += '</div>';
+            scheduleOutput.innerHTML = html;
+        }
+
+        /**
+         * Renders a personalized schedule for a specific roll number.
+         */
+        function renderMySchedule() {
+            const rollNo = parseInt(rollNoInput.value, 10);
+            
+            if (isNaN(rollNo)) {
+                renderFullSchedule();
+                return;
+            }
+
+            let myActivities = [];
+            
+            // Find all activities for the given roll number
+            for (const subject of scheduleData) {
+                for (const batch of subject.batches) {
+                    const [min, max] = batch.rollNos.split('-').map(Number);
+                    
+                    if (rollNo >= min && rollNo <= max) {
+                        myActivities.push({
+                            date: batch.date,
+                            subject: subject.subject
+                        });
+                    }
+                }
+            }
+
+            // Build and render the HTML for the personalized schedule
+            let html = `<div class="my-schedule-list">
+                            <h2>My Schedule (Roll No. ${rollNo})</h2>`;
+            
+            if (myActivities.length > 0) {
+                // Sort activities by date (requires date parsing, simple string sort for now)
+                // A more robust sort would parse "1st December" into a Date object.
+                // For this specific data, string sort works fine.
+                myActivities.sort((a, b) => a.date.localeCompare(b.date, undefined, { numeric: true }));
+
+                html += '<ul>';
+                for (const activity of myActivities) {
+                    html += `
+                        <li>
+                            <span class="my-date"><i class="fas fa-calendar-alt"></i> ${activity.date}</span>
+                            <span class="my-subject">${activity.subject}</span>
+                        </li>
+                    `;
+                }
+                html += '</ul>';
+            } else {
+                html += `<div class="no-activity">
+                            <p>No activities found for Roll No. ${rollNo}. Please check the number or see the full schedule.</p>
+                         </div>`;
+            }
+            
+            html += '</div>';
+            scheduleOutput.innerHTML = html;
+        }
+        
+        /**
+         * Clears the filter and shows the full schedule.
+         */
+        function clearFilter() {
+            rollNoInput.value = '';
+            renderFullSchedule();
+        }
+
+        /**
+         * Toggles the 'light-theme' class on the body.
+         */
+        function toggleTheme() {
+            document.body.classList.toggle('light-theme');
+            // Optional: Save preference to localStorage
+            if (document.body.classList.contains('light-theme')) {
+                localStorage.setItem('theme', 'light');
+            } else {
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+        
+        /**
+         * Loads saved theme from localStorage, if any.
+         */
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-theme');
+            }
+        }
+
+        // --- Event Listeners ---
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme(); // Apply saved theme on load
+            renderFullSchedule(); // Show full schedule by default
+        });
+
+        findBtn.addEventListener('click', renderMySchedule);
+        clearBtn.addEventListener('click', clearFilter);
+        themeToggleBtn.addEventListener('click', toggleTheme);
+        
+        // Also allow pressing 'Enter' to search
+        rollNoInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                renderMySchedule();
+            }
+        });
+
+    </script>
+</body>
+</html>
