@@ -39,6 +39,8 @@ const PRELOADABLE_RESOURCES = [
 // Array for holding subject order for sorting subjects on dashboard later on
 const ALL_SUBJECTS = [
    "General",
+   "Computer",
+   "Data Science",
    "English",
    "Hindi",
    "Science",
@@ -46,8 +48,6 @@ const ALL_SUBJECTS = [
    "EVS",
    "Social Science",
    "Sanskrit",
-   "Computer",
-   "Data Science",
    "GK",
    "Physics",
    "Chemistry",
