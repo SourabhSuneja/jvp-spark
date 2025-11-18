@@ -937,6 +937,14 @@ const AuthManager = {
       elements.sidebar.innerHTML = '';
       elements.username.value = '';
       elements.password.value = '';
+
+      USER_DATA.selectedQbIds = null;
+      USER_DATA.selectedAssignmentId = null;
+      notifId = null;
+      globalStudentId = null;
+      currentSubject = 'General';
+      QB_DETAILS = {};
+      WA_DETAILS = {};
    },
 
    showSignInScreen: () => {
