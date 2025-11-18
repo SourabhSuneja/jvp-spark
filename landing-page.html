@@ -5,11 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JVP Spark | Spark Your Learning</title>
     
-    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Ion Icons -->
     <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
@@ -47,7 +44,7 @@
             --error-hover: #d32f2f;
 
             /* Overlay Colors */
-            --overlay-bg: rgba(0, 0, 0, 0.5);
+            --overlay-bg: rgba(0, 0, 0, 0.7); /* Darkened overlay for modal */
             --loading-overlay-bg: black;
             --loading-credits-color: rgb(245, 245, 245);
 
@@ -101,13 +98,6 @@
             --z-sidebar: 20;
             --z-signin: 99999;
             --z-loading: 500000;
-
-            /* Dimensions */
-            --sidebar-width: 260px;
-            --avatar-sm: 40px;
-            --avatar-md: 70px;
-            --avatar-lg: 80px;
-            --scrollbar-width: 6px;
         }
 
         /* Light theme overrides */
@@ -131,6 +121,8 @@
             --error-color: #d32f2f;
             --error-bg: #ff6666;
             --error-hover: #ff4d4d;
+            
+            --overlay-bg: rgba(0, 0, 0, 0.5); /* Light theme overlay */
 
             --loading-overlay-bg: rgb(253, 253, 253);
             --loading-credits-color: rgb(50, 50, 50);
@@ -310,6 +302,23 @@
             background: var(--bg-input);
             transform: translateY(-2px);
         }
+        
+        /* --- NEW --- */
+        .btn-disabled {
+            background: var(--bg-tertiary);
+            color: var(--text-tertiary);
+            opacity: 0.6;
+            cursor: not-allowed;
+            pointer-events: none; /* Prevents clicks and hover effects */
+        }
+        
+        .btn-disabled:hover {
+             background: var(--bg-tertiary);
+             transform: none;
+             box-shadow: none;
+        }
+        /* --- END NEW --- */
+
 
         /* Story Section */
         .story-section {
@@ -455,24 +464,24 @@
         }
 
          .developer-avatar {
-         width: 180px;
-         height: 180px;
-         border-radius: var(--radius-full);
-         border: 4px solid var(--accent-primary);
-         box-shadow: 0 8px 25px var(--shadow-medium);
-         margin: 0 auto var(--spacing-xl);
-         background: var(--bg-tertiary);
-         display: flex;
-         align-items: center;
-         justify-content: center;
-         font-size: 4rem;
-         color: var(--accent-primary);
-         /*animation: float 3s ease-in-out infinite;*/
-         }
-         @keyframes float {
-         0%, 100% { transform: translateY(0px); }
-         50% { transform: translateY(-10px); }
-         }
+           width: 180px;
+           height: 180px;
+           border-radius: var(--radius-full);
+           border: 4px solid var(--accent-primary);
+           box-shadow: 0 8px 25px var(--shadow-medium);
+           margin: 0 auto var(--spacing-xl);
+           background: var(--bg-tertiary);
+           display: flex;
+           align-items: center;
+           justify-content: center;
+           font-size: 4rem;
+           color: var(--accent-primary);
+           /*animation: float 3s ease-in-out infinite;*/
+           }
+           @keyframes float {
+           0%, 100% { transform: translateY(0px); }
+           50% { transform: translateY(-10px); }
+           }
 
         .developer h3 {
             font-size: var(--font-xxl);
@@ -498,6 +507,108 @@
             color: var(--accent-primary);
             margin-bottom: var(--spacing-lg);
         }
+        
+        /* --- NEW: Modal Styles --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--overlay-bg);
+            display: none; /* Hidden by default */
+            align-items: center;
+            justify-content: center;
+            z-index: var(--z-signin);
+            padding: var(--spacing-lg);
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            padding: var(--spacing-xxl);
+            border-radius: var(--radius-xl);
+            box-shadow: 0 10px 30px var(--shadow-medium);
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+            transform: scale(0.95);
+            transition: transform var(--transition-base);
+        }
+        
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: var(--spacing-md);
+            right: var(--spacing-lg);
+            background: none;
+            border: none;
+            color: var(--text-tertiary);
+            font-size: 2.5rem;
+            line-height: 1;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        .modal-title {
+            font-size: var(--font-xxl);
+            color: var(--accent-primary);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .modal-body {
+            color: var(--text-secondary);
+            font-size: var(--font-md);
+            line-height: 1.7;
+            margin-bottom: var(--spacing-xxl);
+        }
+        
+        .modal-body ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .modal-body li {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .modal-body li::before {
+            content: '\f101'; /* Font Awesome right arrow icon */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: var(--accent-primary);
+            position: absolute;
+            left: 0;
+            top: 4px;
+            font-size: 1rem;
+        }
+        
+        .modal-body li strong {
+            color: var(--error-color); /* Use error color for "Important" */
+        }
+
+        .modal-proceed {
+            width: 100%;
+            justify-content: center;
+            padding: var(--spacing-lg);
+        }
+        /* --- END NEW --- */
+
 
         /* Footer */
         footer {
@@ -548,11 +659,28 @@
             main {
                 padding: var(--spacing-lg) var(--spacing-md);
             }
-            .developer-avatar {
+             .developer-avatar {
             width: 140px;
             height: 140px;
             font-size: 3rem;
             }
+            
+            /* --- NEW: Modal Responsive --- */
+            .modal-content {
+                padding: var(--spacing-xl);
+                padding-top: var(--spacing-xxxl); /* More space for close btn */
+            }
+            .modal-title {
+                font-size: var(--font-xl);
+            }
+            .modal-body {
+                font-size: var(--font-base);
+            }
+            .modal-close {
+                top: var(--spacing-sm);
+                right: var(--spacing-md);
+            }
+            /* --- END NEW --- */
         }
     </style>
 </head>
@@ -571,24 +699,22 @@
     </header>
 
     <main>
-        <!-- Hero Section -->
         <section class="hero">
             <ion-icon name="flash" class="hero-icon"></ion-icon>
             <h2>JVP Spark</h2>
             <p>JVP Spark transforms education through gamification, making learning an adventure rather than a chore. Experience the perfect blend of academic resources and interactive tools designed to inspire curiosity and excellence.</p>
             <div class="cta-buttons">
-                <a href="#" class="btn btn-primary">
+                <a data-href="https://play.google.com/store/apps/details?id=com.jvp.spark" data-type="android" class="btn btn-primary btn-android">
                     <i style="font-size: 20px;" class="fab fa-android"></i>
                     <span>Download Android App (Recommended)</span>
                 </a>
-                <a href="https://sourabhsuneja.github.io/jvp-spark/" class="btn btn-secondary">
+                <a data-href="https://sourabhsuneja.github.io/jvp-spark/" data-type="web" class="btn btn-secondary btn-web">
                     <i style="font-size: 20px;" class="fas fa-globe"></i>
                     Use the Web Version (Limited Features)
                 </a>
             </div>
         </section>
 
-        <!-- Story Section -->
         <section class="story-section">
             <h3>A Teacher's Dream, Realized</h3>
             <div class="story-content">
@@ -602,7 +728,6 @@
             </div>
         </section>
 
-        <!-- Objectives Section -->
         <section class="objectives">
             <h3>Two-Fold Mission</h3>
             <div class="objectives-grid">
@@ -619,7 +744,6 @@
             </div>
         </section>
 
-        <!-- Features Section -->
         <section class="features">
             <h3>Powerful Features, Out of the Box</h3>
             <div class="features-grid">
@@ -668,7 +792,6 @@
             </div>
         </section>
 
-        <!-- Developer Section -->
         <section class="developer">
             <img src="https://sourabhsuneja.github.io/jvp-spark/images/sourabh_suneja.jpg" alt="Sourabh Sir" class="developer-avatar" style="object-fit: cover;">
             <h3>Built by an Educator, For Educators</h3>
@@ -680,16 +803,15 @@
             </p>
         </section>
 
-        <!-- Call to Action -->
         <section class="hero">
             <h2>Ready to Transform Learning?</h2>
             <p>Join thousands of students and parents already experiencing the future of education.</p>
             <div class="cta-buttons">
-                <a href="#" class="btn btn-primary">
+                <a data-href="https://play.google.com/store/apps/details?id=com.jvp.spark" data-type="android" class="btn btn-primary btn-android">
                     <i style="font-size: 20px;" class="fab fa-android"></i>
                     Download Android App (Recommended)
                 </a>
-                <a href="https://sourabhsuneja.github.io/jvp-spark/" class="btn btn-secondary">
+                <a data-href="https://sourabhsuneja.github.io/jvp-spark/" data-type="web" class="btn btn-secondary btn-web">
                     <i style="font-size: 20px;" class="fas fa-globe"></i>
                     Use the Web Version (Limited Features)
                 </a>
@@ -697,12 +819,23 @@
         </section>
     </main>
 
+    <div class="modal-overlay" id="instructionModalOverlay">
+        <div class="modal-content">
+            <button class="modal-close" id="modalCloseBtn">&times;</button>
+            <h3 class="modal-title" id="modalTitle">Instructions</h3>
+            <div class="modal-body" id="modalBody">
+                </div>
+            <button class="btn btn-primary modal-proceed" id="modalProceedBtn">
+                Continue
+                <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
+            </button>
+        </div>
+    </div>
     <footer>
         <p>&copy; 2025 JVP Spark - Jamna Vidyapeeth, Jaipur. All rights reserved.</p>
         <p>Developed with ❤️ by Sourabh Suneja</p>
     </footer>
 
-     <!-- Ion Icons -->
      <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
      <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
@@ -732,6 +865,112 @@
                 document.body.classList.add('light-theme');
                 themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
             }
+            
+            // --- START: NEW CODE ---
+
+            // 1. Android Button Activation
+            const isAndroid = /Android/i.test(navigator.userAgent);
+            const androidButtons = document.querySelectorAll('.btn-android');
+
+            if (!isAndroid) {
+                androidButtons.forEach(button => {
+                    button.classList.add('btn-disabled');
+                    button.setAttribute('title', 'Available on Android devices only');
+                });
+            } else {
+                 // If it is Android, ensure it's not disabled (in case it was cached)
+                 androidButtons.forEach(button => {
+                    button.classList.remove('btn-disabled');
+                    button.removeAttribute('title');
+                });
+            }
+
+            // 2. Modal Logic
+            const modalOverlay = document.getElementById('instructionModalOverlay');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            const modalCloseBtn = document.getElementById('modalCloseBtn');
+            const modalProceedBtn = document.getElementById('modalProceedBtn');
+            
+            const allCtaButtons = document.querySelectorAll('.cta-buttons .btn');
+            
+            const androidInstructions = `
+                <ul>
+                    <li>The Play Store will open. Please <strong>install the app</strong>.</li>
+                    <li>Log in using your <strong>school QR code (using which you see your results)</strong> (scan or upload). No password needed!</li>
+                    <li><strong>Important:</strong> Allow <strong>Camera</strong> permission to scan the QR code.</li>
+                    <li><strong>Important:</strong> Allow <strong>Notification</strong> permission to get school updates.</li>
+                </ul>
+            `;
+
+            const webInstructions = `
+                <ul>
+                    <li>The app will open in your browser now.</li>
+                    <li>Log in using your <strong>school QR code (using which you see your results)</strong> (scan or upload). No password needed!</li>
+                    <li><strong>Important:</strong> On a computer, you'll need to <strong>upload the image</strong> of your QR code.</li>
+                </ul>
+            `;
+            
+            function showModal(e) {
+                e.preventDefault();
+                const button = e.currentTarget;
+                if (button.classList.contains('btn-disabled')) {
+                    return;
+                }
+                
+                const type = button.dataset.type;
+                const href = button.dataset.href;
+                
+                if (type === 'android') {
+                    modalTitle.textContent = 'Android App Instructions';
+                    modalBody.innerHTML = androidInstructions;
+                } else {
+                    modalTitle.textContent = 'Web App Instructions';
+                    modalBody.innerHTML = webInstructions;
+                }
+                
+                modalProceedBtn.dataset.href = href;
+                modalProceedBtn.dataset.type = type;
+                
+                modalOverlay.classList.add('active');
+            }
+            
+            function closeModal() {
+                modalOverlay.classList.remove('active');
+            }
+            
+            function proceedAction() {
+                const href = modalProceedBtn.dataset.href;
+                const type = modalProceedBtn.dataset.type;
+                
+                if (!href) return;
+
+                if (type === 'android') {
+                    // Open Play Store in a new tab
+                    window.open(href, '_blank', 'noopener,noreferrer');
+                } else {
+                    // Open web app in the same tab
+                    window.location.href = href;
+                }
+                
+                closeModal();
+            }
+
+            allCtaButtons.forEach(button => {
+                button.addEventListener('click', showModal);
+            });
+            
+            modalCloseBtn.addEventListener('click', closeModal);
+            modalProceedBtn.addEventListener('click', proceedAction);
+            
+            // Close modal by clicking overlay
+            modalOverlay.addEventListener('click', (e) => {
+                if (e.target === modalOverlay) {
+                    closeModal();
+                }
+            });
+            
+            // --- END: NEW CODE ---
         });
 
         // Smooth scroll for anchor links
