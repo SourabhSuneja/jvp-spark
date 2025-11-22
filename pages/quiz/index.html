@@ -716,12 +716,14 @@
              options.forEach((option, i) => {
                  const isChecked = userAnswers[index] === option ? 'checked' : '';
                  const escapedOption = option.replace(/"/g, '&quot;'); // Escape quotes
+                 const displayOption = option.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
                  questionHTML += `
                      <div>
-                         <input type="radio" name="option" id="option${i}" value="${escapedOption}" class="option-input" ${isChecked}>
+                         <input type="radio" name="option" id="option${i}" value="${i}" class="option-input" ${isChecked}>
                          <label for="option${i}" class="option-label">
                              <span class="custom-radio"></span>
-                             <span>${option}</span>
+                             <span>${displayOption}</span>
                          </label>
                      </div>`;
              });
@@ -731,7 +733,8 @@
              // Add event listeners for new elements
              questionBox.querySelectorAll('input[name="option"]').forEach(input => {
                  input.addEventListener('change', (e) => {
-                     userAnswers[currentQuestion] = e.target.value;
+                     const selectedIndex = parseInt(e.target.value); // Get the index (0, 1, 2...)
+        userAnswers[currentQuestion] = options[selectedIndex]; // Get the exact original string object
                  });
              });
          
