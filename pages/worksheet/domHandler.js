@@ -510,7 +510,7 @@ function DOMHandleMCQ(question, mcqPattern, showAns, shuffleMCQOptions, mediaEmb
         const child = document.createElement('div');
         child.classList.add('option-flex-item');
         // if showAns is true, and this child container holds the correct answer, add class tick-mark-choice; 
-        if(showAns && decodeHTMLEntities(options[j]) === correctAnswer) {
+        if(showAns && decodeHTMLEntities(options[j]) === decodeHTMLEntities(correctAnswer)) {
             child.classList.add('tick-mark-choice'); 
             child.style.position = "relative";
         }
