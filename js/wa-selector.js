@@ -144,7 +144,7 @@ const WorkAssignmentSelector = {
     if (selectedId) {
       // Find the assignment to display its title
       const assignment = this.state.assignments.find(
-        wa => wa.work_set_id === selectedId
+        wa => wa.work_set_id == selectedId
       );
       if (assignment) {
         this.elements.selectionInfo.textContent = `Selected: ${this.escapeHtml(assignment.title)}`;
@@ -163,7 +163,7 @@ const WorkAssignmentSelector = {
       return;
     }
     const html = this.state.filteredAssignments.map(wa => {
-      const isSelected = this.state.selectedAssignmentId === wa.work_set_id;
+      const isSelected = this.state.selectedAssignmentId == wa.work_set_id;
       // Get total questions from the 'Total' key
       const totalCount = wa.question_count?.Total || 0;
       const itemClass = `wa-item ${isSelected ? 'selected' : ''}`;
