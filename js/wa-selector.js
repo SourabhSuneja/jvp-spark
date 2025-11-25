@@ -16,12 +16,19 @@ const WorkAssignmentSelector = {
     selectedAssignmentId: null, // Single selection
     isVisible: false,
     promiseResolve: null,
+    isInitialized: false // Flag to see if the object has been initialized before
   },
 
   // Initialize the selector
   init() {
+    // FIX: Guard clause to prevent double initialization
+    if (this.state.isInitialized) return;
+    
     this.cacheElements();
     this.attachEventListeners();
+
+    // Set flag to true
+    this.state.isInitialized = true;
   },
 
   // Cache DOM elements
