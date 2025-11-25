@@ -252,5 +252,4 @@ const WorkAssignmentSelector = {
   },
 };
 
-// Remember to initialize the module in your main script:
-// WorkAssignmentSelector.init();
+WorkAssignmentSelector.init();
