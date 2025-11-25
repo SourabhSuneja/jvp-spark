@@ -1111,8 +1111,8 @@ const AppManager = {
       // --- Notifications fetching ---
 
       MenuManager.initialize();
-      QuestionBankSelector.init();
-      WorkAssignmentSelector.init();
+      //QuestionBankSelector.init();
+      //WorkAssignmentSelector.init();
       NotificationBadge.updateNotificationCount(USER_DATA['notifications']['count_unread']);
       // Preload certain pages for caching and performance
       //AppManager.preloadIframes(PRELOADABLE_RESOURCES);
