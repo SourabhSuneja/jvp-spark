@@ -938,13 +938,16 @@ const AuthManager = {
       elements.username.value = '';
       elements.password.value = '';
 
-      USER_DATA.selectedQbIds = null;
-      USER_DATA.selectedAssignmentId = null;
       notifId = null;
       globalStudentId = null;
       currentSubject = 'General';
+
       QB_DETAILS = {};
       WA_DETAILS = {};
+      USER_DATA['qbDetails'] = QB_DETAILS;
+      USER_DATA['waDetails'] = WA_DETAILS;
+      USER_DATA.selectedQbIds = null;
+      USER_DATA.selectedAssignmentId = null;
    },
 
    showSignInScreen: () => {
