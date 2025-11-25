@@ -16,7 +16,7 @@ const QuestionBankSelector = {
     selectedBankIds: [],
     isVisible: false,
     promiseResolve: null,
-    allowedQTypes: "all" // default
+    allowedQTypes: "all", // default
     isInitialized: false // Flag to see if the object has been initialized before
   },
 
