@@ -233,3 +233,5 @@ const QuestionBankSelector = {
 }
 
 };
+
+QuestionBankSelector.init();
