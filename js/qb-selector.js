@@ -110,7 +110,7 @@ const QuestionBankSelector = {
   // Prevent selection of disabled banks
   toggleSelection(bankId) {
     // Find the bank object by its ID
-    const bank = this.state.questionBanks.find(b => b.id === bankId);
+    const bank = this.state.questionBanks.find(b => b.id == bankId);
 
     // Guard clause: Do nothing if the bank is not in the user's plan
     if (!bank || !bank.within_current_plan) {
