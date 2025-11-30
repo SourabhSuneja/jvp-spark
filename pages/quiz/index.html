@@ -234,6 +234,15 @@
          /*transform: translateY(-3px);*/
          box-shadow: 0 4px 15px var(--shadow-medium);
          }
+         /* End Quiz button */
+         .btn-warning {
+         background-color: var(--color-incorrect); /* Red color */
+         color: #fff;
+         }
+         .btn-warning:hover {
+         background-color: #d32f2f; /* Darker red on hover */
+         box-shadow: 0 4px 15px var(--shadow-medium);
+         }
          /* --- Custom Radio Buttons --- */
          .option-label {
          display: flex;
@@ -494,6 +503,7 @@
             <div class="navigation-buttons">
                <button id="prevButton" class="btn">Previous</button>
                <button id="nextButton" class="btn">Next</button>
+               <button id="endButton" class="btn btn-warning">End Quiz</button>
                <button id="submitButton" class="btn">Submit</button>
                <button id="resultButton" class="btn">See Review</button>
                <button id="replayButton" class="btn">Re-play Quiz</button>
@@ -513,6 +523,7 @@
          
          // --- VARIABLES ---
          let currentQuestion = 0;
+         let questionsAttemptedCount = 0; // variable to track how many questions were seen
          let score = 0;
          let userName = '';
          let userAnswers = [];
@@ -530,6 +541,7 @@
          const navButtons = document.querySelector('.navigation-buttons');
          const prevButton = document.getElementById('prevButton');
          const nextButton = document.getElementById('nextButton');
+         const endButton = document.getElementById('endButton');
          const submitButton = document.getElementById('submitButton');
          const resultButton = document.getElementById('resultButton');
          const replayButton = document.getElementById('replayButton');
@@ -650,9 +662,24 @@
              }
          });
          
+         endButton.addEventListener('click', async () => {
+         const confirmEnd = await window.showDialog({
+         title: 'End Quiz',
+         message: 'Are you sure you want to end the quiz?',
+         type: 'confirm'
+         });
+         if (confirmEnd) {
+         // Set the count to current question index + 1
+         questionsAttemptedCount = currentQuestion + 1; 
+         calculateScore();
+         showResult();
+         }
+         });
+         
          submitButton.addEventListener('click', () => {
-             calculateScore();
-             showResult();
+         questionsAttemptedCount = quizData.length; // Full quiz taken
+         calculateScore();
+         showResult();
          });
          
          resultButton.addEventListener('click', () => {
@@ -717,7 +744,7 @@
                  const isChecked = userAnswers[index] === option ? 'checked' : '';
                  const escapedOption = option.replace(/"/g, '&quot;'); // Escape quotes
                  const displayOption = option.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-
+         
                  questionHTML += `
                      <div>
                          <input type="radio" name="option" id="option${i}" value="${i}" class="option-input" ${isChecked}>
@@ -734,7 +761,7 @@
              questionBox.querySelectorAll('input[name="option"]').forEach(input => {
                  input.addEventListener('change', (e) => {
                      const selectedIndex = parseInt(e.target.value); // Get the index (0, 1, 2...)
-        userAnswers[currentQuestion] = options[selectedIndex]; // Get the exact original string object
+         userAnswers[currentQuestion] = options[selectedIndex]; // Get the exact original string object
                  });
              });
          
@@ -751,9 +778,17 @@
          }
          
          function updateButtonVisibility() {
-             prevButton.classList.toggle('hidden', currentQuestion === 0);
-             nextButton.classList.toggle('hidden', currentQuestion === quizData.length - 1);
-             submitButton.classList.toggle('hidden', currentQuestion !== quizData.length - 1);
+         prevButton.classList.toggle('hidden', currentQuestion === 0);
+         
+         // Logic for End Button: Show it, but hide it on the very last page 
+         // (because Submit button is sufficient there)
+         const isLastPage = currentQuestion === quizData.length - 1;
+         
+         nextButton.classList.toggle('hidden', isLastPage);
+         submitButton.classList.toggle('hidden', !isLastPage);
+         
+         // Hide End button if we are on the last page (submit exists) or if quiz hasn't started
+         endButton.classList.toggle('hidden', isLastPage); 
          }
          
          function calculateScore() {
@@ -778,7 +813,10 @@
              resultButton.classList.remove('hidden');
              replayButton.classList.remove('hidden');
          
-             const percentage = Math.round((score / quizData.length) * 100);
+             // Use questionsAttemptedCount instead of quizData.length
+         const totalConsidered = questionsAttemptedCount || quizData.length; // Fallback safety
+         const percentage = Math.round((score / totalConsidered) * 100);
+         
              let smiley = '', message = '';
          
             // Launch confetti if percentage = 100
@@ -797,8 +835,10 @@
                  message = "Excellent work! You nailed it!";
              }
          
-             resultBox.querySelector('.smiley-icon').innerHTML = `${userName}, you scored ${score}/${quizData.length} ${smiley}`;
-             resultBox.querySelector('.score-detail h3').innerHTML = `Total Questions: ${quizData.length}<br>Correct: ${score}<br>Wrong: ${quizData.length - score}`;
+             // Update the detailed text to show correct/total based on attempted count
+         resultBox.querySelector('.smiley-icon').innerHTML = `${userName}, you scored ${score}/${totalConsidered} ${smiley}`;
+         resultBox.querySelector('.score-detail h3').innerHTML = `Questions Attempted: ${totalConsidered}<br>Correct: ${score}<br>Wrong: ${totalConsidered - score}`;
+         
              resultBox.querySelector('.message').textContent = message;
          
              initializePieChart(percentage);
@@ -827,7 +867,7 @@
              const tableBody = resultStatsBox.querySelector('tbody');
              tableBody.innerHTML = '';
          
-             quizData.forEach((q, index) => {
+             quizData.slice(0, questionsAttemptedCount).forEach((q, index) => {
                  const userAnswer = userAnswers[index];
                  const correctAnswer = q.details.answer;
                  const explanation = q.details.explanation;
@@ -863,12 +903,14 @@
              currentQuestion = 0;
              score = 0;
              userAnswers.fill(null);
+           questionsAttemptedCount = 0;
              
              fadeOut(resultBox);
              fadeOut(resultStatsBox, () => {
                  fadeIn(questionBox);
                  resultButton.classList.add('hidden');
                  replayButton.classList.add('hidden');
+                 endButton.classList.remove('hidden');
                  loadQuestion(currentQuestion);
              });
          }
