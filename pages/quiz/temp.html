@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en" class="noselect">
+   <head>
+      <!-- Google tag (gtag.js) -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-T7R00N5VLE"></script>
+      <script>
+         window.dataLayer = window.dataLayer || [];
+         function gtag(){dataLayer.push(arguments);}
+         gtag('js', new Date());
+         
+         gtag('config', 'G-T7R00N5VLE');
+      </script>
+      <!-- Google tag (gtag.js) -->
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Quiz</title>
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+      <style>
+         /* --- PWA Design System Integration --- */
+         :root {
+         /* Colors - Dark Theme (Default) */
+         --bg-primary: #121212;
+         --bg-secondary: #1f1f1f;
+         --bg-tertiary: #333333;
+         --bg-gradient: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+         /* Text Colors */
+         --text-primary: #e0e0e0;
+         --text-secondary: #b0bec5;
+         --text-question: #fff;
+         /* Accent Colors */
+         --accent-primary: #ffc107;
+         --accent-hover: #e0a800;
+         --accent-button-text: #121212;
+         /* Shadow Colors */
+         --shadow-medium: rgba(0, 0, 0, 0.5);
+         /* Status Colors */
+         --color-correct: #4ade80;
+         --color-incorrect: #f87171;
+         /* Transitions */
+         --transition-base: 0.3s ease;
+         --transition-fast: 0.2s ease-in-out;
+         --transition-fade: 0.4s ease;
+         }
+         /* Light theme overrides */
+         body.light-theme {
+         --bg-primary: #f5f5f5;
+         --bg-secondary: #ffffff;
+         --bg-tertiary: #e0e0e0;
+         --bg-gradient: linear-gradient(145deg, #ffffff, #e9e9e9);
+         --text-primary: #333333;
+         --text-secondary: #555555;
+         --text-question: #000;
+         --accent-button-text: #333333;
+         --shadow-medium: rgba(0, 0, 0, 0.1);
+         }
+         /* --- Base & Theming Styles --- */
+         *, *::before, *::after {
+         box-sizing: border-box;
+         }
+         body {
+         margin: 0;
+         font-family: 'Roboto', sans-serif;
+         background-color: var(--bg-primary);
+         color: var(--text-primary);
+         transition: background-color var(--transition-base), color var(--transition-base);
+         text-rendering: optimizeLegibility;
+         -webkit-font-smoothing: antialiased;
+         }
+         .noselect {
+         -webkit-user-select: none;
+         -moz-user-select: none;
+         -ms-user-select: none;
+         user-select: none;
+         -webkit-touch-callout: none;
+         -webkit-user-drag: none;
+         -webkit-tap-highlight-color: transparent;
+         }
+         /* --- Layout & Utility Classes (Replaces Tailwind) --- */
+         .hidden {
+         display: none !important;
+         }
+         .fade-out {
+         opacity: 0;
+         }
+         .main-container {
+         min-height: 100vh;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         padding: 1rem;
+         }
+         .quiz-wrapper {
+         width: 100%;
+         max-width: 48rem; /* max-w-3xl */
+         }
+         .text-center { text-align: center; }
+         .text-left { text-align: left; }
+         /* --- Typography (Replaces Tailwind) --- */
+         .title-large {
+         font-size: 1.875rem; /* text-3xl */
+         font-weight: 300; /* font-light */
+         margin-bottom: 1rem; /* mb-4 */
+         }
+         .name-input {
+         width: 100%;
+         max-width: 24rem; /* max-w-sm */
+         font-size: 1.875rem; /* text-3xl */
+         text-align: center;
+         padding-top: 0.5rem;
+         padding-bottom: 0.5rem;
+         }
+         .question-title {
+         font-size: 1.25rem; 
+         font-weight: 500;
+         margin-bottom: 2rem; 
+         line-height: 1.4;
+         color: var(--text-question);
+         }
+         .score-title {
+         font-size: 1.875rem; /* text-3xl */
+         font-weight: 700; /* font-bold */
+         }
+         .score-subtitle, .message-text {
+         font-size: 1.125rem; /* text-lg */
+         margin-top: 1.5rem; /* mt-6 */
+         }
+         .review-title {
+         font-size: 1.5rem; /* text-2xl */
+         font-weight: 700;
+         text-align: center;
+         margin-bottom: 1.5rem;
+         }
+         /* Responsive typography */
+         @media (min-width: 640px) { /* sm: prefix */
+         .title-large { font-size: 3rem; } /* md:text-5xl */
+         .name-input { font-size: 2.25rem; } /* md:text-4xl */
+         .question-title { font-size: 1.875rem; } /* md:text-3xl */
+         .score-title { font-size: 2.25rem; } /* sm:text-4xl */
+         .score-subtitle, .message-text { font-size: 1.25rem; } /* sm:text-xl */
+         }
+         /* --- Grid & Flex Layouts (Replaces Tailwind) --- */
+         .question-header {
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         margin-bottom: 1rem;
+         font-size: 0.875rem;
+         }
+         .options-grid {
+         display: grid;
+         grid-template-columns: 1fr;
+         gap: 1rem;
+         }
+         .result-grid {
+         display: grid;
+         grid-template-columns: 1fr;
+         gap: 2rem;
+         align-items: center;
+         margin-top: 1.5rem;
+         }
+         .navigation-buttons {
+         display: flex;
+         justify-content: flex-end;
+         align-items: center;
+         gap: 1rem;
+         margin-top: 1.5rem;
+         }
+         @media (min-width: 768px) { /* md: prefix */
+         .options-grid { grid-template-columns: repeat(2, 1fr); }
+         .result-grid { grid-template-columns: repeat(2, 1fr); }
+         }
+         /* --- Main Quiz Container --- */
+         .quiz-box {
+         background: var(--bg-gradient);
+         border: 1px solid var(--bg-tertiary);
+         box-shadow: 0 8px 30px var(--shadow-medium);
+         border-radius: 0 4rem 0 4rem; /* Preserved unique shape */
+         padding: 1.5rem;
+         transition: opacity var(--transition-fade);
+         }
+         @media (min-width: 640px) { /* sm: prefix */
+         .quiz-box { padding: 2.5rem; }
+         }
+         /* --- Theme Toggle Button --- */
+         #theme-toggle {
+         position: fixed;
+         top: 1.5rem;
+         right: 1.5rem;
+         background-color: var(--bg-secondary);
+         color: var(--text-primary);
+         border: 1px solid var(--bg-tertiary);
+         border-radius: 50%;
+         width: 48px;
+         height: 48px;
+         display: none;
+         place-content: center;
+         cursor: pointer;
+         z-index: 1000;
+         transition: var(--transition-base);
+         }
+         #theme-toggle:hover {
+         transform: scale(1.1) rotate(15deg);
+         box-shadow: 0 4px 15px var(--shadow-medium);
+         }
+         /* --- Form Elements & Buttons --- */
+         .themed-input {
+         background: transparent;
+         border: none;
+         border-bottom: 2px solid var(--text-secondary);
+         color: var(--text-primary);
+         transition: border-color var(--transition-base);
+         }
+         .themed-input:focus {
+         outline: none;
+         border-bottom-color: var(--accent-primary);
+         }
+         .btn {
+         padding: 0.75rem 2rem;
+         font-size: 1rem;
+         font-weight: bold;
+         color: var(--accent-button-text);
+         background: var(--accent-primary);
+         border: none;
+         border-radius: 0 1.25rem 0 1.25rem; /* Preserved unique shape */
+         text-decoration: none;
+         transition: var(--transition-base);
+         cursor: pointer;
+         }
+         .btn:hover {
+         background: var(--accent-hover);
+         /*transform: translateY(-3px);*/
+         box-shadow: 0 4px 15px var(--shadow-medium);
+         }
+         /* --- Custom Radio Buttons --- */
+         .option-label {
+         display: flex;
+         align-items: center;
+         padding: 0.75rem;
+         border: 2px solid var(--bg-tertiary);
+         border-radius: 0.5rem;
+         cursor: pointer;
+         transition: all var(--transition-fast);
+         }
+         .option-label:hover {
+         background-color: var(--bg-secondary);
+         border-color: var(--accent-primary);
+         }
+         .option-input {
+         display: none; /* Replaces 'hidden' class */
+         }
+         .option-input:checked+.option-label {
+         background-color: color-mix(in srgb, var(--accent-primary) 15%, transparent);
+         border-color: var(--accent-primary);
+         }
+         .custom-radio {
+         width: 1.5em;
+         height: 1.5em;
+         border: 2px solid var(--text-secondary);
+         border-radius: 50%;
+         display: grid;
+         place-content: center;
+         margin-right: 0.75rem;
+         flex-shrink: 0;
+         }
+         .custom-radio::before {
+         content: "";
+         width: 0.75em;
+         height: 0.75em;
+         border-radius: 50%;
+         transform: scale(0);
+         transition: 120ms transform ease-in-out;
+         background-color: var(--accent-primary);
+         }
+         .option-input:checked+.option-label .custom-radio {
+         border-color: var(--accent-primary);
+         }
+         .option-input:checked+.option-label .custom-radio::before {
+         transform: scale(1);
+         }
+         /* --- Result Section (New SVG Pie Chart) --- */
+         .chart-container {
+         position: relative;
+         width: 180px;
+         height: 180px;
+         margin: 0 auto;
+         }
+         .percentage-label {
+         position: absolute;
+         top: 50%;
+         left: 50%;
+         transform: translate(-50%, -50%);
+         color: var(--text-primary);
+         font-size: 3rem; /* text-5xl */
+         font-weight: 700; /* font-bold */
+         }
+         .percentage-label sup {
+         font-size: 1.5rem; /* text-2xl */
+         }
+         .chart-svg {
+         width: 100%;
+         height: 100%;
+         transform: rotate(-90deg);
+         }
+         .chart-svg path {
+         fill: none;
+         stroke-width: 15;
+         stroke-linecap: round;
+         }
+         .chart-bg {
+         stroke: var(--bg-tertiary);
+         }
+         .chart-bar {
+         stroke: var(--accent-primary);
+         stroke-dasharray: 100, 100;
+         stroke-dashoffset: 100;
+         transition: stroke-dashoffset 1s ease-in-out;
+         }
+         /* --- Result Stats Table --- */
+         .result-table-container {
+         overflow-x: auto;
+         }
+         .result-table {
+         width: 100%;
+         text-align: left;
+         border-collapse: collapse;
+         }
+         .result-table th,
+         .result-table td {
+         vertical-align: middle;
+         padding: 8px 16px 8px 0;
+         }
+         .result-table thead {
+         border-bottom: 2px solid var(--bg-tertiary);
+         }
+         .result-table tbody tr:not(.explanation-row) {
+         border-bottom: 1px solid var(--bg-tertiary);
+         }
+         .result-table .explanation-row {
+         border-bottom: 1px solid var(--bg-tertiary);
+         }
+         .result-table tbody tr:last-child {
+         border-bottom: none;
+         }
+         .result-table .question-col { font-weight: 500; vertical-align: top; padding-top: 1rem; }
+         .result-table .answer-col { white-space: nowrap; vertical-align: top; padding-top: 1rem; }
+         .result-table .explanation-col { 
+         padding-top: 0.25rem;
+         padding-bottom: 1rem;
+         font-size: 0.875rem;
+         color: var(--text-secondary);
+         }
+         .result-table .explanation-col strong { color: var(--accent-primary); }
+         .text-correct { color: var(--color-correct); }
+         .text-incorrect { color: var(--color-incorrect); }
+         #result i.smiley-icon { margin-left: 12px; }
+         .result-table i { margin-right: 0.5rem; }
+         /* --- Media Overlay Styles --- */
+         .media-overlay {
+         position: fixed;
+         top: 0;
+         left: 0;
+         width: 100%;
+         height: 100%;
+         background-color: rgba(0, 0, 0, 0.8);
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         z-index: 2000;
+         opacity: 0;
+         visibility: hidden;
+         transition: opacity var(--transition-base), visibility var(--transition-base);
+         }
+         .media-overlay.active {
+         opacity: 1;
+         visibility: visible;
+         }
+         .media-content-wrapper {
+         position: relative;
+         background: var(--bg-primary);
+         padding: 20px;
+         border-radius: 8px;
+         box-shadow: 0 4px 20px var(--shadow-medium);
+         max-width: 90vw;
+         max-height: 90vh;
+         overflow: auto;
+         }
+         .media-content-wrapper .close-button {
+         position: absolute;
+         top: 10px;
+         right: 10px;
+         background: none;
+         border: none;
+         font-size: 1.5rem;
+         color: var(--text-secondary);
+         cursor: pointer;
+         transition: color var(--transition-fast);
+         }
+         .media-content-wrapper .close-button:hover {
+         color: var(--accent-primary);
+         }
+         .media-content-wrapper img {
+         max-width: 100%;
+         height: auto;
+         display: block;
+         margin: 0 auto;
+         border-radius: 0.5rem;
+         }
+         .media-content-wrapper iframe {
+         width: 80vw;
+         height: 45vw; /* 16:9 aspect ratio */
+         max-width: 800px;
+         max-height: 450px;
+         display: block;
+         margin: 0 auto;
+         }
+         .audio-message {
+         text-align: center;
+         padding: 20px;
+         font-size: 1.2rem;
+         color: var(--text-primary);
+         }
+         #confetti-canvas {
+         position: fixed;
+         top: 0;
+         left: 0;
+         width: 100%;
+         height: 100%;
+         pointer-events: none;
+         z-index: 9999;
+         }
+      </style>
+   </head>
+   <body>
+      <canvas id="confetti-canvas"></canvas>
+      <button id="theme-toggle" title="Toggle Theme">
+      <i class="fas fa-sun"></i>
+      </button>
+      <div class="main-container">
+         <div class="quiz-wrapper">
+            <div id="quiz-container" class="quiz-box">
+               <div id="name-box" class="text-center">
+                  <h1 class="title-large">Your Name?</h1>
+                  <form id="name-form">
+                     <input type="text" id="name-input-box" class="themed-input name-input" readonly>
+                     <div style="margin-top: 2rem;">
+                        <button type="submit" id="name-submit-button" class="btn">
+                        Start Quiz
+                        </button>
+                     </div>
+                  </form>
+               </div>
+               <div id="question-box" class="hidden">
+               </div>
+               <div id="result" class="hidden text-center">
+                  <div class="score-label">
+                     <h1 class="score-title"><i class="smiley-icon"></i></h1>
+                  </div>
+                  <div class="result-grid">
+                     <div class="score-detail text-left">
+                        <h3 class="score-subtitle" style="color: var(--text-secondary);"></h3>
+                     </div>
+                     <div class="chart-container">
+                        <svg class="chart-svg" viewBox="0 0 36 36">
+                           <path class="chart-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                           <path id="chart-bar" class="chart-bar" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        </svg>
+                        <div id="percentage-label" class="percentage-label">
+                           <span>0</span><sup>%</sup>
+                        </div>
+                     </div>
+                  </div>
+                  <h3 class="message message-text font-light" style="color: var(--text-secondary);"></h3>
+               </div>
+               <div id="result-stats" class="hidden">
+                  <h2 class="review-title">Review Your Answers</h2>
+                  <div class="result-table-container">
+                     <table class="result-table">
+                        <thead>
+                           <tr>
+                              <th>Question</th>
+                              <th>Your Answer</th>
+                              <th>Correct Answer</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                     </table>
+                  </div>
+               </div>
+            </div>
+            <div class="navigation-buttons">
+               <button id="prevButton" class="btn">Previous</button>
+               <button id="nextButton" class="btn">Next</button>
+               <button id="submitButton" class="btn">Submit</button>
+               <button id="resultButton" class="btn">See Review</button>
+               <button id="replayButton" class="btn">Re-play Quiz</button>
+            </div>
+         </div>
+      </div>
+      <div id="media-overlay" class="media-overlay">
+         <div class="media-content-wrapper">
+            <button class="close-button" id="close-media-overlay">&times;</button>
+            <div id="media-player-container"></div>
+         </div>
+      </div>
+      <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+      <script>
+         // --- QUIZ DATA ---
+         let quizData = [];
+         
+         // --- VARIABLES ---
+         let currentQuestion = 0;
+         let score = 0;
+         let userName = '';
+         let userAnswers = [];
+         let youtubePlayer;
+         let youtubeAPIReady = false;
+         const youtubePlayerQueue = [];
+         
+         // --- DOM ELEMENTS ---
+         const nameBox = document.getElementById('name-box');
+         const nameForm = document.getElementById('name-form');
+         const nameInput = document.getElementById('name-input-box');
+         const questionBox = document.getElementById('question-box');
+         const resultBox = document.getElementById('result');
+         const resultStatsBox = document.getElementById('result-stats');
+         const navButtons = document.querySelector('.navigation-buttons');
+         const prevButton = document.getElementById('prevButton');
+         const nextButton = document.getElementById('nextButton');
+         const submitButton = document.getElementById('submitButton');
+         const resultButton = document.getElementById('resultButton');
+         const replayButton = document.getElementById('replayButton');
+         const themeToggleButton = document.getElementById('theme-toggle');
+         const mediaOverlay = document.getElementById('media-overlay');
+         const closeMediaOverlayButton = document.getElementById('close-media-overlay');
+         const mediaPlayerContainer = document.getElementById('media-player-container');
+         const allNavButtons = navButtons.querySelectorAll('button');
+         
+         /**
+         * Triggers the confetti celebration.
+         */
+         function launchConfetti() {
+         const count = 200;
+         const defaults = {
+         origin: { y: 0.7 }
+         };
+         
+         function fire(particleRatio, opts) {
+         confetti(Object.assign({}, defaults, opts, {
+         particleCount: Math.floor(count * particleRatio)
+         }));
+         }
+         
+         fire(0.25, {
+         spread: 26,
+         startVelocity: 55,
+         });
+         
+         fire(0.2, {
+         spread: 60,
+         });
+         
+         fire(0.35, {
+         spread: 100,
+         decay: 0.91,
+         scalar: 0.8
+         });
+         
+         fire(0.1, {
+         spread: 120,
+         startVelocity: 25,
+         decay: 0.92,
+         scalar: 1.2
+         });
+         
+         fire(0.1, {
+         spread: 120,
+         startVelocity: 45,
+         });
+         }
+         
+         // --- FADE TRANSITION HELPERS ---
+         const FADE_DURATION = 400; // Corresponds to --transition-fade
+         function fadeOut(element, callback) {
+             element.classList.add('fade-out');
+             setTimeout(() => {
+                 element.classList.add('hidden');
+                 if (callback) callback();
+             }, FADE_DURATION);
+         }
+         function fadeIn(element) {
+             element.classList.remove('hidden');
+             // Timeout to allow the browser to apply display change before starting transition
+             setTimeout(() => {
+                 element.classList.remove('fade-out');
+             }, 10); 
+         }
+         
+         // --- INITIALIZATION ---
+         function init() {
+             fadeIn(nameBox);
+             questionBox.classList.add('hidden', 'fade-out');
+             resultBox.classList.add('hidden', 'fade-out');
+             resultStatsBox.classList.add('hidden', 'fade-out');
+             allNavButtons.forEach(btn => btn.classList.add('hidden'));
+         
+         
+             // Load YouTube Iframe API script
+             const tag = document.createElement('script');
+             tag.src = "https://www.youtube.com/iframe_api";
+             const firstScriptTag = document.getElementsByTagName('script')[0];
+             firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+         }
+         
+         // This function is required by the YouTube API
+         window.onYouTubeIframeAPIReady = function() {
+             youtubeAPIReady = true;
+             while (youtubePlayerQueue.length > 0) {
+                 const playerConfig = youtubePlayerQueue.shift();
+                 createYouTubePlayer(playerConfig.containerId, playerConfig.videoId, playerConfig.isAudio);
+             }
+         };
+         
+         // --- EVENT LISTENERS ---
+         nameForm.addEventListener('submit', (e) => {
+             e.preventDefault();
+             userName = nameInput.value.trim();
+             if (userName) {
+                 fadeOut(nameBox, () => {
+                     fadeIn(questionBox);
+                     loadQuestion(currentQuestion);
+                 });
+             }
+         });
+         
+         nextButton.addEventListener('click', () => {
+             if (currentQuestion < quizData.length - 1) {
+                 currentQuestion++;
+                 loadQuestion(currentQuestion);
+             }
+         });
+         
+         prevButton.addEventListener('click', () => {
+             if (currentQuestion > 0) {
+                 currentQuestion--;
+                 loadQuestion(currentQuestion);
+             }
+         });
+         
+         submitButton.addEventListener('click', () => {
+             calculateScore();
+             showResult();
+         });
+         
+         resultButton.addEventListener('click', () => {
+             fadeOut(resultBox, () => {
+                 showResultStats();
+                 fadeIn(resultStatsBox);
+                 resultButton.classList.add('hidden');
+             });
+         });
+         
+         replayButton.addEventListener('click', replayQuiz);
+         
+         themeToggleButton.addEventListener('click', () => {
+             document.body.classList.toggle('light-theme');
+             const isLight = document.body.classList.contains('light-theme');
+             localStorage.setItem('theme', isLight ? 'light' : 'dark');
+             themeToggleButton.innerHTML = isLight ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+         });
+         
+         closeMediaOverlayButton.addEventListener('click', closeMediaOverlay);
+         mediaOverlay.addEventListener('click', (e) => {
+             if (e.target === mediaOverlay) { // Close only if clicking on the background
+                 closeMediaOverlay();
+             }
+         });
+         
+         // --- FUNCTIONS ---
+         function loadQuestion(index) {
+             const q = quizData[index];
+             const details = q.details;
+             const options = q.question_type === 'True/False' ? ["True", "False"] : details.options;
+         
+             function getDifficultyStars(level) {
+                 let stars = '';
+                 for (let i = 0; i < 5; i++) {
+                     stars += i < level ? '<i class="fas fa-star" style="color:var(--accent-primary);"></i>' : '<i class="far fa-star" style="color:var(--text-secondary);"></i>';
+                 }
+                 return `<span style="display: flex; align-items: center; gap: 0.25rem;" title="Difficulty: ${level}/5">${stars}</span>`;
+             }
+         
+             let questionHTML = `
+                 <div class="question-header">
+                     <span style="padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: bold; background-color: color-mix(in srgb, var(--accent-primary) 20%, transparent); color: var(--accent-primary); border: 1px solid var(--accent-primary);">${q.question_bank}</span>
+                     ${getDifficultyStars(q.difficulty_level)}
+                 </div>
+                 <div>
+                     <h2 class="question-title">${index + 1}. ${q.question}</h2>`;
+         
+             if (details.mediaEmbedded && details.mediaLink) {
+                 const buttonText = `Show ${details.mediaEmbedded.charAt(0).toUpperCase() + details.mediaEmbedded.slice(1)}`;
+                 questionHTML += `
+                     <div style="margin-top: 1rem;">
+                         <button class="btn media-button" data-media-type="${details.mediaEmbedded}" data-media-link="${details.mediaLink}">
+                             ${buttonText}
+                         </button>
+                     </div>`;
+             }
+         
+             questionHTML += `</div><div class="options-grid">`;
+         
+             options.forEach((option, i) => {
+                 const isChecked = userAnswers[index] === option ? 'checked' : '';
+                 const escapedOption = option.replace(/"/g, '&quot;'); // Escape quotes
+                 const displayOption = option.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+                 questionHTML += `
+                     <div>
+                         <input type="radio" name="option" id="option${i}" value="${i}" class="option-input" ${isChecked}>
+                         <label for="option${i}" class="option-label">
+                             <span class="custom-radio"></span>
+                             <span>${displayOption}</span>
+                         </label>
+                     </div>`;
+             });
+             questionHTML += '</div>';
+             questionBox.innerHTML = questionHTML;
+         
+             // Add event listeners for new elements
+             questionBox.querySelectorAll('input[name="option"]').forEach(input => {
+                 input.addEventListener('change', (e) => {
+                     const selectedIndex = parseInt(e.target.value); // Get the index (0, 1, 2...)
+        userAnswers[currentQuestion] = options[selectedIndex]; // Get the exact original string object
+                 });
+             });
+         
+             const mediaButton = questionBox.querySelector('.media-button');
+             if (mediaButton) {
+                 mediaButton.addEventListener('click', function() {
+                     const mediaType = this.dataset.mediaType;
+                     const mediaLink = this.dataset.mediaLink;
+                     openMediaOverlay(mediaType, mediaLink);
+                 });
+             }
+             
+             updateButtonVisibility();
+         }
+         
+         function updateButtonVisibility() {
+             prevButton.classList.toggle('hidden', currentQuestion === 0);
+             nextButton.classList.toggle('hidden', currentQuestion === quizData.length - 1);
+             submitButton.classList.toggle('hidden', currentQuestion !== quizData.length - 1);
+         }
+         
+         function calculateScore() {
+             score = 0;
+             quizData.forEach((q, index) => {
+                 const userAnswer = userAnswers[index];
+                 const correctAnswer = q.details.answer;
+                 if (userAnswer === null) return;
+                 
+                 let isMatch = (userAnswer !== null) && (userAnswer === correctAnswer);
+         
+                 
+                 if (isMatch) score++;
+             });
+         }
+         
+         function showResult() {
+             fadeOut(questionBox);
+             allNavButtons.forEach(btn => btn.classList.add('hidden'));
+         
+             fadeIn(resultBox);
+             resultButton.classList.remove('hidden');
+             replayButton.classList.remove('hidden');
+         
+             const percentage = Math.round((score / quizData.length) * 100);
+             let smiley = '', message = '';
+         
+            // Launch confetti if percentage = 100
+            if(percentage === 100) {
+                 launchConfetti();
+            }
+         
+             if (percentage < 35) {
+                 smiley = '<i class="far fa-frown-open" style="color:var(--color-incorrect);"></i>';
+                 message = "Don't worry, try again!";
+             } else if (percentage < 70) {
+                 smiley = '<i class="far fa-meh" style="color:var(--accent-primary);"></i>';
+                 message = "Good job, but you can do better!";
+             } else {
+                 smiley = '<i class="far fa-smile-beam" style="color:var(--color-correct);"></i>';
+                 message = "Excellent work! You nailed it!";
+             }
+         
+             resultBox.querySelector('.smiley-icon').innerHTML = `${userName}, you scored ${score}/${quizData.length} ${smiley}`;
+             resultBox.querySelector('.score-detail h3').innerHTML = `Total Questions: ${quizData.length}<br>Correct: ${score}<br>Wrong: ${quizData.length - score}`;
+             resultBox.querySelector('.message').textContent = message;
+         
+             initializePieChart(percentage);
+         }
+         
+         function initializePieChart(percentage) {
+             const chartBar = document.getElementById('chart-bar');
+             const label = document.getElementById('percentage-label').querySelector('span');
+             const offset = 100 - percentage;
+             chartBar.style.strokeDashoffset = offset;
+         
+             // Animate number count-up
+             let current = 0;
+             const increment = percentage / 50; // Animate over ~1 second (1000ms / 20ms = 50 steps)
+             const timer = setInterval(() => {
+                 current += increment;
+                 if (current >= percentage) {
+                     current = percentage;
+                     clearInterval(timer);
+                 }
+                 label.textContent = Math.round(current);
+             }, 20);
+         }
+         
+         function showResultStats() {
+             const tableBody = resultStatsBox.querySelector('tbody');
+             tableBody.innerHTML = '';
+         
+             quizData.forEach((q, index) => {
+                 const userAnswer = userAnswers[index];
+                 const correctAnswer = q.details.answer;
+                 const explanation = q.details.explanation;
+                 
+                 const userAnswerText = userAnswer !== null ? userAnswer : 'Not Answered';
+                 const correctAnswerText = typeof correctAnswer === 'boolean' ? (correctAnswer ? 'True' : 'False') : correctAnswer;
+                 
+                 let isCorrect = (userAnswer !== null) && (userAnswer === correctAnswer);
+                 
+                 const icon = isCorrect ? '<i class="fas fa-check-circle text-correct"></i>' : '<i class="fas fa-times-circle text-incorrect"></i>';
+                 const rowClass = isCorrect ? '' : 'text-incorrect';
+         
+                 let rowHTML = `
+                     <tr>
+                         <td class="question-col">${q.question}</td>
+                         <td class="answer-col ${rowClass}">${userAnswer === null ? 'Not Answered' : icon + userAnswerText}</td>
+                         <td class="answer-col text-correct">${correctAnswerText}</td>
+                     </tr>`;
+         
+                 if (explanation) {
+                     rowHTML += `
+                         <tr class="explanation-row">
+                             <td colspan="3" class="explanation-col">
+                                 <strong>Explanation:</strong> ${explanation}
+                             </td>
+                         </tr>`;
+                 }
+                 tableBody.insertAdjacentHTML('beforeend', rowHTML);
+             });
+         }
+         
+         function replayQuiz() {
+             currentQuestion = 0;
+             score = 0;
+             userAnswers.fill(null);
+             
+             fadeOut(resultBox);
+             fadeOut(resultStatsBox, () => {
+                 fadeIn(questionBox);
+                 resultButton.classList.add('hidden');
+                 replayButton.classList.add('hidden');
+                 loadQuestion(currentQuestion);
+             });
+         }
+         
+         // --- Media Overlay Functions ---
+         function getYouTubeVideoId(url) {
+             const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+             const match = url.match(regExp);
+             return (match && match[2] && match[2].length === 11) ? match[2] : null;
+         }
+         
+         function createYouTubePlayer(containerId, videoId, isAudio) {
+             youtubePlayer = new YT.Player(containerId, {
+                 videoId: videoId,
+                 events: {
+                     'onReady': (event) => event.target.playVideo(),
+                     'onStateChange': (event) => {
+                         if (isAudio && (event.data === YT.PlayerState.ENDED || event.data === YT.PlayerState.PAUSED)) {
+                             closeMediaOverlay();
+                         }
+                     }
+                 },
+                 playerVars: { 'autoplay': 1, 'controls': isAudio ? 0 : 1, 'modestbranding': 1, 'loop': 0, 'fs': isAudio ? 0 : 1, 'iv_load_policy': 3, 'rel': 0, 'showinfo': 0, 'mute': 0 }
+             });
+         }
+         
+         function openMediaOverlay(mediaType, mediaLink) {
+             mediaPlayerContainer.innerHTML = '';
+             let contentHTML = '';
+         
+             switch (mediaType) {
+                 case 'image':
+                     contentHTML = `<img src="${mediaLink}" alt="Question Image">`;
+                     mediaPlayerContainer.innerHTML = contentHTML;
+                     break;
+                 case 'audio':
+                 case 'video':
+                     const ytVideoId = getYouTubeVideoId(mediaLink);
+                     if (ytVideoId) {
+                         const playerDivId = `youtube-${mediaType}-player`;
+                         const isAudio = mediaType === 'audio';
+                         contentHTML = `
+                             ${isAudio ? '<div class="audio-message">Audio playing...</div>' : ''}
+                             <div id="${playerDivId}" style="${isAudio ? 'position: absolute; left: -9999px;' : ''}"></div>`;
+                         mediaPlayerContainer.innerHTML = contentHTML;
+         
+                         if (youtubeAPIReady) {
+                             createYouTubePlayer(playerDivId, ytVideoId, isAudio);
+                         } else {
+                             youtubePlayerQueue.push({ containerId: playerDivId, videoId: ytVideoId, isAudio: isAudio });
+                         }
+                     } else {
+                         mediaPlayerContainer.innerHTML = `<p class="text-incorrect">Error: Invalid YouTube link.</p>`;
+                     }
+                     break;
+             }
+             mediaOverlay.classList.add('active');
+         }
+         
+         function closeMediaOverlay() {
+             mediaOverlay.classList.remove('active');
+             if (youtubePlayer && typeof youtubePlayer.stopVideo === 'function') {
+                 youtubePlayer.stopVideo();
+                 youtubePlayer.destroy();
+                 youtubePlayer = null;
+             }
+             mediaPlayerContainer.innerHTML = '';
+         }
+         
+         async function initializePage(userData) {
+               parent.showProcessingDialog();
+               const fullName = userData.name;
+               const qbIds = userData['selectedQbIds'];
+         
+               // Set student name
+               const firstName = fullName.split(" ")[0].toLowerCase().replace(/^./, c => c.toUpperCase());
+               nameInput.value = firstName;
+         
+               // Fetch questions
+         try {
+         const data = await parent.invokeFunction('get_custom_question_set', {
+         p_bank_ids: qbIds,
+         p_total_count: 1000,
+         p_type_counts: {"MCQ": 1000, "True/False": 1000}
+         }, false);
+         quizData = data;
+         userAnswers = new Array(quizData.length).fill(null);
+         } catch (err) {
+         console.error("Error fetching questions:", err);
+         return null;
+         }
+         parent.hideProcessingDialog();
+               init();
+         }
+      </script>
+   </body>
+</html>
