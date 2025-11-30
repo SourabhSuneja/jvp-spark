@@ -663,7 +663,7 @@
          });
          
          endButton.addEventListener('click', async () => {
-         const confirmEnd = await window.showDialog({
+         const confirmEnd = await parent.showDialog({
          title: 'End Quiz',
          message: 'Are you sure you want to end the quiz?',
          type: 'confirm'
