@@ -717,12 +717,12 @@
                  for (let i = 0; i < 5; i++) {
                      stars += i < level ? '<i class="fas fa-star" style="color:var(--accent-primary);"></i>' : '<i class="far fa-star" style="color:var(--text-secondary);"></i>';
                  }
-                 return `<span style="display: flex; align-items: center; gap: 0.25rem;" title="Difficulty: ${level}/5">${stars}</span>`;
+                 return `<span style="display: flex; display: none; align-items: center; gap: 0.25rem;" title="Difficulty: ${level}/5">${stars}</span>`;
              }
          
              let questionHTML = `
                  <div class="question-header">
-                     <span style="padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: bold; background-color: color-mix(in srgb, var(--accent-primary) 20%, transparent); color: var(--accent-primary); border: 1px solid var(--accent-primary);">${q.question_bank}</span>
+                     <span style="padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; color: var(--accent-primary); border: 1px solid var(--accent-primary);">${q.question_bank}</span>
                      ${getDifficultyStars(q.difficulty_level)}
                  </div>
                  <div>
