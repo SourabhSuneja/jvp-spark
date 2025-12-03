@@ -167,6 +167,7 @@
          align-items: center;
          gap: 1rem;
          margin-top: 1.5rem;
+         flex-wrap: wrap;
          }
          @media (min-width: 768px) { /* md: prefix */
          .options-grid { grid-template-columns: repeat(2, 1fr); }
@@ -501,9 +502,9 @@
                </div>
             </div>
             <div class="navigation-buttons">
+               <button id="endButton" class="btn btn-warning">End</button>
                <button id="prevButton" class="btn">Previous</button>
                <button id="nextButton" class="btn">Next</button>
-               <button id="endButton" class="btn btn-warning">End</button>
                <button id="submitButton" class="btn">Submit</button>
                <button id="resultButton" class="btn">See Review</button>
                <button id="replayButton" class="btn">Re-play Quiz</button>
