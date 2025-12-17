@@ -279,9 +279,8 @@
          }
          
          // 4. Main App Logic
-         async function initApp() {
-             const urlParams = new URLSearchParams(window.location.search);
-             let token = urlParams.get('token');
+         async function initializePage(userData) {
+             let token = userData.access_token;
              
              // If no token provided in URL, return with error
              if (!token) {
@@ -358,9 +357,6 @@
              document.getElementById('loading').style.display = 'none';
              document.getElementById('app-content').style.display = 'block';
          }
-         
-         // Run on load
-         window.addEventListener('DOMContentLoaded', initApp);
          
       </script>
    </body>
