@@ -43,6 +43,7 @@ ul ul li {
 body {
 	font-family: Arial, sans-serif;
 	background: #000428;
+ background: black;
 	color: white;
 	padding: 20px;
 	padding-bottom: 100px;
@@ -431,6 +432,7 @@ table td:first-child {
 	left: 50%;
 	transform: translateX(-50%);
 	background: #000428;
+ background: black;
 	width: 100%;
 	max-width: 1200px;
 	padding-bottom: 24px;
