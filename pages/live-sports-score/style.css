@@ -427,7 +427,7 @@ table td:first-child {
 /* This is the new main wrapper that is fixed to the bottom */
 #win-prediction-widget {
 	position: fixed;
-	bottom: 50px;
+	bottom: 0;
 	left: 50%;
 	transform: translateX(-50%);
 	background: #000428;
