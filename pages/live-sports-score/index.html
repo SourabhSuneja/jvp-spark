@@ -12,10 +12,8 @@
     </script>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>JVP Sports Meet | Live Score</title>
+      <title>Live Sports Score</title>
       <meta name="description" content="Live results of JVP's Annual Sports Meet 2025-26. Stay updated in real-time!">
-      <link rel="preload" href="https://myjvp.in/commons/loading.gif" as="image">
-      <link rel="stylesheet" href="https://myjvp.in/commons/dialog.css">
       <link rel="stylesheet" href="./style.css">
       <link rel="preconnect" href="https://fonts.googleapis.com">
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -178,17 +176,6 @@
             <li>The Grand Total scores of houses include points from all school activities held earlier during the session, such as soft board decoration, debates etc.</li>
          </ul>
       </div>
-      <!-- Dialog Overlay Starts -->
-      <div id="dialog-overlay" class="dialog-overlay">
-         <div class="dialog-box" id="dialog-box">
-            <div class="dialog-header" id="dialog-header">Title</div>
-            <div class="dialog-message" id="dialog-message">Message goes here</div>
-            <div class="dialog-buttons" id="dialog-buttons">
-               <!-- Buttons will be added dynamically -->
-            </div>
-         </div>
-      </div>
-      <!-- Dialog Overlay Ends -->
       <!-- Pop-up Box Starts -->
       <div class="popup-box" id="popupBox">
          <div class="popup-content">
@@ -223,9 +210,8 @@
          </div>
       </div>
       <!-- Win prediction widget ends -->
-      <script src="https://myjvp.in/commons/dialog.js"></script>
       <script>
-         showProcessingDialog();
+         parent.showProcessingDialog();
       </script>
       <script type="module" src="https://myjvp.in/commons/supabase-crud.js"></script>
       <script src="./script.js"></script>
