@@ -245,6 +245,9 @@
 
         .table-responsive {
             overflow-x: auto;
+            max-height: 80vh;  /* Limits table height to 75% of viewport */
+            overflow-y: auto;  /* Enables vertical scrolling inside the table */
+            border-bottom: 1px solid #ddd; /* Optional: adds definition at bottom */
         }
 
         table {
@@ -266,6 +269,11 @@
             letter-spacing: 0.5px;
             font-size: 0.9rem;
             text-transform: uppercase;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: var(--dark); /* Essential: ensures header is opaque */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Optional: Adds a subtle shadow */
         }
 
         td {
