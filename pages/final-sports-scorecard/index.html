@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="noselect">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -37,6 +37,16 @@
         * {
             max-height: 99999999px;
         }
+
+        .noselect {
+         -webkit-user-select: none;
+         -moz-user-select: none;
+         -ms-user-select: none;
+         user-select: none;
+         -webkit-touch-callout: none;
+         -webkit-user-drag: none;
+         -webkit-tap-highlight-color: transparent;
+         }
 
         body {
             font-family: 'Inter', sans-serif;
@@ -421,9 +431,6 @@
 </div>
 
 <div class="container">
-    <div class="action-bar">
-        <button onclick="window.print()" class="btn-print"><i class="fas fa-print"></i> Print Results</button>
-    </div>
 
     <header>
         <h1>Jamna Vidyapeeth<br><i class="fas fa-medal" style="color: var(--topaz); margin-right: 10px;"></i> </h1>
@@ -458,24 +465,6 @@
                 <tbody>
                     </tbody>
             </table>
-        </div>
-    </div>
-
-    <div class="signatures">
-        <div class="sig-block">
-            <div class="sig-line"></div>
-            <p>Sourabh Suneja</p>
-            <span>Technical Coordinator</span>
-        </div>
-        <div class="sig-block">
-            <div class="sig-line"></div>
-            <p>Kajal Jha & Ritu Das</p>
-            <span>Activity Coordinators</span>
-        </div>
-        <div class="sig-block">
-            <div class="sig-line"></div>
-            <p>Mrs. Savita Devi</p>
-            <span>Principal</span>
         </div>
     </div>
 </div>
