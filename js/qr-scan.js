@@ -186,9 +186,11 @@ async function loginWithQR(qrContent, student) {
 
       // Generate email by using the student details
       const email = generateEmail(student['name'], qrContent);
+      console.log(email);
 
       // Generate password by hashing the access token
       const password = await uuidToNumericHash(qrContent);
+      console.log(password);
 
       // Set email and password in the form inputs
       document.getElementById('username').value = email;
