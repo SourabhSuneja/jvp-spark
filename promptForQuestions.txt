@@ -1,0 +1,98 @@
+Consider this sample PostgreSQL query to insert questions into the "questions" table:
+
+INSERT INTO questions (question_bank_id, question_text, question_type, difficulty_level, details)
+VALUES
+-- Example MCQ
+(1, 
+'Identify the correct form of the verb: She ___ to school every day.', 
+'MCQ',
+1,
+'{
+  "options": ["go", "goes", "going", "gone"],
+  "answer": "goes",
+  "explanation": "The subject ''she'' requires the verb in simple present tense with an -s ending."
+}'),
+
+-- Example True/False question
+(1, 'The present perfect tense is used to describe an action that happened at a specific time in the past.', 'True/False', 2, '{
+  "answer": "False",
+  "explanation": "Present perfect does not refer to specific time; it links past to present."
+}'),
+
+-- Example Fill up question
+(1, 'They _____ football when it started to rain.', 'Fill up', 2, '{
+  "answer": "were playing",
+  "explanation": "Past continuous tense is used for an ongoing action interrupted by another."
+}'),
+
+-- Example Short Answer Type question
+(1, 'What is the difference between the simple past and the present perfect tense?', 'Short Answer Type', 3, '{
+  "answer": "Simple past refers to actions completed at a specific time in the past; present perfect connects past actions with the present."
+}')
+
+The structure of the table is as follows:
+CREATE TABLE questions (
+    id BIGSERIAL PRIMARY KEY,
+    question_bank_id BIGINT NOT NULL REFERENCES question_banks(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    question_text TEXT NOT NULL,
+    question_type TEXT NOT NULL CHECK (question_type IN ('MCQ', 'Fill up', 'True/False', 'Match items', 'Very Short Answer Type', 'Short Answer Type', 'Long Answer Type', 'Very Long Answer Type', 'Diagram/Picture/Map Based')),
+    difficulty_level SMALLINT NOT NULL DEFAULT 1,
+    details JSONB, -- Stores all other data: options, answers, explanations, etc.
+    created_at TIMESTAMP NOT NULL DEFAULT now()
+);
+
+The difficulty level ranges from 1 to 5. 
+
+Following a similar approach, and using your judgement to decide relative difficulty levels, give me PostgreSQL queries to insert these questions (related to Python, computer science for grade 7), keeping the question bank id fixed at 13. Correct any spelling typos, if any. Escape HTML (if any) because they will be dynamically pulled and shown inside an HTML application. I don't want code injections. For breaking lines (especially in subjective question and answers), however, you can use HTML <br> tags as the application uses innerHTML to inject the content. Retain the sequence of options and questions. Also write and include the answers. Keep the answers as simple and as short and sweet as possible, which are easy to learn and understand for grade 7. No answer should be longer than 3 lines.
+
+MCQs:
+1. The data type for 13.6 should be ________.
+a. str
+b. float
+c. int
+d. None of these
+
+2. Which of the following is an invalid variable?
+a. EMP
+b. emp_
+c. 12emp
+d. All of these
+
+3. For giving tab space while printing the statement, you use:
+a. \n
+b. \t
+c. Tab key
+d. Shift key
+
+4. Which of the following cannot be used as a variable?
+a. Print
+b. print
+c. Else
+d. All of these
+
+5. >>> print (30 + 20) will give the output as _____.
+a. 2030
+b. 3020
+c. 50
+d. 600
+
+Fill up:
+1. _________ is a high-level language used for writing codes for the computer programs.
+2. _________ invented Python.
+3. A _________ is used for storing the data in computer's memory.
+4. __________ represent the type of data stored in variables.
+5. The _______ character is used to end a line and start a new line.
+
+True/False:
+1. The print() function is used to accept the value of a variable from the user.
+2. A variable name consists of digits, letters of the alphabet, and underscore.
+3. A script is a program which you type in Python.
+4. You use comma in the print() statement to provide space among the values.
+5. Python is not a case-sensitive programming language.
+
+Short Answer Type:
+1. What is Python?
+2. Distinguish between an interpreter and a compiler.
+3. What is a variable? What are the rules for naming a variable?
+4. Explain the two modes of Python.
+5. What are keywords?
