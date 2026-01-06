@@ -212,7 +212,7 @@ async function fetchData(qbId) {
          p_total_count: 9000,
          p_type_counts: {"MCQ": 1000, "True/False": 1000, "Fill up": 1000, "Very Short Answer Type": 1000, "Short Answer Type": 1000, "Long Answer Type": 1000, "Very Long Answer Type": 1000}
          }, false);
-         return data;
+         return data.map(convertQuestionToOldFormat) || [];
          } catch (err) {
          console.error("Error fetching questions:", err);
          return null;
