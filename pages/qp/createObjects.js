@@ -248,7 +248,7 @@ function generateLink() {
   const qContainers = getQContainers();
 
   // generate URL
-  let url = "https://sourabhsuneja.github.io/question-paper/?" + "ed=" + encodeURIComponent(examDetails) + "&qpm=" + encodeURIComponent(questionPaperMap) + "&qc=" + encodeURIComponent(qContainers) + "&files=" +  encodeURIComponent(document.getElementById('chapters').value.trim()) + "&diff=" + document.getElementById('overall-difficulty').value;
+  let url = "https://sourabhsuneja.github.io/jvp-spark/pages/qp/rendered.html?" + "ed=" + encodeURIComponent(examDetails) + "&qpm=" + encodeURIComponent(questionPaperMap) + "&qc=" + encodeURIComponent(qContainers) + "&files=" +  encodeURIComponent(document.getElementById('chapters').value.trim()) + "&diff=" + document.getElementById('overall-difficulty').value;
 
   // insert link in the link container
   const a = document.createElement('a');
