@@ -205,7 +205,7 @@ async function fetchMultipleFilesData(fileNames) {
 
 // Function to fetch data from a Supabase using qbId
 
-function fetchData(qbId) {
+async function fetchData(qbId) {
     try {
          const data = await invokeFunction('get_custom_question_set', {
          p_bank_ids: [qbId],
