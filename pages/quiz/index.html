@@ -441,6 +441,35 @@
          pointer-events: none;
          z-index: 9999;
          }
+         /* --- Immediate Answer Feedback --- */
+.option-label.answer-correct {
+    background-color: color-mix(in srgb, var(--color-correct) 20%, transparent);
+    border-color: var(--color-correct);
+}
+.option-label.answer-correct .custom-radio {
+    border-color: var(--color-correct);
+}
+.option-label.answer-correct .custom-radio::before {
+    background-color: var(--color-correct);
+    transform: scale(1);
+}
+
+.option-label.answer-incorrect {
+    background-color: color-mix(in srgb, var(--color-incorrect) 20%, transparent);
+    border-color: var(--color-incorrect);
+}
+.option-label.answer-incorrect .custom-radio {
+    border-color: var(--color-incorrect);
+}
+.option-label.answer-incorrect .custom-radio::before {
+    background-color: var(--color-incorrect);
+    transform: scale(1);
+}
+
+.option-label.answer-disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
       </style>
    </head>
    <body>
@@ -757,14 +786,54 @@
              });
              questionHTML += '</div>';
              questionBox.innerHTML = questionHTML;
+
+            // Restore visual feedback if question was already answered
+if (userAnswers[index] !== null) {
+    const correctAnswer = q.details.answer;
+    questionBox.querySelectorAll('input[name="option"]').forEach((inp, i) => {
+        inp.disabled = true;
+        inp.nextElementSibling.classList.add('answer-disabled');
+        if (options[i] === userAnswers[index]) {
+            const isCorrect = options[i] === correctAnswer;
+            inp.nextElementSibling.classList.add(isCorrect ? 'answer-correct' : 'answer-incorrect');
+        } else if (options[i] === correctAnswer && userAnswers[index] !== correctAnswer) {
+            inp.nextElementSibling.classList.add('answer-correct');
+            inp.nextElementSibling.classList.remove('answer-disabled');
+        }
+    });
+}
          
              // Add event listeners for new elements
              questionBox.querySelectorAll('input[name="option"]').forEach(input => {
-                 input.addEventListener('change', (e) => {
-                     const selectedIndex = parseInt(e.target.value); // Get the index (0, 1, 2...)
-         userAnswers[currentQuestion] = options[selectedIndex]; // Get the exact original string object
-                 });
-             });
+    input.addEventListener('change', (e) => {
+        const selectedIndex = parseInt(e.target.value);
+        const selectedOption = options[selectedIndex];
+        userAnswers[currentQuestion] = selectedOption;
+
+        const correctAnswer = quizData[currentQuestion].details.answer;
+        const isCorrect = selectedOption === correctAnswer;
+
+        // Disable all inputs to lock the answer
+        questionBox.querySelectorAll('input[name="option"]').forEach(inp => {
+            inp.disabled = true;
+            inp.nextElementSibling.classList.add('answer-disabled');
+        });
+
+        // Style the selected option
+        const selectedLabel = e.target.nextElementSibling;
+        selectedLabel.classList.add(isCorrect ? 'answer-correct' : 'answer-incorrect');
+
+        // If wrong, also highlight the correct answer
+        if (!isCorrect) {
+            questionBox.querySelectorAll('input[name="option"]').forEach((inp, i) => {
+                if (options[i] === correctAnswer) {
+                    inp.nextElementSibling.classList.add('answer-correct');
+                    inp.nextElementSibling.classList.remove('answer-disabled');
+                }
+            });
+        }
+    });
+});
          
              const mediaButton = questionBox.querySelector('.media-button');
              if (mediaButton) {
