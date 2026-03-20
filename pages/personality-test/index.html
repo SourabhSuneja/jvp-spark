@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kids Personality & Superpower Test</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* Colors - Dark Theme */
+      --bg-primary: #121212;
+      --bg-secondary: #1f1f1f;
+      --bg-tertiary: #333333;
+      --bg-gradient-dark: linear-gradient(145deg, #1e1e1e, #333333);
+      --bg-input: #2c2c2c;
+      /* Text Colors - Dark Theme */
+      --text-primary: #fff;
+      --text-secondary: #ddd;
+      --text-tertiary: #b0bec5;
+      --text-muted: rgb(230, 230, 230);
+      /* Accent Colors */
+      --accent-primary: #ffc107;
+      --accent-hover: #e0a800;
+      --accent-focus: #ffd54f;
+      --accent-button-text: black;
+      /* Shadow Colors */
+      --shadow-dark: rgba(0, 0, 0, 0.5);
+      --shadow-medium: rgba(0, 0, 0, 0.6);
+      --shadow-light: rgba(0, 0, 0, 0.4);
+      /* Spacing Values */
+      --spacing-xs: 4px;
+      --spacing-sm: 8px;
+      --spacing-md: 12px;
+      --spacing-lg: 16px;
+      --spacing-xl: 20px;
+      --spacing-xxl: 25px;
+      --spacing-xxxl: 30px;
+      /* Border Radius */
+      --radius-sm: 5px;
+      --radius-md: 8px;
+      --radius-lg: 10px;
+      --radius-xl: 12px;
+      --radius-full: 50%;
+      /* Font Sizes */
+      --font-sm: 0.9rem;
+      --font-base: 1rem;
+      --font-md: 1.1rem;
+      --font-lg: 1.2rem;
+      --font-xl: 1.6rem;
+      --font-xxl: 1.7rem;
+      --font-xxxl: 1.8rem;
+      --font-icon-sm: 1.2rem;
+      /* Transitions */
+      --transition-fast: 0.2s ease;
+      --transition-base: 0.3s ease;
+      --transition-slow: 0.4s all;
+    }
+
+    /* Light theme overrides */
+    body.light-theme {
+      --bg-primary: #ffffff;
+      --bg-secondary: rgb(253, 253, 253);
+      --bg-tertiary: rgb(240, 240, 240);
+      --bg-gradient-dark: linear-gradient(145deg, #ffffff, #f0f0f0);
+      --bg-input: #ffffff;
+      --text-primary: #333;
+      --text-secondary: rgb(50, 50, 50);
+      --text-tertiary: rgb(80, 80, 80);
+      --text-muted: #333;
+      --accent-button-text: rgb(30, 30, 30);
+      --shadow-dark: rgba(0, 0, 0, 0.1);
+      --shadow-medium: rgba(0, 0, 0, 0.1);
+      --shadow-light: rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', sans-serif;
+      transition: var(--transition-base) all;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: var(--spacing-xl);
+      overflow-x: hidden;
+    }
+
+    .theme-toggle {
+      position: fixed;
+      top: var(--spacing-xl);
+      right: var(--spacing-xl);
+      background-color: var(--bg-secondary);
+      border: none;
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-md);
+      cursor: pointer;
+      color: var(--text-primary);
+      font-size: var(--font-icon-sm);
+      box-shadow: 0 2px 8px var(--shadow-light);
+      z-index: 1000;
+      display: none;
+    }
+
+    .theme-toggle:hover {
+      background-color: var(--bg-tertiary);
+      transform: scale(1.1);
+    }
+
+    .container {
+      max-width: 900px;
+      width: 100%;
+      background: var(--bg-gradient-dark);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-xxxl);
+      color: var(--text-primary);
+      box-shadow: 0 8px 30px var(--shadow-medium);
+      text-align: center;
+      display: none; /* Screens handled by JS */
+    }
+
+    .container.active {
+      display: block;
+      animation: fadeIn var(--transition-base);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      font-size: var(--font-xl);
+      font-weight: 700;
+      margin-bottom: var(--spacing-xl);
+      color: var(--text-primary);
+    }
+
+    p {
+      font-size: var(--font-base);
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: var(--spacing-lg);
+    }
+
+    input[type="text"] {
+      padding: var(--spacing-md);
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: var(--font-base);
+      background-color: var(--bg-input);
+      color: var(--text-primary);
+      width: 100%;
+      box-shadow: 0 2px 8px var(--shadow-light);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px var(--accent-focus);
+    }
+
+    select {
+      padding: var(--spacing-md);
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: var(--font-base);
+      cursor: pointer;
+      background-color: var(--bg-input);
+      color: var(--text-primary);
+      width: 100%;
+      box-shadow: 0 2px 8px var(--shadow-light);
+    }
+
+    select:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px var(--accent-focus);
+    }
+
+    .input-group {
+      text-align: left;
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: var(--spacing-sm);
+      font-weight: 500;
+    }
+
+    button {
+      display: inline-block;
+      padding: var(--spacing-md) var(--spacing-xxl);
+      font-size: var(--font-lg);
+      color: var(--accent-button-text);
+      background: var(--accent-primary);
+      border: none;
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: var(--spacing-lg);
+    }
+
+    button:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px var(--shadow-medium);
+    }
+
+    .disclaimer-box {
+      background-color: rgba(255, 193, 7, 0.1);
+      border-left: 4px solid var(--accent-primary);
+      padding: var(--spacing-lg);
+      text-align: left;
+      margin-bottom: var(--spacing-xl);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    }
+
+    /* Quiz Specifics */
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background-color: var(--bg-input);
+      border-radius: var(--radius-full);
+      margin-bottom: var(--spacing-xl);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background-color: var(--accent-primary);
+      width: 0%;
+      transition: width var(--transition-base);
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--spacing-md);
+      margin-top: var(--spacing-xl);
+    }
+
+    .option-btn {
+      background-color: var(--bg-input);
+      color: var(--text-primary);
+      padding: var(--spacing-lg);
+      border-radius: var(--radius-md);
+      border: 2px solid transparent;
+      text-align: left;
+      font-size: var(--font-md);
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+
+    .option-btn:hover {
+      border-color: var(--accent-primary);
+      background-color: var(--bg-secondary);
+      transform: translateY(-2px);
+    }
+
+    /* Results Specifics */
+    .result-section {
+      background-color: var(--bg-secondary);
+      padding: var(--spacing-xl);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--spacing-xl);
+      text-align: left;
+    }
+
+    .superpower-bar {
+      margin-bottom: var(--spacing-md);
+    }
+
+    .superpower-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: var(--spacing-xs);
+      font-weight: 500;
+    }
+
+    .superpower-track {
+      width: 100%;
+      height: 12px;
+      background-color: var(--bg-input);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+
+    .superpower-fill {
+      height: 100%;
+      background-color: var(--accent-primary);
+    }
+
+    @media (max-width: 768px) {
+      body { padding: var(--spacing-md); }
+      .container { padding: var(--spacing-xl); }
+      button { width: 100%; }
+    }
+  </style>
+</head>
+<body> <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
+    <i class="fas fa-moon"></i>
+  </button>
+
+  <div class="container active" id="screen-setup">
+    <h1>Discover Your Superpowers!</h1>
+    <p>Ready to find out what makes you incredibly awesome?</p>
+    
+    <div class="input-group">
+      <label for="userName">What is your name?</label>
+      <input type="text" id="userName" placeholder="Enter your name..." required>
+    </div>
+
+    <div class="input-group">
+      <label for="userLang">Choose your language:</label>
+      <select id="userLang">
+        <option value="en">English</option>
+        <option value="hi">рд╣рд┐рдВрджреА (Hindi)</option>
+      </select>
+    </div>
+
+    <button onclick="goToDisclaimer()">Start / рд╢реБрд░реВ рдХрд░реЗрдВ <i class="fas fa-arrow-right"></i></button>
+  </div>
+
+  <div class="container" id="screen-disclaimer">
+    <h1 id="disc-title">Important Note!</h1>
+    <div class="disclaimer-box">
+      <p id="disc-text">
+        <strong>Parents & Kids:</strong> This fun quiz is designed to help you discover your learning styles and personality traits based on Multiple Intelligence and MBTI theories. 
+        <br><br>
+        <em>Please note: This is just for self-reference and fun! It is not professional counseling advice, a medical assessment, or a psychological diagnosis.</em>
+      </p>
+    </div>
+    <button onclick="startQuiz()" id="disc-btn">I Understand, Let's Go!</button>
+  </div>
+
+  <div class="container" id="screen-quiz">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+    <p id="question-counter" style="text-align: left; font-weight: bold; color: var(--accent-primary);"></p>
+    <h2 id="question-text" style="margin-bottom: var(--spacing-xl); margin-top: var(--spacing-md); text-align: left;"></h2>
+    <div class="options-grid" id="options-grid">
+      </div>
+  </div>
+
+  <div class="container" id="screen-results">
+    <h1 id="res-greeting"></h1>
+    <p id="res-intro"></p>
+
+    
+
+    <div class="result-section">
+      <h2 style="margin-bottom: var(--spacing-sm); color: var(--accent-primary);" id="res-mbti-title"></h2>
+      <p id="res-mbti-desc"></p>
+    </div>
+
+    
+
+    <div class="result-section">
+      <h2 style="margin-bottom: var(--spacing-md); color: var(--accent-primary);" id="res-mi-title"></h2>
+      <div id="mi-bars-container">
+        </div>
+    </div>
+
+    <button onclick="location.reload()" id="res-restart-btn">Take Test Again</button>
+  </div>
+
+  <script>
+    // Theme logic
+    function toggleTheme() {
+      document.body.classList.toggle('light-theme');
+      const icon = document.querySelector('#themeBtn i');
+      if(document.body.classList.contains('light-theme')) {
+        icon.className = 'fas fa-moon';
+      } else {
+        icon.className = 'fas fa-sun';
+      }
+    }
+
+    // App State
+    let state = {
+      name: '',
+      lang: 'en',
+      currentQ: 0,
+      scores: {
+        E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0,
+        linguistic: 0, logical: 0, visual: 0, kinesthetic: 0,
+        musical: 0, interpersonal: 0, intrapersonal: 0, naturalistic: 0
+      }
+    };
+
+    // Dictionary for UI Translations
+    const UI = {
+      en: {
+        discTitle: "Important Note!",
+        discText: "<strong>Parents & Kids:</strong> This fun quiz is designed to help you discover your learning styles and personality traits... <br><br><em>Please note: This is just for self-reference and fun! It is not professional counseling advice or a medical assessment.</em>",
+        discBtn: "I Understand, Let's Go!",
+        qCounter: "Question {current} of {total}",
+        resIntro: "Based on your answers, here is a breakdown of your unique personality and superpowers!",
+        resMbtiTitle: "Your Personality Style: ",
+        resMiTitle: "Your Top Secret Superpowers (Intelligences):",
+        restart: "Take Test Again",
+        miLabels: {
+          linguistic: "Word Wizard ЁЯУЦ (Linguistic)",
+          logical: "Number Ninja ЁЯФв (Logical)",
+          visual: "Artistic Ace ЁЯОи (Visual)",
+          kinesthetic: "Action Hero тЪ╜ (Kinesthetic)",
+          musical: "Melody Master ЁЯО╡ (Musical)",
+          interpersonal: "People Pal ЁЯдЭ (Interpersonal)",
+          intrapersonal: "Mind Explorer ЁЯза (Intrapersonal)",
+          naturalistic: "Nature Guardian ЁЯМ┐ (Naturalistic)"
+        }
+      },
+      hi: {
+        discTitle: "рдорд╣рддреНрд╡рдкреВрд░реНрдг рд╕реВрдЪрдирд╛!",
+        discText: "<strong>Parents & Kids:</strong> рдпрд╣ рдордЬрд╝реЗрджрд╛рд░ рдХреНрд╡рд┐рдЬрд╝ рдЖрдкрдХреЛ рдЕрдкрдиреЗ рд╕реАрдЦрдиреЗ рдХреЗ рддрд░реАрдХреЗ рдФрд░ рдкрд░реНрд╕рдиреИрд▓рд┐рдЯреА рдХреЛ рд╕рдордЭрдиреЗ рдореЗрдВ рдорджрдж рдХрд░реЗрдЧрд╛... <br><br><em>рдХреГрдкрдпрд╛ рдзреНрдпрд╛рди рджреЗрдВ: рдпрд╣ рд╕рд┐рд░реНрдл рдЖрдкрдХреЗ self-reference рдФрд░ рдореЫреЗ рдХреЗ рд▓рд┐рдП рд╣реИред рдЗрд╕реЗ рдХреЛрдИ medical assessment рдпрд╛ professional рд╕рд▓рд╛рд╣ рди рдорд╛рдиреЗрдВред</em>",
+        discBtn: "рдореБрдЭреЗ рд╕рдордЭ рдЖ рдЧрдпрд╛, рдЖрдЧреЗ рдмреЭреЗрдВ!",
+        qCounter: "рдкреНрд░рд╢реНрди {current} / {total}",
+        resIntro: "рдЖрдкрдХреЗ рдЬрд╡рд╛рдмреЛрдВ рдХреЗ рдЖрдзрд╛рд░ рдкрд░, рдпрд╣рд╛рдБ рдЖрдкрдХреА рдЕрдиреЛрдЦреА рдкрд░реНрд╕рдиреИрд▓рд┐рдЯреА рдФрд░ рд╕реБрдкрд░рдкрд╛рд╡рд░реНрд╕ рдХрд╛ рд░рд┐рдЬрд▓реНрдЯ рд╣реИ!",
+        resMbtiTitle: "рдЖрдкрдХреА рдкрд░реНрд╕рдиреИрд▓рд┐рдЯреА (Personality Style): ",
+        resMiTitle: "рдЖрдкрдХреА рдЯреЙрдк рд╕реБрдкрд░рдкрд╛рд╡рд░реНрд╕ (Intelligences):",
+        restart: "рдлрд┐рд░ рд╕реЗ рдЯреЗрд╕реНрдЯ рд▓реЗрдВ",
+        miLabels: {
+          linguistic: "Word Wizard ЁЯУЦ (рд╢рдмреНрджреЛрдВ рдХреЗ рдЬрд╛рджреВрдЧрд░)",
+          logical: "Number Ninja ЁЯФв (рддрд░реНрдХ рдФрд░ рдЧрдгрд┐рдд)",
+          visual: "Artistic Ace ЁЯОи (рдХрд▓рд╛ рдФрд░ рдбрд┐рдЬрд╝рд╛рдЗрди)",
+          kinesthetic: "Action Hero тЪ╜ (рдЦреЗрд▓ рдФрд░ рдПрдХреНрдЯрд┐рд╡рд┐рдЯреА)",
+          musical: "Melody Master ЁЯО╡ (рд╕рдВрдЧреАрдд рдкреНрд░реЗрдореА)",
+          interpersonal: "People Pal ЁЯдЭ (рджреЛрд╕реНрдд рдмрдирд╛рдиреЗ рдореЗрдВ рдорд╛рд╣рд┐рд░)",
+          intrapersonal: "Mind Explorer ЁЯза (рдЦреБрдж рдХреЛ рдЕрдЪреНрдЫреЗ рд╕реЗ рд╕рдордЭрдиреЗ рд╡рд╛рд▓реЗ)",
+          naturalistic: "Nature Guardian ЁЯМ┐ (рдкреНрд░рдХреГрддрд┐ рдкреНрд░реЗрдореА)"
+        }
+      }
+    };
+
+    // Bilingual Questions Data
+    const QUESTIONS = [
+      { id:1, cat:'E/I', 
+        text:{ hi:'рдХреНрдпрд╛ рдЖрдк рдХреЛ рдЕрдХреЗрд▓реЗ рд╕рдордп рдмрд┐рддрд╛рдирд╛ рдкрд╕рдВрдж рд╣реИ?', en:'Do you like spending time alone?' }, 
+        options:[
+          { text:{ hi:'рдмрд╣реБрдд рдЬрд╝реНрдпрд╛рджрд╛', en:'Very much' }, scores:{ I:3, intrapersonal:2 } },
+          { text:{ hi:'рдХрд╛рдлрд╝реА рд╣рдж рддрдХ', en:'Quite a bit' }, scores:{ I:2, intrapersonal:1 } },
+          { text:{ hi:'рдереЛрдбрд╝рд╛-рд╕рд╛', en:'A little' }, scores:{ E:2 } },
+          { text:{ hi:'рдмрд┐рд▓реНрдХреБрд▓ рдирд╣реАрдВ', en:'Not at all' }, scores:{ E:3, interpersonal:1 } },
+      ]},
+      { id:2, cat:'E/I', 
+        text:{ hi:'рдЬрдм рдЖрдк рдирдП рд▓реЛрдЧреЛрдВ рд╕реЗ рдорд┐рд▓рддреЗ рд╣реИрдВ рддреЛ рдХрд┐рддрдирд╛ рдЬрд▓реНрджреА рдЙрдирдХреЗ рд╕рд╛рде comfortable рд╣реЛ рдЬрд╛рддреЗ рд╣реИрдВ?', en:'How quickly do you get comfortable when meeting new people?' }, 
+        options:[
+          { text:{ hi:'рдмрд╣реБрдд рдЬрд▓реНрджреА', en:'Very quickly' }, scores:{ E:3, interpersonal:2 } },
+          { text:{ hi:'рдЬрд▓реНрджреА', en:'Quickly' }, scores:{ E:2, interpersonal:1 } },
+          { text:{ hi:'рдереЛрдбрд╝рд╛ рд╕рдордп рд▓рдЧрддрд╛ рд╣реИ', en:'It takes some time' }, scores:{ I:2 } },
+          { text:{ hi:'рдХрд╛рдлрд╝реА рд╕рдордп рд▓рдЧрддрд╛ рд╣реИ', en:'It takes a lot of time' }, scores:{ I:3 } },
+      ]},
+      { id:3, cat:'E/I', 
+        text:{ hi:'рдЬрдм рдЖрдк рдХрд┐рд╕реА party рдореЗрдВ рдЬрд╛рддреЗ рд╣реИрдВ рддреЛ рд▓реЛрдЧреЛрдВ рдХреЗ рд╕рд╛рде рдХрд┐рддрдирд╛ рдШреБрд▓-рдорд┐рд▓рдХрд░ рдмрд╛рддреЗрдВ рдХрд░рддреЗ рд╣реИрдВ?', en:'How much do you mingle and talk to people at a party?' }, 
+        options:[
+          { text:{ hi:'рдмрд╣реБрдд рдЬрд╝реНрдпрд╛рджрд╛', en:'A lot' },  scores:{ E:3, interpersonal:3 } },
+          { text:{ hi:'рдХрд╛рдлрд╝реА рд╣рдж рддрдХ', en:'Quite a bit' },  scores:{ E:2, interpersonal:2 } },
+          { text:{ hi:'рдереЛрдбрд╝рд╛', en:'A little' },         scores:{ I:2, interpersonal:1 } },
+          { text:{ hi:'рдмрд┐рд▓реНрдХреБрд▓ рдирд╣реАрдВ', en:'Not at all' }, scores:{ I:3 } },
+      ]},
+      { id:4, cat:'E/I', 
+        text:{ hi:'рдХреНрдпрд╛ рдЖрдк рдХреЛ рд▓реЛрдЧреЛрдВ рдХреЗ рд╕рд╛рде group рдореЗрдВ рдХрд╛рдо рдХрд░рдирд╛ рдкрд╕рдВрдж рд╣реИ?', en:'Do you enjoy working in groups with others?' }, 
+        options:[
+          { text:{ hi:'рдмрд╣реБрдд рдЬрд╝реНрдпрд╛рджрд╛', en:'Very much' },  scores:{ E:3, interpersonal:3 } },
+          { text:{ hi:'рдХрд╛рдлрд╝реА рд╣рдж рддрдХ', en:'Quite a bit' },  scores:{ E:2, interpersonal:2 } },
+          { text:{ hi:'рдереЛрдбрд╝рд╛-рд╕рд╛', en:'A little' },     scores:{ I:1, interpersonal:1 } },
+          { text:{ hi:'рдмрд┐рд▓реНрдХреБрд▓ рдирд╣реАрдВ', en:'Not at all' }, scores:{ I:3 } },
+      ]},
+      { id:5, cat:'E/I', 
+        text:{ hi:'рдХреНрдпрд╛ рдЖрдк рдмрд╣реБрдд рд╕реЛрдЪ-рд╕реЛрдЪрдХрд░ рдмреЛрд▓рддреЗ рд╣реИрдВ?', en:'Do you think carefully before you speak?' }, 
+        options:[
+          { text:{ hi:'рд╣рдореЗрд╢рд╛', en:'Always' },       scores:{ I:3, intrapersonal:3 } },
+          { text:{ hi:'рдЕрдХреНрд╕рд░', en:'Often' },       scores:{ I:2, intrapersonal:2 } },
+          { text:{ hi:'рдХрднреА-рдХрднреА', en:'Sometimes' },    scores:{ E:1, intrapersonal:1 } },
+          { text:{ hi:'рдХрднреА рдирд╣реАрдВ', en:'Never' },    scores:{ E:3 } },
+      ]},
+      { id:6, cat:'E/I', 
+        text:{ hi:'рдХреНрдпрд╛ рдЖрдк рдХреЛ рдмреЛрд▓рдиреЗ рдХреА рдЬрдЧрд╣ рд▓рд┐рдЦрдХрд░ рдЕрдкрдиреА рдмрд╛рдд express рдХрд░рдирд╛ рдЬрд╝реНрдпрд╛рджрд╛ рдкрд╕рдВрдж рд╣реИ?', en:'Do you prefer expressing yourself by writing rather than speaking?' }, 
+        options:[
+          { text:{ hi:'рдмрд╣реБрдд рдЬрд╝реНрдпрд╛рджрд╛', en:'Very much' },  scores:{ I:3, linguistic:3 } },
+          { text:{ hi:'рдХрд╛рдлрд╝реА рд╣рдж рддрдХ', en:'Quite a bit' },  scores:{ I:2, linguistic:2 } },
+          { text:{ hi:'рдереЛрдбрд╝рд╛-рд╕рд╛', en:'A little' },     scores:{ E:1, linguistic:1 } },
+          { text:{ hi:'рдмрд┐рд▓реНрдХреБрд▓ рдирд╣реАрдВ', en:'Not at all' }, scores:{ E:3 } },
+      ]},
+      { id:7, cat:'E/I', 
+        text:{ hi:'рдЬрдм рдЖрдк рдХреЛ class рдореЗрдВ рдХреЛрдИ doubt рд╣реЛрддрд╛ рд╣реИ рддреЛ рдХреНрдпрд╛ рдЖрдк teacher рд╕реЗ рдЬрд╛рдХрд░ рдмрд╛рдд рдХрд░рддреЗ рд╣реИрдВ?', en:'When you have a doubt in class, do you go and talk to the teacher?' }, 
+        options:[
+          { text:{ hi:'рд╣рдореЗрд╢рд╛', en:'Always' },      scores:{ E:3, interpersonal:3 } },
+          { text:{ hi:'рдЕрдХреНрд╕рд░', en:'Often' },      scores:{ E:2, interpersonal:2 } },
+          { text:{ hi:'рдХрднреА-рдХрднреА', en:'Sometimes' },   scores:{ I:1, interpersonal:1 } },
+          { text:{ hi:'рдХрднреА рдирд╣реАрдВ', en:'Never' },   scores:{ I:3 } },
+      ]},
+      { id:8, cat:'E/I', 
+        text:{ hi:'рдЬрдм рдЖрдк рдХреЛ stage рдкрд░ рдмреЛрд▓рдиреЗ рдХрд╛ рдореМрдХрд╛ рдорд┐рд▓рддрд╛ рд╣реИ рддреЛ рдЖрдк рдХреИрд╕рд╛ feel рдХрд░рддреЗ рд╣реИрдВ?', en:'How do you feel when given a chance to speak on stage?' }, 
+        options:[
+          { text:{ hi:'рдмрд╣реБрдд рдЙрддреНрд╕рд╛рд╣рд┐рдд', en:'Very excited!' }, scores:{ E:3, interpersonal:2 } },
+          { text:{ hi:'рдХрд╛рдлрд╝реА рдареАрдХ', en:'Okay, a little nervous but fine' }, scores:{ E:2, interpersonal:1 } },
+          { text:{ hi:'рдереЛрдбрд╝реА рдШрдмрд░рд╛рд╣рдЯ', en:'Nervous, I think a lot before speaking' }, scores:{ I:2 } },
+          { text:{ hi:'рдмрд┐рд▓реНрдХреБрд▓ рдЕрдЪреНрдЫрд╛ рдирд╣реАрдВ', en:'Not good, I avoid the stage' }, scores:{ I:3 } },
+      ]},
+      { id:9, cat:'E/I', 
+        text:{ hi:'рдЖрдк рдХреЛ рдХреИрд╕реЗ lunch рдХрд░рдирд╛ рдкрд╕рдВрдж рд╣реИ?', en:'How do you prefer eating your lunch?' }, 
+        options:[
+          { text:{ hi:'рдмрд╣реБрдд рд╕рд╛рд░реЗ рджреЛрд╕реНрддреЛрдВ рдХреЗ рд╕рд╛рде', en:'With a big group of friends' }, scores:{ E:3, interpersonal:3 } },
+          { text:{ hi:'2-3 close friends рдХреЗ рд╕рд╛рде', en:'With 2-3 close friends' }, scores:{ E:2, interpersonal:2 } },
+          { text:{ hi:'рдЕрдХреНрд╕рд░ рдЕрдХреЗрд▓реЗ', en:'Usually alone' }, scores:{ I:2, intrapersonal:2 } },
+          { text:{ hi:'рд╣рдореЗрд╢рд╛ рдЕрдХреЗрд▓реЗ', en:'Always alone' }, scores:{ I:3, intrapersonal:3 } },
+      ]},
+      { id:10, cat:'E/I', 
+        text:{ hi:'рдЬрдм рдЖрдк рдХреЛ рдХреЛрдИ рдирдпрд╛ idea рдЖрддрд╛ рд╣реИ рддреЛ рдЖрдк рдХреНрдпрд╛ рдХрд░рддреЗ рд╣реИрдВ?', en:'What do you do when you get a new idea?' }, 
+        options:[
+          { text:{ hi:'рддреБрд░рдВрдд рд╕рдм рдХреЗ рд╕рд╛рде share рдХрд░рддреЗ рд╣реИрдВ', en:'Share it with everyone instantly' }, scores:{ E:3 } },
+          { text:{ hi:'рдореМрдХрд╛ рдорд┐рд▓рдиреЗ рдкрд░ share рдХрд░рддреЗ рд╣реИрдВ', en:'Share it when I get a chance' }, scores:{ E:2 } },
+          { text:{ hi:'рдорди рдореЗрдВ рд╕реЛрдЪ-рд╡рд┐рдЪрд╛рд░ рдХрд░рддреЗ рд╣реИрдВ', en:'Think it over, share if necessary' }, scores:{ I:2, intrapersonal:2 } },
+          { text:{ hi:'рдорди рдореЗрдВ рдЧрд╣рд░рд╛рдИ рд╕реЗ рд╕реЛрдЪрддреЗ рд╣реИрдВ', en:'Keep it to myself and deeply think about it' }, scores:{ I:3, intrapersonal:3 } },
+      ]},
+      { id:11, cat:'T/F', 
+        text:{ hi:'рдЬрдм рдЖрдкрдХрд╛ рдХреЛрдИ рджреЛрд╕реНрдд рдмрд╣реБрдд рдкрд░реЗрд╢рд╛рди рд╣реЛ, рддреЛ рдЖрдк рд╕рдмрд╕реЗ рдкрд╣рд▓реЗ рдХреНрдпрд╛ рдХрд░рддреЗ рд╣реИрдВ?', en:'What is your first reaction when a friend is very upset?' }, 
+        options:[
+          { text:{ hi:'рдЙрд╕рдХреА рднрд╛рд╡рдирд╛рдУрдВ рдХреЛ рд╕рдордЭрддреЗ рд╣реИрдВ', en:'Comfort them emotionally' },  scores:{ F:3, interpersonal:3 } },
+          { text:{ hi:'рд╕рд╛рде рдореЗрдВ рджреБрдЦреА рд╣реЛрддреЗ рд╣реИрдВ', en:'Listen and feel sad with them' }, scores:{ F:2, interpersonal:2 } },
+          { text:{ hi:'рдЙрд╕реЗ problem solve рдХрд░рдиреЗ рдореЗрдВ help рдХрд░рддреЗ рд╣реИрдВ', en:'Help them logically solve the problem' }, scores:{ T:2, logical:2 } },
+          { text:{ hi:'рдЙрд╕реЗ рдмрддрд╛рддреЗ рд╣реИрдВ рдХрд┐ рдЙрд╕реЗ рдХреНрдпрд╛ рдХрд░рдирд╛ рдЪрд╛рд╣рд┐рдП', en:'Tell them exactly what they should do' }, scores:{ T:3, logical:1 } },
+      ]},
+      { id:12, cat:'T/F', 
+        text:{ hi:'рдЕрдЧрд░ рддреБрдореНрд╣реЗрдВ рдХреЛрдИ choice рджреЗрдиреА рд╣реЛ, рддреЛ рддреБрдо рдХреНрдпрд╛ prefer рдХрд░реЛрдЧреЗ?', en:'If you had to make a choice, what would you prefer?' }, 
+        options:[
+          { text:{ hi:'рдЬреЛ fair рдФрд░ рд╕рд╣реА рд╣реЛ', en:'What is fair and correct, even if it hurts feelings' }, scores:{ T:3 } },
+          { text:{ hi:'рдЬреЛ рд╕рднреА рдХреЛ рдЦреБрд╢ рдХрд░реЗ', en:'What makes everyone happy, even if not fully fair' }, scores:{ F:3, interpersonal:1 } },
+          { text:{ hi:'рджреЛрдиреЛрдВ рдХреЛ balance рдХрд░рдиреЗ рд╡рд╛рд▓рд╛ decision', en:'A balanced decision' }, scores:{ T:1, F:1 } },
+          { text:{ hi:'рдЬреЛ рджрд┐рд▓ рдФрд░ рд╕реЛрдЪ рджреЛрдиреЛрдВ рд╕рд╣реА рдХрд╣реЗрдВ', en:'Whatever my heart and mind agree on' }, scores:{ T:1, F:2 } },
+      ]},
+      { id:13, cat:'T/F', 
+        text:{ hi:'рдЬрдм рдЖрдк рдХреЛрдИ important decision рд▓реЗрддреЗ рд╣реИрдВ, рддреЛ рд╕рдмрд╕реЗ рдкрд╣рд▓реЗ рдХреНрдпрд╛ рд╕реЛрдЪрддреЗ рд╣реИрдВ?', en:'What do you think of first when making an important decision?' }, 
+        options:[
+          { text:{ hi:'рдЗрд╕рд╕реЗ рд╕рднреА рдХреЛ рдХрд┐рддрдирд╛ рдлрд╝рд╛рдпрджрд╛ рдпрд╛ рджреБрдЦ рд╣реЛрдЧрд╛', en:"How it will affect everyone's feelings" }, scores:{ F:3, interpersonal:1 } },
+          { text:{ hi:'рдХреНрдпрд╛ рдпрд╣ decision logically рд╕рд╣реА рд╣реИ', en:'If the decision makes logical sense' },  scores:{ T:3, logical:2 } },
+          { text:{ hi:'рджреЛрдиреЛрдВ рдХреЛ equal importance рджреЗрддреЗ рд╣реИрдВ', en:'I weigh logic and feelings equally' }, scores:{ T:1, F:1 } },
+          { text:{ hi:'рдЬреЛ рдорди рдФрд░ рджрд┐рд▓ рджреЛрдиреЛрдВ рд╕реЗ рд╕рд╣реА рд▓рдЧреЗ', en:'Whatever feels right' }, scores:{ F:2 } },
+      ]},
+      { id:14, cat:'S/N', 
+        text:{ hi:'рдЬрдм рдЖрдк рдХреЛрдИ рдирдИ рдЪреАрдЬрд╝ рд╕реАрдЦрддреЗ рд╣реИрдВ, рддреЛ рдЖрдк рдХреНрдпрд╛ prefer рдХрд░рддреЗ рд╣реИрдВ?', en:'How do you prefer to learn something new?' }, 
+        options:[
+          { text:{ hi:'Step-by-step, рдПрдХ-рдПрдХ рдХрд░рдХреЗ рд╕реАрдЦрдирд╛', en:'Step-by-step instructions' }, scores:{ S:3 } },
+          { text:{ hi:'рдкрд╣рд▓реЗ рдкреВрд░реА picture рд╕рдордЭрдирд╛', en:'Understand the big picture first, details later' },   scores:{ N:3 } },
+          { text:{ hi:'Examples рджреЗрдЦрдХрд░ рдФрд░ copy рдХрд░рдХреЗ рд╕реАрдЦрдирд╛', en:'Looking at examples and copying' }, scores:{ S:2, visual:1 } },
+          { text:{ hi:'рдЦреБрдж experiment рдХрд░рдХреЗ рд╕реАрдЦрдирд╛', en:'Experimenting on my own' }, scores:{ N:2, kinesthetic:2 } },
+      ]},
+      { id:15, cat:'S/N', 
+        text:{ hi:'рдЖрдк рдХреЛ рдХреИрд╕реА рдХрд┐рддрд╛рдмреЗрдВ рдФрд░ рдХрд╣рд╛рдирд┐рдпрд╛рдБ рдкрд╕рдВрдж рд╣реИрдВ?', en:'What kind of books or stories do you like?' }, 
+        options:[
+          { text:{ hi:'Real life рдХреА рд╕рдЪреНрдЪреА рдШрдЯрдирд╛рдУрдВ рдкрд░ рдЖрдзрд╛рд░рд┐рдд', en:'Based on real-life facts and events' }, scores:{ S:3, linguistic:2 } },
+          { text:{ hi:'рдХрд╛рд▓реНрдкрдирд┐рдХ рдФрд░ fantasy рдХреА рджреБрдирд┐рдпрд╛', en:'Fantasy and imaginary worlds' },        scores:{ N:3, linguistic:2 } },
+          { text:{ hi:'рджреЛрдиреЛрдВ рддрд░рд╣ рдХреА', en:'A bit of both' },                         scores:{ S:1, N:1, linguistic:1 } },
+          { text:{ hi:'рдореБрдЭреЗ рдХрд┐рддрд╛рдмреЗрдВ рдкрдврд╝рдирд╛ рдЬрд╝реНрдпрд╛рджрд╛ рдкрд╕рдВрдж рдирд╣реАрдВ', en:'I am not big on reading' },  scores:{ kinesthetic:1 } },
+      ]},
+      { id:16, cat:'S/N', 
+        text:{ hi:'рдЬрдм рдЖрдк рдХреЛрдИ problem solve рдХрд░рддреЗ рд╣реИрдВ, рддреЛ рдЖрдк рдХреНрдпрд╛ рдХрд░рддреЗ рд╣реИрдВ?', en:'How do you go about solving a problem?' }, 
+        options:[
+          { text:{ hi:'рдкреБрд░рд╛рдиреЗ рддрд░реАрдХреЛрдВ рд╕реЗ рдЬреЛ рдкрд╣рд▓реЗ рдХрд╛рдо рдЖрдП рд╣реЛрдВ', en:'Use proven methods that worked before' },   scores:{ S:3 } },
+          { text:{ hi:'рдирдП рдФрд░ creative рддрд░реАрдХреЗ рдвреВрдВрдврддреЗ рд╣реИрдВ', en:'Find new and creative ways' },        scores:{ N:3, logical:2 } },
+          { text:{ hi:'рджреЛрдиреЛрдВ рдорд┐рд▓рд╛рдХрд░ try рдХрд░рддреЗ рд╣реИрдВ', en:'Try a mix of both' },              scores:{ S:1, N:1, logical:1 } },
+          { text:{ hi:'рдХрд┐рд╕реА рдЕрдиреБрднрд╡реА рд╕реЗ рдкреВрдЫрддреЗ рд╣реИрдВ', en:'Ask someone with experience' },               scores:{ interpersonal:2 } },
+      ]},
+      { id:17, cat:'J/P', 
+        text:{ hi:'рдЖрдк рдЕрдкрдирд╛ homework рдФрд░ рдХрд╛рдо рдХрдм рдХрд░рддреЗ рд╣реИрдВ?', en:'When do you do your homework and chores?' }, 
+        options:[
+          { text:{ hi:'рдкрд╣рд▓реЗ рд╕реЗ plan рдХрд░рдХреЗ, time рдкрд░', en:'I plan ahead and do it on time' }, scores:{ J:3 } },
+          { text:{ hi:'рд╣рд░ рджрд┐рди рдереЛрдбрд╝рд╛-рдереЛрдбрд╝рд╛', en:'A little bit every day' },         scores:{ J:2 } },
+          { text:{ hi:'рдЬрдм рдорди рдХрд░реЗ', en:'Whenever I feel like it' },                 scores:{ P:2 } },
+          { text:{ hi:'Deadline рдЖрдиреЗ рдкрд░', en:'Right before the deadline' },           scores:{ P:3 } },
+      ]},
+      { id:18, cat:'J/P', 
+        text:{ hi:'рдЖрдк рдХреЛ рдХреИрд╕рд╛ daily schedule рдкрд╕рдВрдж рд╣реИ?', en:'What kind of daily schedule do you prefer?' }, 
+        options:[
+          { text:{ hi:'рд╕рдм рдХреБрдЫ рдкрд╣рд▓реЗ рд╕реЗ рддрдп рд╣реЛ', en:'Everything planned in advance' },                    scores:{ J:3 } },
+          { text:{ hi:'рдХреБрдЫ рдЪреАрдЬрд╝реЗрдВ рддрдп рд╣реЛрдВ, рдмрд╛рдХреА flexible', en:'Some things planned, the rest flexible' },          scores:{ J:1, P:1 } },
+          { text:{ hi:'Flexible рд░рд╣реЗ, рдЬрдм рдЬреЛ рдорди рдХрд░реЗ', en:'Completely flexible' },              scores:{ P:3 } },
+          { text:{ hi:'рдХреЛрдИ schedule рдирд╣реАрдВ рдЪрд╛рд╣рд┐рдП', en:'No schedule at all' },                  scores:{ P:2 } },
+      ]},
+      { id:19, cat:'J/P', 
+        text:{ hi:'рдЬрдм class рдореЗрдВ рдЕрдЪрд╛рдирдХ surprise test рд╣реЛрддрд╛ рд╣реИ, рддреЛ рдЖрдк рдХреИрд╕рд╛ feel рдХрд░рддреЗ рд╣реИрдВ?', en:'How do you feel about surprise tests in class?' }, 
+        options:[
+          { text:{ hi:'рдмрд╣реБрдд рдмреБрд░рд╛ рд▓рдЧрддрд╛ рд╣реИ', en:'I hate them, need prior notice' },   scores:{ J:3 } },
+          { text:{ hi:'рдереЛрдбрд╝рд╛ nervous рд╣реЛрддреЗ рд╣реИрдВ', en:'A bit nervous but I manage' },       scores:{ J:1 } },
+          { text:{ hi:'рдареАрдХ рд╣реИ, рд╣рдо рддреЛ рддреИрдпрд╛рд░ рд╣реА рд░рд╣рддреЗ рд╣реИрдВ', en:'Fine, I am usually prepared' },          scores:{ P:2 } },
+          { text:{ hi:'рдордЬрд╝рд╛ рдЖрддрд╛ рд╣реИ, adventure рд▓рдЧрддрд╛ рд╣реИ!', en:'I love them, it is an adventure!' },           scores:{ P:3 } },
+      ]},
+      { id:20, cat:'MI', 
+        text:{ hi:'рдЖрдк рдХреЛ рдЗрдирдореЗрдВ рд╕реЗ рдХреМрдирд╕реА activity рд╕рдмрд╕реЗ рдЬрд╝реНрдпрд╛рджрд╛ рдкрд╕рдВрдж рд╣реИ?', en:'Which of these activities do you like the most?' }, 
+        options:[
+          { text:{ hi:'ЁЯУЪ рдХрд╣рд╛рдирд┐рдпрд╛рдБ рд▓рд┐рдЦрдирд╛ рдпрд╛ рдкрдврд╝рдирд╛', en:'ЁЯУЪ Reading or writing stories' },                 scores:{ linguistic:3 } },
+          { text:{ hi:'ЁЯФв Math puzzles рдФрд░ riddles solve рдХрд░рдирд╛', en:'ЁЯФв Solving math puzzles and riddles' },       scores:{ logical:3 } },
+          { text:{ hi:'ЁЯОи Drawing, painting рдпрд╛ craft рдмрдирд╛рдирд╛', en:'ЁЯОи Drawing, painting, or crafting' },         scores:{ visual:3 } },
+          { text:{ hi:'тЪ╜ Sports рдЦреЗрд▓рдирд╛ рдФрд░ physically active рд░рд╣рдирд╛', en:'тЪ╜ Playing sports and being active' },   scores:{ kinesthetic:3 } },
+      ]},
+      { id:21, cat:'MI', 
+        text:{ hi:'рдЖрдк рдХреЛ puzzles рдФрд░ brain teasers рдХреИрд╕реЗ рд▓рдЧрддреЗ рд╣реИрдВ?', en:'How do you feel about puzzles and brain teasers?' }, 
+        options:[
+          { text:{ hi:'рдмрд╣реБрдд рдордЬрд╝реЗрджрд╛рд░ тАФ рдШрдВрдЯреЛрдВ solve рдХрд░рддреЗ рд╣реИрдВ', en:'Super fun тАФ I solve them for hours' }, scores:{ logical:3 } },
+          { text:{ hi:'рдЕрдЪреНрдЫреЗ рд▓рдЧрддреЗ рд╣реИрдВ', en:'They are nice' },                      scores:{ logical:2 } },
+          { text:{ hi:'рдареАрдХ-рдард╛рдХ рд▓рдЧрддреЗ рд╣реИрдВ', en:'They are okay' },                    scores:{ logical:1 } },
+          { text:{ hi:'Boring рд▓рдЧрддреЗ рд╣реИрдВ', en:'Boring' },                     scores:{ logical:0, kinesthetic:1 } },
+      ]},
+      { id:22, cat:'MI', 
+        text:{ hi:'рдЬрдм рдЖрдк рдХреЛ рдХрд┐рд╕реА рдирдИ рдЬрдЧрд╣ рдХрд╛ рд░рд╛рд╕реНрддрд╛ рдвреВрдВрдврдирд╛ рд╣реЛ, рддреЛ рдЖрдк рдХреНрдпрд╛ рдХрд░рддреЗ рд╣реИрдВ?', en:'How do you find your way in a new place?' }, 
+        options:[
+          { text:{ hi:'Map рджреЗрдЦрдХрд░ рдЦреБрдж navigate рдХрд░рддреЗ рд╣реИрдВ', en:'Look at a map and navigate myself' },   scores:{ visual:3, logical:1 } },
+          { text:{ hi:'рдХрд┐рд╕реА рд╕реЗ рдкреВрдЫрддреЗ рд╣реИрдВ', en:'Ask someone for directions' },                  scores:{ interpersonal:3 } },
+          { text:{ hi:'рд▓рд┐рдЦрдХрд░ рдпрд╛ note рдХрд░рдХреЗ рдпрд╛рдж рдХрд░рддреЗ рд╣реИрдВ', en:'Write down notes to remember' },    scores:{ linguistic:2 } },
+          { text:{ hi:'рдЪрд▓рддреЗ рд╣реБрдП рдЦреБрдж рдвреВрдВрдв рд▓реЗрддреЗ рд╣реИрдВ', en:'Just walk and figure it out' },         scores:{ kinesthetic:2, N:1 } },
+      ]},
+      { id:23, cat:'MI', 
+        text:{ hi:'рдЖрдк рдХреЛ рдЗрдирдореЗрдВ рд╕реЗ рдХреМрдирд╕рд╛ рдХрд╛рдо рд╕рдмрд╕реЗ рдЕрдЪреНрдЫрд╛ рд▓рдЧрддрд╛ рд╣реИ?', en:'Which task sounds the best to you?' }, 
+        options:[
+          { text:{ hi:'ЁЯОи Drawing, painting рдпрд╛ sculpture рдмрдирд╛рдирд╛', en:'ЁЯОи Drawing or sculpting' },         scores:{ visual:3 } },
+          { text:{ hi:'ЁЯО╡ рдЧрд╛рдирд╛ рдЧрд╛рдирд╛ рдпрд╛ instrument рдмрдЬрд╛рдирд╛', en:'ЁЯО╡ Singing or playing an instrument' },                 scores:{ musical:3 } },
+          { text:{ hi:'ЁЯУЦ рдХрд╣рд╛рдиреА рд▓рд┐рдЦрдирд╛ рдпрд╛ poem рдмрдирд╛рдирд╛', en:'ЁЯУЦ Writing a story or poem' },                    scores:{ linguistic:3 } },
+          { text:{ hi:'ЁЯдЭ рджреЛрд╕реНрддреЛрдВ рдХреЛ organize рдХрд░рдХреЗ рд╕рд╛рде рдореЗрдВ рдХрд╛рдо рдХрд░рдирд╛', en:'ЁЯдЭ Organizing friends to work together' },    scores:{ interpersonal:3 } },
+      ]},
+      { id:24, cat:'MI', 
+        text:{ hi:'рдХреНрдпрд╛ рдЖрдк рдХреЛрдИ рдЧрд╛рдирд╛ рд╕реБрдирддреЗ рд╡рдХрд╝реНрдд automatically рдЙрд╕рдХреА beat рдкрд░ рдерд┐рд░рдХрдиреЗ рд▓рдЧрддреЗ рд╣реИрдВ?', en:'Do you automatically tap to the beat when you hear music?' }, 
+        options:[
+          { text:{ hi:'рд╣рд╛рдБ, рд╣рдореЗрд╢рд╛!', en:"Yes, always! I can't stop." },     scores:{ musical:3, kinesthetic:2 } },
+          { text:{ hi:'рдЕрдХреНрд╕рд░ рдРрд╕рд╛ рд╣реЛрддрд╛ рд╣реИ', en:'Often' },                       scores:{ musical:2, kinesthetic:1 } },
+          { text:{ hi:'рдХрднреА-рдХрднреА', en:'Sometimes' },                                 scores:{ musical:1 } },
+          { text:{ hi:'рдирд╣реАрдВ, рдореБрдЭреЗ music рдореЗрдВ рдЬрд╝реНрдпрд╛рджрд╛ interest рдирд╣реАрдВ', en:'No, not very interested in music' }, scores:{ musical:0 } },
+      ]},
+      { id:25, cat:'MI', 
+        text:{ hi:'рдЖрдк рдХреЛ рдХреМрдирд╕реА physical activity рд╕рдмрд╕реЗ рдЬрд╝реНрдпрд╛рджрд╛ рдкрд╕рдВрдж рд╣реИ?', en:'What physical activity do you enjoy the most?' }, 
+        options:[
+          { text:{ hi:'Sports, dance рдпрд╛ outdoor games', en:'Sports, dance, or outdoor games' },           scores:{ kinesthetic:3 } },
+          { text:{ hi:'Craft, model рдмрдирд╛рдирд╛, hands-on рдХрд╛рдо', en:'Crafts, building models, hands-on tasks' },        scores:{ kinesthetic:2, visual:2 } },
+          { text:{ hi:'Yoga, meditation рдпрд╛ stretching', en:'Yoga, stretching, meditation' },          scores:{ kinesthetic:1, intrapersonal:2 } },
+          { text:{ hi:'рдореБрдЭреЗ рдмреИрдардХрд░ рдкрдврд╝рдирд╛-рд▓рд┐рдЦрдирд╛ рдЬрд╝реНрдпрд╛рджрд╛ рдкрд╕рдВрдж рд╣реИ', en:'I prefer sitting and reading/writing' },  scores:{ linguistic:1 } },
+      ]},
+      { id:26, cat:'MI', 
+        text:{ hi:'рдЖрдкрдХреА class рдореЗрдВ рдХрд┐рд╕реА рджреЛ рджреЛрд╕реНрддреЛрдВ рдореЗрдВ рдЭрдЧрдбрд╝рд╛ рд╣реЛ рдЬрд╛рдП, рддреЛ рдЖрдк рдХреНрдпрд╛ рдХрд░рддреЗ рд╣реИрдВ?', en:'If two friends fight in class, what do you do?' }, 
+        options:[
+          { text:{ hi:'рджреЛрдиреЛрдВ рдХреЛ рд╕рдордЭрд╛рдХрд░ рджреЛрд╕реНрддреА рдХрд░рд╡рд╛рддреЗ рд╣реИрдВ', en:'Help them resolve it and be friends again' },   scores:{ interpersonal:3, F:2 } },
+          { text:{ hi:'Teacher рдХреЛ рдмрддрд╛рддреЗ рд╣реИрдВ', en:'Tell the teacher' },                 scores:{ interpersonal:2, S:1 } },
+          { text:{ hi:'рдЬреЛ рд╕рд╣реА рд▓рдЧреЗ рдЙрд╕рдХрд╛ рд╕рд╛рде рджреЗрддреЗ рд╣реИрдВ', en:'Side with whoever is right' },         scores:{ T:1, interpersonal:1 } },
+          { text:{ hi:'рджреВрд░ рд░рд╣рддреЗ рд╣реИрдВ, рдЭрдЧрдбрд╝реЗ рдореЗрдВ рдирд╣реАрдВ рдкрдбрд╝рддреЗ', en:'Stay out of the drama completely' },    scores:{ I:1 } },
+      ]},
+      { id:27, cat:'MI', 
+        text:{ hi:'рдЬрдм рдЖрдк рдЦреБрдж рдХреБрдЫ рдЧрд▓рдд рдХрд░рддреЗ рд╣реИрдВ, рддреЛ рдЖрдк рдХреИрд╕рд╛ рдорд╣рд╕реВрд╕ рдХрд░рддреЗ рд╣реИрдВ?', en:'How do you feel when you make a mistake?' }, 
+        options:[
+          { text:{ hi:'рдмрд╣реБрдд рдмреБрд░рд╛ рд▓рдЧрддрд╛ рд╣реИ, рдЦреБрдж рдХреЛ deeply рд╕рдордЭрд╛рддреЗ рд╣реИрдВ', en:'Feel terrible and deeply reflect on it' },   scores:{ intrapersonal:3, F:2 } },
+          { text:{ hi:'рдереЛрдбрд╝рд╛ рдмреБрд░рд╛ рд▓рдЧрддрд╛ рд╣реИ, рдлрд┐рд░ рдЖрдЧреЗ рдмрдврд╝ рдЬрд╛рддреЗ рд╣реИрдВ', en:'Feel slightly bad, then move on' },      scores:{ intrapersonal:2 } },
+          { text:{ hi:'рд╕реЛрдЪрддреЗ рд╣реИрдВ рдХрд┐ рдЕрдЧрд▓реА рдмрд╛рд░ рдмреЗрд╣рддрд░ рдХрд░реВрдБрдЧрд╛', en:'Think about how to do better next time' },            scores:{ intrapersonal:2, J:1 } },
+          { text:{ hi:'рдЬрд╝реНрдпрд╛рджрд╛ рдлрд░реНрдХ рдирд╣реАрдВ рдкрдбрд╝рддрд╛', en:"It doesn't bother me much" },                        scores:{ intrapersonal:0 } },
+      ]},
+      { id:28, cat:'MI', 
+        text:{ hi:'рдХреНрдпрд╛ рдЖрдк рдХреЛ рдкреЗрдбрд╝-рдкреМрдзреЛрдВ, рдЬрд╛рдирд╡рд░реЛрдВ рдФрд░ рдкреНрд░рдХреГрддрд┐ рдореЗрдВ interest рд╣реИ?', en:'Are you interested in plants, animals, and nature?' }, 
+        options:[
+          { text:{ hi:'рдмрд╣реБрдд рдЬрд╝реНрдпрд╛рджрд╛ тАФ nature рдореЗрд░реА hobby рд╣реИ', en:'Very much тАФ nature is my hobby' }, scores:{ naturalistic:3 } },
+          { text:{ hi:'рд╣рд╛рдБ, рдХрд╛рдлрд╝реА interest рд╣реИ', en:'Yes, quite interested' },               scores:{ naturalistic:2 } },
+          { text:{ hi:'рдереЛрдбрд╝рд╛-рд╕рд╛', en:'A little bit' },                            scores:{ naturalistic:1 } },
+          { text:{ hi:'рдЬрд╝реНрдпрд╛рджрд╛ interest рдирд╣реАрдВ рд╣реИ', en:'Not very interested' },             scores:{ naturalistic:0 } },
+      ]},
+      { id:29, cat:'MI', 
+        text:{ hi:'рдЬрдм рдЖрдк рдмрд╛рд╣рд░ рдШреВрдордиреЗ рдЬрд╛рддреЗ рд╣реИрдВ, рддреЛ рдЖрдк рд╕рдмрд╕реЗ рдкрд╣рд▓реЗ рдХреНрдпрд╛ notice рдХрд░рддреЗ рд╣реИрдВ?', en:'When you go outside, what do you notice first?' }, 
+        options:[
+          { text:{ hi:'ЁЯМ┐ рдкреЗрдбрд╝, рдлреВрд▓, рдкрдХреНрд╖реА рдФрд░ рдореМрд╕рдо', en:'ЁЯМ┐ Trees, flowers, birds, the weather' },              scores:{ naturalistic:3 } },
+          { text:{ hi:'ЁЯСе рд▓реЛрдЧ рдФрд░ рдЙрдирдХреА activities', en:'ЁЯСе People and what they are doing' },               scores:{ interpersonal:3, E:1 } },
+          { text:{ hi:'ЁЯПЧя╕П Buildings, рд░рдВрдЧ рдФрд░ design', en:'ЁЯПЧя╕П Buildings, colors, and designs' },             scores:{ visual:3 } },
+          { text:{ hi:'ЁЯО╢ рдЖрд╡рд╛рдЬрд╝реЗрдВ, music рдФрд░ sounds', en:'ЁЯО╢ Sounds, music, and noises' },              scores:{ musical:3 } },
+      ]},
+      { id:30, cat:'MI', 
+        text:{ hi:'рдЕрдЧрд░ рдЖрдкрдХреЛ рдПрдХ school project рдмрдирд╛рдирд╛ рд╣реЛ, рддреЛ рдЖрдк рдХреМрдирд╕рд╛ choose рдХрд░реЗрдВрдЧреЗ?', en:'If you had to do a school project, which would you pick?' }, 
+        options:[
+          { text:{ hi:'ЁЯУЦ рдПрдХ рдХрд╣рд╛рдиреА рд▓рд┐рдЦрдХрд░ рдЙрд╕реЗ act out рдХрд░рдирд╛', en:'ЁЯУЦ Write a story and act it out' },         scores:{ linguistic:3, kinesthetic:1 } },
+          { text:{ hi:'ЁЯФм Science experiment рдХрд░рдирд╛ рдФрд░ present рдХрд░рдирд╛', en:'ЁЯФм Do a science experiment and present it' }, scores:{ logical:3, S:1 } },
+          { text:{ hi:'ЁЯЦ╝я╕П рдПрдХ beautiful poster рдпрд╛ 3D model рдмрдирд╛рдирд╛', en:'ЁЯЦ╝я╕П Build a 3D model or beautiful poster' },   scores:{ visual:3, kinesthetic:1 } },
+          { text:{ hi:'ЁЯО╝ рдПрдХ song рдпрд╛ music piece compose рдХрд░рдирд╛', en:'ЁЯО╝ Compose a song or music piece' },      scores:{ musical:3 } },
+      ]}
+    ];
+
+    // Navigation Logic
+    function switchScreen(hideId, showId) {
+      document.getElementById(hideId).classList.remove('active');
+      document.getElementById(showId).classList.add('active');
+    }
+
+    function goToDisclaimer() {
+      const nameInput = document.getElementById('userName').value.trim();
+      if (!nameInput) {
+        alert("Please enter your name!");
+        return;
+      }
+      state.name = nameInput;
+      state.lang = document.getElementById('userLang').value;
+
+      // Update UI texts for Disclaimer
+      const texts = UI[state.lang];
+      document.getElementById('disc-title').innerHTML = texts.discTitle;
+      document.getElementById('disc-text').innerHTML = texts.discText;
+      document.getElementById('disc-btn').innerHTML = texts.discBtn;
+
+      switchScreen('screen-setup', 'screen-disclaimer');
+    }
+
+    function startQuiz() {
+      switchScreen('screen-disclaimer', 'screen-quiz');
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      if (state.currentQ >= QUESTIONS.length) {
+        calculateResults();
+        return;
+      }
+
+      const q = QUESTIONS[state.currentQ];
+      const texts = UI[state.lang];
+      
+      // Update Progress
+      const percent = ((state.currentQ) / QUESTIONS.length) * 100;
+      document.getElementById('progress-fill').style.width = `${percent}%`;
+      document.getElementById('question-counter').innerText = texts.qCounter
+        .replace('{current}', state.currentQ + 1)
+        .replace('{total}', QUESTIONS.length);
+
+      // Update Question
+      document.getElementById('question-text').innerText = q.text[state.lang];
+
+      // Update Options
+      const optionsGrid = document.getElementById('options-grid');
+      optionsGrid.innerHTML = ''; // clear old
+
+      q.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerText = opt.text[state.lang];
+        btn.onclick = () => handleAnswer(opt.scores);
+        optionsGrid.appendChild(btn);
+      });
+    }
+
+    function handleAnswer(scoresObj) {
+      // Add scores
+      for (let trait in scoresObj) {
+        if (state.scores[trait] !== undefined) {
+          state.scores[trait] += scoresObj[trait];
+        }
+      }
+      // Next Question
+      state.currentQ++;
+      loadQuestion();
+    }
+
+    function calculateResults() {
+      switchScreen('screen-quiz', 'screen-results');
+      const texts = UI[state.lang];
+
+      // Setup Results Static Text
+      document.getElementById('res-greeting').innerText = state.lang === 'en' ? `Awesome job, ${state.name}! ЁЯОЙ` : `рдмрд╣реБрдд рдмреЭрд┐рдпрд╛, ${state.name}! ЁЯОЙ`;
+      document.getElementById('res-intro').innerText = texts.resIntro;
+      document.getElementById('res-mbti-title').innerText = texts.resMbtiTitle;
+      document.getElementById('res-mi-title').innerText = texts.resMiTitle;
+      document.getElementById('res-restart-btn').innerText = texts.restart;
+
+      // Calculate MBTI
+      const typeE = state.scores.E >= state.scores.I ? 'E' : 'I';
+      const typeS = state.scores.S >= state.scores.N ? 'S' : 'N';
+      const typeT = state.scores.T >= state.scores.F ? 'T' : 'F';
+      const typeJ = state.scores.J >= state.scores.P ? 'J' : 'P';
+      const mbtiResult = typeE + typeS + typeT + typeJ;
+
+      // Kid-friendly MBTI interpretation mapping
+      const mbtiMap = {
+        en: {
+          'ESTJ': "The Captain! тЪУ You are a born leader, highly organized and love helping others follow the rules.",
+          'ESFJ': "The Helper! ЁЯдЧ You have a huge heart, love your friends, and always make sure everyone is happy.",
+          'ENFJ': "The Hero! ЁЯж╕ You inspire others, have big dreams, and are a fantastic friend.",
+          'ENTJ': "The Boss! ЁЯТ╝ You are super smart, focused, and always know how to get the job done.",
+          'ESTP': "The Dynamo! тЪб You have endless energy, love action, and jumping into new adventures.",
+          'ESFP': "The Entertainer! ЁЯМЯ You are the life of the party, funny, and bring joy everywhere you go.",
+          'ENFP': "The Champion! ЁЯПЖ You are bursting with imagination, enthusiasm, and creative ideas.",
+          'ENTP': "The Inventor! ЁЯТб You love brain-teasers, asking 'why?', and coming up with clever solutions.",
+          'ISTJ': "The Detective! ЁЯХ╡я╕П You are reliable, notice all the details, and always do your best.",
+          'ISFJ': "The Defender! ЁЯЫбя╕П You are quiet, incredibly kind, and quietly protect those you care about.",
+          'INFJ': "The Mystic! тЬи You are rare, creative, and deeply understand how others feel.",
+          'INTJ': "The Mastermind! ЁЯза You love puzzles, planning ahead, and learning how the world works.",
+          'ISTP': "The Builder! ЁЯЫая╕П You are cool, calm, and love figuring out how things are put together.",
+          'ISFP': "The Artist! ЁЯОи You are gentle, observant, and express yourself beautifully through art and actions.",
+          'INFP': "The Dreamer! тШБя╕П You are imaginative, deeply caring, and always want to make the world a better place.",
+          'INTP': "The Scientist! ЁЯФн You love logic, experiments, and discovering new facts about everything."
+        },
+        hi: {
+          'ESTJ': "рдХреИрдкреНрдЯрди (The Captain)! тЪУ рдЖрдк рдкреИрджрд╛рдЗрд╢реА рд▓реАрдбрд░ рд╣реИрдВ, рдмрд╣реБрдд organized рд░рд╣рддреЗ рд╣реИрдВ рдФрд░ рд░реВрд▓реНрд╕ рдлреЙрд▓реЛ рдХрд░рдиреЗ рдореЗрдВ рд╕рдмрдХреА рдорджрдж рдХрд░рддреЗ рд╣реИрдВред",
+          'ESFJ': "рдорджрджрдЧрд╛рд░ (The Helper)! ЁЯдЧ рдЖрдкрдХрд╛ рджрд┐рд▓ рдмрд╣реБрдд рдмреЬрд╛ рд╣реИ, рдФрд░ рдЖрдк рд╣рдореЗрд╢рд╛ рдЪрд╛рд╣рддреЗ рд╣реИрдВ рдХрд┐ рдЖрдкрдХреЗ рджреЛрд╕реНрдд рдЦреБрд╢ рд░рд╣реЗрдВред",
+          'ENFJ': "рд╣реАрд░реЛ (The Hero)! ЁЯж╕ рдЖрдк рджреВрд╕рд░реЛрдВ рдХреЛ inspire рдХрд░рддреЗ рд╣реИрдВ рдФрд░ рдПрдХ рдмрд╣реБрдд рд╣реА рд╢рд╛рдирджрд╛рд░ рджреЛрд╕реНрдд рд╣реИрдВред",
+          'ENTJ': "рдмреЙрд╕ (The Boss)! ЁЯТ╝ рдЖрдк рдмрд╣реБрдд рд╕реНрдорд╛рд░реНрдЯ рд╣реИрдВ рдФрд░ рдЖрдкрдХреЛ рдкрддрд╛ рд╣реИ рдХрд┐ рдХрд┐рд╕реА рднреА рдХрд╛рдо рдХреЛ рдХреИрд╕реЗ рдкреВрд░рд╛ рдХрд░рдирд╛ рд╣реИред",
+          'ESTP': "рдбрд╛рдпрдирдореЛ (The Dynamo)! тЪб рдЖрдк рдореЗрдВ рднрд░рдкреВрд░ рдПрдирд░реНрдЬреА рд╣реИ, рдЖрдкрдХреЛ рдПрдХреНрд╢рди рдФрд░ рдирдП рдПрдбрд╡реЗрдВрдЪрд░ рдмрд╣реБрдд рдкрд╕рдВрдж рд╣реИрдВред",
+          'ESFP': "рдПрдВрдЯрд░рдЯреЗрдирд░ (The Entertainer)! ЁЯМЯ рдЖрдк рдкрд╛рд░реНрдЯреА рдХреА рдЬрд╛рди рд╣реИрдВ, рдмрд╣реБрдд рдореЫреЗрджрд╛рд░ рд╣реИрдВ рдФрд░ рд╕рдмрдХреЛ рд╣рдВрд╕рд╛рддреЗ рд╣реИрдВред",
+          'ENFP': "рдЪреИрдВрдкрд┐рдпрди (The Champion)! ЁЯПЖ рдЖрдк рдХреНрд░рд┐рдПрдЯрд┐рд╡ рдЖрдЗрдбрд┐рдпрд╛рдЬ рдФрд░ рдЙрддреНрд╕рд╛рд╣ рд╕реЗ рднрд░реЗ рд╣реБрдП рд╣реИрдВред",
+          'ENTP': "рдЗрдиреНрд╡реЗрдВрдЯрд░ (The Inventor)! ЁЯТб рдЖрдкрдХреЛ рд╕рд╡рд╛рд▓ рдкреВрдЫрдирд╛ рдФрд░ рдирдП-рдирдП solutions рдвреВрдБрдврдирд╛ рдмрд╣реБрдд рдкрд╕рдВрдж рд╣реИред",
+          'ISTJ': "рдбрд┐рдЯреЗрдХреНрдЯрд┐рд╡ (The Detective)! ЁЯХ╡я╕П рдЖрдк рдмрд╣реБрдд рднрд░реЛрд╕реЗрдордВрдж рд╣реИрдВ, рд╣рд░ рдбрд┐рдЯреЗрд▓ рдкрд░ рдзреНрдпрд╛рди рджреЗрддреЗ рд╣реИрдВред",
+          'ISFJ': "рдбрд┐рдлреЗрдВрдбрд░ (The Defender)! ЁЯЫбя╕П рдЖрдк рд╢рд╛рдВрдд рд╣реИрдВ, рдмрд╣реБрдд рджрдпрд╛рд▓реБ рд╣реИрдВ рдФрд░ рдЕрдкрдиреЛрдВ рдХрд╛ рдмрд╣реБрдд рдЦреНрдпрд╛рд▓ рд░рдЦрддреЗ рд╣реИрдВред",
+          'INFJ': "рдорд┐рд╕реНрдЯрд┐рдХ (The Mystic)! тЬи рдЖрдк рдмрд╣реБрдд рд╕рдордЭрджрд╛рд░ рд╣реИрдВ рдФрд░ рджреВрд╕рд░реЛрдВ рдХреА рднрд╛рд╡рдирд╛рдУрдВ рдХреЛ рдЧрд╣рд░рд╛рдИ рд╕реЗ рд╕рдордЭрддреЗ рд╣реИрдВред",
+          'INTJ': "рдорд╛рд╕реНрдЯрд░рдорд╛рдЗрдВрдб (The Mastermind)! ЁЯза рдЖрдкрдХреЛ рдкреЫрд▓реНрд╕ рд╕реЙрд▓реНрд╡ рдХрд░рдирд╛ рдФрд░ рджреБрдирд┐рдпрд╛ рдХреИрд╕реЗ рдХрд╛рдо рдХрд░рддреА рд╣реИ, рдпрд╣ рдЬрд╛рдирдирд╛ рдкрд╕рдВрдж рд╣реИред",
+          'ISTP': "рдмрд┐рд▓реНрдбрд░ (The Builder)! ЁЯЫая╕П рдЖрдк рд╢рд╛рдВрдд рд░рд╣рдХрд░ рдЪреАрдЬрд╝реЛрдВ рдХреЛ рдмрдирд╛рдирд╛ рдФрд░ рд╕рдордЭрдирд╛ рдкрд╕рдВрдж рдХрд░рддреЗ рд╣реИрдВред",
+          'ISFP': "рдЖрд░реНрдЯрд┐рд╕реНрдЯ (The Artist)! ЁЯОи рдЖрдк рдЕрдкрдиреА рдлреАрд▓рд┐рдВрдЧреНрд╕ рдХреЛ рдЕрдкрдиреА рдЖрд░реНрдЯ рдФрд░ рдХрд╛рдореЛрдВ рдХреЗ реЫрд░рд┐рдП рдмрд╣реБрдд рдЦреВрдмрд╕реВрд░рддреА рд╕реЗ рджрд┐рдЦрд╛рддреЗ рд╣реИрдВред",
+          'INFP': "рдбреНрд░реАрдорд░ (The Dreamer)! тШБя╕П рдЖрдкрдХреА рд╕реЛрдЪ рдмрд╣реБрдд рдХреНрд░рд┐рдПрдЯрд┐рд╡ рд╣реИ рдФрд░ рдЖрдк рджреБрдирд┐рдпрд╛ рдХреЛ рдмреЗрд╣рддрд░ рдмрдирд╛рдирд╛ рдЪрд╛рд╣рддреЗ рд╣реИрдВред",
+          'INTP': "рд╕рд╛рдЗрдВрдЯрд┐рд╕реНрдЯ (The Scientist)! ЁЯФн рдЖрдкрдХреЛ рд▓реЙрдЬрд┐рдХ, рдПрдХреНрд╕рдкреЗрд░рд┐рдореЗрдВрдЯ рдФрд░ рдирдИ рдЪреАрдЬрд╝реЗрдВ рдЦреЛрдЬрдирд╛ рдмрд╣реБрдд рдкрд╕рдВрдж рд╣реИред"
+        }
+      };
+
+      document.getElementById('res-mbti-desc').innerText = mbtiMap[state.lang][mbtiResult] || `Your Type is: ${mbtiResult}`;
+
+      // Calculate MI (Sort from Highest to Lowest)
+      const miTypes = ['linguistic', 'logical', 'visual', 'kinesthetic', 'musical', 'interpersonal', 'intrapersonal', 'naturalistic'];
+      
+      let miScoresArray = miTypes.map(type => {
+        return { type: type, score: state.scores[type] };
+      });
+      
+      // Sort descending
+      miScoresArray.sort((a, b) => b.score - a.score);
+
+      // Render top 4 superpowers
+      const miContainer = document.getElementById('mi-bars-container');
+      miContainer.innerHTML = '';
+      
+      // Find max score to normalize the bar width (assume max possible per type is roughly ~15 based on the test distribution, but we'll use dynamic max)
+      const maxScore = miScoresArray[0].score || 1; 
+
+      for(let i = 0; i < 4; i++) {
+        const item = miScoresArray[i];
+        if(!item) break;
+
+        const labelText = texts.miLabels[item.type];
+        const percent = Math.min((item.score / maxScore) * 100, 100);
+
+        const barHtml = `
+          <div class="superpower-bar">
+            <div class="superpower-label">
+              <span>${labelText}</span>
+            </div>
+            <div class="superpower-track">
+              <div class="superpower-fill" style="width: ${percent}%"></div>
+            </div>
+          </div>
+        `;
+        miContainer.innerHTML += barHtml;
+      }
+    }
+  </script>
+</body>
+</html>
