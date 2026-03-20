@@ -1,35 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="noselect">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kids Personality & Superpower Test</title>
+  <title>Discover Your Superpowers</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      /* Colors - Dark Theme */
       --bg-primary: #121212;
       --bg-secondary: #1f1f1f;
       --bg-tertiary: #333333;
       --bg-gradient-dark: linear-gradient(145deg, #1e1e1e, #333333);
       --bg-input: #2c2c2c;
-      /* Text Colors - Dark Theme */
       --text-primary: #fff;
       --text-secondary: #ddd;
       --text-tertiary: #b0bec5;
       --text-muted: rgb(230, 230, 230);
-      /* Accent Colors */
       --accent-primary: #ffc107;
       --accent-hover: #e0a800;
       --accent-focus: #ffd54f;
       --accent-button-text: black;
-      /* Shadow Colors */
-      --shadow-dark: rgba(0, 0, 0, 0.5);
-      --shadow-medium: rgba(0, 0, 0, 0.6);
-      --shadow-light: rgba(0, 0, 0, 0.4);
-      /* Spacing Values */
+      --shadow-dark: rgba(0,0,0,0.5);
+      --shadow-medium: rgba(0,0,0,0.6);
+      --shadow-light: rgba(0,0,0,0.4);
       --spacing-xs: 4px;
       --spacing-sm: 8px;
       --spacing-md: 12px;
@@ -37,13 +32,11 @@
       --spacing-xl: 20px;
       --spacing-xxl: 25px;
       --spacing-xxxl: 30px;
-      /* Border Radius */
       --radius-sm: 5px;
       --radius-md: 8px;
       --radius-lg: 10px;
       --radius-xl: 12px;
       --radius-full: 50%;
-      /* Font Sizes */
       --font-sm: 0.9rem;
       --font-base: 1rem;
       --font-md: 1.1rem;
@@ -52,35 +45,44 @@
       --font-xxl: 1.7rem;
       --font-xxxl: 1.8rem;
       --font-icon-sm: 1.2rem;
-      /* Transitions */
       --transition-fast: 0.2s ease;
       --transition-base: 0.3s ease;
       --transition-slow: 0.4s all;
     }
 
-    /* Light theme overrides */
     body.light-theme {
       --bg-primary: #ffffff;
-      --bg-secondary: rgb(253, 253, 253);
-      --bg-tertiary: rgb(240, 240, 240);
+      --bg-secondary: rgb(253,253,253);
+      --bg-tertiary: rgb(240,240,240);
       --bg-gradient-dark: linear-gradient(145deg, #ffffff, #f0f0f0);
       --bg-input: #ffffff;
       --text-primary: #333;
-      --text-secondary: rgb(50, 50, 50);
-      --text-tertiary: rgb(80, 80, 80);
+      --text-secondary: rgb(50,50,50);
+      --text-tertiary: rgb(80,80,80);
       --text-muted: #333;
-      --accent-button-text: rgb(30, 30, 30);
-      --shadow-dark: rgba(0, 0, 0, 0.1);
-      --shadow-medium: rgba(0, 0, 0, 0.1);
-      --shadow-light: rgba(0, 0, 0, 0.1);
+      --accent-button-text: rgb(30,30,30);
+      --shadow-dark: rgba(0,0,0,0.1);
+      --shadow-medium: rgba(0,0,0,0.1);
+      --shadow-light: rgba(0,0,0,0.1);
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      max-height: 9999999px;
       font-family: 'Roboto', sans-serif;
       transition: var(--transition-base) all;
+    }
+
+    .noselect {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
+      -webkit-user-drag: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
@@ -88,12 +90,13 @@
       color: var(--text-primary);
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start;
       min-height: 100vh;
       padding: var(--spacing-xl);
       overflow-x: hidden;
     }
 
+    /* ── Theme Toggle ── */
     .theme-toggle {
       position: fixed;
       top: var(--spacing-xl);
@@ -106,15 +109,13 @@
       color: var(--text-primary);
       font-size: var(--font-icon-sm);
       box-shadow: 0 2px 8px var(--shadow-light);
+      transition: var(--transition-base);
       z-index: 1000;
-      display: none;
     }
+    .theme-toggle:hover { background-color: var(--bg-tertiary); transform: scale(1.1); }
+    .theme-toggle:active { transform: scale(0.95); }
 
-    .theme-toggle:hover {
-      background-color: var(--bg-tertiary);
-      transform: scale(1.1);
-    }
-
+    /* ── Container (screens) ── */
     .container {
       max-width: 900px;
       width: 100%;
@@ -124,34 +125,27 @@
       color: var(--text-primary);
       box-shadow: 0 8px 30px var(--shadow-medium);
       text-align: center;
-      display: none; /* Screens handled by JS */
+      display: none;
     }
-
     .container.active {
       display: block;
       animation: fadeIn var(--transition-base);
     }
-
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
-    h1 {
-      font-size: var(--font-xl);
-      font-weight: 700;
-      margin-bottom: var(--spacing-xl);
-      color: var(--text-primary);
-    }
+    /* ── Typography ── */
+    h1 { font-size: var(--font-xl); font-weight: 700; margin-bottom: var(--spacing-xl); color: var(--text-primary); }
+    h2 { font-size: var(--font-lg); font-weight: 700; margin-bottom: var(--spacing-md); }
+    h3 { font-size: var(--font-md); font-weight: 700; margin-bottom: var(--spacing-sm); }
+    p  { font-size: var(--font-base); color: var(--text-secondary); line-height: 1.6; margin-bottom: var(--spacing-lg); }
 
-    p {
-      font-size: var(--font-base);
-      color: var(--text-secondary);
-      line-height: 1.6;
-      margin-bottom: var(--spacing-lg);
-    }
-
-    input[type="text"] {
+    /* ── Inputs ── */
+    .input-group { text-align: left; margin-bottom: var(--spacing-xl); }
+    .input-group label { display: block; margin-bottom: var(--spacing-sm); font-weight: 500; color: var(--text-secondary); font-size: var(--font-base); }
+    input[type="text"], select {
       padding: var(--spacing-md);
       border: none;
       border-radius: var(--radius-md);
@@ -160,44 +154,14 @@
       color: var(--text-primary);
       width: 100%;
       box-shadow: 0 2px 8px var(--shadow-light);
-      margin-bottom: var(--spacing-lg);
     }
+    input[type="text"]:focus, select:focus { outline: none; box-shadow: 0 0 0 3px var(--accent-focus); }
+    select:hover { background-color: var(--bg-secondary); }
 
-    input[type="text"]:focus {
-      outline: none;
-      box-shadow: 0 0 0 3px var(--accent-focus);
-    }
-
-    select {
-      padding: var(--spacing-md);
-      border: none;
-      border-radius: var(--radius-md);
-      font-size: var(--font-base);
-      cursor: pointer;
-      background-color: var(--bg-input);
-      color: var(--text-primary);
-      width: 100%;
-      box-shadow: 0 2px 8px var(--shadow-light);
-    }
-
-    select:focus {
-      outline: none;
-      box-shadow: 0 0 0 3px var(--accent-focus);
-    }
-
-    .input-group {
-      text-align: left;
-      margin-bottom: var(--spacing-xl);
-    }
-
-    .input-group label {
-      display: block;
-      margin-bottom: var(--spacing-sm);
-      font-weight: 500;
-    }
-
+    /* ── Buttons ── */
     button {
       display: inline-block;
+      margin-top: var(--spacing-lg);
       padding: var(--spacing-md) var(--spacing-xxl);
       font-size: var(--font-lg);
       color: var(--accent-button-text);
@@ -206,25 +170,23 @@
       border-radius: var(--radius-lg);
       cursor: pointer;
       font-weight: bold;
-      margin-top: var(--spacing-lg);
+      transition: var(--transition-base);
     }
+    button:hover { background: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 4px 15px var(--shadow-medium); }
+    button:active { transform: translateY(0); box-shadow: 0 2px 8px var(--shadow-light); }
 
-    button:hover {
-      background: var(--accent-hover);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px var(--shadow-medium);
-    }
-
+    /* ── Disclaimer ── */
     .disclaimer-box {
-      background-color: rgba(255, 193, 7, 0.1);
+      background-color: rgba(255,193,7,0.1);
       border-left: 4px solid var(--accent-primary);
       padding: var(--spacing-lg);
       text-align: left;
       margin-bottom: var(--spacing-xl);
       border-radius: 0 var(--radius-md) var(--radius-md) 0;
     }
+    .disclaimer-box p { margin: 0; }
 
-    /* Quiz Specifics */
+    /* ── Progress Bar ── */
     .progress-bar {
       width: 100%;
       height: 8px;
@@ -233,21 +195,31 @@
       margin-bottom: var(--spacing-xl);
       overflow: hidden;
     }
-
     .progress-fill {
       height: 100%;
       background-color: var(--accent-primary);
       width: 0%;
       transition: width var(--transition-base);
     }
-
-    .options-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: var(--spacing-md);
-      margin-top: var(--spacing-xl);
+    .question-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--spacing-sm);
     }
+    .question-meta span { font-size: var(--font-sm); color: var(--text-tertiary); font-weight: 500; }
+    .question-meta .q-count { color: var(--accent-primary); font-weight: 700; }
 
+    /* ── Quiz Options ── */
+    .q-text {
+      text-align: left;
+      font-size: var(--font-md);
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: var(--spacing-xl);
+      line-height: 1.5;
+    }
+    .options-grid { display: grid; grid-template-columns: 1fr; gap: var(--spacing-md); margin-top: var(--spacing-xl); }
     .option-btn {
       background-color: var(--bg-input);
       color: var(--text-primary);
@@ -257,16 +229,16 @@
       text-align: left;
       font-size: var(--font-md);
       cursor: pointer;
-      transition: var(--transition-fast);
+      margin-top: 0;
+      font-weight: 400;
     }
-
     .option-btn:hover {
       border-color: var(--accent-primary);
       background-color: var(--bg-secondary);
-      transform: translateY(-2px);
+      transform: translateX(4px);
     }
 
-    /* Results Specifics */
+    /* ── Result Sections ── */
     .result-section {
       background-color: var(--bg-secondary);
       padding: var(--spacing-xl);
@@ -274,588 +246,640 @@
       margin-bottom: var(--spacing-xl);
       text-align: left;
     }
-
-    .superpower-bar {
-      margin-bottom: var(--spacing-md);
-    }
-
-    .superpower-label {
+    .section-header {
       display: flex;
-      justify-content: space-between;
-      margin-bottom: var(--spacing-xs);
+      align-items: center;
+      gap: var(--spacing-sm);
+      color: var(--accent-primary);
+      font-size: var(--font-lg);
+      font-weight: 700;
+      margin-bottom: var(--spacing-lg);
+    }
+    .section-header i { font-size: var(--font-md); }
+
+    /* ── Personality Hero ── */
+    .personality-hero { display: flex; gap: var(--spacing-xl); align-items: flex-start; }
+    .hero-emoji { font-size: 2.8rem; flex-shrink: 0; line-height: 1; margin-top: 4px; }
+    .hero-content { flex: 1; }
+    .mbti-badge {
+      display: inline-block;
+      background: var(--accent-primary);
+      color: var(--accent-button-text);
+      border-radius: var(--radius-sm);
+      padding: 2px 12px;
+      font-size: var(--font-sm);
+      font-weight: 700;
+      letter-spacing: 2px;
+      margin-bottom: var(--spacing-sm);
+    }
+    .hero-nickname { font-size: var(--font-xl); font-weight: 700; margin-bottom: var(--spacing-xs); }
+    .hero-tagline { font-size: var(--font-sm); color: var(--text-tertiary); font-style: italic; margin-bottom: var(--spacing-md); }
+    .hero-desc { color: var(--text-secondary); font-size: var(--font-base); line-height: 1.6; margin: 0; }
+    @media (max-width: 540px) { .personality-hero { flex-direction: column; gap: var(--spacing-md); } }
+
+    /* ── MBTI Axes ── */
+    .axis-row { margin-bottom: var(--spacing-lg); }
+    .axis-row:last-child { margin-bottom: 0; }
+    .axis-labels { display: flex; justify-content: space-between; font-size: var(--font-sm); font-weight: 500; color: var(--text-tertiary); margin-bottom: var(--spacing-xs); }
+    .axis-labels .dominant { color: var(--accent-primary); font-weight: 700; }
+    .axis-track { height: 8px; background: var(--bg-input); border-radius: var(--radius-full); overflow: hidden; display: flex; }
+    .axis-fill { height: 100%; background: var(--accent-primary); border-radius: var(--radius-full); transition: width 0.8s ease; }
+    .axis-note { font-size: 0.82rem; color: var(--text-tertiary); margin-top: var(--spacing-xs); }
+    .axis-note strong { color: var(--text-secondary); }
+
+    /* ── Strengths ── */
+    .strengths-wrap { display: flex; flex-wrap: wrap; gap: var(--spacing-sm); margin-bottom: var(--spacing-lg); }
+    .strength-pill {
+      background-color: var(--bg-tertiary);
+      border: 1px solid rgba(255,193,7,0.3);
+      color: var(--text-muted);
+      border-radius: var(--radius-full);
+      padding: var(--spacing-xs) var(--spacing-md);
+      font-size: var(--font-sm);
       font-weight: 500;
     }
 
-    .superpower-track {
-      width: 100%;
-      height: 12px;
+    /* ── Info Boxes ── */
+    .info-boxes { display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md); }
+    @media (max-width: 540px) { .info-boxes { grid-template-columns: 1fr; } }
+    .info-box { background-color: var(--bg-input); border-radius: var(--radius-md); padding: var(--spacing-lg); }
+    .info-box-title { font-size: var(--font-sm); font-weight: 700; margin-bottom: var(--spacing-sm); }
+    .info-box.learn .info-box-title { color: #4d9de0; }
+    .info-box.watch .info-box-title { color: #ff9f43; }
+    .info-box p { margin: 0; font-size: var(--font-sm); color: var(--text-secondary); }
+
+    /* ── MI Bars ── */
+    .mi-bar-row { margin-bottom: var(--spacing-md); }
+    .mi-bar-row:last-child { margin-bottom: 0; }
+    .mi-bar-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-xs); }
+    .mi-bar-name { font-size: var(--font-sm); font-weight: 700; }
+    .mi-bar-sub  { font-size: 0.8rem; color: var(--text-tertiary); }
+    .mi-bar-track { height: 10px; background: var(--bg-input); border-radius: var(--radius-full); overflow: hidden; }
+    .mi-bar-fill  { height: 100%; border-radius: var(--radius-full); transition: width 1s ease; }
+    .mi-bar-desc  { font-size: 0.8rem; color: var(--text-tertiary); margin-top: var(--spacing-xs); font-style: italic; }
+
+    /* MI colours */
+    .mi-linguistic    { background-color: #e17055; }
+    .mi-logical       { background-color: #4d9de0; }
+    .mi-visual        { background-color: #9b59b6; }
+    .mi-kinesthetic   { background-color: #00b894; }
+    .mi-musical       { background-color: var(--accent-primary); }
+    .mi-interpersonal { background-color: #e84393; }
+    .mi-intrapersonal { background-color: #a29bfe; }
+    .mi-naturalistic  { background-color: #27ae60; }
+
+    /* ── Top MI Detail ── */
+    .mi-detail-box { background-color: var(--bg-input); border-radius: var(--radius-md); padding: var(--spacing-xl); border-left: 4px solid var(--accent-primary); }
+    .mi-detail-header { display: flex; align-items: center; gap: var(--spacing-md); margin-bottom: var(--spacing-md); }
+    .mi-detail-icon { font-size: 2rem; line-height: 1; }
+    .mi-detail-title { font-size: var(--font-md); font-weight: 700; }
+    .mi-detail-body p { font-size: var(--font-sm); color: var(--text-secondary); margin-bottom: var(--spacing-sm); }
+    .mi-detail-body p:last-child { margin-bottom: 0; }
+    .mi-develop { background-color: var(--bg-secondary); border-radius: var(--radius-sm); padding: var(--spacing-md); margin-top: var(--spacing-md); }
+    .mi-develop-title { font-size: var(--font-sm); font-weight: 700; color: #00b894; margin-bottom: var(--spacing-xs); }
+    .mi-develop-text  { font-size: var(--font-sm); color: var(--text-secondary); margin: 0; }
+
+    /* ── Career Grid ── */
+    .career-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--spacing-md); }
+    .career-card {
       background-color: var(--bg-input);
-      border-radius: var(--radius-full);
-      overflow: hidden;
+      border-radius: var(--radius-md);
+      padding: var(--spacing-md);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      font-size: var(--font-sm);
+      font-weight: 500;
+      border: 1px solid transparent;
     }
+    .career-card:hover { border-color: var(--accent-primary); background-color: var(--bg-tertiary); transform: translateY(-2px); }
+    .career-emoji { font-size: 1.3rem; flex-shrink: 0; }
 
-    .superpower-fill {
-      height: 100%;
-      background-color: var(--accent-primary);
+    /* ── Save Status ── */
+    .save-status {
+      display: flex; align-items: center; gap: var(--spacing-sm);
+      font-size: var(--font-sm); font-weight: 500;
+      padding: var(--spacing-sm) var(--spacing-md);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--spacing-lg);
     }
+    .save-status:empty { display: none; }
+    .save-saving { background: rgba(77,157,224,0.15); color: #4d9de0; }
+    .save-saved  { background: rgba(0,184,148,0.15); color: #00b894; }
+    .save-error  { background: rgba(255,107,107,0.15); color: #ff6b6b; }
 
+    /* ── Responsive ── */
     @media (max-width: 768px) {
       body { padding: var(--spacing-md); }
+      .theme-toggle { top: var(--spacing-md); right: var(--spacing-md); }
+      h1 { font-size: var(--font-lg); }
       .container { padding: var(--spacing-xl); }
       button { width: 100%; }
     }
+    @media (max-width: 480px) {
+      .career-grid { grid-template-columns: 1fr 1fr; }
+    }
   </style>
 </head>
-<body> <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
+
+<body class="light-theme">
+  <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
     <i class="fas fa-moon"></i>
   </button>
 
+  <!-- ══════════════════════════════════ SCREEN: SETUP ══ -->
   <div class="container active" id="screen-setup">
-    <h1>Discover Your Superpowers!</h1>
-    <p>Ready to find out what makes you incredibly awesome?</p>
-    
-    <div class="input-group">
-      <label for="userName">What is your name?</label>
-      <input type="text" id="userName" placeholder="Enter your name..." required>
-    </div>
+    <h1>✨ Discover Your Superpowers!</h1>
+    <p>Find out your unique personality style and hidden strengths through this fun quiz.</p>
 
     <div class="input-group">
-      <label for="userLang">Choose your language:</label>
+      <label for="userName">Your Name / आपका नाम</label>
+      <input type="text" id="userName" placeholder="Enter your name...">
+    </div>
+    <div class="input-group">
+      <label for="userLang">Language / भाषा</label>
       <select id="userLang">
         <option value="en">English</option>
-        <option value="hi">рд╣рд┐рдВрджреА (Hindi)</option>
+        <option value="hi">हिंदी (Hindi)</option>
       </select>
     </div>
-
-    <button onclick="goToDisclaimer()">Start / рд╢реБрд░реВ рдХрд░реЗрдВ <i class="fas fa-arrow-right"></i></button>
+    <button onclick="goToDisclaimer()">Let's Begin &nbsp;<i class="fas fa-arrow-right"></i></button>
   </div>
 
+  <!-- ══════════════════════════════ SCREEN: DISCLAIMER ══ -->
   <div class="container" id="screen-disclaimer">
     <h1 id="disc-title">Important Note!</h1>
     <div class="disclaimer-box">
-      <p id="disc-text">
-        <strong>Parents & Kids:</strong> This fun quiz is designed to help you discover your learning styles and personality traits based on Multiple Intelligence and MBTI theories. 
-        <br><br>
-        <em>Please note: This is just for self-reference and fun! It is not professional counseling advice, a medical assessment, or a psychological diagnosis.</em>
-      </p>
+      <p id="disc-text"></p>
     </div>
-    <button onclick="startQuiz()" id="disc-btn">I Understand, Let's Go!</button>
+    <button onclick="startQuiz()" id="disc-btn">I Understand — Let's Go!</button>
   </div>
 
+  <!-- ════════════════════════════════════ SCREEN: QUIZ ══ -->
   <div class="container" id="screen-quiz">
+    <div class="question-meta">
+      <span id="q-section-label"></span>
+      <span class="q-count" id="q-counter"></span>
+    </div>
     <div class="progress-bar">
       <div class="progress-fill" id="progress-fill"></div>
     </div>
-    <p id="question-counter" style="text-align: left; font-weight: bold; color: var(--accent-primary);"></p>
-    <h2 id="question-text" style="margin-bottom: var(--spacing-xl); margin-top: var(--spacing-md); text-align: left;"></h2>
-    <div class="options-grid" id="options-grid">
-      </div>
+    <p class="q-text" id="question-text"></p>
+    <div class="options-grid" id="options-grid"></div>
   </div>
 
+  <!-- ══════════════════════════════════ SCREEN: RESULTS ══ -->
   <div class="container" id="screen-results">
+
+    <!-- Save status -->
+    <div class="save-status" id="save-status"></div>
+
+    <!-- Greeting -->
     <h1 id="res-greeting"></h1>
     <p id="res-intro"></p>
 
-    
-
+    <!-- 1. Personality Card -->
     <div class="result-section">
-      <h2 style="margin-bottom: var(--spacing-sm); color: var(--accent-primary);" id="res-mbti-title"></h2>
-      <p id="res-mbti-desc"></p>
-    </div>
-
-    
-
-    <div class="result-section">
-      <h2 style="margin-bottom: var(--spacing-md); color: var(--accent-primary);" id="res-mi-title"></h2>
-      <div id="mi-bars-container">
+      <div class="section-header"><i class="fas fa-user-astronaut"></i><span id="sec-personality"></span></div>
+      <div class="personality-hero">
+        <div class="hero-emoji" id="hero-emoji"></div>
+        <div class="hero-content">
+          <div class="mbti-badge" id="mbti-badge"></div>
+          <div class="hero-nickname" id="hero-nickname"></div>
+          <div class="hero-tagline" id="hero-tagline"></div>
+          <p class="hero-desc" id="hero-desc"></p>
         </div>
+      </div>
     </div>
 
-    <button onclick="location.reload()" id="res-restart-btn">Take Test Again</button>
+    <!-- 2. MBTI Dimensions -->
+    <div class="result-section">
+      <div class="section-header"><i class="fas fa-sliders-h"></i><span id="sec-dimensions"></span></div>
+      <div id="mbti-axes"></div>
+    </div>
+
+    <!-- 3. Strengths + Tips -->
+    <div class="result-section">
+      <div class="section-header"><i class="fas fa-star"></i><span id="sec-strengths"></span></div>
+      <div class="strengths-wrap" id="strengths-wrap"></div>
+      <div class="info-boxes">
+        <div class="info-box learn">
+          <div class="info-box-title">💡 <span id="learn-title"></span></div>
+          <p id="learn-text"></p>
+        </div>
+        <div class="info-box watch">
+          <div class="info-box-title">⚡ <span id="watch-title"></span></div>
+          <p id="watch-text"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Multiple Intelligences -->
+    <div class="result-section">
+      <div class="section-header"><i class="fas fa-brain"></i><span id="sec-mi"></span></div>
+      <div id="mi-bars-container"></div>
+    </div>
+
+    <!-- 5. Top MI Detail -->
+    <div class="result-section">
+      <div class="section-header"><i class="fas fa-trophy"></i><span id="sec-mi-detail"></span></div>
+      <div class="mi-detail-box" id="mi-detail-box"></div>
+    </div>
+
+    <!-- 6. Careers -->
+    <div class="result-section">
+      <div class="section-header"><i class="fas fa-rocket"></i><span id="sec-careers"></span></div>
+      <p id="careers-intro"></p>
+      <div class="career-grid" id="career-grid"></div>
+    </div>
+
+    <button onclick="location.reload()" id="res-restart-btn" style="margin-top: var(--spacing-xxl);">
+      <i class="fas fa-redo"></i>&nbsp; Take Test Again
+    </button>
   </div>
 
   <script>
-    // Theme logic
-    function toggleTheme() {
-      document.body.classList.toggle('light-theme');
-      const icon = document.querySelector('#themeBtn i');
-      if(document.body.classList.contains('light-theme')) {
-        icon.className = 'fas fa-moon';
-      } else {
-        icon.className = 'fas fa-sun';
-      }
+  /* ─── Theme ─── */
+  function toggleTheme() {
+    document.body.classList.toggle('light-theme');
+    document.querySelector('#themeBtn i').className =
+      document.body.classList.contains('light-theme') ? 'fas fa-moon' : 'fas fa-sun';
+  }
+
+  /* ─── State ─── */
+  let state = {
+    name: '', lang: 'en', currentQ: 0,
+    scores: {
+      E:0, I:0, S:0, N:0, T:0, F:0, J:0, P:0,
+      linguistic:0, logical:0, visual:0, kinesthetic:0,
+      musical:0, interpersonal:0, intrapersonal:0, naturalistic:0
     }
+  };
 
-    // App State
-    let state = {
-      name: '',
-      lang: 'en',
-      currentQ: 0,
-      scores: {
-        E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0,
-        linguistic: 0, logical: 0, visual: 0, kinesthetic: 0,
-        musical: 0, interpersonal: 0, intrapersonal: 0, naturalistic: 0
-      }
-    };
-
-    // Dictionary for UI Translations
-    const UI = {
-      en: {
-        discTitle: "Important Note!",
-        discText: "<strong>Parents & Kids:</strong> This fun quiz is designed to help you discover your learning styles and personality traits... <br><br><em>Please note: This is just for self-reference and fun! It is not professional counseling advice or a medical assessment.</em>",
-        discBtn: "I Understand, Let's Go!",
-        qCounter: "Question {current} of {total}",
-        resIntro: "Based on your answers, here is a breakdown of your unique personality and superpowers!",
-        resMbtiTitle: "Your Personality Style: ",
-        resMiTitle: "Your Top Secret Superpowers (Intelligences):",
-        restart: "Take Test Again",
-        miLabels: {
-          linguistic: "Word Wizard ЁЯУЦ (Linguistic)",
-          logical: "Number Ninja ЁЯФв (Logical)",
-          visual: "Artistic Ace ЁЯОи (Visual)",
-          kinesthetic: "Action Hero тЪ╜ (Kinesthetic)",
-          musical: "Melody Master ЁЯО╡ (Musical)",
-          interpersonal: "People Pal ЁЯдЭ (Interpersonal)",
-          intrapersonal: "Mind Explorer ЁЯза (Intrapersonal)",
-          naturalistic: "Nature Guardian ЁЯМ┐ (Naturalistic)"
-        }
+  /* ─── UI Translations ─── */
+  const UI = {
+    en: {
+      discTitle: "Important Note!",
+      discText: "<strong>Parents & Kids:</strong> This quiz is based on MBTI Personality Theory and Howard Gardner's Multiple Intelligences framework. It will help you discover how you think, learn, and what your natural strengths are.<br><br><em>Please note: This is a self-discovery tool for fun and reflection. It is not professional counselling advice, a medical assessment, or a psychological diagnosis.</em>",
+      discBtn: "I Understand — Let's Go!",
+      qCounter: "{c} of {t}",
+      resIntro: "Here is your unique personality profile — packed with insights about how you think, what you're great at, and where you could go!",
+      secPersonality: "Your Personality Type",
+      secDimensions: "Your Personality Dimensions",
+      secStrengths: "Your Key Strengths",
+      secMi: "Your Superpowers (Multiple Intelligences)",
+      secMiDetail: "Your Top Superpower — In Detail",
+      secCareers: "Career Paths to Explore",
+      careersIntro: "Based on your personality and top intelligences, here are careers that could be a great fit. These are just starting points — the world of possibilities is huge!",
+      learnTitle: "How You Learn Best",
+      watchTitle: "Something to Work On",
+      axisLean: "You lean towards",
+      axes: {
+        EI: { left:'Extrovert (E)', right:'Introvert (I)', desc:'Energy Style — where do you get your energy from?' },
+        SN: { left:'Sensing (S)',   right:'Intuition (N)',  desc:'Information Style — how do you take in the world?' },
+        TF: { left:'Thinking (T)', right:'Feeling (F)',    desc:'Decision Style — how do you make choices?' },
+        JP: { left:'Judging (J)',  right:'Perceiving (P)', desc:'Life Style — how do you like to organise your life?' }
       },
-      hi: {
-        discTitle: "рдорд╣рддреНрд╡рдкреВрд░реНрдг рд╕реВрдЪрдирд╛!",
-        discText: "<strong>Parents & Kids:</strong> рдпрд╣ рдордЬрд╝реЗрджрд╛рд░ рдХреНрд╡рд┐рдЬрд╝ рдЖрдкрдХреЛ рдЕрдкрдиреЗ рд╕реАрдЦрдиреЗ рдХреЗ рддрд░реАрдХреЗ рдФрд░ рдкрд░реНрд╕рдиреИрд▓рд┐рдЯреА рдХреЛ рд╕рдордЭрдиреЗ рдореЗрдВ рдорджрдж рдХрд░реЗрдЧрд╛... <br><br><em>рдХреГрдкрдпрд╛ рдзреНрдпрд╛рди рджреЗрдВ: рдпрд╣ рд╕рд┐рд░реНрдл рдЖрдкрдХреЗ self-reference рдФрд░ рдореЫреЗ рдХреЗ рд▓рд┐рдП рд╣реИред рдЗрд╕реЗ рдХреЛрдИ medical assessment рдпрд╛ professional рд╕рд▓рд╛рд╣ рди рдорд╛рдиреЗрдВред</em>",
-        discBtn: "рдореБрдЭреЗ рд╕рдордЭ рдЖ рдЧрдпрд╛, рдЖрдЧреЗ рдмреЭреЗрдВ!",
-        qCounter: "рдкреНрд░рд╢реНрди {current} / {total}",
-        resIntro: "рдЖрдкрдХреЗ рдЬрд╡рд╛рдмреЛрдВ рдХреЗ рдЖрдзрд╛рд░ рдкрд░, рдпрд╣рд╛рдБ рдЖрдкрдХреА рдЕрдиреЛрдЦреА рдкрд░реНрд╕рдиреИрд▓рд┐рдЯреА рдФрд░ рд╕реБрдкрд░рдкрд╛рд╡рд░реНрд╕ рдХрд╛ рд░рд┐рдЬрд▓реНрдЯ рд╣реИ!",
-        resMbtiTitle: "рдЖрдкрдХреА рдкрд░реНрд╕рдиреИрд▓рд┐рдЯреА (Personality Style): ",
-        resMiTitle: "рдЖрдкрдХреА рдЯреЙрдк рд╕реБрдкрд░рдкрд╛рд╡рд░реНрд╕ (Intelligences):",
-        restart: "рдлрд┐рд░ рд╕реЗ рдЯреЗрд╕реНрдЯ рд▓реЗрдВ",
-        miLabels: {
-          linguistic: "Word Wizard ЁЯУЦ (рд╢рдмреНрджреЛрдВ рдХреЗ рдЬрд╛рджреВрдЧрд░)",
-          logical: "Number Ninja ЁЯФв (рддрд░реНрдХ рдФрд░ рдЧрдгрд┐рдд)",
-          visual: "Artistic Ace ЁЯОи (рдХрд▓рд╛ рдФрд░ рдбрд┐рдЬрд╝рд╛рдЗрди)",
-          kinesthetic: "Action Hero тЪ╜ (рдЦреЗрд▓ рдФрд░ рдПрдХреНрдЯрд┐рд╡рд┐рдЯреА)",
-          musical: "Melody Master ЁЯО╡ (рд╕рдВрдЧреАрдд рдкреНрд░реЗрдореА)",
-          interpersonal: "People Pal ЁЯдЭ (рджреЛрд╕реНрдд рдмрдирд╛рдиреЗ рдореЗрдВ рдорд╛рд╣рд┐рд░)",
-          intrapersonal: "Mind Explorer ЁЯза (рдЦреБрдж рдХреЛ рдЕрдЪреНрдЫреЗ рд╕реЗ рд╕рдордЭрдиреЗ рд╡рд╛рд▓реЗ)",
-          naturalistic: "Nature Guardian ЁЯМ┐ (рдкреНрд░рдХреГрддрд┐ рдкреНрд░реЗрдореА)"
-        }
+      restart: "Take Test Again",
+      miLabels: {
+        linguistic:    { name:'Word Wizard 📖',    sub:'Linguistic Intelligence' },
+        logical:       { name:'Number Ninja 🔢',   sub:'Logical-Mathematical Intelligence' },
+        visual:        { name:'Creative Eye 🎨',   sub:'Visual-Spatial Intelligence' },
+        kinesthetic:   { name:'Action Hero ⚽',    sub:'Bodily-Kinesthetic Intelligence' },
+        musical:       { name:'Melody Master 🎵',  sub:'Musical Intelligence' },
+        interpersonal: { name:'People Pro 🤝',     sub:'Interpersonal Intelligence' },
+        intrapersonal: { name:'Self Scholar 🧠',   sub:'Intrapersonal Intelligence' },
+        naturalistic:  { name:'Nature Guardian 🌿',sub:'Naturalistic Intelligence' }
       }
+    },
+    hi: {
+      discTitle: "महत्वपूर्ण सूचना!",
+      discText: "<strong>माता-पिता और बच्चे:</strong> यह quiz MBTI Personality Theory और Howard Gardner के Multiple Intelligences framework पर आधारित है। यह आपको समझने में मदद करेगा कि आप कैसे सोचते हैं, कैसे सीखते हैं और आपकी natural strengths क्या हैं।<br><br><em>कृपया ध्यान दें: यह quiz सिर्फ self-discovery और मज़े के लिए है। इसे कोई medical assessment, professional सलाह या psychological diagnosis न मानें।</em>",
+      discBtn: "समझ गया — शुरू करते हैं!",
+      qCounter: "{c} / {t}",
+      resIntro: "यह रहा आपका unique personality profile — जानिए आप कैसे सोचते हैं, आपकी strengths क्या हैं, और आप कहाँ तक जा सकते हैं!",
+      secPersonality: "आपकी Personality Type",
+      secDimensions: "आपके Personality Dimensions",
+      secStrengths: "आपकी प्रमुख Strengths",
+      secMi: "आपकी Superpowers (Multiple Intelligences)",
+      secMiDetail: "आपकी सबसे बड़ी Superpower — विस्तार में",
+      secCareers: "Career के रास्ते",
+      careersIntro: "आपकी personality और top intelligences के आधार पर, ये careers आपके लिए बेहतरीन हो सकते हैं।",
+      learnTitle: "आप सबसे अच्छे कैसे सीखते हैं",
+      watchTitle: "इस पर और काम करें",
+      axisLean: "आप lean करते हैं",
+      axes: {
+        EI: { left:'Extrovert (E)', right:'Introvert (I)', desc:'Energy — आप energy कहाँ से पाते हैं?' },
+        SN: { left:'Sensing (S)',   right:'Intuition (N)',  desc:'Information — आप दुनिया को कैसे देखते हैं?' },
+        TF: { left:'Thinking (T)', right:'Feeling (F)',    desc:'Decision — आप decisions कैसे लेते हैं?' },
+        JP: { left:'Judging (J)',  right:'Perceiving (P)', desc:'Lifestyle — आप अपनी ज़िंदगी कैसे organize करते हैं?' }
+      },
+      restart: "फिर से टेस्ट लें",
+      miLabels: {
+        linguistic:    { name:'Word Wizard 📖',    sub:'भाषाई बुद्धि' },
+        logical:       { name:'Number Ninja 🔢',   sub:'तर्क और गणित' },
+        visual:        { name:'Creative Eye 🎨',   sub:'दृश्य कला बुद्धि' },
+        kinesthetic:   { name:'Action Hero ⚽',    sub:'शारीरिक बुद्धि' },
+        musical:       { name:'Melody Master 🎵',  sub:'संगीत बुद्धि' },
+        interpersonal: { name:'People Pro 🤝',     sub:'सामाजिक बुद्धि' },
+        intrapersonal: { name:'Self Scholar 🧠',   sub:'आत्म-ज्ञान बुद्धि' },
+        naturalistic:  { name:'Nature Guardian 🌿',sub:'प्राकृतिक बुद्धि' }
+      }
+    }
+  };
+
+  /* ─── MBTI Detailed Data ─── */
+  const MBTI_DETAILS = {
+    INTJ:{ nickname:'The Mastermind', emoji:'🧠', tagline:'Strategic, independent, and always one step ahead.', description:'You have a rare gift for seeing patterns and planning for the future. You love deep, complex ideas and set very high standards for yourself. You prefer a small circle of close friends and value intelligence, honesty, and depth over small talk.', strengths:['Strategic long-term thinking','Deep concentration','Independent problem-solving','High personal standards','Spotting inefficiencies'], learningTip:'You learn best by grasping the big picture first, then diving into details. You thrive with quiet time to think deeply and self-directed research.', watchOut:'You can sometimes seem distant or impatient. Sharing your thoughts and being patient with different viewpoints makes you even more powerful.', careers:['Software Engineer','Research Scientist','Architect','Data Scientist','Investment Analyst','Strategic Planner','Entrepreneur','Professor'] },
+    INTP:{ nickname:'The Scientist', emoji:'🔭', tagline:'Curious, analytical, and always asking "why?"', description:'Your mind is a constant engine of curiosity and analysis. You love exploring ideas, finding logical inconsistencies, and figuring out exactly how things work. You are open-minded and ready to change your view when evidence points somewhere new.', strengths:['Logical analysis','Creative problem-solving','Open-mindedness','Deep intellectual curiosity','Spotting flaws in arguments'], learningTip:'You learn best by following your curiosity wherever it leads. Thought experiments, debates, and "what if?" questions are your fuel.', watchOut:'You can overthink or procrastinate on finishing projects. Try setting small achievable deadlines — your ideas deserve to be completed!', careers:['Mathematician','Computer Scientist','Physicist','Philosopher','Game Designer','Research Analyst','Systems Architect','Professor'] },
+    ENTJ:{ nickname:'The Commander', emoji:'💼', tagline:'Bold leader with big visions and the drive to achieve them.', description:'You are a natural-born leader who sees problems as exciting challenges. You are direct, confident, and driven by ambitious goals. You are brilliant at organizing people and resources, turning vision into reality — fast.', strengths:['Natural leadership','Strategic vision','Decisiveness','High ambition','Organizational skills'], learningTip:'You learn best when challenged with clear goals. You thrive in debates, leadership roles, and competitive projects with measurable results.', watchOut:'Your directness can sometimes be too blunt. A kind, encouraging word makes your team even more effective and loyal.', careers:['CEO / Executive','Lawyer','Business Manager','Military Officer','Entrepreneur','School Principal','Judge','Politician'] },
+    ENTP:{ nickname:'The Inventor', emoji:'💡', tagline:'Clever, enthusiastic, and full of innovative ideas.', description:'You are quick-witted, imaginative, and love a great intellectual debate. You thrive on new ideas, challenge conventional thinking, and always spot opportunities others miss.', strengths:['Creative and innovative thinking','Quick wit','Adaptability','Spotting new opportunities','Persuasion and debate'], learningTip:'You learn best through debate, free exploration, and open-ended projects. Teaching concepts to others helps you find gaps in your own understanding.', watchOut:'You can start many exciting projects without finishing them. Focus your energy on completing one big goal — you will be amazed by what you accomplish.', careers:['Entrepreneur','Lawyer','Marketing Director','Inventor','Film Director','Political Analyst','Startup Founder','Journalist'] },
+    INFJ:{ nickname:'The Mystic', emoji:'✨', tagline:'Deeply insightful, creative, and guided by strong values.', description:'You have an extraordinary ability to understand people and situations at a deeper level. You are idealistic, creative, and genuinely care about making a meaningful difference. Private and principled, your insights often surprise even you.', strengths:['Deep empathy and insight','Creative vision','Strong moral principles','Understanding complex emotions','Long-term thinking'], learningTip:'You learn best when topics connect to a deeper meaning or purpose. Journaling helps you organise the rich thoughts flowing through your mind.', watchOut:'You can be a perfectionist and take on too much trying to help everyone. It is absolutely okay to say no and protect your precious energy.', careers:['Counselor','Psychologist','Writer','Teacher','Non-profit Leader','Doctor','Social Worker','UX Designer'] },
+    INFP:{ nickname:'The Dreamer', emoji:'☁️', tagline:'Imaginative, empathetic, and always reaching for something meaningful.', description:'You have a beautifully rich inner world full of ideas, values, and deep feelings. You are compassionate, authentic, and constantly searching for meaning. You are creative and expressive, and you care deeply about causes close to your heart.', strengths:['Deep empathy and compassion','Creative expression','Strong personal values','Open-mindedness','Seeing potential in others'], learningTip:'You learn best when topics connect to your values and interests. Creative projects, storytelling, and reflective writing help you absorb ideas at a profound level.', watchOut:'You can be too hard on yourself when you make mistakes. Remember: mistakes are how everyone grows — even the greatest people learn from getting things wrong!', careers:['Psychologist','Author','Artist','Social Worker','Teacher','Musician','UX Designer','Counselor'] },
+    ENFJ:{ nickname:'The Hero', emoji:'🦸', tagline:'Inspiring leader who brings out the very best in people.', description:'You are charismatic, warm, and deeply committed to helping others grow. You are a natural teacher and team-builder, and your empathy makes people feel truly seen and understood. Others naturally look up to you.', strengths:['Inspiring and motivating others','Deep empathy','Communication and listening','Building teams','Seeing others\' potential'], learningTip:'You learn best through collaboration, group discussion, and projects that make a real difference in people\'s lives. Teaching others is how you truly master a subject.', watchOut:'You put others\' needs first so often that you can exhaust yourself. Taking care of yourself is what allows you to keep giving.', careers:['Teacher','Counselor','HR Manager','Politician','Social Worker','Life Coach','Non-profit Director','Doctor'] },
+    ENFP:{ nickname:'The Champion', emoji:'🏆', tagline:'Enthusiastic, creative, and spreading positive energy everywhere.', description:'You are a burst of positive creative energy! You love connecting with people, exploring new ideas, and inspiring everyone around you. Optimistic and imaginative, you see potential and possibility in everything and everyone.', strengths:['Creativity and imagination','Connecting with people','Infectious enthusiasm','Seeing possibilities','Empathy and warmth'], learningTip:'You learn best when you are genuinely excited about a topic. Follow your curiosity, use stories and real examples, and mix things up often to stay energised.', watchOut:'Your excitement can spread thin across too many interests. Focus your amazing energy on one meaningful goal at a time.', careers:['Journalist','Actor','Marketing Specialist','Entrepreneur','Counselor','Event Planner','Teacher','Designer'] },
+    ISTJ:{ nickname:'The Inspector', emoji:'🕵️', tagline:'Reliable, thorough, and the person everyone counts on.', description:'You are the rock that everyone relies on. Hardworking, detail-oriented, and deeply responsible, you take your commitments seriously and always follow through. Your steady integrity is a gift to everyone around you.', strengths:['Reliability and dependability','Attention to detail','Strong organisation','Patience and persistence','Methodical thinking'], learningTip:'You learn best with clear instructions, step-by-step processes, and real-world examples. You like knowing exactly what is expected and work steadily toward your goals.', watchOut:'You can sometimes resist change and prefer familiar methods. New approaches can sometimes lead to even better results — stay open to experiments!', careers:['Accountant','Engineer','Doctor','Lawyer','Police Officer','Librarian','Financial Analyst','Military Officer'] },
+    ISFJ:{ nickname:'The Nurturer', emoji:'🛡️', tagline:'Warm, dedicated, and quietly extraordinary.', description:'You are one of the most caring and devoted people around. You remember details about everyone you love, always show up when needed, and work tirelessly without seeking recognition. Your kindness and quiet strength are tremendous gifts.', strengths:['Loyalty and reliability','Genuine care for others','Excellent memory for details','Hard work and dedication','Practical helpfulness'], learningTip:'You learn best in stable, supportive environments. Practical, hands-on learning works wonderfully for you, and you love real-world applications of what you study.', watchOut:'You can be so selfless that you forget your own needs. It is necessary to put yourself first sometimes. Your wellbeing matters!', careers:['Nurse','Teacher','Social Worker','Librarian','Interior Designer','Veterinarian','Administrator','Counselor'] },
+    ESTJ:{ nickname:'The Director', emoji:'⚓', tagline:'Organised, decisive, and a natural community leader.', description:'You are a born organiser and executor. You know how to bring order to chaos, rally people to a goal, and make sure results are delivered. Direct, logical, and committed to hard work — people respect you because you always lead by example.', strengths:['Leadership and organisation','Decisiveness','Dependability','Clear communication','Practical planning'], learningTip:'You learn best with clear structure, defined goals, and real-world applications. Organised settings and step-by-step guidance match your style perfectly.', watchOut:'You can sometimes be rigid or unwilling to consider alternatives. Being open to unconventional ideas can lead to genuinely surprising breakthroughs!', careers:['Business Manager','Military Officer','Judge','School Principal','Civil Engineer','Financial Analyst','Police Officer','Executive Director'] },
+    ESFJ:{ nickname:'The Caregiver', emoji:'🤗', tagline:'Warm, loyal, and the glue that holds communities together.', description:'You are the heart of every group you belong to. Warm, caring, and deeply attuned to what people need, you love creating harmony and making sure everyone feels included and valued.', strengths:['Building social harmony','Loyalty and dedication','Organising and planning','Genuine care for others','Bringing people together'], learningTip:'You learn best in cooperative, warm environments with positive encouragement. Group projects and collaborative learning are where you absolutely shine.', watchOut:'You can worry too much about others\' opinions of you. Trust your own wonderful instincts — they are usually spot on!', careers:['Nurse','Teacher','Event Planner','Social Worker','Sales Manager','HR Professional','Chef','Counselor'] },
+    ESTP:{ nickname:'The Adventurer', emoji:'⚡', tagline:'Bold, energetic, and always ready to dive headfirst into action.', description:'You are all about action and the thrill of the moment! You love being in the thick of things, solving problems on the spot, and pushing boundaries. Bold, confident, and sharply perceptive.', strengths:['Bold decisiveness','On-the-spot problem-solving','Sharp observation','Boundless energy','Staying calm in a crisis'], learningTip:'You learn best through hands-on experience, real-world projects, and active participation. Sitting still for too long is genuinely difficult for your high-energy mind!', watchOut:'You can sometimes act impulsively before thinking through consequences. Taking even a brief moment to consider the full picture can save you from unnecessary trouble.', careers:['Entrepreneur','Professional Athlete','Police Officer','Sales Executive','Emergency Responder','Military Officer','Sports Coach','Pilot'] },
+    ESFP:{ nickname:'The Performer', emoji:'🌟', tagline:'Fun, generous, and the life of every single room.', description:'You bring joy and spontaneity wherever you go! You love people, new experiences, and excitement. Highly observant, generous with your time, and always ready to help in a practical hands-on way — life is never dull with you around.', strengths:['Infectious enthusiasm','Natural connection with people','Practical hands-on helpfulness','Spontaneity and adaptability','Making everyone feel welcome'], learningTip:'You learn best through real-world, hands-on experience. You love learning with others — through games, activities, and demonstrations rather than textbooks alone.', watchOut:'You can get distracted by fun and excitement when important things need to get done. Building simple focus habits will take your incredible talents even further.', careers:['Actor','Dancer','Event Coordinator','Sales Representative','Fitness Trainer','Chef','Tour Guide','Music Artist'] },
+    ISTP:{ nickname:'The Craftsman', emoji:'🛠️', tagline:'Calm, observant, and masterful with tools and systems.', description:'You are cool, calm, and exceptional at understanding how things work. You naturally observe before you act, and you love taking systems apart to truly understand them. Endlessly practical and precise.', strengths:['Practical hands-on skills','Calm under pressure','Logical systems analysis','Precision and efficiency','Adaptability in crises'], learningTip:'You learn by doing — hands-on experiments, real projects, and physical tools are far more valuable to you than lectures. Give yourself freedom to tinker!', watchOut:'You can find it difficult to express your feelings to others. Sharing how you feel — even a little — builds deeper connections with the people who matter to you.', careers:['Engineer','Mechanic','Surgeon','Pilot','Programmer','Craftsperson','Chef','Military Technician'] },
+    ISFP:{ nickname:'The Artist', emoji:'🎨', tagline:'Gentle, deeply creative, and expressing a beautiful inner world.', description:'You are gentle, deeply observant, and possess a wonderfully rich creative spirit. You experience the world intensely through your senses and emotions, and you express yourself in ways that genuinely move people.', strengths:['Artistic and creative expression','Deep sensitivity and empathy','Genuine kindness','Practical creativity','Strong personal values'], learningTip:'You learn best through beauty, creativity, and hands-on experience. Art projects, creative freedom, and real-world applications help you absorb and remember anything.', watchOut:'You can be too modest about your incredible talents. The world genuinely needs to see your work — share it! Your art and sensitivity are gifts worth celebrating.', careers:['Artist','Musician','Fashion Designer','Veterinarian','Chef','Physical Therapist','Interior Designer','Photographer'] }
+  };
+
+  /* ─── MI Detailed Data ─── */
+  const MI_DETAILS = {
+    linguistic:    { fullName:'Linguistic Intelligence',             emoji:'📖', cssClass:'mi-linguistic',    description:'You have a natural gift with language. You think in words, love to read and write, and express yourself clearly and creatively.', dailyLife:'You probably love storytelling, poetry, and debating ideas. You may find yourself reading constantly and coming up with inventive ways to say things.', develop:'Write a daily journal, try poetry or short stories, join a debate club, read books across many genres, or start your own blog.', topCareers:[{e:'📖',n:'Author / Novelist'},{e:'📰',n:'Journalist'},{e:'⚖️',n:'Lawyer'},{e:'🎓',n:'Teacher'},{e:'✍️',n:'Copywriter'},{e:'🎤',n:'Speechwriter'}] },
+    logical:       { fullName:'Logical-Mathematical Intelligence',   emoji:'🔢', cssClass:'mi-logical',       description:'You love numbers, patterns, and logical thinking. You are drawn to puzzles, experiments, and systematically figuring out how things work.', dailyLife:'You probably love math, chess, coding, and logic puzzles, and you often ask "why?" about how everything around you works.', develop:'Try coding, play chess or strategy games, solve logic puzzles, explore math olympiad problems, or run your own science experiments.', topCareers:[{e:'📊',n:'Data Scientist'},{e:'💻',n:'Software Engineer'},{e:'📐',n:'Mathematician'},{e:'⚛️',n:'Physicist'},{e:'📈',n:'Financial Analyst'},{e:'🔬',n:'Researcher'}] },
+    visual:        { fullName:'Visual-Spatial Intelligence',         emoji:'🎨', cssClass:'mi-visual',        description:'You think in images and pictures. You are excellent at understanding space, design, and how things look, and can visualise ideas clearly in your mind.', dailyLife:'You probably love drawing, photography, and design. You navigate spaces well and notice visual details that others completely miss.', develop:'Practice drawing or sketching daily, try photography or videography, learn graphic design tools, or build 3D models.', topCareers:[{e:'🖌️',n:'Graphic Designer'},{e:'🏛️',n:'Architect'},{e:'🎬',n:'Film Director'},{e:'✨',n:'Animator'},{e:'🛋️',n:'Interior Designer'},{e:'🏥',n:'Surgeon'}] },
+    kinesthetic:   { fullName:'Bodily-Kinesthetic Intelligence',     emoji:'⚽', cssClass:'mi-kinesthetic',   description:'You learn through movement and hands-on experience. You have excellent body awareness, coordination, and physical skill. Your body is one of your greatest thinking tools.', dailyLife:'You probably love sports, dance, building things, and learning by doing rather than just reading or listening.', develop:'Join sports teams, try dance or martial arts, build things with your hands, explore drama and theatre, or try woodworking and crafts.', topCareers:[{e:'⚽',n:'Professional Athlete'},{e:'💃',n:'Dancer'},{e:'🏃',n:'Physical Therapist'},{e:'👨‍🍳',n:'Chef'},{e:'🎭',n:'Actor'},{e:'🏥',n:'Surgeon'}] },
+    musical:       { fullName:'Musical Intelligence',                emoji:'🎵', cssClass:'mi-musical',       description:'You have a deep sensitivity to rhythm, melody, pitch, and sound. Music speaks to you in a way others may not fully understand — it moves you, energises you, and helps you think.', dailyLife:'You probably hum or tap rhythms without realising it, pick up music quickly, and feel emotions strongly through songs and sounds.', develop:'Learn an instrument, take singing lessons, study music theory, experiment with composing, or join your school band or choir.', topCareers:[{e:'🎤',n:'Musician'},{e:'🎧',n:'Music Producer'},{e:'🎼',n:'Composer'},{e:'🎚️',n:'Sound Engineer'},{e:'🎹',n:'Music Teacher'},{e:'🎻',n:'Conductor'}] },
+    interpersonal: { fullName:'Interpersonal Intelligence',          emoji:'🤝', cssClass:'mi-interpersonal', description:'You understand people deeply. You can easily read others\' emotions and motivations, making you a natural connector, mediator, and leader.', dailyLife:'You probably have a wide circle of friends, love helping others navigate problems, and naturally find yourself leading or organising group activities.', develop:'Join student council, participate in group activities, volunteer in community service, and practice active listening and communication.', topCareers:[{e:'🧩',n:'Counselor'},{e:'📚',n:'Teacher'},{e:'👥',n:'HR Manager'},{e:'🤝',n:'Social Worker'},{e:'🗳️',n:'Politician'},{e:'🌟',n:'Life Coach'}] },
+    intrapersonal: { fullName:'Intrapersonal Intelligence',          emoji:'🧠', cssClass:'mi-intrapersonal', description:'You have a deep and clear understanding of yourself — your emotions, values, strengths, and weaknesses. You are highly self-aware and naturally reflective.', dailyLife:'You probably enjoy journaling, deep thinking, and time alone with your thoughts. You have a strong sense of who you are and what you truly want.', develop:'Keep a reflective journal, practice mindfulness or meditation, set meaningful personal goals, and explore philosophy and psychology.', topCareers:[{e:'🧠',n:'Psychologist'},{e:'🤔',n:'Philosopher'},{e:'📖',n:'Author'},{e:'🌟',n:'Life Coach'},{e:'🔬',n:'Researcher'},{e:'🚀',n:'Entrepreneur'}] },
+    naturalistic:  { fullName:'Naturalistic Intelligence',           emoji:'🌿', cssClass:'mi-naturalistic',  description:'You have a deep and special connection with the natural world. You notice patterns in nature, feel drawn to animals and plants, and find understanding in living systems.', dailyLife:'You probably love being outdoors, noticing changes in weather and seasons, caring for animals, and learning about how life on Earth works.', develop:'Try gardening, birdwatching, nature journaling, join environmental clubs, visit nature reserves, or study biology deeply.', topCareers:[{e:'🧬',n:'Biologist'},{e:'🐾',n:'Veterinarian'},{e:'🌿',n:'Environmental Scientist'},{e:'🌱',n:'Botanist'},{e:'🪨',n:'Geologist'},{e:'📸',n:'Wildlife Photographer'}] }
+  };
+
+  /* ─── Questions ─── */
+  const QUESTIONS = [
+    { id:1,  cat:'E/I', text:{hi:'क्या आप को अकेले समय बिताना पसंद है?', en:'Do you like spending time alone?'}, options:[{text:{hi:'बहुत ज़्यादा',en:'Very much'},scores:{I:3,intrapersonal:2}},{text:{hi:'काफ़ी हद तक',en:'Quite a bit'},scores:{I:2,intrapersonal:1}},{text:{hi:'थोड़ा-सा',en:'A little'},scores:{E:2}},{text:{hi:'बिल्कुल नहीं',en:'Not at all'},scores:{E:3,interpersonal:1}}]},
+    { id:2,  cat:'E/I', text:{hi:'जब आप नए लोगों से मिलते हैं तो कितना जल्दी comfortable हो जाते हैं?', en:'How quickly do you get comfortable when meeting new people?'}, options:[{text:{hi:'बहुत जल्दी',en:'Very quickly'},scores:{E:3,interpersonal:2}},{text:{hi:'जल्दी',en:'Quickly'},scores:{E:2,interpersonal:1}},{text:{hi:'थोड़ा समय लगता है',en:'It takes some time'},scores:{I:2}},{text:{hi:'काफ़ी समय लगता है',en:'It takes a lot of time'},scores:{I:3}}]},
+    { id:3,  cat:'E/I', text:{hi:'जब आप किसी party में जाते हैं तो लोगों के साथ कितना घुल-मिलकर बातें करते हैं?', en:'How much do you mingle and talk to people at a party?'}, options:[{text:{hi:'बहुत ज़्यादा',en:'A lot'},scores:{E:3,interpersonal:3}},{text:{hi:'काफ़ी हद तक',en:'Quite a bit'},scores:{E:2,interpersonal:2}},{text:{hi:'थोड़ा',en:'A little'},scores:{I:2,interpersonal:1}},{text:{hi:'बिल्कुल नहीं',en:'Not at all'},scores:{I:3}}]},
+    { id:4,  cat:'E/I', text:{hi:'क्या आप को लोगों के साथ group में काम करना पसंद है?', en:'Do you enjoy working in groups with others?'}, options:[{text:{hi:'बहुत ज़्यादा',en:'Very much'},scores:{E:3,interpersonal:3}},{text:{hi:'काफ़ी हद तक',en:'Quite a bit'},scores:{E:2,interpersonal:2}},{text:{hi:'थोड़ा-सा',en:'A little'},scores:{I:1,interpersonal:1}},{text:{hi:'बिल्कुल नहीं',en:'Not at all'},scores:{I:3}}]},
+    { id:5,  cat:'E/I', text:{hi:'क्या आप बहुत सोच-सोचकर बोलते हैं?', en:'Do you think carefully before you speak?'}, options:[{text:{hi:'हमेशा',en:'Always'},scores:{I:3,intrapersonal:3}},{text:{hi:'अक्सर',en:'Often'},scores:{I:2,intrapersonal:2}},{text:{hi:'कभी-कभी',en:'Sometimes'},scores:{E:1,intrapersonal:1}},{text:{hi:'कभी नहीं',en:'Never'},scores:{E:3}}]},
+    { id:6,  cat:'E/I', text:{hi:'क्या आप को बोलने की जगह लिखकर अपनी बात express करना ज़्यादा पसंद है?', en:'Do you prefer expressing yourself by writing rather than speaking?'}, options:[{text:{hi:'बहुत ज़्यादा',en:'Very much'},scores:{I:3,linguistic:3}},{text:{hi:'काफ़ी हद तक',en:'Quite a bit'},scores:{I:2,linguistic:2}},{text:{hi:'थोड़ा-सा',en:'A little'},scores:{E:1,linguistic:1}},{text:{hi:'बिल्कुल नहीं',en:'Not at all'},scores:{E:3}}]},
+    { id:7,  cat:'E/I', text:{hi:'जब class में कोई doubt हो तो क्या आप teacher से बात करते हैं?', en:'When you have a doubt in class, do you go and talk to the teacher?'}, options:[{text:{hi:'हमेशा',en:'Always'},scores:{E:3,interpersonal:3}},{text:{hi:'अक्सर',en:'Often'},scores:{E:2,interpersonal:2}},{text:{hi:'कभी-कभी',en:'Sometimes'},scores:{I:1,interpersonal:1}},{text:{hi:'कभी नहीं',en:'Never'},scores:{I:3}}]},
+    { id:8,  cat:'E/I', text:{hi:'जब stage पर बोलने का मौका मिलता है, तो आप कैसा feel करते हैं?', en:'How do you feel when given a chance to speak on stage?'}, options:[{text:{hi:'बहुत उत्साहित',en:'Very excited!'},scores:{E:3,interpersonal:2}},{text:{hi:'काफ़ी ठीक',en:'Okay, a little nervous but fine'},scores:{E:2,interpersonal:1}},{text:{hi:'थोड़ी घबराहट',en:'Nervous, I think a lot before speaking'},scores:{I:2}},{text:{hi:'बिल्कुल अच्छा नहीं',en:'Not good, I avoid the stage'},scores:{I:3}}]},
+    { id:9,  cat:'E/I', text:{hi:'आप को कैसे lunch करना पसंद है?', en:'How do you prefer eating your lunch?'}, options:[{text:{hi:'बहुत सारे दोस्तों के साथ',en:'With a big group of friends'},scores:{E:3,interpersonal:3}},{text:{hi:'2-3 close friends के साथ',en:'With 2-3 close friends'},scores:{E:2,interpersonal:2}},{text:{hi:'अक्सर अकेले',en:'Usually alone'},scores:{I:2,intrapersonal:2}},{text:{hi:'हमेशा अकेले',en:'Always alone'},scores:{I:3,intrapersonal:3}}]},
+    { id:10, cat:'E/I', text:{hi:'जब कोई नया idea आता है तो आप क्या करते हैं?', en:'What do you do when you get a new idea?'}, options:[{text:{hi:'तुरंत सब के साथ share करते हैं',en:'Share it with everyone instantly'},scores:{E:3}},{text:{hi:'मौका मिलने पर share करते हैं',en:'Share it when I get a chance'},scores:{E:2}},{text:{hi:'मन में सोच-विचार करते हैं',en:'Think it over, share if necessary'},scores:{I:2,intrapersonal:2}},{text:{hi:'मन में गहराई से सोचते हैं',en:'Keep it to myself and deeply think about it'},scores:{I:3,intrapersonal:3}}]},
+    { id:11, cat:'T/F', text:{hi:'जब आपका कोई दोस्त बहुत परेशान हो, तो आप सबसे पहले क्या करते हैं?', en:'What is your first reaction when a friend is very upset?'}, options:[{text:{hi:'उसकी भावनाओं को समझते हैं',en:'Comfort them emotionally'},scores:{F:3,interpersonal:3}},{text:{hi:'साथ में दुखी होते हैं',en:'Listen and feel sad with them'},scores:{F:2,interpersonal:2}},{text:{hi:'problem solve करने में help करते हैं',en:'Help them logically solve the problem'},scores:{T:2,logical:2}},{text:{hi:'बताते हैं कि क्या करना चाहिए',en:'Tell them exactly what they should do'},scores:{T:3,logical:1}}]},
+    { id:12, cat:'T/F', text:{hi:'अगर तुम्हें कोई choice देनी हो, तो तुम क्या prefer करोगे?', en:'If you had to make a choice, what would you prefer?'}, options:[{text:{hi:'जो fair और सही हो',en:'What is fair and correct, even if it hurts feelings'},scores:{T:3}},{text:{hi:'जो सभी को खुश करे',en:'What makes everyone happy, even if not fully fair'},scores:{F:3,interpersonal:1}},{text:{hi:'दोनों को balance करने वाला decision',en:'A balanced decision'},scores:{T:1,F:1}},{text:{hi:'जो दिल और सोच दोनों सही कहें',en:'Whatever my heart and mind agree on'},scores:{T:1,F:2}}]},
+    { id:13, cat:'T/F', text:{hi:'जब आप कोई important decision लेते हैं, तो सबसे पहले क्या सोचते हैं?', en:'What do you think of first when making an important decision?'}, options:[{text:{hi:'इससे सभी को कितना फ़ायदा या दुख होगा',en:'How it will affect everyone\'s feelings'},scores:{F:3,interpersonal:1}},{text:{hi:'क्या यह decision logically सही है',en:'If the decision makes logical sense'},scores:{T:3,logical:2}},{text:{hi:'दोनों को equal importance देते हैं',en:'I weigh logic and feelings equally'},scores:{T:1,F:1}},{text:{hi:'जो मन और दिल दोनों से सही लगे',en:'Whatever feels right'},scores:{F:2}}]},
+    { id:14, cat:'S/N', text:{hi:'जब आप कोई नई चीज़ सीखते हैं, तो क्या prefer करते हैं?', en:'How do you prefer to learn something new?'}, options:[{text:{hi:'Step-by-step, एक-एक करके सीखना',en:'Step-by-step instructions'},scores:{S:3}},{text:{hi:'पहले पूरी picture समझना',en:'Understand the big picture first, details later'},scores:{N:3}},{text:{hi:'Examples देखकर सीखना',en:'Looking at examples and copying'},scores:{S:2,visual:1}},{text:{hi:'खुद experiment करके सीखना',en:'Experimenting on my own'},scores:{N:2,kinesthetic:2}}]},
+    { id:15, cat:'S/N', text:{hi:'आप को कैसी किताबें और कहानियाँ पसंद हैं?', en:'What kind of books or stories do you like?'}, options:[{text:{hi:'Real life की सच्ची घटनाओं पर आधारित',en:'Based on real-life facts and events'},scores:{S:3,linguistic:2}},{text:{hi:'काल्पनिक और fantasy की दुनिया',en:'Fantasy and imaginary worlds'},scores:{N:3,linguistic:2}},{text:{hi:'दोनों तरह की',en:'A bit of both'},scores:{S:1,N:1,linguistic:1}},{text:{hi:'मुझे किताबें पढ़ना ज़्यादा पसंद नहीं',en:'I am not big on reading'},scores:{kinesthetic:1}}]},
+    { id:16, cat:'S/N', text:{hi:'जब आप कोई problem solve करते हैं, तो आप क्या करते हैं?', en:'How do you go about solving a problem?'}, options:[{text:{hi:'पुराने तरीकों से जो पहले काम आए हों',en:'Use proven methods that worked before'},scores:{S:3}},{text:{hi:'नए और creative तरीके ढूंढते हैं',en:'Find new and creative ways'},scores:{N:3,logical:2}},{text:{hi:'दोनों मिलाकर try करते हैं',en:'Try a mix of both'},scores:{S:1,N:1,logical:1}},{text:{hi:'किसी अनुभवी से पूछते हैं',en:'Ask someone with experience'},scores:{interpersonal:2}}]},
+    { id:17, cat:'J/P', text:{hi:'आप अपना homework और काम कब करते हैं?', en:'When do you do your homework and chores?'}, options:[{text:{hi:'पहले से plan करके, time पर',en:'I plan ahead and do it on time'},scores:{J:3}},{text:{hi:'हर दिन थोड़ा-थोड़ा',en:'A little bit every day'},scores:{J:2}},{text:{hi:'जब मन करे',en:'Whenever I feel like it'},scores:{P:2}},{text:{hi:'Deadline आने पर',en:'Right before the deadline'},scores:{P:3}}]},
+    { id:18, cat:'J/P', text:{hi:'आप को कैसा daily schedule पसंद है?', en:'What kind of daily schedule do you prefer?'}, options:[{text:{hi:'सब कुछ पहले से तय हो',en:'Everything planned in advance'},scores:{J:3}},{text:{hi:'कुछ चीज़ें तय हों, बाकी flexible',en:'Some things planned, the rest flexible'},scores:{J:1,P:1}},{text:{hi:'Flexible रहे, जब जो मन करे',en:'Completely flexible'},scores:{P:3}},{text:{hi:'कोई schedule नहीं चाहिए',en:'No schedule at all'},scores:{P:2}}]},
+    { id:19, cat:'J/P', text:{hi:'जब class में अचानक surprise test होता है, तो आप कैसा feel करते हैं?', en:'How do you feel about surprise tests in class?'}, options:[{text:{hi:'बहुत बुरा लगता है',en:'I hate them, need prior notice'},scores:{J:3}},{text:{hi:'थोड़ा nervous होते हैं',en:'A bit nervous but I manage'},scores:{J:1}},{text:{hi:'ठीक है, हम तो तैयार ही रहते हैं',en:'Fine, I am usually prepared'},scores:{P:2}},{text:{hi:'मज़ा आता है, adventure लगता है!',en:'I love them, it is an adventure!'},scores:{P:3}}]},
+    { id:20, cat:'MI', text:{hi:'आप को इनमें से कौनसी activity सबसे ज़्यादा पसंद है?', en:'Which of these activities do you like the most?'}, options:[{text:{hi:'📚 कहानियाँ लिखना या पढ़ना',en:'📚 Reading or writing stories'},scores:{linguistic:3}},{text:{hi:'🔢 Math puzzles और riddles solve करना',en:'🔢 Solving math puzzles and riddles'},scores:{logical:3}},{text:{hi:'🎨 Drawing, painting या craft बनाना',en:'🎨 Drawing, painting, or crafting'},scores:{visual:3}},{text:{hi:'⚽ Sports खेलना और physically active रहना',en:'⚽ Playing sports and being active'},scores:{kinesthetic:3}}]},
+    { id:21, cat:'MI', text:{hi:'आप को puzzles और brain teasers कैसे लगते हैं?', en:'How do you feel about puzzles and brain teasers?'}, options:[{text:{hi:'बहुत मज़ेदार — घंटों solve करते हैं',en:'Super fun — I solve them for hours'},scores:{logical:3}},{text:{hi:'अच्छे लगते हैं',en:'They are nice'},scores:{logical:2}},{text:{hi:'ठीक-ठाक लगते हैं',en:'They are okay'},scores:{logical:1}},{text:{hi:'Boring लगते हैं',en:'Boring'},scores:{kinesthetic:1}}]},
+    { id:22, cat:'MI', text:{hi:'जब किसी नई जगह का रास्ता ढूंढना हो, तो आप क्या करते हैं?', en:'How do you find your way in a new place?'}, options:[{text:{hi:'Map देखकर खुद navigate करते हैं',en:'Look at a map and navigate myself'},scores:{visual:3,logical:1}},{text:{hi:'किसी से पूछते हैं',en:'Ask someone for directions'},scores:{interpersonal:3}},{text:{hi:'लिखकर या note करके याद करते हैं',en:'Write down notes to remember'},scores:{linguistic:2}},{text:{hi:'चलते हुए खुद ढूंढ लेते हैं',en:'Just walk and figure it out'},scores:{kinesthetic:2,N:1}}]},
+    { id:23, cat:'MI', text:{hi:'आप को इनमें से कौनसा काम सबसे अच्छा लगता है?', en:'Which task sounds the best to you?'}, options:[{text:{hi:'🎨 Drawing, painting या sculpture बनाना',en:'🎨 Drawing or sculpting'},scores:{visual:3}},{text:{hi:'🎵 गाना गाना या instrument बजाना',en:'🎵 Singing or playing an instrument'},scores:{musical:3}},{text:{hi:'📖 कहानी लिखना या poem बनाना',en:'📖 Writing a story or poem'},scores:{linguistic:3}},{text:{hi:'🤝 दोस्तों को organize करके साथ काम करना',en:'🤝 Organising friends to work together'},scores:{interpersonal:3}}]},
+    { id:24, cat:'MI', text:{hi:'क्या आप गाना सुनते वक़्त automatically beat पर थिरकने लगते हैं?', en:'Do you automatically tap to the beat when you hear music?'}, options:[{text:{hi:'हाँ, हमेशा!',en:'Yes, always! I can\'t stop.'},scores:{musical:3,kinesthetic:2}},{text:{hi:'अक्सर ऐसा होता है',en:'Often'},scores:{musical:2,kinesthetic:1}},{text:{hi:'कभी-कभी',en:'Sometimes'},scores:{musical:1}},{text:{hi:'नहीं, music में ज़्यादा interest नहीं',en:'No, not very interested in music'},scores:{musical:0}}]},
+    { id:25, cat:'MI', text:{hi:'आप को कौनसी physical activity सबसे ज़्यादा पसंद है?', en:'What physical activity do you enjoy the most?'}, options:[{text:{hi:'Sports, dance या outdoor games',en:'Sports, dance, or outdoor games'},scores:{kinesthetic:3}},{text:{hi:'Craft, model बनाना, hands-on काम',en:'Crafts, building models, hands-on tasks'},scores:{kinesthetic:2,visual:2}},{text:{hi:'Yoga, meditation या stretching',en:'Yoga, stretching, meditation'},scores:{kinesthetic:1,intrapersonal:2}},{text:{hi:'मुझे बैठकर पढ़ना-लिखना ज़्यादा पसंद है',en:'I prefer sitting and reading/writing'},scores:{linguistic:1}}]},
+    { id:26, cat:'MI', text:{hi:'class में दो दोस्तों में झगड़ा हो जाए, तो आप क्या करते हैं?', en:'If two friends fight in class, what do you do?'}, options:[{text:{hi:'दोनों को समझाकर दोस्ती करवाते हैं',en:'Help them resolve it and be friends again'},scores:{interpersonal:3,F:2}},{text:{hi:'Teacher को बताते हैं',en:'Tell the teacher'},scores:{interpersonal:2,S:1}},{text:{hi:'जो सही लगे उसका साथ देते हैं',en:'Side with whoever is right'},scores:{T:1,interpersonal:1}},{text:{hi:'दूर रहते हैं, झगड़े में नहीं पड़ते',en:'Stay out of the drama completely'},scores:{I:1}}]},
+    { id:27, cat:'MI', text:{hi:'जब आप खुद कुछ गलत करते हैं, तो कैसा महसूस करते हैं?', en:'How do you feel when you make a mistake?'}, options:[{text:{hi:'बहुत बुरा लगता है, deeply सोचते हैं',en:'Feel terrible and deeply reflect on it'},scores:{intrapersonal:3,F:2}},{text:{hi:'थोड़ा बुरा लगता है, फिर आगे बढ़ जाते हैं',en:'Feel slightly bad, then move on'},scores:{intrapersonal:2}},{text:{hi:'सोचते हैं अगली बार बेहतर करूँगा',en:'Think about how to do better next time'},scores:{intrapersonal:2,J:1}},{text:{hi:'ज़्यादा फर्क नहीं पड़ता',en:'It doesn\'t bother me much'},scores:{intrapersonal:0}}]},
+    { id:28, cat:'MI', text:{hi:'क्या आप को पेड़-पौधों, जानवरों और प्रकृति में interest है?', en:'Are you interested in plants, animals, and nature?'}, options:[{text:{hi:'बहुत ज़्यादा — nature मेरी hobby है',en:'Very much — nature is my hobby'},scores:{naturalistic:3}},{text:{hi:'हाँ, काफ़ी interest है',en:'Yes, quite interested'},scores:{naturalistic:2}},{text:{hi:'थोड़ा-सा',en:'A little bit'},scores:{naturalistic:1}},{text:{hi:'ज़्यादा interest नहीं है',en:'Not very interested'},scores:{naturalistic:0}}]},
+    { id:29, cat:'MI', text:{hi:'जब आप बाहर घूमने जाते हैं, तो आप सबसे पहले क्या notice करते हैं?', en:'When you go outside, what do you notice first?'}, options:[{text:{hi:'🌿 पेड़, फूल, पक्षी और मौसम',en:'🌿 Trees, flowers, birds, the weather'},scores:{naturalistic:3}},{text:{hi:'👥 लोग और उनकी activities',en:'👥 People and what they are doing'},scores:{interpersonal:3,E:1}},{text:{hi:'🏗️ Buildings, रंग और design',en:'🏗️ Buildings, colours, and designs'},scores:{visual:3}},{text:{hi:'🎶 आवाज़ें, music और sounds',en:'🎶 Sounds, music, and noises'},scores:{musical:3}}]},
+    { id:30, cat:'MI', text:{hi:'अगर आपको एक school project बनाना हो, तो आप कौनसा choose करेंगे?', en:'If you had to do a school project, which would you pick?'}, options:[{text:{hi:'📖 एक कहानी लिखकर उसे act out करना',en:'📖 Write a story and act it out'},scores:{linguistic:3,kinesthetic:1}},{text:{hi:'🔬 Science experiment करना और present करना',en:'🔬 Do a science experiment and present it'},scores:{logical:3,S:1}},{text:{hi:'🖼️ एक beautiful poster या 3D model बनाना',en:'🖼️ Build a 3D model or beautiful poster'},scores:{visual:3,kinesthetic:1}},{text:{hi:'🎼 एक song या music piece compose करना',en:'🎼 Compose a song or music piece'},scores:{musical:3}}]}
+  ];
+
+  /* ─── Navigation ─── */
+  function switchScreen(hideId, showId) {
+    document.getElementById(hideId).classList.remove('active');
+    const next = document.getElementById(showId);
+    next.classList.add('active');
+    next.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function goToDisclaimer() {
+    const name = document.getElementById('userName').value.trim();
+    if (!name) { alert('Please enter your name! / कृपया अपना नाम दर्ज करें!'); return; }
+    state.name = name;
+    state.lang = document.getElementById('userLang').value;
+    const t = UI[state.lang];
+    document.getElementById('disc-title').innerHTML = t.discTitle;
+    document.getElementById('disc-text').innerHTML  = t.discText;
+    document.getElementById('disc-btn').textContent = t.discBtn;
+    switchScreen('screen-setup', 'screen-disclaimer');
+  }
+
+  function startQuiz() { switchScreen('screen-disclaimer', 'screen-quiz'); loadQuestion(); }
+
+  /* ─── Quiz ─── */
+  function loadQuestion() {
+    if (state.currentQ >= QUESTIONS.length) { computeAndShowResults(); return; }
+    const q   = QUESTIONS[state.currentQ];
+    const t   = UI[state.lang];
+    const pct = (state.currentQ / QUESTIONS.length) * 100;
+
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('q-section-label').textContent = 'Category: ' + q.cat;
+    document.getElementById('q-counter').textContent =
+      t.qCounter.replace('{c}', state.currentQ + 1).replace('{t}', QUESTIONS.length);
+    document.getElementById('question-text').textContent = q.text[state.lang];
+
+    const grid = document.getElementById('options-grid');
+    grid.innerHTML = '';
+    q.options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.style.marginTop = '0';
+      btn.textContent = opt.text[state.lang];
+      btn.onclick = () => pickAnswer(opt.scores);
+      grid.appendChild(btn);
+    });
+  }
+
+  function pickAnswer(scores) {
+    for (const [k, v] of Object.entries(scores)) {
+      if (state.scores[k] !== undefined) state.scores[k] += v;
+    }
+    state.currentQ++;
+    loadQuestion();
+  }
+
+  /* ─── Results ─── */
+  function computeAndShowResults() {
+    const s = state.scores;
+    const mbti =
+      (s.E >= s.I ? 'E' : 'I') +
+      (s.S >= s.N ? 'S' : 'N') +
+      (s.T >= s.F ? 'T' : 'F') +
+      (s.J >= s.P ? 'J' : 'P');
+    const MI_TYPES = ['linguistic','logical','visual','kinesthetic','musical','interpersonal','intrapersonal','naturalistic'];
+    const miSorted = [...MI_TYPES].sort((a, b) => s[b] - s[a]);
+    const maxMI = s[miSorted[0]] || 1;
+
+    switchScreen('screen-quiz', 'screen-results');
+    renderResults(mbti, miSorted, maxMI);
+    saveResults(mbti, miSorted).catch(e => console.warn('Save failed:', e));
+  }
+
+  function renderResults(mbti, miSorted, maxMI) {
+    const t    = UI[state.lang];
+    const s    = state.scores;
+    const info = MBTI_DETAILS[mbti] || MBTI_DETAILS['INFP'];
+    const topMI = MI_DETAILS[miSorted[0]];
+
+    /* Greeting */
+    document.getElementById('res-greeting').textContent =
+      state.lang === 'en' ? `Great job, ${state.name}! 🎉` : `शाबाश, ${state.name}! 🎉`;
+    document.getElementById('res-intro').textContent = t.resIntro;
+
+    /* Section labels */
+    document.getElementById('sec-personality').textContent = t.secPersonality;
+    document.getElementById('sec-dimensions').textContent  = t.secDimensions;
+    document.getElementById('sec-strengths').textContent   = t.secStrengths;
+    document.getElementById('sec-mi').textContent          = t.secMi;
+    document.getElementById('sec-mi-detail').textContent   = t.secMiDetail;
+    document.getElementById('sec-careers').textContent     = t.secCareers;
+    document.getElementById('careers-intro').textContent   = t.careersIntro;
+    document.getElementById('learn-title').textContent     = t.learnTitle;
+    document.getElementById('watch-title').textContent     = t.watchTitle;
+    document.getElementById('res-restart-btn').innerHTML   = `<i class="fas fa-redo"></i>&nbsp; ${t.restart}`;
+
+    /* Hero */
+    document.getElementById('hero-emoji').textContent    = info.emoji;
+    document.getElementById('mbti-badge').textContent    = mbti;
+    document.getElementById('hero-nickname').textContent = info.nickname;
+    document.getElementById('hero-tagline').textContent  = info.tagline;
+    document.getElementById('hero-desc').textContent     = info.description;
+
+    /* MBTI Axes */
+    const axisData = [
+      { key:'EI', a:'E', b:'I', sA: s.E, sB: s.I },
+      { key:'SN', a:'S', b:'N', sA: s.S, sB: s.N },
+      { key:'TF', a:'T', b:'F', sA: s.T, sB: s.F },
+      { key:'JP', a:'J', b:'P', sA: s.J, sB: s.P }
+    ];
+    document.getElementById('mbti-axes').innerHTML = axisData.map(ax => {
+      const total = ax.sA + ax.sB || 1;
+      const pctA  = Math.round((ax.sA / total) * 100);
+      const domLabel = pctA >= 50 ? t.axes[ax.key].left : t.axes[ax.key].right;
+      const domPct   = pctA >= 50 ? pctA : 100 - pctA;
+      const lA = pctA >= 50
+        ? `<span class="dominant">${t.axes[ax.key].left}</span>`
+        : `<span>${t.axes[ax.key].left}</span>`;
+      const lB = pctA < 50
+        ? `<span class="dominant">${t.axes[ax.key].right}</span>`
+        : `<span>${t.axes[ax.key].right}</span>`;
+      return `<div class="axis-row">
+        <div class="axis-labels">${lA}${lB}</div>
+        <div class="axis-track"><div class="axis-fill" style="width:${pctA}%"></div></div>
+        <div class="axis-note">${t.axisLean}: <strong>${domLabel}</strong> (${domPct}%) &nbsp;·&nbsp; ${t.axes[ax.key].desc}</div>
+      </div>`;
+    }).join('');
+
+    /* Strengths */
+    document.getElementById('strengths-wrap').innerHTML =
+      info.strengths.map(s => `<span class="strength-pill">${s}</span>`).join('');
+    document.getElementById('learn-text').textContent = info.learningTip;
+    document.getElementById('watch-text').textContent = info.watchOut;
+
+    /* MI Bars */
+    document.getElementById('mi-bars-container').innerHTML = miSorted.map((type, i) => {
+      const score = s[type];
+      const pct   = Math.min(Math.round((score / maxMI) * 100), 100);
+      const label = t.miLabels[type];
+      return `<div class="mi-bar-row">
+        <div class="mi-bar-label">
+          <span class="mi-bar-name">${label.name}</span>
+          <span class="mi-bar-sub">${label.sub}</span>
+        </div>
+        <div class="mi-bar-track">
+          <div class="mi-bar-fill ${MI_DETAILS[type].cssClass}" style="width:${pct}%"></div>
+        </div>
+        ${i < 3 ? `<div class="mi-bar-desc">${MI_DETAILS[type].description.split('.')[0]}.</div>` : ''}
+      </div>`;
+    }).join('');
+
+    /* Top MI Detail */
+    const mdb = document.getElementById('mi-detail-box');
+    mdb.innerHTML = `
+      <div class="mi-detail-header">
+        <div class="mi-detail-icon">${topMI.emoji}</div>
+        <div class="mi-detail-title">${topMI.fullName}</div>
+      </div>
+      <div class="mi-detail-body">
+        <p><strong>What it means:</strong> ${topMI.description}</p>
+        <p><strong>In daily life:</strong> ${topMI.dailyLife}</p>
+        <div class="mi-develop">
+          <div class="mi-develop-title">💪 How to grow this superpower:</div>
+          <p class="mi-develop-text">${topMI.develop}</p>
+        </div>
+      </div>`;
+
+    /* Careers */
+    const allCareers = [
+      ...MI_DETAILS[miSorted[0]].topCareers,
+      ...(MI_DETAILS[miSorted[1]]?.topCareers || []),
+      ...info.careers.map(n => ({ e: careerEmoji(n), n }))
+    ];
+    const seen = new Set();
+    const unique = allCareers.filter(c => { if (seen.has(c.n)) return false; seen.add(c.n); return true; });
+    document.getElementById('career-grid').innerHTML =
+      unique.slice(0, 9).map(c =>
+        `<div class="career-card"><span class="career-emoji">${c.e}</span><span>${c.n}</span></div>`
+      ).join('');
+  }
+
+  function careerEmoji(name) {
+    const MAP = { 'Software Engineer':'💻','Research Scientist':'🔬','Architect':'🏛️','Data Scientist':'📊','Investment Analyst':'📈','Strategic Planner':'🗓️','Entrepreneur':'🚀','Professor':'🎓','Mathematician':'📐','Computer Scientist':'🖥️','Physicist':'⚛️','Philosopher':'🤔','Game Designer':'🎮','Research Analyst':'📋','Systems Architect':'🏗️','CEO / Executive':'👔','Lawyer':'⚖️','Business Manager':'📁','Military Officer':'🪖','School Principal':'🏫','Judge':'⚖️','Politician':'🗳️','Journalist':'📰','Marketing Director':'📣','Inventor':'💡','Film Director':'🎬','Political Analyst':'🗳️','Startup Founder':'🌱','Counselor':'🧩','Psychologist':'🧠','Writer':'✍️','Teacher':'📚','Non-profit Leader':'💝','Doctor':'🏥','Social Worker':'🤝','UX Designer':'🖌️','Author':'📖','Artist':'🎨','Musician':'🎵','HR Manager':'👥','Life Coach':'🌟','Non-profit Director':'🌍','Actor':'🎭','Event Planner':'🎉','Designer':'✏️','Accountant':'💰','Engineer':'⚙️','Police Officer':'👮','Librarian':'📚','Financial Analyst':'💹','Nurse':'💉','Interior Designer':'🛋️','Veterinarian':'🐾','Administrator':'📋','Civil Engineer':'🏗️','Executive Director':'🏢','Sales Manager':'📊','HR Professional':'👥','Chef':'👨‍🍳','Professional Athlete':'⚽','Sales Executive':'💼','Emergency Responder':'🚑','Sports Coach':'🎯','Pilot':'✈️','Dancer':'💃','Event Coordinator':'📋','Sales Representative':'📱','Fitness Trainer':'💪','Tour Guide':'🗺️','Music Artist':'🎤','Mechanic':'🔧','Surgeon':'🏥','Programmer':'💻','Craftsperson':'🪵','Military Technician':'🪖','Fashion Designer':'👗','Physical Therapist':'🏃','Photographer':'📸','Botanist':'🌱','Geologist':'🪨','Biologist':'🧬','Environmental Scientist':'🌿','Wildlife Photographer':'📸','Composer':'🎼','Sound Engineer':'🎚️','Music Teacher':'🎹','Conductor':'🎻','Music Producer':'🎧' };
+    return MAP[name] || '🌟';
+  }
+
+  /* ─── Save to Supabase ─── */
+  async function getStudentId() {
+    try { const { data } = await parent.supabase.auth.getUser(); return data?.user?.id || null; }
+    catch (e) { return null; }
+  }
+
+  function setSaveStatus(cls, html) {
+    const el = document.getElementById('save-status');
+    el.className = cls ? `save-status ${cls}` : 'save-status';
+    el.innerHTML = html;
+  }
+
+  async function saveResults(mbtiType, miSorted) {
+    setSaveStatus('save-saving', '<i class="fas fa-spinner fa-spin"></i> &nbsp;Saving your results...');
+    const studentId = await getStudentId();
+    if (!studentId) { setSaveStatus('', ''); return; }
+
+    const s = state.scores;
+    const record = {
+      student_id: studentId, lang: state.lang,
+      score_e: s.E, score_i: s.I, score_s: s.S, score_n: s.N,
+      score_t: s.T, score_f: s.F, score_j: s.J, score_p: s.P,
+      mbti_type: mbtiType,
+      mi_linguistic: s.linguistic, mi_logical: s.logical, mi_visual: s.visual,
+      mi_kinesthetic: s.kinesthetic, mi_musical: s.musical, mi_interpersonal: s.interpersonal,
+      mi_intrapersonal: s.intrapersonal, mi_naturalistic: s.naturalistic,
+      top_intelligence: miSorted[0], second_intelligence: miSorted[1] || null, third_intelligence: miSorted[2] || null
     };
 
-    // Bilingual Questions Data
-    const QUESTIONS = [
-      { id:1, cat:'E/I', 
-        text:{ hi:'рдХреНрдпрд╛ рдЖрдк рдХреЛ рдЕрдХреЗрд▓реЗ рд╕рдордп рдмрд┐рддрд╛рдирд╛ рдкрд╕рдВрдж рд╣реИ?', en:'Do you like spending time alone?' }, 
-        options:[
-          { text:{ hi:'рдмрд╣реБрдд рдЬрд╝реНрдпрд╛рджрд╛', en:'Very much' }, scores:{ I:3, intrapersonal:2 } },
-          { text:{ hi:'рдХрд╛рдлрд╝реА рд╣рдж рддрдХ', en:'Quite a bit' }, scores:{ I:2, intrapersonal:1 } },
-          { text:{ hi:'рдереЛрдбрд╝рд╛-рд╕рд╛', en:'A little' }, scores:{ E:2 } },
-          { text:{ hi:'рдмрд┐рд▓реНрдХреБрд▓ рдирд╣реАрдВ', en:'Not at all' }, scores:{ E:3, interpersonal:1 } },
-      ]},
-      { id:2, cat:'E/I', 
-        text:{ hi:'рдЬрдм рдЖрдк рдирдП рд▓реЛрдЧреЛрдВ рд╕реЗ рдорд┐рд▓рддреЗ рд╣реИрдВ рддреЛ рдХрд┐рддрдирд╛ рдЬрд▓реНрджреА рдЙрдирдХреЗ рд╕рд╛рде comfortable рд╣реЛ рдЬрд╛рддреЗ рд╣реИрдВ?', en:'How quickly do you get comfortable when meeting new people?' }, 
-        options:[
-          { text:{ hi:'рдмрд╣реБрдд рдЬрд▓реНрджреА', en:'Very quickly' }, scores:{ E:3, interpersonal:2 } },
-          { text:{ hi:'рдЬрд▓реНрджреА', en:'Quickly' }, scores:{ E:2, interpersonal:1 } },
-          { text:{ hi:'рдереЛрдбрд╝рд╛ рд╕рдордп рд▓рдЧрддрд╛ рд╣реИ', en:'It takes some time' }, scores:{ I:2 } },
-          { text:{ hi:'рдХрд╛рдлрд╝реА рд╕рдордп рд▓рдЧрддрд╛ рд╣реИ', en:'It takes a lot of time' }, scores:{ I:3 } },
-      ]},
-      { id:3, cat:'E/I', 
-        text:{ hi:'рдЬрдм рдЖрдк рдХрд┐рд╕реА party рдореЗрдВ рдЬрд╛рддреЗ рд╣реИрдВ рддреЛ рд▓реЛрдЧреЛрдВ рдХреЗ рд╕рд╛рде рдХрд┐рддрдирд╛ рдШреБрд▓-рдорд┐рд▓рдХрд░ рдмрд╛рддреЗрдВ рдХрд░рддреЗ рд╣реИрдВ?', en:'How much do you mingle and talk to people at a party?' }, 
-        options:[
-          { text:{ hi:'рдмрд╣реБрдд рдЬрд╝реНрдпрд╛рджрд╛', en:'A lot' },  scores:{ E:3, interpersonal:3 } },
-          { text:{ hi:'рдХрд╛рдлрд╝реА рд╣рдж рддрдХ', en:'Quite a bit' },  scores:{ E:2, interpersonal:2 } },
-          { text:{ hi:'рдереЛрдбрд╝рд╛', en:'A little' },         scores:{ I:2, interpersonal:1 } },
-          { text:{ hi:'рдмрд┐рд▓реНрдХреБрд▓ рдирд╣реАрдВ', en:'Not at all' }, scores:{ I:3 } },
-      ]},
-      { id:4, cat:'E/I', 
-        text:{ hi:'рдХреНрдпрд╛ рдЖрдк рдХреЛ рд▓реЛрдЧреЛрдВ рдХреЗ рд╕рд╛рде group рдореЗрдВ рдХрд╛рдо рдХрд░рдирд╛ рдкрд╕рдВрдж рд╣реИ?', en:'Do you enjoy working in groups with others?' }, 
-        options:[
-          { text:{ hi:'рдмрд╣реБрдд рдЬрд╝реНрдпрд╛рджрд╛', en:'Very much' },  scores:{ E:3, interpersonal:3 } },
-          { text:{ hi:'рдХрд╛рдлрд╝реА рд╣рдж рддрдХ', en:'Quite a bit' },  scores:{ E:2, interpersonal:2 } },
-          { text:{ hi:'рдереЛрдбрд╝рд╛-рд╕рд╛', en:'A little' },     scores:{ I:1, interpersonal:1 } },
-          { text:{ hi:'рдмрд┐рд▓реНрдХреБрд▓ рдирд╣реАрдВ', en:'Not at all' }, scores:{ I:3 } },
-      ]},
-      { id:5, cat:'E/I', 
-        text:{ hi:'рдХреНрдпрд╛ рдЖрдк рдмрд╣реБрдд рд╕реЛрдЪ-рд╕реЛрдЪрдХрд░ рдмреЛрд▓рддреЗ рд╣реИрдВ?', en:'Do you think carefully before you speak?' }, 
-        options:[
-          { text:{ hi:'рд╣рдореЗрд╢рд╛', en:'Always' },       scores:{ I:3, intrapersonal:3 } },
-          { text:{ hi:'рдЕрдХреНрд╕рд░', en:'Often' },       scores:{ I:2, intrapersonal:2 } },
-          { text:{ hi:'рдХрднреА-рдХрднреА', en:'Sometimes' },    scores:{ E:1, intrapersonal:1 } },
-          { text:{ hi:'рдХрднреА рдирд╣реАрдВ', en:'Never' },    scores:{ E:3 } },
-      ]},
-      { id:6, cat:'E/I', 
-        text:{ hi:'рдХреНрдпрд╛ рдЖрдк рдХреЛ рдмреЛрд▓рдиреЗ рдХреА рдЬрдЧрд╣ рд▓рд┐рдЦрдХрд░ рдЕрдкрдиреА рдмрд╛рдд express рдХрд░рдирд╛ рдЬрд╝реНрдпрд╛рджрд╛ рдкрд╕рдВрдж рд╣реИ?', en:'Do you prefer expressing yourself by writing rather than speaking?' }, 
-        options:[
-          { text:{ hi:'рдмрд╣реБрдд рдЬрд╝реНрдпрд╛рджрд╛', en:'Very much' },  scores:{ I:3, linguistic:3 } },
-          { text:{ hi:'рдХрд╛рдлрд╝реА рд╣рдж рддрдХ', en:'Quite a bit' },  scores:{ I:2, linguistic:2 } },
-          { text:{ hi:'рдереЛрдбрд╝рд╛-рд╕рд╛', en:'A little' },     scores:{ E:1, linguistic:1 } },
-          { text:{ hi:'рдмрд┐рд▓реНрдХреБрд▓ рдирд╣реАрдВ', en:'Not at all' }, scores:{ E:3 } },
-      ]},
-      { id:7, cat:'E/I', 
-        text:{ hi:'рдЬрдм рдЖрдк рдХреЛ class рдореЗрдВ рдХреЛрдИ doubt рд╣реЛрддрд╛ рд╣реИ рддреЛ рдХреНрдпрд╛ рдЖрдк teacher рд╕реЗ рдЬрд╛рдХрд░ рдмрд╛рдд рдХрд░рддреЗ рд╣реИрдВ?', en:'When you have a doubt in class, do you go and talk to the teacher?' }, 
-        options:[
-          { text:{ hi:'рд╣рдореЗрд╢рд╛', en:'Always' },      scores:{ E:3, interpersonal:3 } },
-          { text:{ hi:'рдЕрдХреНрд╕рд░', en:'Often' },      scores:{ E:2, interpersonal:2 } },
-          { text:{ hi:'рдХрднреА-рдХрднреА', en:'Sometimes' },   scores:{ I:1, interpersonal:1 } },
-          { text:{ hi:'рдХрднреА рдирд╣реАрдВ', en:'Never' },   scores:{ I:3 } },
-      ]},
-      { id:8, cat:'E/I', 
-        text:{ hi:'рдЬрдм рдЖрдк рдХреЛ stage рдкрд░ рдмреЛрд▓рдиреЗ рдХрд╛ рдореМрдХрд╛ рдорд┐рд▓рддрд╛ рд╣реИ рддреЛ рдЖрдк рдХреИрд╕рд╛ feel рдХрд░рддреЗ рд╣реИрдВ?', en:'How do you feel when given a chance to speak on stage?' }, 
-        options:[
-          { text:{ hi:'рдмрд╣реБрдд рдЙрддреНрд╕рд╛рд╣рд┐рдд', en:'Very excited!' }, scores:{ E:3, interpersonal:2 } },
-          { text:{ hi:'рдХрд╛рдлрд╝реА рдареАрдХ', en:'Okay, a little nervous but fine' }, scores:{ E:2, interpersonal:1 } },
-          { text:{ hi:'рдереЛрдбрд╝реА рдШрдмрд░рд╛рд╣рдЯ', en:'Nervous, I think a lot before speaking' }, scores:{ I:2 } },
-          { text:{ hi:'рдмрд┐рд▓реНрдХреБрд▓ рдЕрдЪреНрдЫрд╛ рдирд╣реАрдВ', en:'Not good, I avoid the stage' }, scores:{ I:3 } },
-      ]},
-      { id:9, cat:'E/I', 
-        text:{ hi:'рдЖрдк рдХреЛ рдХреИрд╕реЗ lunch рдХрд░рдирд╛ рдкрд╕рдВрдж рд╣реИ?', en:'How do you prefer eating your lunch?' }, 
-        options:[
-          { text:{ hi:'рдмрд╣реБрдд рд╕рд╛рд░реЗ рджреЛрд╕реНрддреЛрдВ рдХреЗ рд╕рд╛рде', en:'With a big group of friends' }, scores:{ E:3, interpersonal:3 } },
-          { text:{ hi:'2-3 close friends рдХреЗ рд╕рд╛рде', en:'With 2-3 close friends' }, scores:{ E:2, interpersonal:2 } },
-          { text:{ hi:'рдЕрдХреНрд╕рд░ рдЕрдХреЗрд▓реЗ', en:'Usually alone' }, scores:{ I:2, intrapersonal:2 } },
-          { text:{ hi:'рд╣рдореЗрд╢рд╛ рдЕрдХреЗрд▓реЗ', en:'Always alone' }, scores:{ I:3, intrapersonal:3 } },
-      ]},
-      { id:10, cat:'E/I', 
-        text:{ hi:'рдЬрдм рдЖрдк рдХреЛ рдХреЛрдИ рдирдпрд╛ idea рдЖрддрд╛ рд╣реИ рддреЛ рдЖрдк рдХреНрдпрд╛ рдХрд░рддреЗ рд╣реИрдВ?', en:'What do you do when you get a new idea?' }, 
-        options:[
-          { text:{ hi:'рддреБрд░рдВрдд рд╕рдм рдХреЗ рд╕рд╛рде share рдХрд░рддреЗ рд╣реИрдВ', en:'Share it with everyone instantly' }, scores:{ E:3 } },
-          { text:{ hi:'рдореМрдХрд╛ рдорд┐рд▓рдиреЗ рдкрд░ share рдХрд░рддреЗ рд╣реИрдВ', en:'Share it when I get a chance' }, scores:{ E:2 } },
-          { text:{ hi:'рдорди рдореЗрдВ рд╕реЛрдЪ-рд╡рд┐рдЪрд╛рд░ рдХрд░рддреЗ рд╣реИрдВ', en:'Think it over, share if necessary' }, scores:{ I:2, intrapersonal:2 } },
-          { text:{ hi:'рдорди рдореЗрдВ рдЧрд╣рд░рд╛рдИ рд╕реЗ рд╕реЛрдЪрддреЗ рд╣реИрдВ', en:'Keep it to myself and deeply think about it' }, scores:{ I:3, intrapersonal:3 } },
-      ]},
-      { id:11, cat:'T/F', 
-        text:{ hi:'рдЬрдм рдЖрдкрдХрд╛ рдХреЛрдИ рджреЛрд╕реНрдд рдмрд╣реБрдд рдкрд░реЗрд╢рд╛рди рд╣реЛ, рддреЛ рдЖрдк рд╕рдмрд╕реЗ рдкрд╣рд▓реЗ рдХреНрдпрд╛ рдХрд░рддреЗ рд╣реИрдВ?', en:'What is your first reaction when a friend is very upset?' }, 
-        options:[
-          { text:{ hi:'рдЙрд╕рдХреА рднрд╛рд╡рдирд╛рдУрдВ рдХреЛ рд╕рдордЭрддреЗ рд╣реИрдВ', en:'Comfort them emotionally' },  scores:{ F:3, interpersonal:3 } },
-          { text:{ hi:'рд╕рд╛рде рдореЗрдВ рджреБрдЦреА рд╣реЛрддреЗ рд╣реИрдВ', en:'Listen and feel sad with them' }, scores:{ F:2, interpersonal:2 } },
-          { text:{ hi:'рдЙрд╕реЗ problem solve рдХрд░рдиреЗ рдореЗрдВ help рдХрд░рддреЗ рд╣реИрдВ', en:'Help them logically solve the problem' }, scores:{ T:2, logical:2 } },
-          { text:{ hi:'рдЙрд╕реЗ рдмрддрд╛рддреЗ рд╣реИрдВ рдХрд┐ рдЙрд╕реЗ рдХреНрдпрд╛ рдХрд░рдирд╛ рдЪрд╛рд╣рд┐рдП', en:'Tell them exactly what they should do' }, scores:{ T:3, logical:1 } },
-      ]},
-      { id:12, cat:'T/F', 
-        text:{ hi:'рдЕрдЧрд░ рддреБрдореНрд╣реЗрдВ рдХреЛрдИ choice рджреЗрдиреА рд╣реЛ, рддреЛ рддреБрдо рдХреНрдпрд╛ prefer рдХрд░реЛрдЧреЗ?', en:'If you had to make a choice, what would you prefer?' }, 
-        options:[
-          { text:{ hi:'рдЬреЛ fair рдФрд░ рд╕рд╣реА рд╣реЛ', en:'What is fair and correct, even if it hurts feelings' }, scores:{ T:3 } },
-          { text:{ hi:'рдЬреЛ рд╕рднреА рдХреЛ рдЦреБрд╢ рдХрд░реЗ', en:'What makes everyone happy, even if not fully fair' }, scores:{ F:3, interpersonal:1 } },
-          { text:{ hi:'рджреЛрдиреЛрдВ рдХреЛ balance рдХрд░рдиреЗ рд╡рд╛рд▓рд╛ decision', en:'A balanced decision' }, scores:{ T:1, F:1 } },
-          { text:{ hi:'рдЬреЛ рджрд┐рд▓ рдФрд░ рд╕реЛрдЪ рджреЛрдиреЛрдВ рд╕рд╣реА рдХрд╣реЗрдВ', en:'Whatever my heart and mind agree on' }, scores:{ T:1, F:2 } },
-      ]},
-      { id:13, cat:'T/F', 
-        text:{ hi:'рдЬрдм рдЖрдк рдХреЛрдИ important decision рд▓реЗрддреЗ рд╣реИрдВ, рддреЛ рд╕рдмрд╕реЗ рдкрд╣рд▓реЗ рдХреНрдпрд╛ рд╕реЛрдЪрддреЗ рд╣реИрдВ?', en:'What do you think of first when making an important decision?' }, 
-        options:[
-          { text:{ hi:'рдЗрд╕рд╕реЗ рд╕рднреА рдХреЛ рдХрд┐рддрдирд╛ рдлрд╝рд╛рдпрджрд╛ рдпрд╛ рджреБрдЦ рд╣реЛрдЧрд╛', en:"How it will affect everyone's feelings" }, scores:{ F:3, interpersonal:1 } },
-          { text:{ hi:'рдХреНрдпрд╛ рдпрд╣ decision logically рд╕рд╣реА рд╣реИ', en:'If the decision makes logical sense' },  scores:{ T:3, logical:2 } },
-          { text:{ hi:'рджреЛрдиреЛрдВ рдХреЛ equal importance рджреЗрддреЗ рд╣реИрдВ', en:'I weigh logic and feelings equally' }, scores:{ T:1, F:1 } },
-          { text:{ hi:'рдЬреЛ рдорди рдФрд░ рджрд┐рд▓ рджреЛрдиреЛрдВ рд╕реЗ рд╕рд╣реА рд▓рдЧреЗ', en:'Whatever feels right' }, scores:{ F:2 } },
-      ]},
-      { id:14, cat:'S/N', 
-        text:{ hi:'рдЬрдм рдЖрдк рдХреЛрдИ рдирдИ рдЪреАрдЬрд╝ рд╕реАрдЦрддреЗ рд╣реИрдВ, рддреЛ рдЖрдк рдХреНрдпрд╛ prefer рдХрд░рддреЗ рд╣реИрдВ?', en:'How do you prefer to learn something new?' }, 
-        options:[
-          { text:{ hi:'Step-by-step, рдПрдХ-рдПрдХ рдХрд░рдХреЗ рд╕реАрдЦрдирд╛', en:'Step-by-step instructions' }, scores:{ S:3 } },
-          { text:{ hi:'рдкрд╣рд▓реЗ рдкреВрд░реА picture рд╕рдордЭрдирд╛', en:'Understand the big picture first, details later' },   scores:{ N:3 } },
-          { text:{ hi:'Examples рджреЗрдЦрдХрд░ рдФрд░ copy рдХрд░рдХреЗ рд╕реАрдЦрдирд╛', en:'Looking at examples and copying' }, scores:{ S:2, visual:1 } },
-          { text:{ hi:'рдЦреБрдж experiment рдХрд░рдХреЗ рд╕реАрдЦрдирд╛', en:'Experimenting on my own' }, scores:{ N:2, kinesthetic:2 } },
-      ]},
-      { id:15, cat:'S/N', 
-        text:{ hi:'рдЖрдк рдХреЛ рдХреИрд╕реА рдХрд┐рддрд╛рдмреЗрдВ рдФрд░ рдХрд╣рд╛рдирд┐рдпрд╛рдБ рдкрд╕рдВрдж рд╣реИрдВ?', en:'What kind of books or stories do you like?' }, 
-        options:[
-          { text:{ hi:'Real life рдХреА рд╕рдЪреНрдЪреА рдШрдЯрдирд╛рдУрдВ рдкрд░ рдЖрдзрд╛рд░рд┐рдд', en:'Based on real-life facts and events' }, scores:{ S:3, linguistic:2 } },
-          { text:{ hi:'рдХрд╛рд▓реНрдкрдирд┐рдХ рдФрд░ fantasy рдХреА рджреБрдирд┐рдпрд╛', en:'Fantasy and imaginary worlds' },        scores:{ N:3, linguistic:2 } },
-          { text:{ hi:'рджреЛрдиреЛрдВ рддрд░рд╣ рдХреА', en:'A bit of both' },                         scores:{ S:1, N:1, linguistic:1 } },
-          { text:{ hi:'рдореБрдЭреЗ рдХрд┐рддрд╛рдмреЗрдВ рдкрдврд╝рдирд╛ рдЬрд╝реНрдпрд╛рджрд╛ рдкрд╕рдВрдж рдирд╣реАрдВ', en:'I am not big on reading' },  scores:{ kinesthetic:1 } },
-      ]},
-      { id:16, cat:'S/N', 
-        text:{ hi:'рдЬрдм рдЖрдк рдХреЛрдИ problem solve рдХрд░рддреЗ рд╣реИрдВ, рддреЛ рдЖрдк рдХреНрдпрд╛ рдХрд░рддреЗ рд╣реИрдВ?', en:'How do you go about solving a problem?' }, 
-        options:[
-          { text:{ hi:'рдкреБрд░рд╛рдиреЗ рддрд░реАрдХреЛрдВ рд╕реЗ рдЬреЛ рдкрд╣рд▓реЗ рдХрд╛рдо рдЖрдП рд╣реЛрдВ', en:'Use proven methods that worked before' },   scores:{ S:3 } },
-          { text:{ hi:'рдирдП рдФрд░ creative рддрд░реАрдХреЗ рдвреВрдВрдврддреЗ рд╣реИрдВ', en:'Find new and creative ways' },        scores:{ N:3, logical:2 } },
-          { text:{ hi:'рджреЛрдиреЛрдВ рдорд┐рд▓рд╛рдХрд░ try рдХрд░рддреЗ рд╣реИрдВ', en:'Try a mix of both' },              scores:{ S:1, N:1, logical:1 } },
-          { text:{ hi:'рдХрд┐рд╕реА рдЕрдиреБрднрд╡реА рд╕реЗ рдкреВрдЫрддреЗ рд╣реИрдВ', en:'Ask someone with experience' },               scores:{ interpersonal:2 } },
-      ]},
-      { id:17, cat:'J/P', 
-        text:{ hi:'рдЖрдк рдЕрдкрдирд╛ homework рдФрд░ рдХрд╛рдо рдХрдм рдХрд░рддреЗ рд╣реИрдВ?', en:'When do you do your homework and chores?' }, 
-        options:[
-          { text:{ hi:'рдкрд╣рд▓реЗ рд╕реЗ plan рдХрд░рдХреЗ, time рдкрд░', en:'I plan ahead and do it on time' }, scores:{ J:3 } },
-          { text:{ hi:'рд╣рд░ рджрд┐рди рдереЛрдбрд╝рд╛-рдереЛрдбрд╝рд╛', en:'A little bit every day' },         scores:{ J:2 } },
-          { text:{ hi:'рдЬрдм рдорди рдХрд░реЗ', en:'Whenever I feel like it' },                 scores:{ P:2 } },
-          { text:{ hi:'Deadline рдЖрдиреЗ рдкрд░', en:'Right before the deadline' },           scores:{ P:3 } },
-      ]},
-      { id:18, cat:'J/P', 
-        text:{ hi:'рдЖрдк рдХреЛ рдХреИрд╕рд╛ daily schedule рдкрд╕рдВрдж рд╣реИ?', en:'What kind of daily schedule do you prefer?' }, 
-        options:[
-          { text:{ hi:'рд╕рдм рдХреБрдЫ рдкрд╣рд▓реЗ рд╕реЗ рддрдп рд╣реЛ', en:'Everything planned in advance' },                    scores:{ J:3 } },
-          { text:{ hi:'рдХреБрдЫ рдЪреАрдЬрд╝реЗрдВ рддрдп рд╣реЛрдВ, рдмрд╛рдХреА flexible', en:'Some things planned, the rest flexible' },          scores:{ J:1, P:1 } },
-          { text:{ hi:'Flexible рд░рд╣реЗ, рдЬрдм рдЬреЛ рдорди рдХрд░реЗ', en:'Completely flexible' },              scores:{ P:3 } },
-          { text:{ hi:'рдХреЛрдИ schedule рдирд╣реАрдВ рдЪрд╛рд╣рд┐рдП', en:'No schedule at all' },                  scores:{ P:2 } },
-      ]},
-      { id:19, cat:'J/P', 
-        text:{ hi:'рдЬрдм class рдореЗрдВ рдЕрдЪрд╛рдирдХ surprise test рд╣реЛрддрд╛ рд╣реИ, рддреЛ рдЖрдк рдХреИрд╕рд╛ feel рдХрд░рддреЗ рд╣реИрдВ?', en:'How do you feel about surprise tests in class?' }, 
-        options:[
-          { text:{ hi:'рдмрд╣реБрдд рдмреБрд░рд╛ рд▓рдЧрддрд╛ рд╣реИ', en:'I hate them, need prior notice' },   scores:{ J:3 } },
-          { text:{ hi:'рдереЛрдбрд╝рд╛ nervous рд╣реЛрддреЗ рд╣реИрдВ', en:'A bit nervous but I manage' },       scores:{ J:1 } },
-          { text:{ hi:'рдареАрдХ рд╣реИ, рд╣рдо рддреЛ рддреИрдпрд╛рд░ рд╣реА рд░рд╣рддреЗ рд╣реИрдВ', en:'Fine, I am usually prepared' },          scores:{ P:2 } },
-          { text:{ hi:'рдордЬрд╝рд╛ рдЖрддрд╛ рд╣реИ, adventure рд▓рдЧрддрд╛ рд╣реИ!', en:'I love them, it is an adventure!' },           scores:{ P:3 } },
-      ]},
-      { id:20, cat:'MI', 
-        text:{ hi:'рдЖрдк рдХреЛ рдЗрдирдореЗрдВ рд╕реЗ рдХреМрдирд╕реА activity рд╕рдмрд╕реЗ рдЬрд╝реНрдпрд╛рджрд╛ рдкрд╕рдВрдж рд╣реИ?', en:'Which of these activities do you like the most?' }, 
-        options:[
-          { text:{ hi:'ЁЯУЪ рдХрд╣рд╛рдирд┐рдпрд╛рдБ рд▓рд┐рдЦрдирд╛ рдпрд╛ рдкрдврд╝рдирд╛', en:'ЁЯУЪ Reading or writing stories' },                 scores:{ linguistic:3 } },
-          { text:{ hi:'ЁЯФв Math puzzles рдФрд░ riddles solve рдХрд░рдирд╛', en:'ЁЯФв Solving math puzzles and riddles' },       scores:{ logical:3 } },
-          { text:{ hi:'ЁЯОи Drawing, painting рдпрд╛ craft рдмрдирд╛рдирд╛', en:'ЁЯОи Drawing, painting, or crafting' },         scores:{ visual:3 } },
-          { text:{ hi:'тЪ╜ Sports рдЦреЗрд▓рдирд╛ рдФрд░ physically active рд░рд╣рдирд╛', en:'тЪ╜ Playing sports and being active' },   scores:{ kinesthetic:3 } },
-      ]},
-      { id:21, cat:'MI', 
-        text:{ hi:'рдЖрдк рдХреЛ puzzles рдФрд░ brain teasers рдХреИрд╕реЗ рд▓рдЧрддреЗ рд╣реИрдВ?', en:'How do you feel about puzzles and brain teasers?' }, 
-        options:[
-          { text:{ hi:'рдмрд╣реБрдд рдордЬрд╝реЗрджрд╛рд░ тАФ рдШрдВрдЯреЛрдВ solve рдХрд░рддреЗ рд╣реИрдВ', en:'Super fun тАФ I solve them for hours' }, scores:{ logical:3 } },
-          { text:{ hi:'рдЕрдЪреНрдЫреЗ рд▓рдЧрддреЗ рд╣реИрдВ', en:'They are nice' },                      scores:{ logical:2 } },
-          { text:{ hi:'рдареАрдХ-рдард╛рдХ рд▓рдЧрддреЗ рд╣реИрдВ', en:'They are okay' },                    scores:{ logical:1 } },
-          { text:{ hi:'Boring рд▓рдЧрддреЗ рд╣реИрдВ', en:'Boring' },                     scores:{ logical:0, kinesthetic:1 } },
-      ]},
-      { id:22, cat:'MI', 
-        text:{ hi:'рдЬрдм рдЖрдк рдХреЛ рдХрд┐рд╕реА рдирдИ рдЬрдЧрд╣ рдХрд╛ рд░рд╛рд╕реНрддрд╛ рдвреВрдВрдврдирд╛ рд╣реЛ, рддреЛ рдЖрдк рдХреНрдпрд╛ рдХрд░рддреЗ рд╣реИрдВ?', en:'How do you find your way in a new place?' }, 
-        options:[
-          { text:{ hi:'Map рджреЗрдЦрдХрд░ рдЦреБрдж navigate рдХрд░рддреЗ рд╣реИрдВ', en:'Look at a map and navigate myself' },   scores:{ visual:3, logical:1 } },
-          { text:{ hi:'рдХрд┐рд╕реА рд╕реЗ рдкреВрдЫрддреЗ рд╣реИрдВ', en:'Ask someone for directions' },                  scores:{ interpersonal:3 } },
-          { text:{ hi:'рд▓рд┐рдЦрдХрд░ рдпрд╛ note рдХрд░рдХреЗ рдпрд╛рдж рдХрд░рддреЗ рд╣реИрдВ', en:'Write down notes to remember' },    scores:{ linguistic:2 } },
-          { text:{ hi:'рдЪрд▓рддреЗ рд╣реБрдП рдЦреБрдж рдвреВрдВрдв рд▓реЗрддреЗ рд╣реИрдВ', en:'Just walk and figure it out' },         scores:{ kinesthetic:2, N:1 } },
-      ]},
-      { id:23, cat:'MI', 
-        text:{ hi:'рдЖрдк рдХреЛ рдЗрдирдореЗрдВ рд╕реЗ рдХреМрдирд╕рд╛ рдХрд╛рдо рд╕рдмрд╕реЗ рдЕрдЪреНрдЫрд╛ рд▓рдЧрддрд╛ рд╣реИ?', en:'Which task sounds the best to you?' }, 
-        options:[
-          { text:{ hi:'ЁЯОи Drawing, painting рдпрд╛ sculpture рдмрдирд╛рдирд╛', en:'ЁЯОи Drawing or sculpting' },         scores:{ visual:3 } },
-          { text:{ hi:'ЁЯО╡ рдЧрд╛рдирд╛ рдЧрд╛рдирд╛ рдпрд╛ instrument рдмрдЬрд╛рдирд╛', en:'ЁЯО╡ Singing or playing an instrument' },                 scores:{ musical:3 } },
-          { text:{ hi:'ЁЯУЦ рдХрд╣рд╛рдиреА рд▓рд┐рдЦрдирд╛ рдпрд╛ poem рдмрдирд╛рдирд╛', en:'ЁЯУЦ Writing a story or poem' },                    scores:{ linguistic:3 } },
-          { text:{ hi:'ЁЯдЭ рджреЛрд╕реНрддреЛрдВ рдХреЛ organize рдХрд░рдХреЗ рд╕рд╛рде рдореЗрдВ рдХрд╛рдо рдХрд░рдирд╛', en:'ЁЯдЭ Organizing friends to work together' },    scores:{ interpersonal:3 } },
-      ]},
-      { id:24, cat:'MI', 
-        text:{ hi:'рдХреНрдпрд╛ рдЖрдк рдХреЛрдИ рдЧрд╛рдирд╛ рд╕реБрдирддреЗ рд╡рдХрд╝реНрдд automatically рдЙрд╕рдХреА beat рдкрд░ рдерд┐рд░рдХрдиреЗ рд▓рдЧрддреЗ рд╣реИрдВ?', en:'Do you automatically tap to the beat when you hear music?' }, 
-        options:[
-          { text:{ hi:'рд╣рд╛рдБ, рд╣рдореЗрд╢рд╛!', en:"Yes, always! I can't stop." },     scores:{ musical:3, kinesthetic:2 } },
-          { text:{ hi:'рдЕрдХреНрд╕рд░ рдРрд╕рд╛ рд╣реЛрддрд╛ рд╣реИ', en:'Often' },                       scores:{ musical:2, kinesthetic:1 } },
-          { text:{ hi:'рдХрднреА-рдХрднреА', en:'Sometimes' },                                 scores:{ musical:1 } },
-          { text:{ hi:'рдирд╣реАрдВ, рдореБрдЭреЗ music рдореЗрдВ рдЬрд╝реНрдпрд╛рджрд╛ interest рдирд╣реАрдВ', en:'No, not very interested in music' }, scores:{ musical:0 } },
-      ]},
-      { id:25, cat:'MI', 
-        text:{ hi:'рдЖрдк рдХреЛ рдХреМрдирд╕реА physical activity рд╕рдмрд╕реЗ рдЬрд╝реНрдпрд╛рджрд╛ рдкрд╕рдВрдж рд╣реИ?', en:'What physical activity do you enjoy the most?' }, 
-        options:[
-          { text:{ hi:'Sports, dance рдпрд╛ outdoor games', en:'Sports, dance, or outdoor games' },           scores:{ kinesthetic:3 } },
-          { text:{ hi:'Craft, model рдмрдирд╛рдирд╛, hands-on рдХрд╛рдо', en:'Crafts, building models, hands-on tasks' },        scores:{ kinesthetic:2, visual:2 } },
-          { text:{ hi:'Yoga, meditation рдпрд╛ stretching', en:'Yoga, stretching, meditation' },          scores:{ kinesthetic:1, intrapersonal:2 } },
-          { text:{ hi:'рдореБрдЭреЗ рдмреИрдардХрд░ рдкрдврд╝рдирд╛-рд▓рд┐рдЦрдирд╛ рдЬрд╝реНрдпрд╛рджрд╛ рдкрд╕рдВрдж рд╣реИ', en:'I prefer sitting and reading/writing' },  scores:{ linguistic:1 } },
-      ]},
-      { id:26, cat:'MI', 
-        text:{ hi:'рдЖрдкрдХреА class рдореЗрдВ рдХрд┐рд╕реА рджреЛ рджреЛрд╕реНрддреЛрдВ рдореЗрдВ рдЭрдЧрдбрд╝рд╛ рд╣реЛ рдЬрд╛рдП, рддреЛ рдЖрдк рдХреНрдпрд╛ рдХрд░рддреЗ рд╣реИрдВ?', en:'If two friends fight in class, what do you do?' }, 
-        options:[
-          { text:{ hi:'рджреЛрдиреЛрдВ рдХреЛ рд╕рдордЭрд╛рдХрд░ рджреЛрд╕реНрддреА рдХрд░рд╡рд╛рддреЗ рд╣реИрдВ', en:'Help them resolve it and be friends again' },   scores:{ interpersonal:3, F:2 } },
-          { text:{ hi:'Teacher рдХреЛ рдмрддрд╛рддреЗ рд╣реИрдВ', en:'Tell the teacher' },                 scores:{ interpersonal:2, S:1 } },
-          { text:{ hi:'рдЬреЛ рд╕рд╣реА рд▓рдЧреЗ рдЙрд╕рдХрд╛ рд╕рд╛рде рджреЗрддреЗ рд╣реИрдВ', en:'Side with whoever is right' },         scores:{ T:1, interpersonal:1 } },
-          { text:{ hi:'рджреВрд░ рд░рд╣рддреЗ рд╣реИрдВ, рдЭрдЧрдбрд╝реЗ рдореЗрдВ рдирд╣реАрдВ рдкрдбрд╝рддреЗ', en:'Stay out of the drama completely' },    scores:{ I:1 } },
-      ]},
-      { id:27, cat:'MI', 
-        text:{ hi:'рдЬрдм рдЖрдк рдЦреБрдж рдХреБрдЫ рдЧрд▓рдд рдХрд░рддреЗ рд╣реИрдВ, рддреЛ рдЖрдк рдХреИрд╕рд╛ рдорд╣рд╕реВрд╕ рдХрд░рддреЗ рд╣реИрдВ?', en:'How do you feel when you make a mistake?' }, 
-        options:[
-          { text:{ hi:'рдмрд╣реБрдд рдмреБрд░рд╛ рд▓рдЧрддрд╛ рд╣реИ, рдЦреБрдж рдХреЛ deeply рд╕рдордЭрд╛рддреЗ рд╣реИрдВ', en:'Feel terrible and deeply reflect on it' },   scores:{ intrapersonal:3, F:2 } },
-          { text:{ hi:'рдереЛрдбрд╝рд╛ рдмреБрд░рд╛ рд▓рдЧрддрд╛ рд╣реИ, рдлрд┐рд░ рдЖрдЧреЗ рдмрдврд╝ рдЬрд╛рддреЗ рд╣реИрдВ', en:'Feel slightly bad, then move on' },      scores:{ intrapersonal:2 } },
-          { text:{ hi:'рд╕реЛрдЪрддреЗ рд╣реИрдВ рдХрд┐ рдЕрдЧрд▓реА рдмрд╛рд░ рдмреЗрд╣рддрд░ рдХрд░реВрдБрдЧрд╛', en:'Think about how to do better next time' },            scores:{ intrapersonal:2, J:1 } },
-          { text:{ hi:'рдЬрд╝реНрдпрд╛рджрд╛ рдлрд░реНрдХ рдирд╣реАрдВ рдкрдбрд╝рддрд╛', en:"It doesn't bother me much" },                        scores:{ intrapersonal:0 } },
-      ]},
-      { id:28, cat:'MI', 
-        text:{ hi:'рдХреНрдпрд╛ рдЖрдк рдХреЛ рдкреЗрдбрд╝-рдкреМрдзреЛрдВ, рдЬрд╛рдирд╡рд░реЛрдВ рдФрд░ рдкреНрд░рдХреГрддрд┐ рдореЗрдВ interest рд╣реИ?', en:'Are you interested in plants, animals, and nature?' }, 
-        options:[
-          { text:{ hi:'рдмрд╣реБрдд рдЬрд╝реНрдпрд╛рджрд╛ тАФ nature рдореЗрд░реА hobby рд╣реИ', en:'Very much тАФ nature is my hobby' }, scores:{ naturalistic:3 } },
-          { text:{ hi:'рд╣рд╛рдБ, рдХрд╛рдлрд╝реА interest рд╣реИ', en:'Yes, quite interested' },               scores:{ naturalistic:2 } },
-          { text:{ hi:'рдереЛрдбрд╝рд╛-рд╕рд╛', en:'A little bit' },                            scores:{ naturalistic:1 } },
-          { text:{ hi:'рдЬрд╝реНрдпрд╛рджрд╛ interest рдирд╣реАрдВ рд╣реИ', en:'Not very interested' },             scores:{ naturalistic:0 } },
-      ]},
-      { id:29, cat:'MI', 
-        text:{ hi:'рдЬрдм рдЖрдк рдмрд╛рд╣рд░ рдШреВрдордиреЗ рдЬрд╛рддреЗ рд╣реИрдВ, рддреЛ рдЖрдк рд╕рдмрд╕реЗ рдкрд╣рд▓реЗ рдХреНрдпрд╛ notice рдХрд░рддреЗ рд╣реИрдВ?', en:'When you go outside, what do you notice first?' }, 
-        options:[
-          { text:{ hi:'ЁЯМ┐ рдкреЗрдбрд╝, рдлреВрд▓, рдкрдХреНрд╖реА рдФрд░ рдореМрд╕рдо', en:'ЁЯМ┐ Trees, flowers, birds, the weather' },              scores:{ naturalistic:3 } },
-          { text:{ hi:'ЁЯСе рд▓реЛрдЧ рдФрд░ рдЙрдирдХреА activities', en:'ЁЯСе People and what they are doing' },               scores:{ interpersonal:3, E:1 } },
-          { text:{ hi:'ЁЯПЧя╕П Buildings, рд░рдВрдЧ рдФрд░ design', en:'ЁЯПЧя╕П Buildings, colors, and designs' },             scores:{ visual:3 } },
-          { text:{ hi:'ЁЯО╢ рдЖрд╡рд╛рдЬрд╝реЗрдВ, music рдФрд░ sounds', en:'ЁЯО╢ Sounds, music, and noises' },              scores:{ musical:3 } },
-      ]},
-      { id:30, cat:'MI', 
-        text:{ hi:'рдЕрдЧрд░ рдЖрдкрдХреЛ рдПрдХ school project рдмрдирд╛рдирд╛ рд╣реЛ, рддреЛ рдЖрдк рдХреМрдирд╕рд╛ choose рдХрд░реЗрдВрдЧреЗ?', en:'If you had to do a school project, which would you pick?' }, 
-        options:[
-          { text:{ hi:'ЁЯУЦ рдПрдХ рдХрд╣рд╛рдиреА рд▓рд┐рдЦрдХрд░ рдЙрд╕реЗ act out рдХрд░рдирд╛', en:'ЁЯУЦ Write a story and act it out' },         scores:{ linguistic:3, kinesthetic:1 } },
-          { text:{ hi:'ЁЯФм Science experiment рдХрд░рдирд╛ рдФрд░ present рдХрд░рдирд╛', en:'ЁЯФм Do a science experiment and present it' }, scores:{ logical:3, S:1 } },
-          { text:{ hi:'ЁЯЦ╝я╕П рдПрдХ beautiful poster рдпрд╛ 3D model рдмрдирд╛рдирд╛', en:'ЁЯЦ╝я╕П Build a 3D model or beautiful poster' },   scores:{ visual:3, kinesthetic:1 } },
-          { text:{ hi:'ЁЯО╝ рдПрдХ song рдпрд╛ music piece compose рдХрд░рдирд╛', en:'ЁЯО╝ Compose a song or music piece' },      scores:{ musical:3 } },
-      ]}
-    ];
-
-    // Navigation Logic
-    function switchScreen(hideId, showId) {
-      document.getElementById(hideId).classList.remove('active');
-      document.getElementById(showId).classList.add('active');
-    }
-
-    function goToDisclaimer() {
-      const nameInput = document.getElementById('userName').value.trim();
-      if (!nameInput) {
-        alert("Please enter your name!");
-        return;
+    try {
+      const result = await parent.insertData('personality_test_results', record);
+      if (result) {
+        setSaveStatus('save-saved', '<i class="fas fa-check-circle"></i> &nbsp;Results saved to your profile!');
+        setTimeout(() => setSaveStatus('', ''), 4000);
+      } else {
+        setSaveStatus('save-error', '<i class="fas fa-exclamation-triangle"></i> &nbsp;Could not save results. Please try again.');
       }
-      state.name = nameInput;
-      state.lang = document.getElementById('userLang').value;
-
-      // Update UI texts for Disclaimer
-      const texts = UI[state.lang];
-      document.getElementById('disc-title').innerHTML = texts.discTitle;
-      document.getElementById('disc-text').innerHTML = texts.discText;
-      document.getElementById('disc-btn').innerHTML = texts.discBtn;
-
-      switchScreen('screen-setup', 'screen-disclaimer');
+    } catch (e) {
+      setSaveStatus('save-error', '<i class="fas fa-exclamation-triangle"></i> &nbsp;Could not save results.');
     }
-
-    function startQuiz() {
-      switchScreen('screen-disclaimer', 'screen-quiz');
-      loadQuestion();
-    }
-
-    function loadQuestion() {
-      if (state.currentQ >= QUESTIONS.length) {
-        calculateResults();
-        return;
-      }
-
-      const q = QUESTIONS[state.currentQ];
-      const texts = UI[state.lang];
-      
-      // Update Progress
-      const percent = ((state.currentQ) / QUESTIONS.length) * 100;
-      document.getElementById('progress-fill').style.width = `${percent}%`;
-      document.getElementById('question-counter').innerText = texts.qCounter
-        .replace('{current}', state.currentQ + 1)
-        .replace('{total}', QUESTIONS.length);
-
-      // Update Question
-      document.getElementById('question-text').innerText = q.text[state.lang];
-
-      // Update Options
-      const optionsGrid = document.getElementById('options-grid');
-      optionsGrid.innerHTML = ''; // clear old
-
-      q.options.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.className = 'option-btn';
-        btn.innerText = opt.text[state.lang];
-        btn.onclick = () => handleAnswer(opt.scores);
-        optionsGrid.appendChild(btn);
-      });
-    }
-
-    function handleAnswer(scoresObj) {
-      // Add scores
-      for (let trait in scoresObj) {
-        if (state.scores[trait] !== undefined) {
-          state.scores[trait] += scoresObj[trait];
-        }
-      }
-      // Next Question
-      state.currentQ++;
-      loadQuestion();
-    }
-
-    function calculateResults() {
-      switchScreen('screen-quiz', 'screen-results');
-      const texts = UI[state.lang];
-
-      // Setup Results Static Text
-      document.getElementById('res-greeting').innerText = state.lang === 'en' ? `Awesome job, ${state.name}! ЁЯОЙ` : `рдмрд╣реБрдд рдмреЭрд┐рдпрд╛, ${state.name}! ЁЯОЙ`;
-      document.getElementById('res-intro').innerText = texts.resIntro;
-      document.getElementById('res-mbti-title').innerText = texts.resMbtiTitle;
-      document.getElementById('res-mi-title').innerText = texts.resMiTitle;
-      document.getElementById('res-restart-btn').innerText = texts.restart;
-
-      // Calculate MBTI
-      const typeE = state.scores.E >= state.scores.I ? 'E' : 'I';
-      const typeS = state.scores.S >= state.scores.N ? 'S' : 'N';
-      const typeT = state.scores.T >= state.scores.F ? 'T' : 'F';
-      const typeJ = state.scores.J >= state.scores.P ? 'J' : 'P';
-      const mbtiResult = typeE + typeS + typeT + typeJ;
-
-      // Kid-friendly MBTI interpretation mapping
-      const mbtiMap = {
-        en: {
-          'ESTJ': "The Captain! тЪУ You are a born leader, highly organized and love helping others follow the rules.",
-          'ESFJ': "The Helper! ЁЯдЧ You have a huge heart, love your friends, and always make sure everyone is happy.",
-          'ENFJ': "The Hero! ЁЯж╕ You inspire others, have big dreams, and are a fantastic friend.",
-          'ENTJ': "The Boss! ЁЯТ╝ You are super smart, focused, and always know how to get the job done.",
-          'ESTP': "The Dynamo! тЪб You have endless energy, love action, and jumping into new adventures.",
-          'ESFP': "The Entertainer! ЁЯМЯ You are the life of the party, funny, and bring joy everywhere you go.",
-          'ENFP': "The Champion! ЁЯПЖ You are bursting with imagination, enthusiasm, and creative ideas.",
-          'ENTP': "The Inventor! ЁЯТб You love brain-teasers, asking 'why?', and coming up with clever solutions.",
-          'ISTJ': "The Detective! ЁЯХ╡я╕П You are reliable, notice all the details, and always do your best.",
-          'ISFJ': "The Defender! ЁЯЫбя╕П You are quiet, incredibly kind, and quietly protect those you care about.",
-          'INFJ': "The Mystic! тЬи You are rare, creative, and deeply understand how others feel.",
-          'INTJ': "The Mastermind! ЁЯза You love puzzles, planning ahead, and learning how the world works.",
-          'ISTP': "The Builder! ЁЯЫая╕П You are cool, calm, and love figuring out how things are put together.",
-          'ISFP': "The Artist! ЁЯОи You are gentle, observant, and express yourself beautifully through art and actions.",
-          'INFP': "The Dreamer! тШБя╕П You are imaginative, deeply caring, and always want to make the world a better place.",
-          'INTP': "The Scientist! ЁЯФн You love logic, experiments, and discovering new facts about everything."
-        },
-        hi: {
-          'ESTJ': "рдХреИрдкреНрдЯрди (The Captain)! тЪУ рдЖрдк рдкреИрджрд╛рдЗрд╢реА рд▓реАрдбрд░ рд╣реИрдВ, рдмрд╣реБрдд organized рд░рд╣рддреЗ рд╣реИрдВ рдФрд░ рд░реВрд▓реНрд╕ рдлреЙрд▓реЛ рдХрд░рдиреЗ рдореЗрдВ рд╕рдмрдХреА рдорджрдж рдХрд░рддреЗ рд╣реИрдВред",
-          'ESFJ': "рдорджрджрдЧрд╛рд░ (The Helper)! ЁЯдЧ рдЖрдкрдХрд╛ рджрд┐рд▓ рдмрд╣реБрдд рдмреЬрд╛ рд╣реИ, рдФрд░ рдЖрдк рд╣рдореЗрд╢рд╛ рдЪрд╛рд╣рддреЗ рд╣реИрдВ рдХрд┐ рдЖрдкрдХреЗ рджреЛрд╕реНрдд рдЦреБрд╢ рд░рд╣реЗрдВред",
-          'ENFJ': "рд╣реАрд░реЛ (The Hero)! ЁЯж╕ рдЖрдк рджреВрд╕рд░реЛрдВ рдХреЛ inspire рдХрд░рддреЗ рд╣реИрдВ рдФрд░ рдПрдХ рдмрд╣реБрдд рд╣реА рд╢рд╛рдирджрд╛рд░ рджреЛрд╕реНрдд рд╣реИрдВред",
-          'ENTJ': "рдмреЙрд╕ (The Boss)! ЁЯТ╝ рдЖрдк рдмрд╣реБрдд рд╕реНрдорд╛рд░реНрдЯ рд╣реИрдВ рдФрд░ рдЖрдкрдХреЛ рдкрддрд╛ рд╣реИ рдХрд┐ рдХрд┐рд╕реА рднреА рдХрд╛рдо рдХреЛ рдХреИрд╕реЗ рдкреВрд░рд╛ рдХрд░рдирд╛ рд╣реИред",
-          'ESTP': "рдбрд╛рдпрдирдореЛ (The Dynamo)! тЪб рдЖрдк рдореЗрдВ рднрд░рдкреВрд░ рдПрдирд░реНрдЬреА рд╣реИ, рдЖрдкрдХреЛ рдПрдХреНрд╢рди рдФрд░ рдирдП рдПрдбрд╡реЗрдВрдЪрд░ рдмрд╣реБрдд рдкрд╕рдВрдж рд╣реИрдВред",
-          'ESFP': "рдПрдВрдЯрд░рдЯреЗрдирд░ (The Entertainer)! ЁЯМЯ рдЖрдк рдкрд╛рд░реНрдЯреА рдХреА рдЬрд╛рди рд╣реИрдВ, рдмрд╣реБрдд рдореЫреЗрджрд╛рд░ рд╣реИрдВ рдФрд░ рд╕рдмрдХреЛ рд╣рдВрд╕рд╛рддреЗ рд╣реИрдВред",
-          'ENFP': "рдЪреИрдВрдкрд┐рдпрди (The Champion)! ЁЯПЖ рдЖрдк рдХреНрд░рд┐рдПрдЯрд┐рд╡ рдЖрдЗрдбрд┐рдпрд╛рдЬ рдФрд░ рдЙрддреНрд╕рд╛рд╣ рд╕реЗ рднрд░реЗ рд╣реБрдП рд╣реИрдВред",
-          'ENTP': "рдЗрдиреНрд╡реЗрдВрдЯрд░ (The Inventor)! ЁЯТб рдЖрдкрдХреЛ рд╕рд╡рд╛рд▓ рдкреВрдЫрдирд╛ рдФрд░ рдирдП-рдирдП solutions рдвреВрдБрдврдирд╛ рдмрд╣реБрдд рдкрд╕рдВрдж рд╣реИред",
-          'ISTJ': "рдбрд┐рдЯреЗрдХреНрдЯрд┐рд╡ (The Detective)! ЁЯХ╡я╕П рдЖрдк рдмрд╣реБрдд рднрд░реЛрд╕реЗрдордВрдж рд╣реИрдВ, рд╣рд░ рдбрд┐рдЯреЗрд▓ рдкрд░ рдзреНрдпрд╛рди рджреЗрддреЗ рд╣реИрдВред",
-          'ISFJ': "рдбрд┐рдлреЗрдВрдбрд░ (The Defender)! ЁЯЫбя╕П рдЖрдк рд╢рд╛рдВрдд рд╣реИрдВ, рдмрд╣реБрдд рджрдпрд╛рд▓реБ рд╣реИрдВ рдФрд░ рдЕрдкрдиреЛрдВ рдХрд╛ рдмрд╣реБрдд рдЦреНрдпрд╛рд▓ рд░рдЦрддреЗ рд╣реИрдВред",
-          'INFJ': "рдорд┐рд╕реНрдЯрд┐рдХ (The Mystic)! тЬи рдЖрдк рдмрд╣реБрдд рд╕рдордЭрджрд╛рд░ рд╣реИрдВ рдФрд░ рджреВрд╕рд░реЛрдВ рдХреА рднрд╛рд╡рдирд╛рдУрдВ рдХреЛ рдЧрд╣рд░рд╛рдИ рд╕реЗ рд╕рдордЭрддреЗ рд╣реИрдВред",
-          'INTJ': "рдорд╛рд╕реНрдЯрд░рдорд╛рдЗрдВрдб (The Mastermind)! ЁЯза рдЖрдкрдХреЛ рдкреЫрд▓реНрд╕ рд╕реЙрд▓реНрд╡ рдХрд░рдирд╛ рдФрд░ рджреБрдирд┐рдпрд╛ рдХреИрд╕реЗ рдХрд╛рдо рдХрд░рддреА рд╣реИ, рдпрд╣ рдЬрд╛рдирдирд╛ рдкрд╕рдВрдж рд╣реИред",
-          'ISTP': "рдмрд┐рд▓реНрдбрд░ (The Builder)! ЁЯЫая╕П рдЖрдк рд╢рд╛рдВрдд рд░рд╣рдХрд░ рдЪреАрдЬрд╝реЛрдВ рдХреЛ рдмрдирд╛рдирд╛ рдФрд░ рд╕рдордЭрдирд╛ рдкрд╕рдВрдж рдХрд░рддреЗ рд╣реИрдВред",
-          'ISFP': "рдЖрд░реНрдЯрд┐рд╕реНрдЯ (The Artist)! ЁЯОи рдЖрдк рдЕрдкрдиреА рдлреАрд▓рд┐рдВрдЧреНрд╕ рдХреЛ рдЕрдкрдиреА рдЖрд░реНрдЯ рдФрд░ рдХрд╛рдореЛрдВ рдХреЗ реЫрд░рд┐рдП рдмрд╣реБрдд рдЦреВрдмрд╕реВрд░рддреА рд╕реЗ рджрд┐рдЦрд╛рддреЗ рд╣реИрдВред",
-          'INFP': "рдбреНрд░реАрдорд░ (The Dreamer)! тШБя╕П рдЖрдкрдХреА рд╕реЛрдЪ рдмрд╣реБрдд рдХреНрд░рд┐рдПрдЯрд┐рд╡ рд╣реИ рдФрд░ рдЖрдк рджреБрдирд┐рдпрд╛ рдХреЛ рдмреЗрд╣рддрд░ рдмрдирд╛рдирд╛ рдЪрд╛рд╣рддреЗ рд╣реИрдВред",
-          'INTP': "рд╕рд╛рдЗрдВрдЯрд┐рд╕реНрдЯ (The Scientist)! ЁЯФн рдЖрдкрдХреЛ рд▓реЙрдЬрд┐рдХ, рдПрдХреНрд╕рдкреЗрд░рд┐рдореЗрдВрдЯ рдФрд░ рдирдИ рдЪреАрдЬрд╝реЗрдВ рдЦреЛрдЬрдирд╛ рдмрд╣реБрдд рдкрд╕рдВрдж рд╣реИред"
-        }
-      };
-
-      document.getElementById('res-mbti-desc').innerText = mbtiMap[state.lang][mbtiResult] || `Your Type is: ${mbtiResult}`;
-
-      // Calculate MI (Sort from Highest to Lowest)
-      const miTypes = ['linguistic', 'logical', 'visual', 'kinesthetic', 'musical', 'interpersonal', 'intrapersonal', 'naturalistic'];
-      
-      let miScoresArray = miTypes.map(type => {
-        return { type: type, score: state.scores[type] };
-      });
-      
-      // Sort descending
-      miScoresArray.sort((a, b) => b.score - a.score);
-
-      // Render top 4 superpowers
-      const miContainer = document.getElementById('mi-bars-container');
-      miContainer.innerHTML = '';
-      
-      // Find max score to normalize the bar width (assume max possible per type is roughly ~15 based on the test distribution, but we'll use dynamic max)
-      const maxScore = miScoresArray[0].score || 1; 
-
-      for(let i = 0; i < 4; i++) {
-        const item = miScoresArray[i];
-        if(!item) break;
-
-        const labelText = texts.miLabels[item.type];
-        const percent = Math.min((item.score / maxScore) * 100, 100);
-
-        const barHtml = `
-          <div class="superpower-bar">
-            <div class="superpower-label">
-              <span>${labelText}</span>
-            </div>
-            <div class="superpower-track">
-              <div class="superpower-fill" style="width: ${percent}%"></div>
-            </div>
-          </div>
-        `;
-        miContainer.innerHTML += barHtml;
-      }
-    }
+  }
   </script>
 </body>
 </html>
