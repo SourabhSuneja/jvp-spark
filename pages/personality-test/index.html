@@ -111,6 +111,7 @@
       box-shadow: 0 2px 8px var(--shadow-light);
       transition: var(--transition-base);
       z-index: 1000;
+      display: none;
     }
     .theme-toggle:hover { background-color: var(--bg-tertiary); transform: scale(1.1); }
     .theme-toggle:active { transform: scale(0.95); }
@@ -382,7 +383,7 @@
   </style>
 </head>
 
-<body class="light-theme">
+<body>
   <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
     <i class="fas fa-moon"></i>
   </button>
