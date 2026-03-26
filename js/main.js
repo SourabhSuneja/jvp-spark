@@ -101,6 +101,49 @@ let toastTimer;
 // BACKEND MANAGEMENT
 // =============================================================================
 
+// Newly added function to auto-sync student profile on JVP Spark with that on My JVP (useful when sessions change, grade/section gets updated)
+// =============================================================================
+// SILENT PROFILE SYNC — keeps JVP Spark in sync with My JVP data
+// =============================================================================
+
+async function syncStudentDetailsFromJVP() {
+   try {
+      const token = USER_DATA.access_token;
+      if (!token) return; // Nothing to sync if token isn't loaded yet
+
+      // Fetch the latest details from My JVP
+      const fresh = await invokeFunctionJVP('get_student_profile', {
+         'p_access_token': token
+      }, true);
+
+      if (!fresh) return;
+
+      // Only sync the fields that can change (extend this list as needed)
+      const SYNCABLE_FIELDS = ['name', 'grade', 'section', 'house', 'gender', 'class'];
+      const updateColumns = [];
+      const updateValues = [];
+
+      SYNCABLE_FIELDS.forEach(field => {
+         if (fresh[field] !== undefined && fresh[field] !== USER_DATA[field]) {
+            updateColumns.push(field);
+            updateValues.push(fresh[field]);
+         }
+      });
+
+      if (updateColumns.length === 0) return; // Nothing changed, skip the DB write
+
+      // Silently update JVP Spark database
+      await updateRow('students', ['id'], [window.userId], updateColumns, updateValues);
+
+      // Also update the in-memory USER_DATA so the current session reflects the new values
+      updateColumns.forEach((col, i) => { USER_DATA[col] = updateValues[i]; });
+
+      console.log('Student profile synced from My JVP:', updateColumns);
+   } catch (err) {
+      console.error('Silent profile sync failed (non-critical):', err);
+   }
+}
+
 const BackendManager = {
    getStudentProfile: async (student_id) => {
       try {
@@ -859,6 +902,7 @@ const AuthManager = {
 
          // Load profile AND dashboard data before showing the page
          await AppManager.initialize();
+         syncStudentDetailsFromJVP(); // 🔄 silently sync fresh details from My JVP
 
          DOMUtils.hide(elements.signInScreen);
          await PageManager.loadPage('home'); // Load home page to trigger correct setup
@@ -971,6 +1015,7 @@ const AuthManager = {
             await subscribeToPush();
             // Load profile AND dashboard data before showing the page
             await AppManager.initialize();
+            syncStudentDetailsFromJVP(); // 🔄 silently sync fresh details from My JVP
             DOMUtils.hide(signInScreen);
             await PageManager.loadPage('home'); // Load home page to trigger correct setup
 
