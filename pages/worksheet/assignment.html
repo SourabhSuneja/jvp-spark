@@ -832,7 +832,7 @@
          // Average must be > 3 AND no count can be < 3
          const conditionMet = ((average > 3) && !anyCountBelowThree) || (counts.filter(x => x > 0).length === 1);
          
-         if (conditionMet) {
+         if (true || conditionMet) {
          // Condition is TRUE: Return the "spread out" structure
          return {
             headings: ["", "", "", "", "", ""],
