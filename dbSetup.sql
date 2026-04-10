@@ -31,6 +31,7 @@ DROP FUNCTION IF EXISTS create_settings_for_student();
 DROP FUNCTION IF EXISTS set_default_avatar();
 DROP FUNCTION IF EXISTS log_welcome_notification();
 DROP FUNCTION IF EXISTS handle_new_student_subscriptions();
+DROP FUNCTION IF EXISTS handle_student_grade_update();
 DROP FUNCTION IF EXISTS get_specific_notification(text, jsonb);
 DROP FUNCTION IF EXISTS get_all_notifications(uuid, integer, jsonb);
 DROP FUNCTION IF EXISTS get_new_notifications(uuid, jsonb);
@@ -1498,6 +1499,77 @@ BEGIN
 END;
 $$;
 
+-- Trigger function to auto upgrade student subscriptions upon grade change/promotion
+CREATE OR REPLACE FUNCTION handle_student_grade_update()
+RETURNS TRIGGER AS $$
+DECLARE
+    subjects     TEXT[];
+    subject_name TEXT;
+BEGIN
+    -- Only proceed if the grade actually changed and school is Jamna Vidyapeeth
+    IF NEW.grade = OLD.grade THEN
+        RETURN NEW;
+    END IF;
+
+    IF NEW.school != 'Jamna Vidyapeeth' THEN
+        RETURN NEW;
+    END IF;
+
+    -- Determine the new subject list based on the updated grade
+    subjects :=
+        CASE NEW.grade
+            WHEN 1  THEN ARRAY['English','Hindi','Maths','EVS','Computer','GK']
+            WHEN 2  THEN ARRAY['English','Hindi','Maths','EVS','Computer','GK']
+            WHEN 3  THEN ARRAY['English','Hindi','Maths','Science','Social Science','Computer','GK']
+            WHEN 4  THEN ARRAY['English','Hindi','Maths','Science','Social Science','Computer','GK']
+            WHEN 5  THEN ARRAY['English','Hindi','Maths','Science','Social Science','Computer','GK']
+            WHEN 6  THEN ARRAY['English','Hindi','Maths','Science','Social Science','Sanskrit','Computer','GK']
+            WHEN 7  THEN ARRAY['English','Hindi','Maths','Science','Social Science','Sanskrit','Computer','GK']
+            WHEN 8  THEN ARRAY['English','Hindi','Maths','Science','Social Science','Sanskrit','Computer','GK']
+            WHEN 9  THEN ARRAY['English','Hindi','Maths','Science','Social Science','Data Science']
+            WHEN 10 THEN ARRAY['English','Hindi','Maths','Science','Social Science','Data Science']
+            WHEN 11 THEN
+                CASE NEW.section
+                    WHEN 'SCI' THEN ARRAY['English','Physics','Chemistry','Biology','Maths','P.E.','I.P.','Geography','Economics','Psychology','Fine Arts']
+                    WHEN 'COM' THEN ARRAY['English','Accountancy','B.St.','Economics','Maths','P.E.','I.P.','Applied Maths','Psychology','Fine Arts']
+                    WHEN 'HUM' THEN ARRAY['English','History','Geography','Pol. Sci.','Maths','P.E.','I.P.','Economics','Applied Maths','Psychology','Fine Arts']
+                    ELSE ARRAY[]::TEXT[]
+                END
+            WHEN 12 THEN
+                CASE NEW.section
+                    WHEN 'SCI' THEN ARRAY['English','Physics','Chemistry','Biology','Maths','P.E.','I.P.','Geography','Economics']
+                    WHEN 'COM' THEN ARRAY['English','Accountancy','B.St.','Economics','Maths','P.E.','I.P.']
+                    WHEN 'HUM' THEN ARRAY['English','History','Geography','Pol. Sci.','Maths','P.E.','I.P.','Economics']
+                    ELSE ARRAY[]::TEXT[]
+                END
+            ELSE ARRAY[]::TEXT[]
+        END;
+
+    -- Step 1: Update grade on ALL existing subscriptions for this student
+    UPDATE subscriptions
+    SET grade = NEW.grade
+    WHERE student_id = NEW.id;
+
+    -- Step 2: Delete subject subscriptions that are NOT in the new subject list
+    -- (preserve 'General' subscription always)
+    DELETE FROM subscriptions
+    WHERE student_id = NEW.id
+      AND subject != 'General'
+      AND subject != ALL(subjects);
+
+    -- Step 3: Insert missing subjects from the new list (skip duplicates)
+    IF array_length(subjects, 1) > 0 THEN
+        FOREACH subject_name IN ARRAY subjects LOOP
+            INSERT INTO subscriptions (student_id, grade, subject)
+            VALUES (NEW.id, NEW.grade, subject_name)
+            ON CONFLICT (student_id, grade, subject) DO NOTHING;
+        END LOOP;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
 -- Function to return a specific notification (only if a student is eligible for this notification)
 CREATE OR REPLACE FUNCTION get_specific_notification(
     p_notification_id text,
@@ -1646,6 +1718,11 @@ AFTER INSERT ON students
 FOR EACH ROW
 EXECUTE FUNCTION handle_new_student_subscriptions();
 
+CREATE TRIGGER after_student_grade_update_sync_subscriptions
+AFTER UPDATE OF grade ON students
+FOR EACH ROW
+EXECUTE FUNCTION handle_student_grade_update();
+
 CREATE TRIGGER after_student_insert_log_welcome_msg
 AFTER INSERT ON students
 FOR EACH ROW
@@ -1748,6 +1825,10 @@ CREATE POLICY "Students can read their own subscriptions"
 CREATE POLICY "Students can insert their own subscriptions"
     ON subscriptions FOR INSERT
     WITH CHECK (auth.uid() = student_id);
+
+CREATE POLICY "Students can delete their own subscriptions"
+    ON subscriptions FOR DELETE
+    USING (auth.uid() = student_id);
 
 -- Push subscriptions
 ALTER TABLE push_subscriptions ENABLE ROW LEVEL SECURITY;
