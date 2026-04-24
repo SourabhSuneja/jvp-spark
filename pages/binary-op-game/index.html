@@ -586,4 +586,118 @@
                      break;
                  case 'div':
                      num2 = isHard ? getRandom(2, 7) : getRandom(2, 3);
-                     result = isHard ? getRandom(2,
+                     result = isHard ? getRandom(2, 15) : getRandom(2, 3);
+                     num1 = num2 * result; // Ensure clean division
+                     document.getElementById('operator-symbol').textContent = '÷';
+                     break;
+             }
+
+             document.getElementById('operand1').textContent = num1.toString(2);
+             document.getElementById('operand2').textContent = num2.toString(2);
+             expectedBinaryStr = result.toString(2);
+
+             // Setup Answer Row
+             const answerRow = document.getElementById('answer-row');
+             answerRow.innerHTML = '';
+             
+             for(let i = 0; i < expectedBinaryStr.length; i++) {
+                 const bitBox = document.createElement('div');
+                 bitBox.className = 'bit-box';
+                 bitBox.id = `bit-${i}`;
+                 answerRow.appendChild(bitBox);
+             }
+
+             // We start taking input from right-to-left
+             currentTargetBitIndex = expectedBinaryStr.length - 1;
+             highlightCurrentBox();
+         }
+
+         function getRandom(min, max) {
+             return Math.floor(Math.random() * (max - min + 1)) + min;
+         }
+
+         function highlightCurrentBox() {
+             document.querySelectorAll('.bit-box').forEach(box => box.classList.remove('active'));
+             if (currentTargetBitIndex >= 0) {
+                 document.getElementById(`bit-${currentTargetBitIndex}`).classList.add('active');
+             }
+         }
+
+         function inputBit(bitVal) {
+             if (currentTargetBitIndex < 0 || isAnimating) return;
+
+             const currentBox = document.getElementById(`bit-${currentTargetBitIndex}`);
+             const expectedBit = expectedBinaryStr[currentTargetBitIndex];
+
+             if (bitVal === expectedBit) {
+                 // Correct Bit
+                 currentBox.textContent = bitVal;
+                 currentBox.classList.remove('active');
+                 currentBox.classList.add('correct');
+                 
+                 currentTargetBitIndex--;
+                 
+                 if (currentTargetBitIndex < 0) {
+                     // Problem Solved!
+                     handleSuccess();
+                 } else {
+                     highlightCurrentBox();
+                 }
+             } else {
+                 // Incorrect Bit
+                 isAnimating = true;
+                 currentBox.textContent = bitVal;
+                 currentBox.classList.add('incorrect');
+                 
+                 // Deduct points
+                 score = Math.max(0, score - 5);
+                 streak = 0;
+                 updateScoreDisplay();
+
+                 setTimeout(() => {
+                     currentBox.classList.remove('incorrect');
+                     currentBox.textContent = '';
+                     isAnimating = false;
+                 }, 500);
+             }
+         }
+
+         function handleSuccess() {
+             score += (currentDiff === 'hard' ? 20 : 10) + (streak * 2);
+             streak++;
+             updateScoreDisplay();
+             
+             // Trigger Confetti
+             confetti({
+                 particleCount: 150,
+                 spread: 70,
+                 origin: { y: 0.6 },
+                 colors: ['#ffc107', '#4caf50', '#ffffff']
+             });
+
+             document.getElementById('numpad').style.display = 'none';
+             document.getElementById('next-btn').style.display = 'block';
+         }
+
+         function updateScoreDisplay() {
+             document.getElementById('score').textContent = score;
+             document.getElementById('streak').textContent = streak;
+         }
+
+         // Initialize on load
+         window.onload = () => {
+             updateRules();
+             generateProblem();
+         };
+         
+         // Keyboard support for typing 0 or 1
+         document.addEventListener('keydown', (e) => {
+             if(e.key === '0' || e.key === '1') {
+                 inputBit(e.key);
+             } else if (e.key === 'Enter' && currentTargetBitIndex < 0) {
+                 generateProblem();
+             }
+         });
+      </script>
+   </body>
+</html>
