@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Network Topology Game</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Courier+Prime:wght@700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #121212;
+      --bg-secondary: #1f1f1f;
+      --bg-tertiary: #333333;
+      --bg-gradient-dark: linear-gradient(145deg, #1e1e1e, #333333);
+      --bg-input: #2c2c2c;
+      --text-primary: #fff;
+      --text-secondary: #ddd;
+      --text-tertiary: #b0bec5;
+      --accent-primary: #ffc107;
+      --accent-hover: #e0a800;
+      --accent-button-text: black;
+      --error-color: #FF3333;
+      --error-bg: #e53935;
+      --error-hover: #d32f2f;
+      --success-color: #4caf50;
+      --shadow-dark: rgba(0,0,0,0.5);
+      --shadow-medium: rgba(0,0,0,0.6);
+      --spacing-xs: 4px; --spacing-sm: 8px; --spacing-md: 12px;
+      --spacing-lg: 16px; --spacing-xl: 20px; --spacing-xxl: 25px; --spacing-xxxl: 30px;
+      --radius-sm: 5px; --radius-md: 8px; --radius-lg: 10px; --radius-xl: 12px;
+      --font-sm: 0.9rem; --font-base: 1rem; --font-md: 1.1rem; --font-lg: 1.2rem;
+      --font-xl: 1.6rem; --font-xxl: 1.7rem; --font-xxxl: 1.8rem;
+      --transition-fast: 0.2s ease; --transition-base: 0.3s ease;
+    }
+    body.light-theme {
+      --bg-primary: #ffffff; --bg-secondary: rgb(253,253,253);
+      --bg-tertiary: rgb(240,240,240); --bg-gradient-dark: linear-gradient(145deg,#ffffff,#f0f0f0);
+      --bg-input: #ffffff; --text-primary: #333; --text-secondary: rgb(50,50,50);
+      --text-tertiary: rgb(80,80,80); --accent-button-text: rgb(30,30,30);
+      --error-color: #d32f2f; --error-bg: #ff6666; --error-hover: #ff4d4d;
+      --shadow-dark: rgba(0,0,0,0.1); --shadow-medium: rgba(0,0,0,0.1);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Roboto',sans-serif; }
+    body {
+      background: var(--bg-primary); color: var(--text-primary);
+      min-height: 100vh; padding: var(--spacing-xl);
+      transition: var(--transition-base);
+      -webkit-tap-highlight-color: transparent;
+      user-select: none; -webkit-user-select: none;
+    }
+    .container { max-width: 900px; margin: 0 auto; }
+
+    /* ── Header ── */
+    .header {
+      background: var(--bg-gradient-dark); padding: var(--spacing-xl);
+      border-radius: var(--radius-lg); margin-bottom: var(--spacing-xl);
+      box-shadow: 0 4px 6px var(--shadow-dark);
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: var(--spacing-lg);
+    }
+    .header h1 {
+      font-size: var(--font-xxl); color: var(--text-primary);
+      display: flex; align-items: center; gap: var(--spacing-md);
+    }
+    .header h1 .accent { color: var(--accent-primary); }
+    .theme-toggle {
+      background: var(--accent-primary); color: var(--accent-button-text);
+      border: none; padding: var(--spacing-md) var(--spacing-xl);
+      border-radius: var(--radius-md); cursor: pointer;
+      font-size: var(--font-base); font-weight: 700;
+      transition: var(--transition-fast);
+      display: flex; align-items: center; gap: var(--spacing-sm); display: none;
+    }
+    .theme-toggle:hover { background: var(--accent-hover); transform: translateY(-2px); }
+
+    /* ── Score ── */
+    .score-section {
+      background: var(--bg-secondary); padding: var(--spacing-xl);
+      border-radius: var(--radius-lg); margin-bottom: var(--spacing-xl);
+      box-shadow: 0 4px 6px var(--shadow-dark);
+      display: flex; justify-content: space-around; flex-wrap: wrap; gap: var(--spacing-lg);
+    }
+    .score-item { text-align: center; }
+    .score-label { color: var(--text-tertiary); font-size: var(--font-sm); margin-bottom: var(--spacing-xs); }
+    .score-value { font-size: var(--font-xl); font-weight: 700; color: var(--accent-primary); font-family: 'Courier Prime', monospace; }
+
+    /* ── Mode Tabs ── */
+    .controls-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-md); margin-bottom: var(--spacing-xl);
+    }
+    .mode-btn {
+      background: var(--bg-gradient-dark); color: var(--text-primary);
+      border: 3px solid transparent; padding: var(--spacing-lg);
+      border-radius: var(--radius-lg); cursor: pointer;
+      font-size: var(--font-base); font-weight: 700;
+      transition: var(--transition-fast); box-shadow: 0 4px 6px var(--shadow-dark);
+      display: flex; flex-direction: column; align-items: center; gap: var(--spacing-sm);
+    }
+    .mode-btn i { font-size: var(--font-xl); }
+    .mode-btn small { font-weight: 400; font-size: 0.75rem; color: var(--text-tertiary); }
+    .mode-btn:hover { transform: translateY(-4px); box-shadow: 0 6px 12px var(--shadow-medium); }
+    .mode-btn.active { border-color: var(--accent-primary); color: var(--accent-primary); }
+
+    /* ── Game Card ── */
+    .game-card {
+      background: var(--bg-secondary); border-radius: var(--radius-xl);
+      padding: var(--spacing-xl); margin-bottom: var(--spacing-xl);
+      box-shadow: 0 4px 6px var(--shadow-dark);
+    }
+    .game-title {
+      text-align: center; font-size: var(--font-lg); font-weight: 700;
+      margin-bottom: var(--spacing-md);
+    }
+    .topology-name { color: var(--accent-primary); font-family: 'Courier Prime', monospace; }
+    .instructions {
+      font-size: var(--font-sm); color: var(--text-tertiary);
+      text-align: center; margin-bottom: var(--spacing-lg);
+      padding: var(--spacing-sm) var(--spacing-md);
+      background: var(--bg-tertiary); border-radius: var(--radius-md); line-height: 1.5;
+    }
+    .feedback {
+      text-align: center; padding: var(--spacing-md);
+      border-radius: var(--radius-md); font-size: var(--font-base); font-weight: 700;
+      margin-bottom: var(--spacing-md); display: none;
+      animation: fadeInDown 0.3s ease;
+    }
+    .feedback.success { background: rgba(76,175,80,0.2); color: #4caf50; border: 1px solid #4caf50; display: block; }
+    .feedback.error   { background: rgba(229,57,53,0.2); color: #ef5350; border: 1px solid #ef5350; display: block; }
+
+    .conn-info {
+      text-align: center; font-size: var(--font-sm); color: var(--text-tertiary);
+      margin-bottom: var(--spacing-md);
+    }
+    .conn-info span { color: var(--accent-primary); font-weight: 700; font-family: 'Courier Prime', monospace; }
+
+    /* ── SVG Canvas ── */
+    .svg-container {
+      background: var(--bg-tertiary); border-radius: var(--radius-lg);
+      overflow: hidden; margin-bottom: var(--spacing-lg); touch-action: none;
+    }
+    .svg-container svg { display: block; width: 100%; }
+
+    /* ── Answer buttons (Identify mode) ── */
+    .answer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md); }
+    .answer-btn {
+      background: var(--bg-gradient-dark); color: var(--text-primary);
+      border: 2px solid var(--bg-tertiary); padding: var(--spacing-lg) var(--spacing-xl);
+      border-radius: var(--radius-lg); cursor: pointer; font-size: var(--font-md);
+      font-weight: 700; transition: var(--transition-fast);
+      font-family: 'Courier Prime', monospace; min-height: 58px;
+      display: flex; align-items: center; justify-content: center; gap: var(--spacing-sm);
+    }
+    .answer-btn:hover:not(:disabled) { transform: translateY(-2px); border-color: var(--accent-primary); }
+    .answer-btn.correct { background: rgba(76,175,80,0.25); border-color: #4caf50; color: #4caf50; }
+    .answer-btn.wrong   { background: rgba(229,57,53,0.25); border-color: #ef5350; color: #ef5350; }
+    .answer-btn:disabled { cursor: default; }
+
+    /* ── Action buttons (Build mode) ── */
+    .action-row {
+      display: flex; gap: var(--spacing-md); flex-wrap: wrap;
+      justify-content: center; margin-top: var(--spacing-lg);
+    }
+    .btn {
+      padding: var(--spacing-md) var(--spacing-xxl); border-radius: var(--radius-md);
+      border: none; font-size: var(--font-base); font-weight: 700; cursor: pointer;
+      transition: var(--transition-fast); display: flex; align-items: center; gap: var(--spacing-sm);
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary { background: var(--accent-primary); color: var(--accent-button-text); }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-danger  { background: var(--error-bg); color: white; }
+    .btn-danger:hover { background: var(--error-hover); }
+    .btn-secondary { background: var(--bg-tertiary); color: var(--text-primary); }
+
+    /* ── Reference cards ── */
+    .info-section { margin-bottom: var(--spacing-xl); }
+    .info-title {
+      font-size: var(--font-lg); font-weight: 700; margin-bottom: var(--spacing-lg);
+      display: flex; align-items: center; gap: var(--spacing-md);
+    }
+    .topo-cards {
+      display: grid; grid-template-columns: repeat(auto-fit,minmax(150px,1fr));
+      gap: var(--spacing-md);
+    }
+    .topo-card {
+      background: var(--bg-secondary); border-radius: var(--radius-lg);
+      padding: var(--spacing-lg); box-shadow: 0 2px 4px var(--shadow-dark);
+      border-left: 4px solid; transition: var(--transition-fast);
+    }
+    .topo-card:hover { transform: translateY(-2px); }
+    .topo-card-name { font-family: 'Courier Prime',monospace; font-weight: 700; font-size: var(--font-md); margin-bottom: var(--spacing-xs); }
+    .topo-card-desc { font-size: 0.78rem; color: var(--text-tertiary); line-height: 1.45; }
+
+    /* ── Animations ── */
+    @keyframes fadeInDown {
+      from { opacity:0; transform:translateY(-10px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    @keyframes shake {
+      0%,100% { transform:translateX(0); }
+      20%,60% { transform:translateX(-8px); }
+      40%,80% { transform:translateX(8px); }
+    }
+    @keyframes pulseRing {
+      0%,100% { opacity:0.5; r:28; }
+      50%      { opacity:1;   r:32; }
+    }
+    .shake { animation: shake 0.4s ease; }
+
+    /* ── Responsive ── */
+    @media (max-width:600px) {
+      body { padding: var(--spacing-md); }
+      .header h1 { font-size: var(--font-lg); }
+      .answer-btn { font-size: var(--font-base); padding: var(--spacing-md); min-height:48px; }
+      .btn { padding: var(--spacing-md) var(--spacing-xl); font-size: var(--font-sm); }
+      .topo-cards { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>
+      <i class="fas fa-network-wired" style="color:var(--accent-primary)"></i>
+      Network <span class="accent">Topologies</span>
+    </h1>
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <i class="fas fa-moon"></i>
+      <span id="theme-text">Light Mode</span>
+    </button>
+  </div>
+
+  <!-- Score -->
+  <div class="score-section">
+    <div class="score-item">
+      <div class="score-label">SCORE</div>
+      <div class="score-value" id="score">0</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">STREAK 🔥</div>
+      <div class="score-value" id="streak">0</div>
+    </div>
+    <div class="score-item">
+      <div class="score-label">CORRECT</div>
+      <div class="score-value" id="correct">0</div>
+    </div>
+  </div>
+
+  <!-- Mode tabs -->
+  <div class="controls-grid">
+    <button class="mode-btn active" id="mode-identify" onclick="setMode('identify')">
+      <i class="fas fa-search"></i>
+      Identify
+      <small>Recognise the topology</small>
+    </button>
+    <button class="mode-btn" id="mode-build" onclick="setMode('build')">
+      <i class="fas fa-project-diagram"></i>
+      Build
+      <small>Connect the nodes</small>
+    </button>
+  </div>
+
+  <!-- Game card -->
+  <div class="game-card" id="game-card">
+    <div id="game-title" class="game-title">What type of topology is this?</div>
+    <div id="instructions" class="instructions"></div>
+    <div id="feedback" class="feedback"></div>
+    <div id="conn-info" class="conn-info" style="display:none">
+      Connections made: <span id="conn-count">0</span>
+    </div>
+
+    <div class="svg-container" id="svg-container">
+      <svg id="game-svg" viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+
+    <!-- Identify: answer grid -->
+    <div id="answer-grid" class="answer-grid"></div>
+
+    <!-- Build: action buttons -->
+    <div id="action-row" class="action-row" style="display:none">
+      <button class="btn btn-danger"    onclick="clearEdges()"><i class="fas fa-trash-alt"></i> Clear</button>
+      <button class="btn btn-primary"   id="check-btn" onclick="checkBuild()"><i class="fas fa-check"></i> Check</button>
+      <button class="btn btn-secondary" id="next-btn"  onclick="nextRound()" style="display:none"><i class="fas fa-forward"></i> Next</button>
+    </div>
+  </div>
+
+  <!-- Reference cards -->
+  <div class="info-section">
+    <div class="info-title">
+      <i class="fas fa-book-open" style="color:var(--accent-primary)"></i>
+      Topology Reference
+    </div>
+    <div class="topo-cards" id="topo-cards"></div>
+  </div>
+
+</div><!-- /container -->
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+<script>
+// ================================================================
+// CONSTANTS
+// ================================================================
+const W = 400, H = 260;
+
+const HINTS = {
+  star:  'The Hub in the centre must connect to every PC. Tap Hub, then each PC.',
+  ring:  'Each PC connects to exactly two neighbours, forming a closed loop.',
+  bus:   'Connect all PCs in a single straight chain (no branches, no loops).',
+  mesh:  'Every PC must connect to every other PC — don\'t miss any pair!',
+  tree:  'Root → Switches → PCs. Build a hierarchy with no loops.',
+};
+
+// Topology definitions
+const TOPOS = {
+  star: {
+    name:'Star', color:'#ffc107', icon:'⭐',
+    desc:'All devices connect to a central hub/switch. Easy to manage; hub failure affects the whole network.',
+    n:5,
+    labels:['Hub','PC 1','PC 2','PC 3','PC 4'],
+    types:['hub','pc','pc','pc','pc'],
+    pos(W,H){
+      const cx=W/2, cy=H/2, r=Math.min(W,H)*0.34;
+      return [
+        [cx, cy],          // hub centre
+        [cx, cy-r],        // North
+        [cx+r, cy],        // East
+        [cx, cy+r],        // South
+        [cx-r, cy],        // West
+      ];
+    },
+    edges(){ return [[0,1],[0,2],[0,3],[0,4]]; },
+    validate(e,n){
+      const d=getDeg(e,n), mx=Math.max(...d);
+      return mx===n-1 && d.filter(x=>x===1).length===n-1 && isConnected(e,n);
+    }
+  },
+  ring: {
+    name:'Ring', color:'#4dd0e1', icon:'⭕',
+    desc:'Devices form a closed loop. Data travels one direction. A single break can disrupt all traffic.',
+    n:5,
+    labels:['PC 1','PC 2','PC 3','PC 4','PC 5'],
+    types:['pc','pc','pc','pc','pc'],
+    pos(W,H){
+      const cx=W/2, cy=H/2, r=Math.min(W,H)*0.35;
+      return Array.from({length:5},(_,i)=>[
+        cx+r*Math.cos(2*Math.PI*i/5-Math.PI/2),
+        cy+r*Math.sin(2*Math.PI*i/5-Math.PI/2)
+      ]);
+    },
+    edges(){ return [[0,1],[1,2],[2,3],[3,4],[4,0]]; },
+    validate(e,n){
+      const d=getDeg(e,n);
+      return d.every(x=>x===2) && isConnected(e,n) && e.length===n;
+    }
+  },
+  bus: {
+    name:'Bus', color:'#ef5350', icon:'➖',
+    desc:'All devices share one backbone cable. Simple and cheap, but collisions and a cable break affect everyone.',
+    n:5,
+    labels:['PC 1','PC 2','PC 3','PC 4','PC 5'],
+    types:['pc','pc','pc','pc','pc'],
+    pos(W,H){
+      const y=H/2, m=W*0.1, sp=(W-2*m)/4;
+      return Array.from({length:5},(_,i)=>[m+i*sp, y]);
+    },
+    edges(){ return [[0,1],[1,2],[2,3],[3,4]]; },
+    validate(e,n){
+      const d=getDeg(e,n);
+      return d.filter(x=>x===1).length===2 && d.filter(x=>x===2).length===n-2
+             && isConnected(e,n) && isAcyclic(e,n);
+    }
+  },
+  mesh: {
+    name:'Mesh', color:'#ab47bc', icon:'🕸️',
+    desc:'Every device connects to every other device. Highly reliable with many redundant paths; expensive to cable.',
+    n:4,
+    labels:['PC 1','PC 2','PC 3','PC 4'],
+    types:['pc','pc','pc','pc'],
+    pos(W,H){
+      const cx=W/2, cy=H/2, r=Math.min(W,H)*0.34;
+      return Array.from({length:4},(_,i)=>[
+        cx+r*Math.cos(2*Math.PI*i/4+Math.PI/4),
+        cy+r*Math.sin(2*Math.PI*i/4+Math.PI/4)
+      ]);
+    },
+    edges(){
+      const e=[];
+      for(let i=0;i<4;i++) for(let j=i+1;j<4;j++) e.push([i,j]);
+      return e;
+    },
+    validate(e,n){
+      const d=getDeg(e,n);
+      return d.every(x=>x===n-1);
+    }
+  },
+  tree: {
+    name:'Tree', color:'#66bb6a', icon:'🌳',
+    desc:'Hierarchical layout extending from a root node through switches to end devices. Scalable but a branch failure isolates its subtree.',
+    n:7,
+    labels:['Root','Sw 1','Sw 2','PC 1','PC 2','PC 3','PC 4'],
+    types:['root','switch','switch','pc','pc','pc','pc'],
+    pos(W,H){
+      return [
+        [W/2,    H*0.12],
+        [W*0.28, H*0.44],
+        [W*0.72, H*0.44],
+        [W*0.12, H*0.80],
+        [W*0.38, H*0.80],
+        [W*0.62, H*0.80],
+        [W*0.88, H*0.80],
+      ];
+    },
+    edges(){ return [[0,1],[0,2],[1,3],[1,4],[2,5],[2,6]]; },
+    validate(e,n){
+      return isConnected(e,n) && isAcyclic(e,n) && e.length===n-1 && !isPathGraph(e,n);
+    }
+  }
+};
+
+const KEYS = Object.keys(TOPOS);
+
+// ================================================================
+// GRAPH UTILITIES
+// ================================================================
+function getDeg(edges, n){
+  const d=new Array(n).fill(0);
+  edges.forEach(([a,b])=>{d[a]++;d[b]++;});
+  return d;
+}
+function isConnected(edges, n){
+  const adj=Array.from({length:n},()=>[]);
+  edges.forEach(([a,b])=>{adj[a].push(b);adj[b].push(a);});
+  const vis=new Set([0]), q=[0];
+  while(q.length){ const v=q.shift(); adj[v].forEach(u=>{if(!vis.has(u)){vis.add(u);q.push(u);}}); }
+  return vis.size===n;
+}
+function isAcyclic(edges, n){
+  const p=Array.from({length:n},(_,i)=>i);
+  const find=x=>p[x]===x?x:(p[x]=find(p[x]));
+  for(const [a,b] of edges){ const pa=find(a),pb=find(b); if(pa===pb)return false; p[pa]=pb; }
+  return true;
+}
+function isPathGraph(edges, n){
+  const d=getDeg(edges,n);
+  return d.filter(x=>x===1).length===2 && d.filter(x=>x===2).length===n-2;
+}
+
+// ================================================================
+// STATE
+// ================================================================
+let mode='identify', topoKey='star';
+let pts=[], curEdges=[], selNode=-1;
+let answered=false, buildDone=false;
+let score=0, streak=0, correct=0;
+
+// ================================================================
+// THEME
+// ================================================================
+function toggleTheme(){
+  document.body.classList.toggle('light-theme');
+  const light=document.body.classList.contains('light-theme');
+  document.getElementById('theme-text').textContent=light?'Dark Mode':'Light Mode';
+  document.querySelector('.theme-toggle i').className=light?'fas fa-sun':'fas fa-moon';
+  redraw();
+}
+
+// ================================================================
+// MODE SWITCH
+// ================================================================
+function setMode(m){
+  mode=m;
+  document.getElementById('mode-identify').classList.toggle('active',m==='identify');
+  document.getElementById('mode-build').classList.toggle('active',m==='build');
+  nextRound();
+}
+
+// ================================================================
+// ROUND MANAGEMENT
+// ================================================================
+function nextRound(){
+  // Pick a different topology
+  const prev=topoKey;
+  const pool=KEYS.filter(k=>k!==prev);
+  topoKey=pool[Math.floor(Math.random()*pool.length)];
+
+  const t=TOPOS[topoKey];
+  pts=t.pos(W,H);
+  curEdges=[]; selNode=-1; answered=false; buildDone=false;
+  clearFeedback();
+
+  if(mode==='identify'){
+    document.getElementById('game-title').textContent='What type of topology is this?';
+    document.getElementById('instructions').textContent='Study the diagram below and choose the correct topology type.';
+    document.getElementById('conn-info').style.display='none';
+    document.getElementById('answer-grid').style.display='grid';
+    document.getElementById('action-row').style.display='none';
+    buildAnswerGrid();
+    drawSVG(pts, t.edges(), t, -1, false);
+  } else {
+    document.getElementById('game-title').innerHTML=`Build a <span class="topology-name">${t.name.toUpperCase()}</span> Topology`;
+    document.getElementById('instructions').textContent=HINTS[topoKey]+' Tap connected nodes again to disconnect.';
+    document.getElementById('conn-info').style.display='block';
+    document.getElementById('conn-count').textContent='0';
+    document.getElementById('answer-grid').style.display='none';
+    document.getElementById('action-row').style.display='flex';
+    document.getElementById('check-btn').style.display='flex';
+    document.getElementById('next-btn').style.display='none';
+    drawSVG(pts, curEdges, t, selNode, true);
+  }
+}
+
+// ================================================================
+// IDENTIFY MODE
+// ================================================================
+function buildAnswerGrid(){
+  const grid=document.getElementById('answer-grid');
+  grid.innerHTML='';
+  const wrong=KEYS.filter(k=>k!==topoKey).sort(()=>Math.random()-0.5).slice(0,3);
+  const opts=[topoKey,...wrong].sort(()=>Math.random()-0.5);
+  opts.forEach(k=>{
+    const t=TOPOS[k];
+    const btn=document.createElement('button');
+    btn.className='answer-btn';
+    btn.innerHTML=`${t.icon} ${t.name}`;
+    btn.onclick=()=>handleAnswer(k, btn, grid.querySelectorAll('.answer-btn'));
+    grid.appendChild(btn);
+  });
+}
+
+function handleAnswer(k, btn, allBtns){
+  if(answered) return;
+  answered=true;
+  allBtns.forEach(b=>b.disabled=true);
+
+  if(k===topoKey){
+    btn.classList.add('correct');
+    score+=10+streak*2; streak++; correct++;
+    showFeedback('success',`✅ Correct! That's a ${TOPOS[topoKey].name} topology!${streak>1?' 🔥 '+streak+' streak!':''}`);
+    confettiBurst();
+  } else {
+    btn.classList.add('wrong'); streak=0;
+    showFeedback('error',`❌ Not quite — that was a ${TOPOS[topoKey].name} topology.`);
+    allBtns.forEach(b=>{ if(b.textContent.includes(TOPOS[topoKey].name)) b.classList.add('correct'); });
+  }
+  updateScore();
+  setTimeout(nextRound, 2800);
+}
+
+// ================================================================
+// BUILD MODE
+// ================================================================
+function handleNodeTap(i){
+  if(buildDone) return;
+  if(selNode===-1){
+    selNode=i;
+  } else if(selNode===i){
+    selNode=-1;
+  } else {
+    const idx=curEdges.findIndex(([a,b])=>(a===selNode&&b===i)||(a===i&&b===selNode));
+    if(idx>=0) curEdges.splice(idx,1);
+    else curEdges.push([selNode, i]);
+    selNode=-1;
+  }
+  const t=TOPOS[topoKey];
+  document.getElementById('conn-count').textContent=curEdges.length;
+  drawSVG(pts, curEdges, t, selNode, true);
+}
+
+function removeEdge(idx){
+  curEdges.splice(idx,1);
+  document.getElementById('conn-count').textContent=curEdges.length;
+  drawSVG(pts, curEdges, TOPOS[topoKey], selNode, true);
+}
+
+function clearEdges(){
+  curEdges=[]; selNode=-1;
+  document.getElementById('conn-count').textContent='0';
+  clearFeedback();
+  drawSVG(pts, curEdges, TOPOS[topoKey], selNode, true);
+}
+
+function checkBuild(){
+  if(buildDone) return;
+  const t=TOPOS[topoKey];
+  if(t.validate(curEdges, t.n)){
+    buildDone=true;
+    score+=20+streak*3; streak++; correct++;
+    showFeedback('success',`✅ ${t.name} topology built correctly!${streak>1?' 🔥 '+streak+' streak!':''}`);
+    confettiBurst();
+    document.getElementById('check-btn').style.display='none';
+    document.getElementById('next-btn').style.display='flex';
+  } else {
+    score=Math.max(0,score-5); streak=0;
+    showFeedback('error','❌ Not quite right yet — check your connections and try again!');
+    document.getElementById('game-card').classList.add('shake');
+    setTimeout(()=>document.getElementById('game-card').classList.remove('shake'),400);
+  }
+  updateScore();
+}
+
+// ================================================================
+// SVG RENDER
+// ================================================================
+function svgEl(tag, attrs){
+  const el=document.createElementNS('http://www.w3.org/2000/svg', tag);
+  if(attrs) Object.entries(attrs).forEach(([k,v])=>el.setAttribute(k,String(v)));
+  return el;
+}
+
+function drawSVG(pts, edges, topo, selIdx, interactive){
+  const svg=document.getElementById('game-svg');
+  svg.innerHTML='';
+
+  const light=document.body.classList.contains('light-theme');
+  const BG       = light ? '#f2f2f2' : '#252525';
+  const GRID     = light ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.04)';
+  const NFILL    = light ? '#e0e0e0' : '#2c2c2c';
+  const NBORDER  = light ? '#aaa'    : '#555';
+  const TFILL    = light ? '#555'    : '#b0bec5';
+  const LBFILL   = light ? '#444'    : '#999';
+
+  // BG + grid
+  svg.appendChild(svgEl('rect',{width:W,height:H,fill:BG,rx:10}));
+  const defs=svgEl('defs');
+  const pat=svgEl('pattern',{id:'g',width:28,height:28,patternUnits:'userSpaceOnUse'});
+  const gp=svgEl('path',{d:'M 28 0 L 0 0 0 28',fill:'none',stroke:GRID,'stroke-width':0.5});
+  pat.appendChild(gp); defs.appendChild(pat); svg.appendChild(defs);
+  svg.appendChild(svgEl('rect',{width:W,height:H,fill:'url(#g)',rx:10}));
+
+  // Bus backbone hint
+  if(topo.name==='Bus' && pts.length){
+    const x1=pts[0][0]-20, x2=pts[pts.length-1][0]+20, y=H/2;
+    svg.appendChild(svgEl('line',{x1,y1:y,x2,y2:y,stroke:topo.color,'stroke-width':6,opacity:0.12,'stroke-linecap':'round'}));
+  }
+
+  // Edges
+  edges.forEach(([a,b],idx)=>{
+    const [x1,y1]=pts[a],[x2,y2]=pts[b];
+    const g=svgEl('g');
+
+    // Glow effect under edge
+    const glow=svgEl('line',{x1,y1,x2,y2,stroke:topo.color,'stroke-width':8,opacity:0.18,'stroke-linecap':'round'});
+    g.appendChild(glow);
+
+    const line=svgEl('line',{x1,y1,x2,y2,stroke:topo.color,'stroke-width':2.5,opacity:0.9,'stroke-linecap':'round'});
+    g.appendChild(line);
+
+    // Delete button (desktop hover; mobile: retap nodes)
+    if(interactive && !buildDone){
+      const mx=(x1+x2)/2, my=(y1+y2)/2;
+      const dBg=svgEl('circle',{cx:mx,cy:my,r:11,fill:'#c62828',opacity:0,style:'cursor:pointer'});
+      const dTx=svgEl('text',{x:mx,y:my,fill:'white','font-size':14,'font-weight':'bold','text-anchor':'middle','dominant-baseline':'central','pointer-events':'none'});
+      dTx.textContent='×';
+      dBg.addEventListener('click',e=>{e.stopPropagation();removeEdge(idx);});
+      dBg.addEventListener('touchend',e=>{e.preventDefault();e.stopPropagation();removeEdge(idx);});
+      g.addEventListener('mouseenter',()=>dBg.setAttribute('opacity',0.9));
+      g.addEventListener('mouseleave',()=>dBg.setAttribute('opacity',0));
+      g.appendChild(dBg); g.appendChild(dTx);
+    }
+    svg.appendChild(g);
+  });
+
+  // Nodes
+  pts.forEach(([x,y],i)=>{
+    const type=topo.types ? topo.types[i] : 'pc';
+    const isHub  = type==='hub'||type==='root';
+    const isSw   = type==='switch';
+    const isSel  = i===selIdx;
+    const r      = isHub ? 26 : 20;
+    const g      = svgEl('g',{style:`cursor:${interactive&&!buildDone?'pointer':'default'}`});
+
+    // Pulsing selection ring
+    if(isSel){
+      const ring=svgEl('circle',{cx:x,cy:y,r:r+9,fill:'none',stroke:topo.color,'stroke-width':2,opacity:0.4});
+      const ring2=svgEl('circle',{cx:x,cy:y,r:r+5,fill:'none',stroke:topo.color,'stroke-width':1.5,opacity:0.7});
+      ring.style.animation='pulseRing 1s ease infinite';
+      g.appendChild(ring);
+      g.appendChild(ring2);
+    }
+
+    // Outer glow for hub/root
+    if((isHub||isSw)&&!isSel){
+      const gl=svgEl('circle',{cx:x,cy:y,r:r+4,fill:'none',stroke:topo.color,'stroke-width':1.5,opacity:0.2});
+      g.appendChild(gl);
+    }
+
+    // Main circle
+    const c=svgEl('circle',{
+      cx:x,cy:y,r,
+      fill: isSel ? topo.color : NFILL,
+      stroke: isSel ? topo.color : (isHub||isSw ? topo.color : NBORDER),
+      'stroke-width': isHub||isSw ? 2.5 : 1.8,
+    });
+    g.appendChild(c);
+
+    // Inner icon
+    const ic = isSel ? 'rgba(0,0,0,0.7)' : topo.color;
+    const is  = r * 0.40;
+    if(type==='pc'){
+      // Monitor outline
+      g.appendChild(svgEl('rect',{x:x-is,y:y-is*0.85,width:is*2,height:is*1.35,rx:1.5,fill:'none',stroke:ic,'stroke-width':1.4,'pointer-events':'none'}));
+      g.appendChild(svgEl('line',{x1:x,y1:y+is*0.5,x2:x,y2:y+is*0.9,stroke:ic,'stroke-width':1.4,'pointer-events':'none'}));
+      g.appendChild(svgEl('line',{x1:x-is*0.55,y1:y+is*0.9,x2:x+is*0.55,y2:y+is*0.9,stroke:ic,'stroke-width':1.4,'pointer-events':'none'}));
+    } else {
+      // Hub/switch: circle with spokes
+      g.appendChild(svgEl('circle',{cx:x,cy:y,r:is*0.5,fill:'none',stroke:ic,'stroke-width':1.4,'pointer-events':'none'}));
+      const spokeAngles = isHub ? [0,60,120,180,240,300] : [0,90,180,270];
+      spokeAngles.forEach(deg=>{
+        const rad=deg*Math.PI/180;
+        g.appendChild(svgEl('line',{
+          x1:x+is*0.5*Math.cos(rad), y1:y+is*0.5*Math.sin(rad),
+          x2:x+is*Math.cos(rad),     y2:y+is*Math.sin(rad),
+          stroke:ic,'stroke-width':1.4,'pointer-events':'none'
+        }));
+      });
+    }
+
+    // Label below
+    const lbl=svgEl('text',{
+      x,y:y+r+13,fill:LBFILL,'font-size':9.5,
+      'font-family':'Courier Prime, monospace',
+      'text-anchor':'middle','pointer-events':'none'
+    });
+    lbl.textContent=topo.labels[i];
+    g.appendChild(lbl);
+
+    // Events
+    if(interactive && !buildDone){
+      g.addEventListener('click',  ()=>handleNodeTap(i));
+      g.addEventListener('touchend',e=>{e.preventDefault();handleNodeTap(i);});
+      c.addEventListener('mouseenter',()=>{
+        if(i!==selIdx) c.setAttribute('stroke',topo.color);
+      });
+      c.addEventListener('mouseleave',()=>{
+        if(i!==selIdx) c.setAttribute('stroke',(isHub||isSw)?topo.color:NBORDER);
+      });
+    }
+    svg.appendChild(g);
+  });
+}
+
+function redraw(){
+  const t=TOPOS[topoKey];
+  if(mode==='identify') drawSVG(pts, t.edges(), t, -1, false);
+  else drawSVG(pts, curEdges, t, selNode, true);
+}
+
+// ================================================================
+// UI HELPERS
+// ================================================================
+function showFeedback(type, msg){
+  const el=document.getElementById('feedback');
+  el.className=`feedback ${type}`;
+  el.textContent=msg;
+}
+function clearFeedback(){
+  const el=document.getElementById('feedback');
+  el.className='feedback'; el.textContent='';
+}
+function updateScore(){
+  document.getElementById('score').textContent=score;
+  document.getElementById('streak').textContent=streak;
+  document.getElementById('correct').textContent=correct;
+}
+function confettiBurst(){
+  confetti({particleCount:190,spread:70,origin:{y:0.6},colors:['#ffc107','#4caf50','#ffffff','#4dd0e1','#ab47bc','#ef5350']});
+}
+
+// ================================================================
+// REFERENCE CARDS
+// ================================================================
+function buildCards(){
+  const c=document.getElementById('topo-cards');
+  KEYS.forEach(k=>{
+    const t=TOPOS[k];
+    const d=document.createElement('div');
+    d.className='topo-card'; d.style.borderColor=t.color;
+    d.innerHTML=`<div class="topo-card-name" style="color:${t.color}">${t.icon} ${t.name}</div><div class="topo-card-desc">${t.desc}</div>`;
+    c.appendChild(d);
+  });
+}
+
+// ================================================================
+// INIT
+// ================================================================
+window.onload=()=>{ buildCards(); nextRound(); };
+</script>
+</body>
+</html>
