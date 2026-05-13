@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html lang="en" class="noselect">
 <head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-T7R00N5VLE"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+         
+      gtag('config', 'G-T7R00N5VLE');
+  </script>
+  <!-- Google tag (gtag.js) -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>My Resources</title>
-
-  <!--
-    ⚠️  REQUIRED FUNCTION CHANGE:
-    The `get_student_files` PostgreSQL function on My JVP must also return
-    `scope` in its SELECT clause for folder categorisation to work:
-
-      select id, object_key, title, mime_type, size_bytes,
-             subject, scope, teacher_name, updated_at
-      from file_metadata ...
-  -->
+  <title>File Vault</title>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
@@ -135,6 +135,7 @@
       box-shadow: 0 2px 8px var(--shadow-light);
       transition: all var(--transition-base);
       z-index: 900;
+      display: none;
     }
     .theme-toggle:hover { background: var(--bg-tertiary); transform: scale(1.1); }
     .theme-toggle:active { transform: scale(.95); }
