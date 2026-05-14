@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en" class="noselect">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-T7R00N5VLE"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+         
+      gtag('config', 'G-T7R00N5VLE');
+  </script>
+  <!-- Google tag (gtag.js) -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>File Vault</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ═══════════════════════════════════════════════════════════════
+       CSS VARIABLES  —  matches the shared iframe theme
+    ═══════════════════════════════════════════════════════════════ */
+    :root {
+      --bg-primary:          #121212;
+      --bg-secondary:        #1f1f1f;
+      --bg-tertiary:         #333333;
+      --bg-gradient-dark:    linear-gradient(145deg, #1e1e1e, #333333);
+      --bg-input:            #2c2c2c;
+
+      --text-primary:        #fff;
+      --text-secondary:      #ddd;
+      --text-tertiary:       #b0bec5;
+      --text-muted:          rgb(230,230,230);
+
+      --accent-primary:      #ffc107;
+      --accent-hover:        #e0a800;
+      --accent-focus:        #ffd54f;
+      --accent-button-text:  black;
+
+      --shadow-dark:         rgba(0,0,0,.5);
+      --shadow-medium:       rgba(0,0,0,.6);
+      --shadow-light:        rgba(0,0,0,.4);
+
+      --spacing-xs:   4px;
+      --spacing-sm:   8px;
+      --spacing-md:   12px;
+      --spacing-lg:   16px;
+      --spacing-xl:   20px;
+      --spacing-xxl:  25px;
+      --spacing-xxxl: 30px;
+
+      --radius-sm:   5px;
+      --radius-md:   8px;
+      --radius-lg:   10px;
+      --radius-xl:   12px;
+      --radius-full: 50%;
+
+      --font-sm:      .9rem;
+      --font-base:    1rem;
+      --font-md:      1.1rem;
+      --font-lg:      1.2rem;
+      --font-xl:      1.6rem;
+      --font-icon-sm: 1.2rem;
+
+      --transition-fast: .2s ease;
+      --transition-base: .3s ease;
+
+      /* File-type palette */
+      --c-pdf:   #ef5350;
+      --c-word:  #42a5f5;
+      --c-excel: #66bb6a;
+      --c-ppt:   #ff7043;
+      --c-img:   #ab47bc;
+      --c-video: #ec407a;
+      --c-audio: #ffa726;
+      --c-other: #78909c;
+    }
+
+    body.light-theme {
+      --bg-primary:         #f4f4f4;
+      --bg-secondary:       #ffffff;
+      --bg-tertiary:        #ebebeb;
+      --bg-gradient-dark:   linear-gradient(145deg,#fff,#f0f0f0);
+      --bg-input:           #ffffff;
+      --text-primary:       #222;
+      --text-secondary:     #333;
+      --text-tertiary:      #666;
+      --text-muted:         #444;
+      --accent-button-text: #1a1a1a;
+      --shadow-dark:        rgba(0,0,0,.12);
+      --shadow-medium:      rgba(0,0,0,.15);
+      --shadow-light:       rgba(0,0,0,.10);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       RESET / BASE
+    ═══════════════════════════════════════════════════════════════ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0; padding: 0;
+      max-height: 9999999px;
+      font-family: 'Roboto', sans-serif;
+    }
+    .noselect {
+      -webkit-user-select: none;
+      -moz-user-select:    none;
+      user-select:         none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: var(--spacing-xl);
+      overflow-x: hidden;
+      transition: background var(--transition-base), color var(--transition-base);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       THEME TOGGLE
+    ═══════════════════════════════════════════════════════════════ */
+    .theme-toggle {
+      position: fixed;
+      top: var(--spacing-xl); right: var(--spacing-xl);
+      background: var(--bg-secondary);
+      border: none;
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-md);
+      cursor: pointer;
+      color: var(--text-primary);
+      font-size: var(--font-icon-sm);
+      box-shadow: 0 2px 8px var(--shadow-light);
+      transition: all var(--transition-base);
+      z-index: 900;
+      display: none;
+    }
+    .theme-toggle:hover { background: var(--bg-tertiary); transform: scale(1.1); }
+    .theme-toggle:active { transform: scale(.95); }
+
+    /* ═══════════════════════════════════════════════════════════════
+       LAYOUT
+    ═══════════════════════════════════════════════════════════════ */
+    .container {
+      max-width: 960px;
+      width: 100%;
+      margin: 0 auto;
+      padding-bottom: 60px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       PAGE HEADER
+    ═══════════════════════════════════════════════════════════════ */
+    .page-header {
+      margin-bottom: var(--spacing-xl);
+      padding-top: var(--spacing-sm);
+    }
+    .page-header h1 {
+      font-size: var(--font-xl);
+      font-weight: 700;
+      display: flex;
+      display: none;
+      align-items: center;
+      gap: var(--spacing-md);
+    }
+    .page-header h1 i { color: var(--accent-primary); }
+
+    /* ── Breadcrumb ── */
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      margin-top: var(--spacing-sm);
+      font-size: var(--font-sm);
+      color: var(--text-tertiary);
+      flex-wrap: wrap;
+    }
+    .bc-item           { cursor: pointer; color: var(--accent-primary); transition: color var(--transition-fast); }
+    .bc-item:hover     { color: var(--accent-hover); }
+    .bc-item.active    { cursor: default; color: var(--text-tertiary); }
+    .bc-sep            { font-size: .65rem; color: var(--text-tertiary); }
+
+    /* ═══════════════════════════════════════════════════════════════
+       ROOT — FOLDER GRID
+    ═══════════════════════════════════════════════════════════════ */
+    .folder-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: var(--spacing-xl);
+      margin-top: var(--spacing-xl);
+    }
+
+    .folder-card {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-xl);
+      padding: var(--spacing-xxl) var(--spacing-xl);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-md);
+      text-align: center;
+      box-shadow: 0 4px 16px var(--shadow-light);
+      border: 2px solid transparent;
+      transition: all var(--transition-base);
+      position: relative;
+      overflow: hidden;
+    }
+    .folder-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity var(--transition-base);
+      pointer-events: none;
+    }
+    .folder-card.common::before  { background: radial-gradient(circle at 70% 20%, rgba(255,193,7,.08), transparent 60%); }
+    .folder-card.section::before { background: radial-gradient(circle at 70% 20%, rgba(100,181,246,.08), transparent 60%); }
+    .folder-card:hover { transform: translateY(-5px); box-shadow: 0 10px 28px var(--shadow-medium); }
+    .folder-card:hover::before { opacity: 1; }
+    .folder-card.common:hover  { border-color: var(--accent-primary); }
+    .folder-card.section:hover { border-color: #64b5f6; }
+
+    .folder-icon {
+      font-size: 3rem;
+      transition: transform var(--transition-base);
+    }
+    .folder-card:hover .folder-icon { transform: scale(1.12) rotate(-4deg); }
+
+    .folder-name { font-size: var(--font-md); font-weight: 700; color: var(--text-primary); }
+    .folder-desc { font-size: var(--font-sm); color: var(--text-tertiary); line-height: 1.4; }
+
+    .file-badge {
+      background: var(--accent-primary);
+      color: var(--accent-button-text);
+      border-radius: 999px;
+      padding: 3px 12px;
+      font-size: .75rem;
+      font-weight: 700;
+      margin-top: var(--spacing-xs);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       FOLDER VIEW — FILE LIST
+    ═══════════════════════════════════════════════════════════════ */
+    .folder-view-header {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-xl);
+      flex-wrap: wrap;
+    }
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-sm) var(--spacing-lg);
+      background: var(--bg-secondary);
+      border: none;
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
+      cursor: pointer;
+      font-size: var(--font-sm);
+      font-weight: 600;
+      box-shadow: 0 2px 6px var(--shadow-light);
+      transition: all var(--transition-base);
+    }
+    .back-btn:hover { background: var(--bg-tertiary); transform: translateX(-3px); }
+
+    .folder-view-title {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      font-size: var(--font-lg);
+      font-weight: 700;
+      min-width: 0;
+    }
+    .folder-view-title i { color: var(--accent-primary); flex-shrink: 0; }
+
+    .search-wrap {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      background: var(--bg-input);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-sm) var(--spacing-md);
+      box-shadow: 0 2px 6px var(--shadow-light);
+      width: 100%;
+      max-width: 300px;
+      transition: box-shadow var(--transition-base);
+    }
+    .search-wrap:focus-within { box-shadow: 0 0 0 2px var(--accent-focus); }
+    .search-wrap i { color: var(--text-tertiary); font-size: .85rem; flex-shrink: 0; }
+    .search-wrap input {
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--text-primary);
+      font-size: var(--font-sm);
+      width: 100%;
+    }
+    .search-wrap input::placeholder { color: var(--text-tertiary); }
+
+    /* ── Subject Group ── */
+    .subject-group { margin-bottom: var(--spacing-xxl); }
+    .subject-header {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      margin-bottom: var(--spacing-md);
+      padding-bottom: var(--spacing-sm);
+      border-bottom: 2px solid var(--bg-tertiary);
+    }
+    .subject-header i      { color: var(--accent-primary); font-size: .95rem; }
+    .subject-header-name   { font-size: var(--font-sm); font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .6px; }
+    .subject-header-count  { margin-left: auto; font-size: .72rem; color: var(--text-tertiary); }
+
+    /* ── File Card ── */
+    .files-stack { display: flex; flex-direction: column; gap: var(--spacing-sm); }
+
+    .file-card {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-md) var(--spacing-lg);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      box-shadow: 0 2px 8px var(--shadow-light);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all var(--transition-base);
+    }
+    .file-card:hover {
+      transform: translateX(5px);
+      border-color: var(--accent-primary);
+      box-shadow: 0 4px 18px var(--shadow-medium);
+    }
+    .file-card:active { transform: translateX(3px); }
+
+    .file-icon-box {
+      width: 46px; height: 46px;
+      border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.35rem;
+      flex-shrink: 0;
+    }
+
+    .file-info     { flex: 1; min-width: 0; }
+    .file-title    { font-size: var(--font-base); font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .file-meta     { display: flex; gap: var(--spacing-md); flex-wrap: wrap; margin-top: 3px; }
+    .file-meta-item {
+      display: flex; align-items: center; gap: 4px;
+      font-size: .72rem; color: var(--text-tertiary);
+    }
+    .file-meta-item i { font-size: .65rem; }
+
+    .open-btn {
+      width: 38px; height: 38px;
+      background: var(--accent-primary);
+      color: var(--accent-button-text);
+      border: none; border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .9rem;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all var(--transition-base);
+      box-shadow: 0 2px 8px rgba(255,193,7,.3);
+    }
+    .open-btn:hover { background: var(--accent-hover); transform: scale(1.1); }
+    .open-btn:active { transform: scale(.95); }
+
+    /* ═══════════════════════════════════════════════════════════════
+       EMPTY STATE
+    ═══════════════════════════════════════════════════════════════ */
+    .empty-state {
+      text-align: center;
+      padding: 70px var(--spacing-xl);
+      color: var(--text-tertiary);
+    }
+    .empty-state i   { font-size: 3.5rem; opacity: .3; display: block; margin-bottom: var(--spacing-lg); }
+    .empty-state p   { font-size: var(--font-md); margin-bottom: var(--spacing-sm); color: var(--text-secondary); }
+    .empty-state small { font-size: var(--font-sm); opacity: .7; }
+
+    /* ═══════════════════════════════════════════════════════════════
+       SKELETON LOADER
+    ═══════════════════════════════════════════════════════════════ */
+    .skeleton {
+      background: linear-gradient(90deg, var(--bg-secondary) 25%, var(--bg-tertiary) 50%, var(--bg-secondary) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: var(--radius-xl);
+    }
+    @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+    .skel-folder { height: 200px; }
+    .skel-file   { height: 70px; border-radius: var(--radius-lg); margin-bottom: var(--spacing-sm); }
+
+    /* ═══════════════════════════════════════════════════════════════
+       FILE VIEWER MODAL
+    ═══════════════════════════════════════════════════════════════ */
+    .viewer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.88);
+      z-index: 9999;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: var(--spacing-lg);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .viewer-modal {
+      background: var(--bg-primary);
+      border-radius: var(--radius-xl);
+      width: 100%;
+      max-width: 940px;
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 70px rgba(0,0,0,.9);
+      overflow: hidden;
+      margin: auto;
+      animation: modalIn .25s cubic-bezier(.34,1.56,.64,1);
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(.94) translateY(12px); }
+      to   { opacity: 1; transform: scale(1)   translateY(0); }
+    }
+
+    /* Viewer header */
+    .viewer-header {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      padding: var(--spacing-md) var(--spacing-lg);
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--bg-tertiary);
+      flex-shrink: 0;
+    }
+    .vh-icon {
+      width: 38px; height: 38px;
+      border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .vh-info     { flex: 1; min-width: 0; }
+    .vh-title    { font-size: var(--font-base); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .vh-sub      { font-size: .73rem; color: var(--text-tertiary); margin-top: 1px; }
+
+    .vh-actions  { display: flex; gap: var(--spacing-sm); flex-shrink: 0; }
+    .vh-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: var(--spacing-sm) var(--spacing-md);
+      border: none; border-radius: var(--radius-md);
+      cursor: pointer; font-size: .8rem; font-weight: 600;
+      transition: all var(--transition-base);
+    }
+    .vh-btn.dl   { background: var(--accent-primary); color: var(--accent-button-text); }
+    .vh-btn.dl:hover { background: var(--accent-hover); }
+    .vh-btn.cls  { background: var(--bg-tertiary); color: var(--text-primary); }
+    .vh-btn.cls:hover { background: #4a4a4a; }
+
+    /* Viewer body */
+    .viewer-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      background: var(--bg-primary);
+      overflow: hidden;
+      min-height: 70vh;
+    }
+
+    /* ── PDF ── */
+    #pdf-frame {
+      width: 100%; height: 74vh;
+      border: none; display: block;
+    }
+
+    /* ── Image ── */
+    #img-viewer {
+      flex: 1;
+      display: flex; align-items: center; justify-content: center;
+      overflow: auto;
+      padding: var(--spacing-lg);
+      min-height: 60vh;
+    }
+    #img-el {
+      max-width: 100%; max-height: 72vh;
+      object-fit: contain;
+      border-radius: var(--radius-md);
+      box-shadow: 0 4px 20px var(--shadow-dark);
+      touch-action: pinch-zoom;
+      user-select: none;
+    }
+
+    /* ── Video ── */
+    #vid-viewer {
+      width: 100%;
+      display: flex; align-items: center; justify-content: center;
+      padding: var(--spacing-lg);
+      background: #000;
+    }
+    #vid-el {
+      width: 100%;
+      max-height: 72vh;
+      outline: none;
+      border-radius: var(--radius-md);
+    }
+
+    /* ── Audio ── */
+    #aud-viewer {
+      flex: 1;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: var(--spacing-xl);
+      padding: 60px var(--spacing-xl);
+      min-height: 42vh;
+    }
+    .aud-art {
+      width: 120px; height: 120px;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-full);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.8rem;
+      color: var(--c-audio);
+      box-shadow: 0 0 0 0 rgba(255,167,38,.4);
+      animation: audioPulse 2s ease-in-out infinite;
+    }
+    @keyframes audioPulse {
+      0%,100% { box-shadow: 0 0 0 0  rgba(255,167,38,.4); }
+      50%      { box-shadow: 0 0 0 18px rgba(255,167,38,0); }
+    }
+    .aud-name { font-size: var(--font-base); font-weight: 600; color: var(--text-secondary); text-align: center; max-width: 400px; }
+    #aud-el   { width: 100%; max-width: 480px; accent-color: var(--accent-primary); }
+
+    /* ── Other / Download ── */
+    #other-viewer {
+      flex: 1;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: var(--spacing-lg);
+      padding: 60px var(--spacing-xl);
+      text-align: center;
+      min-height: 42vh;
+    }
+    #other-viewer i    { font-size: 4rem; opacity: .4; }
+    #other-viewer p    { font-size: var(--font-md); color: var(--text-secondary); }
+    #other-viewer small { font-size: var(--font-sm); color: var(--text-tertiary); }
+    .dl-cta {
+      margin-top: var(--spacing-md);
+      padding: var(--spacing-md) var(--spacing-xxl);
+      background: var(--accent-primary);
+      color: var(--accent-button-text);
+      border: none; border-radius: var(--radius-lg);
+      font-size: var(--font-base); font-weight: 700;
+      cursor: pointer;
+      transition: all var(--transition-base);
+    }
+    .dl-cta:hover { background: var(--accent-hover); transform: translateY(-2px); }
+
+    /* ═══════════════════════════════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════════════════════════════ */
+    @media (max-width: 768px) {
+      body { padding: var(--spacing-md); }
+      .theme-toggle { top: var(--spacing-md); right: var(--spacing-md); }
+      .page-header h1 { font-size: var(--font-lg); }
+      .folder-grid { grid-template-columns: repeat(2, 1fr); gap: var(--spacing-md); }
+      .folder-view-header { flex-direction: column; align-items: flex-start; }
+      .search-wrap { max-width: 100%; }
+      .viewer-overlay { padding: var(--spacing-sm); }
+      .viewer-modal { min-height: 90vh; border-radius: var(--radius-lg); }
+      #pdf-frame { height: 65vh; }
+      .file-meta { flex-direction: column; gap: 2px; }
+      .vh-btn span { display: none; }
+    }
+    @media (max-width: 480px) {
+      .folder-grid { grid-template-columns: 1fr; }
+      .file-title { font-size: var(--font-sm); }
+      .folder-card { padding: var(--spacing-xl) var(--spacing-lg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Theme Toggle -->
+  <button class="theme-toggle noselect" id="theme-btn" onclick="toggleTheme()" title="Toggle theme">
+    <i id="theme-icon" class="fas fa-sun"></i>
+  </button>
+
+  <!-- ══ Main Container ══════════════════════════════════════════════ -->
+  <div id="container" class="container" style="display:none">
+
+    <!-- Page Header & Breadcrumb -->
+    <div class="page-header noselect">
+      <h1><i class="fas fa-book-open"></i> My Resources</h1>
+      <nav class="breadcrumb" id="breadcrumb" aria-label="Breadcrumb">
+        <span class="bc-item active"><i class="fas fa-home"></i> Home</span>
+      </nav>
+    </div>
+
+    <!-- ── ROOT VIEW: two folder cards ── -->
+    <div id="view-root">
+      <div class="folder-grid" id="folder-grid">
+        <!-- JS-populated -->
+      </div>
+    </div>
+
+    <!-- ── FOLDER VIEW: file list ── -->
+    <div id="view-folder" style="display:none">
+      <div class="folder-view-header noselect">
+        <button class="back-btn" onclick="showRootView()">
+          <i class="fas fa-arrow-left"></i> Back
+        </button>
+        <div class="folder-view-title">
+          <i id="folder-icon" class="fas fa-folder-open"></i>
+          <span id="folder-title-text" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></span>
+        </div>
+        <div class="search-wrap">
+          <i class="fas fa-search"></i>
+          <input type="text" id="search-input" placeholder="Search files…"
+                 oninput="filterFiles()" autocomplete="off">
+        </div>
+      </div>
+      <div id="subject-groups">
+        <!-- JS-populated -->
+      </div>
+    </div>
+
+  </div><!-- /container -->
+
+  <!-- ══ FILE VIEWER MODAL ═══════════════════════════════════════════ -->
+  <div id="viewer-overlay" class="viewer-overlay" style="display:none"
+       onclick="onOverlayClick(event)" role="dialog" aria-modal="true">
+    <div class="viewer-modal" id="viewer-modal">
+
+      <div class="viewer-header">
+        <div class="vh-icon" id="vh-icon"></div>
+        <div class="vh-info">
+          <div class="vh-title" id="vh-title"></div>
+          <div class="vh-sub"   id="vh-sub"></div>
+        </div>
+        <div class="vh-actions">
+          <button class="vh-btn dl" onclick="triggerDownload()" title="Download">
+            <i class="fas fa-download"></i> <span>Download</span>
+          </button>
+          <button class="vh-btn cls" onclick="closeViewer()" title="Close (Esc)">
+            <i class="fas fa-times"></i> <span>Close</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="viewer-body" id="viewer-body">
+        <!-- Injected per file type -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════
+       SCRIPT
+  ═════════════════════════════════════════════════════════════════ -->
+  <script>
+    // ── State ───────────────────────────────────────────────────────
+    let allFiles      = [];
+    let fileMap       = {};     // id → file object  (avoids inline JSON in DOM)
+    let currentScope  = null;   // 'common' | 'section'
+    let currentUrl    = '';
+    let currentFile   = null;
+    let userData      = null;
+    let isDark        = true;
+
+    // ── Theme ───────────────────────────────────────────────────────
+    function toggleTheme() {
+      isDark = !isDark;
+      document.body.classList.toggle('light-theme', !isDark);
+      document.getElementById('theme-icon').className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+    }
+
+    // ── MIME helpers ────────────────────────────────────────────────
+    const MIME_MAP = {
+      'application/pdf':       { icon:'fa-file-pdf',        color:'var(--c-pdf)',   label:'PDF'        },
+      'application/msword':    { icon:'fa-file-word',       color:'var(--c-word)',  label:'Word'       },
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+                               { icon:'fa-file-word',       color:'var(--c-word)',  label:'Word'       },
+      'application/vnd.ms-excel':
+                               { icon:'fa-file-excel',      color:'var(--c-excel)', label:'Excel'      },
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+                               { icon:'fa-file-excel',      color:'var(--c-excel)', label:'Excel'      },
+      'application/vnd.ms-powerpoint':
+                               { icon:'fa-file-powerpoint', color:'var(--c-ppt)',   label:'PowerPoint' },
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation':
+                               { icon:'fa-file-powerpoint', color:'var(--c-ppt)',   label:'PowerPoint' },
+    };
+
+    function mimeInfo(mime) {
+      if (!mime) return { icon:'fa-file', color:'var(--c-other)', label:'File' };
+      if (MIME_MAP[mime])           return MIME_MAP[mime];
+      if (mime.startsWith('image/')) return { icon:'fa-file-image',  color:'var(--c-img)',   label:'Image'  };
+      if (mime.startsWith('video/')) return { icon:'fa-file-video',  color:'var(--c-video)', label:'Video'  };
+      if (mime.startsWith('audio/')) return { icon:'fa-file-audio',  color:'var(--c-audio)', label:'Audio'  };
+      if (mime.startsWith('text/'))  return { icon:'fa-file-alt',    color:'var(--c-other)', label:'Text'   };
+      return { icon:'fa-file', color:'var(--c-other)', label:'File' };
+    }
+
+    function fmtSize(b) {
+      if (!b) return '';
+      if (b < 1024)       return b + ' B';
+      if (b < 1048576)    return (b/1024).toFixed(1) + ' KB';
+      if (b < 1073741824) return (b/1048576).toFixed(1) + ' MB';
+      return (b/1073741824).toFixed(2) + ' GB';
+    }
+
+    function fmtDate(iso) {
+      if (!iso) return '';
+      return new Date(iso).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+    }
+
+    function subjectIcon(s) {
+      if (!s) return 'fa-folder';
+      const l = s.toLowerCase();
+      if (l.includes('math'))                     return 'fa-square-root-alt';
+      if (l.includes('science'))                  return 'fa-flask';
+      if (l.includes('physics'))                  return 'fa-atom';
+      if (l.includes('chem'))                     return 'fa-vial';
+      if (l.includes('bio'))                      return 'fa-dna';
+      if (l.includes('english'))                  return 'fa-language';
+      if (l.includes('hindi') || l.includes('sanskrit')) return 'fa-language';
+      if (l.includes('history') || l.includes('social')) return 'fa-landmark';
+      if (l.includes('geo'))                      return 'fa-globe-asia';
+      if (l.includes('computer') || l.includes('it') || l.includes('info')) return 'fa-laptop-code';
+      if (l.includes('art') || l.includes('draw')) return 'fa-palette';
+      if (l.includes('music'))                    return 'fa-music';
+      if (l.includes('pe') || l.includes('sport') || l.includes('phy ed')) return 'fa-running';
+      if (l.includes('activity') || l.includes('video')) return 'fa-film';
+      return 'fa-book';
+    }
+
+    function escHtml(s) {
+      const d = document.createElement('div');
+      d.textContent = s || '';
+      return d.innerHTML;
+    }
+
+    // ── Breadcrumb ──────────────────────────────────────────────────
+    function updateBreadcrumb() {
+      const bc = document.getElementById('breadcrumb');
+      const secLabel = userData ? `${userData.grade}-${userData.section}` : 'My Section';
+
+      if (!currentScope) {
+        bc.innerHTML = `<span class="bc-item active"><i class="fas fa-home"></i> Home</span>`;
+      } else {
+        const name = currentScope === 'common'
+          ? `Grade ${userData?.grade} — Common`
+          : `${secLabel} — My Section`;
+        bc.innerHTML = `
+          <span class="bc-item" onclick="showRootView()"><i class="fas fa-home"></i> Home</span>
+          <span class="bc-sep"><i class="fas fa-chevron-right"></i></span>
+          <span class="bc-item active">${name}</span>`;
+      }
+    }
+
+    // ── Root View ───────────────────────────────────────────────────
+    function showRootView() {
+      currentScope = null;
+      document.getElementById('view-folder').style.display = 'none';
+      document.getElementById('view-root').style.display   = 'block';
+      document.getElementById('search-input').value = '';
+      updateBreadcrumb();
+    }
+
+    function renderRootFolders() {
+      const grid    = document.getElementById('folder-grid');
+      const common  = allFiles.filter(f => f.scope === 'common');
+      const section = allFiles.filter(f => f.scope === 'section');
+      const secLabel = userData ? `${userData.grade}-${userData.section}` : 'My Section';
+
+      if (allFiles.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state" style="grid-column:1/-1">
+            <i class="fas fa-folder-open"></i>
+            <p>No resources available yet</p>
+            <small>Your teachers haven't uploaded any files for your class yet. Check back soon!</small>
+          </div>`;
+        return;
+      }
+
+      grid.innerHTML = `
+        ${folderCardHTML('common',
+          `Grade ${userData?.grade} — Common`,
+          'Shared notes and resources for all sections of your grade',
+          common.length, 'fa-users', 'var(--accent-primary)')}
+        ${folderCardHTML('section',
+          `Section ${secLabel}`,
+          'Resources and materials uploaded specifically for your class section',
+          section.length, 'fa-chalkboard-teacher', '#64b5f6')}`;
+    }
+
+    function folderCardHTML(key, name, desc, count, icon, color) {
+      return `
+        <div class="folder-card ${key} noselect" onclick="openFolder('${key}')">
+          <i class="fas ${icon} folder-icon" style="color:${color}"></i>
+          <div class="folder-name">${name}</div>
+          <div class="folder-desc">${desc}</div>
+          <span class="file-badge">${count} file${count !== 1 ? 's' : ''}</span>
+        </div>`;
+    }
+
+    // ── Folder View ─────────────────────────────────────────────────
+    function openFolder(scope) {
+      currentScope = scope;
+      const secLabel = userData ? `${userData.grade}-${userData.section}` : 'My Section';
+
+      document.getElementById('view-root').style.display   = 'none';
+      document.getElementById('view-folder').style.display = 'block';
+
+      const icon = scope === 'common' ? 'fa-users' : 'fa-chalkboard-teacher';
+      const iconColor = scope === 'common' ? 'var(--accent-primary)' : '#64b5f6';
+      document.getElementById('folder-icon').className = `fas ${icon}`;
+      document.getElementById('folder-icon').style.color = iconColor;
+      document.getElementById('folder-title-text').textContent =
+        scope === 'common'
+          ? `Grade ${userData?.grade} — Common Resources`
+          : `Section ${secLabel}`;
+
+      updateBreadcrumb();
+      renderFileList(allFiles.filter(f => f.scope === scope));
+    }
+
+    function filterFiles() {
+      const q = document.getElementById('search-input').value.trim().toLowerCase();
+      const base = allFiles.filter(f => f.scope === currentScope);
+      const result = q
+        ? base.filter(f =>
+            f.title.toLowerCase().includes(q) ||
+            (f.subject || '').toLowerCase().includes(q) ||
+            (f.teacher_name || '').toLowerCase().includes(q))
+        : base;
+      renderFileList(result, q);
+    }
+
+    function renderFileList(files, query = '') {
+      const container = document.getElementById('subject-groups');
+
+      if (!files.length) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-search"></i>
+            <p>${query ? 'No files match your search' : 'No files here yet'}</p>
+            <small>${query ? 'Try different keywords.' : 'Files uploaded by your teachers will appear here.'}</small>
+          </div>`;
+        return;
+      }
+
+      // Group by subject
+      const groups = {};
+      files.forEach(f => {
+        const k = f.subject || 'General';
+        if (!groups[k]) groups[k] = [];
+        groups[k].push(f);
+      });
+
+      const html = Object.keys(groups).sort().map(subj => {
+        const gFiles = groups[subj];
+        return `
+          <div class="subject-group">
+            <div class="subject-header noselect">
+              <i class="fas ${subjectIcon(subj)}"></i>
+              <span class="subject-header-name">${escHtml(subj)}</span>
+              <span class="subject-header-count">${gFiles.length} file${gFiles.length !== 1 ? 's' : ''}</span>
+            </div>
+            <div class="files-stack">
+              ${gFiles.map(f => buildFileCard(f)).join('')}
+            </div>
+          </div>`;
+      }).join('');
+
+      container.innerHTML = html;
+    }
+
+    function buildFileCard(file) {
+      fileMap[file.id] = file;            // register for lookup
+      const info = mimeInfo(file.mime_type);
+      const size = fmtSize(file.size_bytes);
+      const date = fmtDate(file.updated_at);
+
+      return `
+        <div class="file-card" onclick="openFile('${file.id}')" title="${escHtml(file.title)}">
+          <div class="file-icon-box" style="background:${info.color}1a">
+            <i class="fas ${info.icon}" style="color:${info.color}"></i>
+          </div>
+          <div class="file-info">
+            <div class="file-title">${escHtml(file.title)}</div>
+            <div class="file-meta">
+              <span class="file-meta-item"><i class="fas fa-tag"></i>${info.label}</span>
+              ${size ? `<span class="file-meta-item"><i class="fas fa-weight-hanging"></i>${size}</span>` : ''}
+              ${file.teacher_name ? `<span class="file-meta-item"><i class="fas fa-user-tie"></i>${escHtml(file.teacher_name)}</span>` : ''}
+              ${date ? `<span class="file-meta-item"><i class="fas fa-calendar-alt"></i>${date}</span>` : ''}
+            </div>
+          </div>
+          <button class="open-btn" onclick="event.stopPropagation();openFile('${file.id}')" title="Open">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>`;
+    }
+
+    /** Must match REFRESH_BUFFER_MS in the edge function */
+const REFRESH_BUFFER_MS = 60 * 60 * 1000; // 1 hour
+
+async function getCachedUrl(fileId) {
+  try {
+    const row = await window.parent.selectData(
+      'url_cache',          // table
+      true,                 // fetchSingle
+      'signed_url,expires_at',
+      ['file_id'],          // matchColumns
+      [fileId]              // matchValues
+    );
+    if (!row) return null;
+    if (new Date(row.expires_at).getTime() - Date.now() > REFRESH_BUFFER_MS) {
+      return row.signed_url;
+    }
+    return null;  // near expiry → let edge function refresh
+  } catch {
+    return null;  // any error → fall through safely
+  }
+}
+
+    // ── Open file → get signed URL → show viewer ─────────────────────
+    async function openFile(fileId) {
+  const file = fileMap[fileId];
+  if (!file) return;
+
+  window.parent.showProcessingDialog();
+  currentFile = file;
+
+  // ── 1. Try direct cache lookup first ─────────────────────────────
+  const cachedUrl = await getCachedUrl(file.id);
+  if (cachedUrl) {
+    window.parent.hideProcessingDialog();
+    currentUrl = cachedUrl;
+    showViewer(file, cachedUrl);
+    return;
+  }
+
+  // ── 2. Miss / near-expiry → invoke edge function as before ────────
+  const result = await window.parent.invokeEdgeFunction('get-file-url', {
+    file_id:    file.id,
+    object_key: file.object_key,
+  });
+
+  window.parent.hideProcessingDialog();
+
+  if (!result?.download_url) {
+    alert('Could not load this file. Please try again.');
+    return;
+  }
+
+  currentUrl = result.download_url;
+  showViewer(file, result.download_url);
+}
+
+    // ── Viewer ──────────────────────────────────────────────────────
+    function showViewer(file, url) {
+      const info = mimeInfo(file.mime_type);
+      const mime = file.mime_type || '';
+
+      // Header
+      document.getElementById('vh-title').textContent = file.title;
+      document.getElementById('vh-sub').textContent   =
+        [info.label, fmtSize(file.size_bytes), file.teacher_name].filter(Boolean).join(' · ');
+
+      const iconEl = document.getElementById('vh-icon');
+      iconEl.innerHTML = `<i class="fas ${info.icon}" style="color:${info.color}"></i>`;
+      iconEl.style.background = `${info.color}1a`;
+
+      // Body
+      const body = document.getElementById('viewer-body');
+      body.innerHTML = '';
+
+      if (mime === 'application/pdf') {
+        /* Native browser PDF viewer — supports search (Ctrl+F), zoom,
+           pinch-to-zoom on iOS/Android, scroll, and rotation.        */
+        body.innerHTML = `
+          <iframe id="pdf-frame" src="${url}#toolbar=1&navpanes=1"
+            type="application/pdf"
+            title="${escHtml(file.title)}"
+            allow="fullscreen">
+            <p style="padding:20px;color:var(--text-secondary)">
+              Your browser cannot display PDFs inline.
+              <a href="${url}" target="_blank" rel="noopener" style="color:var(--accent-primary)">
+                Open in new tab</a>.
+            </p>
+          </iframe>`;
+
+      } else if (mime.startsWith('image/')) {
+        body.innerHTML = `
+          <div id="img-viewer">
+            <img id="img-el" src="${url}" alt="${escHtml(file.title)}"
+              draggable="false" loading="lazy">
+          </div>`;
+
+      } else if (mime.startsWith('video/')) {
+        body.innerHTML = `
+          <div id="vid-viewer">
+            <video id="vid-el" controls playsinline preload="metadata">
+              <source src="${url}" type="${mime}">
+              Your browser does not support video playback.
+            </video>
+          </div>`;
+
+      } else if (mime.startsWith('audio/')) {
+        body.innerHTML = `
+          <div id="aud-viewer">
+            <div class="aud-art"><i class="fas fa-music"></i></div>
+            <div class="aud-name">${escHtml(file.title)}</div>
+            <audio id="aud-el" controls preload="metadata">
+              <source src="${url}" type="${mime}">
+            </audio>
+          </div>`;
+        // Auto-play
+        setTimeout(() => {
+          const a = document.getElementById('aud-el');
+          if (a) a.play().catch(() => {});
+        }, 300);
+
+      } else {
+        body.innerHTML = `
+          <div id="other-viewer">
+            <i class="fas ${info.icon}" style="color:${info.color}"></i>
+            <p>Preview unavailable for ${info.label} files.</p>
+            <small>Download the file to open it on your device.</small>
+            <button class="dl-cta" onclick="triggerDownload()">
+              <i class="fas fa-download"></i> Download File
+            </button>
+          </div>`;
+      }
+
+      document.getElementById('viewer-overlay').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeViewer() {
+      ['vid-el', 'aud-el'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.pause(); el.removeAttribute('src'); el.load(); }
+      });
+      document.getElementById('viewer-overlay').style.display = 'none';
+      document.getElementById('viewer-body').innerHTML = '';
+      document.body.style.overflow = '';
+      currentUrl  = '';
+      currentFile = null;
+    }
+
+    function onOverlayClick(e) {
+      if (e.target === document.getElementById('viewer-overlay')) closeViewer();
+    }
+
+    function triggerDownload() {
+      if (!currentUrl) return;
+      const a = document.createElement('a');
+      a.href     = currentUrl;
+      a.download = currentFile?.title || 'download';
+      a.target   = '_blank';
+      a.rel      = 'noopener noreferrer';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    // Close viewer on Escape key
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' &&
+          document.getElementById('viewer-overlay').style.display !== 'none') {
+        closeViewer();
+      }
+    });
+
+    // ── Skeleton ────────────────────────────────────────────────────
+    function showSkeleton() {
+      document.getElementById('folder-grid').innerHTML = `
+        <div class="skeleton skel-folder"></div>
+        <div class="skeleton skel-folder"></div>`;
+    }
+
+    // ── initializePage  (called by parent) ───────────────────────────
+    async function initializePage(ud) {
+      userData = ud;
+      window.parent.showProcessingDialog();
+
+      document.getElementById('container').style.display = 'block';
+      showSkeleton();
+
+      const files = await window.parent.invokeFunctionJVP('get_student_files', {
+        p_grade:   String(userData.grade),
+        p_section: String(userData.section),
+      });
+
+      allFiles  = files || [];
+      fileMap   = {};
+      allFiles.forEach(f => { fileMap[f.id] = f; });
+
+      renderRootFolders();
+      updateBreadcrumb();
+      window.parent.hideProcessingDialog();
+    }
+  </script>
+</body>
+</html>
