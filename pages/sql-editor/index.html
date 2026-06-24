@@ -418,7 +418,7 @@ input { font: inherit; color: inherit; }
   min-height: 0;
   background: var(--bg-input);
 }
-.editor-highlight,
+/* ── Single contenteditable editor ── */
 .editor-input {
   position: absolute;
   inset: 0;
@@ -429,28 +429,31 @@ input { font: inherit; color: inherit; }
   line-height: 1.6;
   white-space: pre-wrap;
   word-break: break-word;
+  overflow-y: auto;
+  overflow-x: hidden;
   border: none;
+  outline: none;
   resize: none;
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  cursor: text;
+  transition: none !important;    /* no lag on caret */
+  -webkit-user-modify: read-write-plaintext-only;  /* Safari: plain text only */
+}
+.editor-input * { transition: none !important; }
+
+/* Placeholder — toggled by JS via .is-empty */
+.editor-input.is-empty::before {
+  content: attr(data-placeholder);
+  color: var(--text-tertiary);
+  pointer-events: none;
+  white-space: pre;
+  display: block;
 }
 
-/* textarea keeps its own scrollbar; the overlay is scrolled by JS only */
-.editor-input   { overflow-y: auto; overflow-x: hidden; }
-.editor-highlight { overflow: hidden; }          /* ← no scrollbar, still scrollable via JS */
-.editor-highlight {
-  color: var(--text-secondary);
-  pointer-events: none;
-  z-index: 1;
-}
-.editor-highlight code { font-family: var(--font-mono); }
-.editor-input {
-  z-index: 2;
-  background: transparent;
-  color: transparent;
-  caret-color: var(--text-primary);
-  -webkit-text-fill-color: transparent;
-}
-.editor-input::placeholder { color: var(--text-tertiary); -webkit-text-fill-color: var(--text-tertiary); }
-.editor-input::selection { background: rgba(255, 193, 7, 0.35); -webkit-text-fill-color: transparent; }
+/* Text selection */
+.editor-input::selection,
+.editor-input *::selection { background: rgba(255, 193, 7, 0.35); }
 
 .tok-keyword { color: var(--tok-keyword); font-weight: 600; }
 .tok-string { color: var(--tok-string); }
@@ -623,7 +626,7 @@ input { font: inherit; color: inherit; }
   .sidebar.open { transform: translateX(0); }
   .sidebar-close { display: inline-flex; }
   .sidebar-open { display: inline-flex; }
-  .editor-input, .editor-highlight { font-size: 0.88rem; padding: var(--spacing-sm) var(--spacing-md); }
+  .editor-input { font-size: 0.88rem; padding: var(--spacing-sm) var(--spacing-md); }
   .db-indicator-label { display: none; }
   .toolbar { padding: var(--spacing-sm) var(--spacing-md); }
   .modal { max-width: 100%; }
@@ -696,16 +699,19 @@ input { font: inherit; color: inherit; }
 
     <div class="editor-section">
       <div class="editor-wrap">
-        <pre class="editor-highlight thin-scroll" id="highlightLayer" aria-hidden="true"><code id="highlightCode"></code></pre>
-        <textarea
-          class="editor-input"
-          id="sqlInput"
-          spellcheck="false"
-          autocapitalize="off"
-          autocomplete="off"
-          autocorrect="off"
-          placeholder="-- Type SQL here, for example:&#10;CREATE DATABASE school;&#10;USE school;&#10;CREATE TABLE students (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(50));"
-        ></textarea>
+        <div
+  class="editor-input"
+  id="sqlInput"
+  contenteditable="true"
+  spellcheck="false"
+  autocapitalize="off"
+  autocomplete="off"
+  autocorrect="off"
+  role="textbox"
+  aria-multiline="true"
+  aria-label="SQL query editor"
+  data-placeholder="-- Type SQL here, for example:&#10;CREATE DATABASE school;&#10;USE school;&#10;CREATE TABLE students (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(50));"
+></div>
       </div>
       <div class="editor-hint">Press <kbd>Ctrl</kbd>+<kbd>Enter</kbd> to run &middot; separate statements with <code>;</code></div>
     </div>
@@ -912,8 +918,6 @@ input { font: inherit; color: inherit; }
   var sidebar = $('sidebar');
   var sidebarBackdrop = $('sidebarBackdrop');
   var sqlInput = $('sqlInput');
-  var highlightCode = $('highlightCode');
-  var highlightLayer = $('highlightLayer');
   var runBtn = $('runBtn');
   var clearEditorBtn = $('clearEditorBtn');
   var dbList = $('dbList');
@@ -1290,16 +1294,15 @@ input { font: inherit; color: inherit; }
 "  (4, 'Biology', 4);\n\n" +
 "SELECT * FROM students;";
 
-  sampleBtn.addEventListener('click', function () {
-    if (getUserDatabases().indexOf('school') !== -1) {
-      sqlInput.value = 'USE `school`;\nSELECT * FROM students;';
-    } else {
-      sqlInput.value = SAMPLE_SQL;
-    }
-    onEditorInput();
-    runBatch(sqlInput.value);
-    closeSidebarOnMobile();
-  });
+  /* REPLACE WITH */
+sampleBtn.addEventListener('click', function () {
+  var sql = getUserDatabases().indexOf('school') !== -1
+    ? 'USE `school`;\nSELECT * FROM students;'
+    : SAMPLE_SQL;
+  setEditorValue(sql);
+  runBatch(sql);
+  closeSidebarOnMobile();
+});
 
   /* ============================================================
      REFERENCE / CHEAT SHEET
@@ -1356,21 +1359,26 @@ input { font: inherit; color: inherit; }
     }
   });
 
-  function insertIntoEditor(text) {
-    var ta = sqlInput;
-    var start = ta.selectionStart, end = ta.selectionEnd;
-    var before = ta.value.slice(0, start), after = ta.value.slice(end);
-    var insertText = text;
-    if (before && !/\n\s*$/.test(before)) insertText = '\n' + insertText;
-    if (after && !/^\s*\n/.test(after)) insertText = insertText + '\n';
-    ta.value = before + insertText + after;
-    var pos = before.length + insertText.length;
-    onEditorInput();
-    ta.focus();
-    ta.selectionStart = ta.selectionEnd = pos;
-    switchTab('explorer');
-    closeSidebarOnMobile();
-  }
+  /* FIND the entire insertIntoEditor function and REPLACE WITH */
+function insertIntoEditor(text) {
+  sqlInput.focus();
+  var caret  = getCaretOffset();
+  var cur    = getEditorValue();
+  var before = cur.slice(0, caret);
+  var after  = cur.slice(caret);
+  var insert = text;
+  if (before && !/\n\s*$/.test(before)) insert = '\n' + insert;
+  if (after  && !/^\s*\n/.test(after))  insert = insert + '\n';
+  var newText  = before + insert + after;
+  var newCaret = before.length + insert.length;
+  sqlInput.innerHTML = highlightSQL(newText) + '\n';
+  sqlInput.classList.toggle('is-empty', !newText.trim());
+  setCaretOffset(newCaret);
+  if (draftTimer) clearTimeout(draftTimer);
+  storageSet(DRAFT_KEY, newText);
+  switchTab('explorer');
+  closeSidebarOnMobile();
+}
 
   /* ============================================================
      HISTORY
@@ -1409,11 +1417,11 @@ input { font: inherit; color: inherit; }
     var item = e.target.closest('.history-item');
     if (!item) return;
     var idx = parseInt(item.getAttribute('data-idx'), 10);
-    sqlInput.value = history[idx].sql;
-    onEditorInput();
-    switchTab('explorer');
-    closeSidebarOnMobile();
-    sqlInput.focus();
+    /* REPLACE WITH */
+setEditorValue(history[idx].sql);
+switchTab('explorer');
+closeSidebarOnMobile();
+sqlInput.focus();
   });
   clearHistoryBtn.addEventListener('click', function () {
     if (!history.length) return;
@@ -1426,45 +1434,123 @@ input { font: inherit; color: inherit; }
     });
   });
 
-  /* ============================================================
-     EDITOR — textarea + highlight overlay
-     ============================================================ */
-  var draftTimer = null;
-  function onEditorInput() {
-    highlightCode.innerHTML = highlightSQL(sqlInput.value) + '\n';
-    syncEditorScroll();
-    if (draftTimer) clearTimeout(draftTimer);
-    draftTimer = setTimeout(function () { storageSet(DRAFT_KEY, sqlInput.value); }, 400);
-  }
-  function syncEditorScroll() {
-    requestAnimationFrame(function () {
-      highlightLayer.scrollTop = sqlInput.scrollTop;
-      highlightLayer.scrollLeft = sqlInput.scrollLeft;
-    });
-  }
-  sqlInput.addEventListener('input', onEditorInput);
-  sqlInput.addEventListener('compositionend', onEditorInput);
-  sqlInput.addEventListener('scroll', syncEditorScroll);
-  sqlInput.addEventListener('keydown', function (e) {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); runBtn.click(); return; }
-    if (e.key === 'Tab') {
-      e.preventDefault();
-      var s = sqlInput.selectionStart, en = sqlInput.selectionEnd;
-      sqlInput.value = sqlInput.value.slice(0, s) + '  ' + sqlInput.value.slice(en);
-      sqlInput.selectionStart = sqlInput.selectionEnd = s + 2;
-      onEditorInput();
-    }
-  });
+/* ============================================================
+   EDITOR CURSOR UTILITIES
+   Work on character offsets through text nodes only, so they
+   are invariant to the <span> tags the highlighter injects.
+   ============================================================ */
+function getCaretOffset() {
+  var sel = window.getSelection();
+  if (!sel || !sel.rangeCount) return 0;
+  var range = sel.getRangeAt(0);
+  if (!sqlInput.contains(range.endContainer)) return 0;
+  var pre = range.cloneRange();
+  pre.selectNodeContents(sqlInput);
+  pre.setEnd(range.endContainer, range.endOffset);
+  return pre.toString().length;
+}
 
-  runBtn.addEventListener('click', function () {
-    if (!sqlInput.value.trim()) { showResultsNotice('Nothing to run — type a SQL statement first.'); return; }
-    runBatch(sqlInput.value);
-  });
-  clearEditorBtn.addEventListener('click', function () {
-    sqlInput.value = '';
-    onEditorInput();
-    sqlInput.focus();
-  });
+function setCaretOffset(offset) {
+  var sel = window.getSelection();
+  if (!sel) return;
+  var range = document.createRange();
+  var rem = offset;
+  var found = false;
+  (function walk(node) {
+    if (found) return;
+    if (node.nodeType === 3) {
+      if (rem <= node.length) {
+        range.setStart(node, rem);
+        range.collapse(true);
+        found = true;
+        return;
+      }
+      rem -= node.length;
+    } else {
+      for (var i = 0; i < node.childNodes.length; i++) {
+        walk(node.childNodes[i]);
+        if (found) return;
+      }
+    }
+  }(sqlInput));
+  if (!found) { range.selectNodeContents(sqlInput); range.collapse(false); }
+  sel.removeAllRanges();
+  sel.addRange(range);
+}
+
+/* Gets plain text by walking DOM text nodes directly — consistent
+   across browsers, unaffected by innerHTML changes.
+   Strips the one trailing \\n we always append for cursor stability. */
+function getEditorValue() {
+  var text = '';
+  (function walk(node) {
+    if (node.nodeType === 3) { text += node.textContent; }
+    else { for (var i = 0; i < node.childNodes.length; i++) walk(node.childNodes[i]); }
+  }(sqlInput));
+  if (text.charAt(text.length - 1) === '\n') text = text.slice(0, -1);
+  return text;
+}
+
+/* Sets editor content with highlighting; moves caret to end. */
+function setEditorValue(text) {
+  sqlInput.innerHTML = highlightSQL(text) + '\n';
+  sqlInput.classList.toggle('is-empty', !text.trim());
+  var range = document.createRange();
+  range.selectNodeContents(sqlInput);
+  range.collapse(false);
+  var sel = window.getSelection();
+  if (sel) { sel.removeAllRanges(); sel.addRange(range); }
+  if (draftTimer) clearTimeout(draftTimer);
+  storageSet(DRAFT_KEY, text);
+}
+
+/* ============================================================
+   EDITOR — contenteditable input + live highlighting
+   ============================================================ */
+var draftTimer = null;
+var isComposing = false;
+
+function onEditorInput() {
+  if (isComposing) return;               // never interrupt IME composition
+  var caret = getCaretOffset();
+  var text  = getEditorValue();
+  sqlInput.innerHTML = highlightSQL(text) + '\n';
+  sqlInput.classList.toggle('is-empty', !text.trim());
+  setCaretOffset(caret);                 // restore cursor to exact same character
+  if (draftTimer) clearTimeout(draftTimer);
+  draftTimer = setTimeout(function () { storageSet(DRAFT_KEY, text); }, 400);
+}
+
+sqlInput.addEventListener('compositionstart', function () { isComposing = true; });
+sqlInput.addEventListener('compositionend',   function () { isComposing = false; onEditorInput(); });
+sqlInput.addEventListener('input', onEditorInput);
+
+sqlInput.addEventListener('keydown', function (e) {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); runBtn.click(); return; }
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    document.execCommand('insertText', false, '  '); // fires 'input' → onEditorInput
+  }
+});
+
+/* Always paste as plain text — prevents browser injecting HTML */
+sqlInput.addEventListener('paste', function (e) {
+  e.preventDefault();
+  var text = (e.clipboardData || window.clipboardData).getData('text/plain');
+  document.execCommand('insertText', false, text);
+});
+
+runBtn.addEventListener('click', function () {
+  var sql = getEditorValue();
+  if (!sql.trim()) { showResultsNotice('Nothing to run — type a SQL statement first.'); return; }
+  runBatch(sql);
+});
+clearEditorBtn.addEventListener('click', function () {
+  sqlInput.innerHTML = '';
+  sqlInput.classList.add('is-empty');
+  sqlInput.focus();
+  storageSet(DRAFT_KEY, '');
+});
 
   /* ============================================================
      TABS
@@ -1541,9 +1627,14 @@ input { font: inherit; color: inherit; }
   loadHistory();
   renderHistory();
 
-  var draft = storageGet(DRAFT_KEY);
-  if (draft) { sqlInput.value = draft; }
-  onEditorInput();
+  /* REPLACE WITH */
+var draft = storageGet(DRAFT_KEY);
+if (draft) {
+  sqlInput.innerHTML = highlightSQL(draft) + '\n';
+  sqlInput.classList.toggle('is-empty', !draft.trim());
+} else {
+  sqlInput.classList.add('is-empty');
+}
 
 })();
 </script>
