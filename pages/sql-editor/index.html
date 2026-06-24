@@ -89,6 +89,16 @@ body.light-theme {
   transition: var(--transition-base) all;
 }
 
+/* ── Editor: transitions must be instant for pixel-perfect caret sync ── */
+.editor-input,
+.editor-highlight,
+.editor-highlight *,
+#highlightLayer,
+#highlightCode {
+  transition: none !important;
+  animation: none !important;
+}
+
 /* ============================================================
    2. EXTRA TOKENS — additive, namespaced, follow the same pattern
    ============================================================ */
@@ -419,11 +429,13 @@ input { font: inherit; color: inherit; }
   line-height: 1.6;
   white-space: pre-wrap;
   word-break: break-word;
-  overflow-y: auto;
-  overflow-x: hidden;
   border: none;
   resize: none;
 }
+
+/* textarea keeps its own scrollbar; the overlay is scrolled by JS only */
+.editor-input   { overflow-y: auto; overflow-x: hidden; }
+.editor-highlight { overflow: hidden; }          /* ← no scrollbar, still scrollable via JS */
 .editor-highlight {
   color: var(--text-secondary);
   pointer-events: none;
@@ -604,6 +616,9 @@ input { font: inherit; color: inherit; }
     inset: 0 auto 0 0;
     transform: translateX(-100%);
     box-shadow: 8px 0 24px var(--shadow-dark);
+  }
+  .editor-hint {
+    display: none;
   }
   .sidebar.open { transform: translateX(0); }
   .sidebar-close { display: inline-flex; }
@@ -1417,14 +1432,18 @@ input { font: inherit; color: inherit; }
   var draftTimer = null;
   function onEditorInput() {
     highlightCode.innerHTML = highlightSQL(sqlInput.value) + '\n';
+    syncEditorScroll();
     if (draftTimer) clearTimeout(draftTimer);
     draftTimer = setTimeout(function () { storageSet(DRAFT_KEY, sqlInput.value); }, 400);
   }
   function syncEditorScroll() {
-    highlightLayer.scrollTop = sqlInput.scrollTop;
-    highlightLayer.scrollLeft = sqlInput.scrollLeft;
+    requestAnimationFrame(function () {
+      highlightLayer.scrollTop = sqlInput.scrollTop;
+      highlightLayer.scrollLeft = sqlInput.scrollLeft;
+    });
   }
   sqlInput.addEventListener('input', onEditorInput);
+  sqlInput.addEventListener('compositionend', onEditorInput);
   sqlInput.addEventListener('scroll', syncEditorScroll);
   sqlInput.addEventListener('keydown', function (e) {
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); runBtn.click(); return; }
