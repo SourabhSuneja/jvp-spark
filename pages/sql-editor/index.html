@@ -1319,7 +1319,7 @@ sampleBtn.addEventListener('click', function () {
     { title: 'ORDER BY', desc: 'Sorts the result. Add DESC for highest-to-lowest.', code: 'SELECT * FROM students ORDER BY percentage DESC;' },
     { title: 'GROUP BY', desc: 'Collapses rows that share a value so you can summarize each group, often with COUNT, SUM or AVG.', code: 'SELECT grade, COUNT(*) AS students\nFROM students\nGROUP BY grade;' },
     { title: 'HAVING', desc: 'Filters groups after GROUP BY — like WHERE, but for the summarized groups.', code: 'SELECT grade, COUNT(*) AS students\nFROM students\nGROUP BY grade\nHAVING COUNT(*) > 1;' },
-    { title: 'UPDATE', desc: 'Changes existing rows. Always pair it with WHERE, or every row gets updated.', code: "UPDATE students SET percentage = 3.9 WHERE name = 'Asha Patel';" },
+    { title: 'UPDATE', desc: 'Changes existing rows. Always pair it with WHERE, or every row gets updated.', code: "UPDATE students SET percentage = 53.9 WHERE name = 'Asha Patel';" },
     { title: 'DELETE', desc: 'Removes rows from a table. Always pair it with WHERE, or every row gets deleted.', code: "DELETE FROM students WHERE name = 'Mateo Garcia';" },
     { title: 'JOIN', desc: 'Combines rows from two tables that share a matching value.', code: 'SELECT students.name, courses.title\nFROM students\nJOIN courses ON students.id = courses.student_id;' },
     { title: 'DISTINCT', desc: 'Removes duplicate values from the result.', code: 'SELECT DISTINCT grade FROM students;' },
