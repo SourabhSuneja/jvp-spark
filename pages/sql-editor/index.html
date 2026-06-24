@@ -1272,7 +1272,7 @@ input { font: inherit; color: inherit; }
 "  id INT AUTO_INCREMENT PRIMARY KEY,\n" +
 "  name VARCHAR(50),\n" +
 "  grade INT,\n" +
-"  gpa NUMBER\n" +
+"  percentage NUMBER\n" +
 ");\n\n" +
 "CREATE TABLE IF NOT EXISTS courses (\n" +
 "  id INT AUTO_INCREMENT PRIMARY KEY,\n" +
@@ -1280,12 +1280,12 @@ input { font: inherit; color: inherit; }
 "  title VARCHAR(80),\n" +
 "  credits INT\n" +
 ");\n\n" +
-"INSERT INTO students (name, grade, gpa) VALUES\n" +
-"  ('Asha Patel', 10, 3.8),\n" +
-"  ('Liam Chen', 11, 3.2),\n" +
-"  ('Mateo Garcia', 10, 2.9),\n" +
-"  ('Noor Hassan', 12, 3.95),\n" +
-"  ('Priya Singh', 11, 3.5);\n\n" +
+"INSERT INTO students (name, grade, percentage) VALUES\n" +
+"  ('Asha Patel', 10, 93.8),\n" +
+"  ('Liam Chen', 11, 36.2),\n" +
+"  ('Mateo Garcia', 10, 72.9),\n" +
+"  ('Noor Hassan', 12, 83.95),\n" +
+"  ('Priya Singh', 11, 63.5);\n\n" +
 "INSERT INTO courses (student_id, title, credits) VALUES\n" +
 "  (1, 'Algebra II', 4),\n" +
 "  (2, 'World History', 3),\n" +
@@ -1312,18 +1312,18 @@ sampleBtn.addEventListener('click', function () {
     { title: 'SHOW DATABASES', desc: 'Lists every database you have created.', code: 'SHOW DATABASES;' },
     { title: 'USE', desc: 'Switches the active database, so the next statements apply to it.', code: 'USE school;' },
     { title: 'SHOW TABLES', desc: 'Lists the tables inside the database you are currently using.', code: 'SHOW TABLES;' },
-    { title: 'CREATE TABLE', desc: 'Defines a new table and its columns. AUTO_INCREMENT makes a column generate its own ID.', code: 'CREATE TABLE students (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  name VARCHAR(50),\n  grade INT,\n  gpa NUMBER\n);' },
-    { title: 'INSERT INTO', desc: 'Adds one or more new rows to a table.', code: "INSERT INTO students (name, grade, gpa)\nVALUES ('Asha Patel', 10, 3.8), ('Liam Chen', 11, 3.2);" },
+    { title: 'CREATE TABLE', desc: 'Defines a new table and its columns. AUTO_INCREMENT makes a column generate its own ID.', code: 'CREATE TABLE students (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  name VARCHAR(50),\n  grade INT,\n  percentage NUMBER\n);' },
+    { title: 'INSERT INTO', desc: 'Adds one or more new rows to a table.', code: "INSERT INTO students (name, grade, percentage)\nVALUES ('Asha Patel', 10, 93.8), ('Liam Chen', 11, 83.2);" },
     { title: 'SELECT', desc: 'Reads rows from a table. Use * for every column, or name the ones you want.', code: 'SELECT name, grade FROM students;' },
     { title: 'WHERE', desc: 'Filters rows so only the ones matching a condition come back.', code: 'SELECT * FROM students WHERE grade >= 11;' },
-    { title: 'ORDER BY', desc: 'Sorts the result. Add DESC for highest-to-lowest.', code: 'SELECT * FROM students ORDER BY gpa DESC;' },
+    { title: 'ORDER BY', desc: 'Sorts the result. Add DESC for highest-to-lowest.', code: 'SELECT * FROM students ORDER BY percentage DESC;' },
     { title: 'GROUP BY', desc: 'Collapses rows that share a value so you can summarize each group, often with COUNT, SUM or AVG.', code: 'SELECT grade, COUNT(*) AS students\nFROM students\nGROUP BY grade;' },
     { title: 'HAVING', desc: 'Filters groups after GROUP BY — like WHERE, but for the summarized groups.', code: 'SELECT grade, COUNT(*) AS students\nFROM students\nGROUP BY grade\nHAVING COUNT(*) > 1;' },
-    { title: 'UPDATE', desc: 'Changes existing rows. Always pair it with WHERE, or every row gets updated.', code: "UPDATE students SET gpa = 3.9 WHERE name = 'Asha Patel';" },
+    { title: 'UPDATE', desc: 'Changes existing rows. Always pair it with WHERE, or every row gets updated.', code: "UPDATE students SET percentage = 3.9 WHERE name = 'Asha Patel';" },
     { title: 'DELETE', desc: 'Removes rows from a table. Always pair it with WHERE, or every row gets deleted.', code: "DELETE FROM students WHERE name = 'Mateo Garcia';" },
     { title: 'JOIN', desc: 'Combines rows from two tables that share a matching value.', code: 'SELECT students.name, courses.title\nFROM students\nJOIN courses ON students.id = courses.student_id;' },
     { title: 'DISTINCT', desc: 'Removes duplicate values from the result.', code: 'SELECT DISTINCT grade FROM students;' },
-    { title: 'LIMIT', desc: 'Caps how many rows come back — handy for previewing big tables.', code: 'SELECT * FROM students ORDER BY gpa DESC LIMIT 3;' },
+    { title: 'LIMIT', desc: 'Caps how many rows come back — handy for previewing big tables.', code: 'SELECT * FROM students ORDER BY percentage DESC LIMIT 3;' },
     { title: 'ALTER TABLE', desc: 'Changes a table\u2019s structure, such as adding a new column.', code: 'ALTER TABLE students ADD COLUMN email VARCHAR(100);' },
     { title: 'DROP', desc: 'Permanently deletes a table or an entire database. There is no undo.', code: 'DROP TABLE students;\nDROP DATABASE school;' }
   ];
