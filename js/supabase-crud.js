@@ -162,6 +162,21 @@ async function insertData(tableName, data) {
    }
 }
 
+async function insertDataWithoutSelect(tableName, data) {
+   try {
+      const { error } = await supabase
+         .from(tableName)
+         .insert(data);
+
+      if (error) throw error;
+
+      return true;
+   } catch (error) {
+      console.error("Error inserting data:", error.message);
+      return false;
+   }
+}
+
 // upsert data
 async function upsertData(tableName, data, conflictColumns = []) {
    try {
@@ -516,6 +531,7 @@ window.signOutUser = signOutUser;
 window.signUpUser = signUpUser;
 window.changeUserPassword = changeUserPassword;
 window.insertData = insertData;
+window.insertDataWithoutSelect = insertDataWithoutSelect;
 window.upsertData = upsertData;
 window.selectData = selectData;
 window.deleteRow = deleteRow;
