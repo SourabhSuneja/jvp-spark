@@ -315,7 +315,7 @@ function logActivity(action, extra = null) {
     (async () => {
         try {
             const data = {
-                visitor,
+                visitor: `${USER_DATA.name} (${USER_DATA.grade}-${USER_DATA.section})`,
                 action,
                 extra: extra ? extra : null
             };
