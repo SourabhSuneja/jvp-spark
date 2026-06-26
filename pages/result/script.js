@@ -287,5 +287,6 @@
          if (accessToken && isValidUUID(accessToken)) {
          showLoadingModal();
          fetchStudentMarks(accessToken);
+         parent.logActivity("MARKS_VIEW");
          }
 }
