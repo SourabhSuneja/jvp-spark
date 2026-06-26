@@ -164,7 +164,8 @@ async function insertData(tableName, data) {
 
 async function insertDataWithoutSelect(tableName, data) {
    try {
-      const { error } = await supabase
+      const supabaseJVP = createClient(supabaseUrlJVP, supabaseKeyJVP);
+      const { error } = await supabaseJVP
          .from(tableName)
          .insert(data);
 
