@@ -308,6 +308,24 @@
       <div id="toast-notification"></div>
       <!-- Toast Notification ends -->
       <!-- Scripts Start -->
+      <script>
+      // Function to log user activity on server
+function logActivity(action, extra = null) {
+    // Run insert in the background, without blocking main code
+    (async () => {
+        try {
+            const data = {
+                visitor,
+                action,
+                extra: extra ? extra : null
+            };
+            await insertDataWithoutSelect("activity_logs", data);
+        } catch (error) {
+            console.error("Error logging activity:", error.message);
+        }
+    })();
+}
+      </script>
       <!-- Set viewport -->     
       <script src="./js/set-viewport.js"></script>
       <!-- PWA Script -->     
