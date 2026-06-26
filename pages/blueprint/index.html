@@ -571,6 +571,7 @@
          // Fetch blueprints from My JVP Supabase backend
          async function fetchBlueprint(grade, examName) {
             const data = await parent.invokeFunctionJVP('get_blueprint_data', {'p_class': grade, 'p_exam': examName});
+            parent.logActivity('BLUEPRINT_VIEW');
             return data;
          }
          
