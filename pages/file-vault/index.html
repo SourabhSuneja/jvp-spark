@@ -726,13 +726,13 @@
       if (!s) return 'fa-folder';
       const l = s.toLowerCase();
       if (l.includes('math'))                     return 'fa-square-root-alt';
+      if (l.includes('history') || l.includes('social')) return 'fa-landmark';
       if (l.includes('science'))                  return 'fa-flask';
       if (l.includes('physics'))                  return 'fa-atom';
       if (l.includes('chem'))                     return 'fa-vial';
       if (l.includes('bio'))                      return 'fa-dna';
       if (l.includes('english'))                  return 'fa-language';
       if (l.includes('hindi') || l.includes('sanskrit')) return 'fa-language';
-      if (l.includes('history') || l.includes('social')) return 'fa-landmark';
       if (l.includes('geo'))                      return 'fa-globe-asia';
       if (l.includes('computer') || l.includes('it') || l.includes('info')) return 'fa-laptop-code';
       if (l.includes('art') || l.includes('draw')) return 'fa-palette';
